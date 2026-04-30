@@ -4,12 +4,17 @@ header: |
   Post Aggregate Root
 level: 1.0
 links:
-- SWA001: APewKl2DjecSi9hEzZiGqeyowXSo9-ZhJBB-d0ja40w=
+- SWA001: 1csuDNcNuE9XFg5pSlGNgRQ5xd8hKiNgNOfrjK2qJK4=
 - SWA004: muOMKmHdWM_WGbTtvgOYgqQFtkFTwFSd-6Tr7WKETiI=
+- SWA007: EsGx3SkU5JbHb5d7Q9kJ-S73yN2I8vMVKvKNbNa4NmA=
 normative: true
-ref: services/blog-content/src/main/java/de/tomsblog/blogcontent/domain/model/Post.java
-reviewed: sH7Z3zGI_fkIkQHx2xy3duYpBvLpso4-c7a5gdh0-vM=
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/domain/model/Post.java
+  type: file
+reviewed: hRsl6EZrYGwpsAyHchNpNTM4r3Jh_CnVyiip59TIos4=
 text: |
   Implementiert das Post-Aggregate mit Statusübergängen (DRAFT -> PUBLISHED -> ARCHIVED),
-  Slug-Generierung, Tag-Verwaltung und Domain-Event-Registrierung.
-  Reine Java-Klasse ohne Framework-Abhängigkeiten.
+  Slug-Generierung, AuthorId-Referenz, TagId-basierter Verschlagwortung,
+  Quellenverwaltung (List<Source>), Attachment-Verwaltung (List<Attachment>)
+  und Domain-Event-Registrierung. Reine Java-Klasse ohne Framework-Abhängigkeiten.

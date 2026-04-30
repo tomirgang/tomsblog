@@ -7,8 +7,11 @@ links:
 - SWR001: oD6Rn0QKvdfBWIxTDhBdJYrroqSrJ2VT_QgKIXZn4co=
 - SWR003: d2uW70nk_joetofqEToZSgV_jZbOMSDNC-SER0zo1ls=
 normative: true
-ref: services/blog-content/src/test/java/de/tomsblog/blogcontent/adapter/outbound/persistence/JpaPostRepositoryIntegrationTest.java
-reviewed: wiz9LuwcjrDjni1zWPMEXNpeJwOjtFotvRG6czbZy8A=
+ref: ''
+references:
+- path: services/blog-content/src/test/java/de/tomsblog/blogcontent/adapter/outbound/persistence/JpaPostRepositoryIntegrationTest.java
+  type: file
+reviewed: uP3Ln6J38gyeD9dM_9lfPJfF8Ef61uNUZeIsTtSvUiQ=
 text: |
   Integrationstest mit Testcontainers (PostgreSQL):
   Nur Posts des eigenen Tenants werden gelistet.

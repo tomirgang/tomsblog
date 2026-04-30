@@ -1,14 +1,17 @@
 package de.tomsblog.blogcontent.adapter.outbound.persistence;
 
+import de.tomsblog.shared.audit.Auditable;
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Table(name = "posts")
-public class PostJpaEntity {
+public class PostJpaEntity implements Auditable {
 
     @Id
     @Column(name = "id", nullable = false, updatable = false)
@@ -16,6 +19,9 @@ public class PostJpaEntity {
 
     @Column(name = "tenant_id", nullable = false, updatable = false)
     private UUID tenantId;
+
+    @Column(name = "author_id", nullable = false)
+    private UUID authorId;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -35,8 +41,16 @@ public class PostJpaEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"))
-    @Column(name = "tag")
-    private Set<String> tags = new HashSet<>();
+    @Column(name = "tag_id")
+    private Set<UUID> tagIds = new HashSet<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "post_sources", joinColumns = @JoinColumn(name = "post_id"))
+    private List<SourceEmbeddable> sources = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "post_attachments", joinColumns = @JoinColumn(name = "post_id"))
+    private List<AttachmentEmbeddable> attachments = new ArrayList<>();
 
     @Column(name = "published_at")
     private Instant publishedAt;
@@ -46,6 +60,12 @@ public class PostJpaEntity {
 
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
 
     protected PostJpaEntity() {
     }
@@ -77,6 +97,14 @@ public class PostJpaEntity {
 
     public void setTenantId(UUID tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public UUID getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(UUID authorId) {
+        this.authorId = authorId;
     }
 
     public String getTitle() {
@@ -119,12 +147,28 @@ public class PostJpaEntity {
         this.locale = locale;
     }
 
-    public Set<String> getTags() {
-        return tags;
+    public Set<UUID> getTagIds() {
+        return tagIds;
     }
 
-    public void setTags(Set<String> tags) {
-        this.tags = tags;
+    public void setTagIds(Set<UUID> tagIds) {
+        this.tagIds = tagIds;
+    }
+
+    public List<SourceEmbeddable> getSources() {
+        return sources;
+    }
+
+    public void setSources(List<SourceEmbeddable> sources) {
+        this.sources = sources;
+    }
+
+    public List<AttachmentEmbeddable> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<AttachmentEmbeddable> attachments) {
+        this.attachments = attachments;
     }
 
     public Instant getPublishedAt() {
@@ -135,11 +179,31 @@ public class PostJpaEntity {
         this.publishedAt = publishedAt;
     }
 
+    @Override
     public Instant getCreatedAt() {
         return createdAt;
     }
 
+    @Override
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    @Override
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Override
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 }

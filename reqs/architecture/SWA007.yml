@@ -1,0 +1,22 @@
+active: true
+derived: false
+header: |
+  Domain-Modell mit Aggregates, Entities und Value Objects
+level: 7.0
+links:
+- SWR001: cMy_Lz6FRlFzeqYCwiHsMZkTkd5oJUYXgxqSP_NhD5M=
+- SWR003: x08iTWndzHfGhW8IlW2BGH-Xf3dDgoDgklYM_pwMWKo=
+- SWR012: 27Ft8tnYbvrz-J3KE_c3RRyU9q-K1iheKIdk8WfiOHg=
+normative: true
+ref: ''
+reviewed: MHF4lLL6iKrZZzIGK2QFznp_sqvqrBDX9S5GuRD0Lqg=
+text: |
+  Das Domain-Modell des Blog Content Service besteht aus folgenden Bausteinen:
+  - Post (Aggregate Root): PostId, TenantId, AuthorId (Referenz), title, slug, content, status, locale, tags (Set<TagId>), sources (List<Source>), attachments (List<Attachment>)
+  - Tag (Entity): TagId, TenantId, name, slug
+  - Translation (Aggregate Root): TranslationId, PostId, TenantId, locale, title, content, status, source
+  - Source (Value Object): url, title
+  - Attachment (Value Object): AttachmentId, filename, contentType, size, show, storageKey
+  - AuthorId liegt im shared-kernel als reine Referenz (keine Author-Entity im blog-content)
+  Alle Aggregates und Entities tragen eine TenantId fuer Multi-Tenant-Isolation.
+  Attachments mit show=true werden im Blog-Rendering angezeigt, mit show=false fuer eingebettete Inhalte.

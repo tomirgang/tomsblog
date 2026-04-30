@@ -6,8 +6,11 @@ level: 5.0
 links:
 - SWR001: oD6Rn0QKvdfBWIxTDhBdJYrroqSrJ2VT_QgKIXZn4co=
 normative: true
-ref: services/blog-content/src/test/java/de/tomsblog/blogcontent/domain/PostTest.java
-reviewed: g5sQQUHhWbRoskQQKX-_57kV_7wM_sOXVy9vo5stqeE=
+ref: ''
+references:
+- path: services/blog-content/src/test/java/de/tomsblog/blogcontent/domain/PostTest.java
+  type: file
+reviewed: 5G0JkK1wxvTMXyEtnUG4hA3Vb4w1VWOuHZrM1X85G8U=
 text: |
   Unit Test: updateContent() ändert Titel, generiert neuen Slug
   und aktualisiert Content.

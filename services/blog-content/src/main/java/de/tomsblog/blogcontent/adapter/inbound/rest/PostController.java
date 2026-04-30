@@ -5,6 +5,7 @@ import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
 import de.tomsblog.blogcontent.application.port.inbound.UpdatePostCommand;
 import de.tomsblog.blogcontent.domain.model.Post;
 import de.tomsblog.blogcontent.domain.model.PostId;
+import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -33,8 +34,9 @@ public class PostController {
     @PostMapping
     public ResponseEntity<PostResponse> createPost(
             @RequestHeader("X-Tenant-Id") UUID tenantId, @Valid @RequestBody CreatePostRequest request) {
-        CreatePostCommand command = new CreatePostCommand(TenantId.of(tenantId), request.title(), request.content(),
-                request.locale());
+        CreatePostCommand command = new CreatePostCommand(
+                TenantId.of(tenantId), AuthorId.of(request.authorId()),
+                request.title(), request.content(), request.locale());
         Post post = postUseCase.createPost(command);
         PostResponse response = PostResponse.from(post);
         URI location = URI.create("/api/posts/" + post.getId().asString());

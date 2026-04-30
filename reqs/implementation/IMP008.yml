@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Tag Entity mit Identity
+level: 8.0
+links:
+- SWA007: EsGx3SkU5JbHb5d7Q9kJ-S73yN2I8vMVKvKNbNa4NmA=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/domain/model/Tag.java
+  type: file
+reviewed: SHeudF1qgr_AetouUUT-26j2dlllTUSigppO-bOxEoo=
+text: |
+  Implementiert Tag als Entity mit TagId, TenantId, name und slug.
+  Factory-Methode create() generiert ID und Slug aus dem Namen.
+  Rename-Methode aktualisiert Name und Slug. Equality basiert auf ID.

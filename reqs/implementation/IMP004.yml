@@ -4,11 +4,14 @@ header: |
   JpaPostRepository (Persistence Outbound Adapter)
 level: 4.0
 links:
-- SWA001: APewKl2DjecSi9hEzZiGqeyowXSo9-ZhJBB-d0ja40w=
+- SWA001: 1csuDNcNuE9XFg5pSlGNgRQ5xd8hKiNgNOfrjK2qJK4=
 - SWA004: muOMKmHdWM_WGbTtvgOYgqQFtkFTwFSd-6Tr7WKETiI=
 normative: true
-ref: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/JpaPostRepository.java
-reviewed: 0kXBZmexqy7YwYt-_MX1_Lpi0vjVIQ3nxxUSDlrJ2CA=
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/JpaPostRepository.java
+  type: file
+reviewed: fAu9xSZ33ACoPBdQ3W2z4kIqLJe0NnFAF1JXdlyIDHA=
 text: |
   JPA-basierte Implementierung des PostRepository-Ports.
   Mappt zwischen Domain-Model (Post) und JPA-Entity (PostJpaEntity).

@@ -8,8 +8,8 @@ links:
 - SWR003: d2uW70nk_joetofqEToZSgV_jZbOMSDNC-SER0zo1ls=
 normative: true
 ref: ''
-reviewed: aIn55OfuW8JXZRUn_6lSN0nt_1m672EH4NsfsW6rlno=
+reviewed: ZhYLSXL1LWgJ7Rqt-efcJtg8BwbTMFJz1NIj8G5lGZA=
 text: |
-  Gemeinsame Domain Primitives (EntityId, TenantId, AggregateRoot, DomainEvent,
+  Gemeinsame Domain Primitives (EntityId, TenantId, AuthorId, AggregateRoot, DomainEvent,
   Auditable) werden in libs/shared-kernel bereitgestellt.
   Diese Library darf keine Spring- oder Framework-Abhängigkeiten haben.

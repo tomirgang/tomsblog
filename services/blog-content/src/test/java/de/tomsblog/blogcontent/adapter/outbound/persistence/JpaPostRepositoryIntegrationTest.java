@@ -3,6 +3,7 @@ package de.tomsblog.blogcontent.adapter.outbound.persistence;
 import static org.assertj.core.api.Assertions.*;
 
 import de.tomsblog.blogcontent.domain.model.*;
+import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
 import java.util.Optional;
@@ -39,12 +40,14 @@ class JpaPostRepositoryIntegrationTest {
     private JpaPostRepository repository;
 
     private final TenantId tenantId = TenantId.generate();
+    private final AuthorId authorId = AuthorId.generate();
 
     @Test
     @DisplayName("SWR-001: Save and retrieve post by ID and tenant")
     void saveAndFindPost() {
-        Post post = Post.create(tenantId, "Integration Test Post", "Test content", PostLocale.german());
-        post.addTag(new Tag("test"));
+        Post post = Post.create(tenantId, authorId, "Integration Test Post", "Test content", PostLocale.german());
+        TagId tagId = TagId.generate();
+        post.addTag(tagId);
 
         Post saved = repository.save(post);
 
@@ -52,13 +55,14 @@ class JpaPostRepositoryIntegrationTest {
         assertThat(found).isPresent();
         assertThat(found.get().getTitle()).isEqualTo("Integration Test Post");
         assertThat(found.get().getSlug().value()).isEqualTo("integration-test-post");
-        assertThat(found.get().getTags()).containsExactly(new Tag("test"));
+        assertThat(found.get().getAuthorId()).isEqualTo(authorId);
+        assertThat(found.get().getTags()).containsExactly(tagId);
     }
 
     @Test
     @DisplayName("SWR-003: Post not found for different tenant")
     void postNotFoundForDifferentTenant() {
-        Post post = Post.create(tenantId, "Tenant Post", "Content", PostLocale.german());
+        Post post = Post.create(tenantId, authorId, "Tenant Post", "Content", PostLocale.german());
         Post saved = repository.save(post);
 
         TenantId otherTenant = TenantId.generate();
@@ -69,13 +73,43 @@ class JpaPostRepositoryIntegrationTest {
     @Test
     @DisplayName("SWR-001: List all posts for a tenant")
     void listPostsForTenant() {
-        repository.save(Post.create(tenantId, "Post One", "Content 1", PostLocale.german()));
-        repository.save(Post.create(tenantId, "Post Two", "Content 2", PostLocale.german()));
+        repository.save(Post.create(tenantId, authorId, "Post One", "Content 1", PostLocale.german()));
+        repository.save(Post.create(tenantId, authorId, "Post Two", "Content 2", PostLocale.german()));
 
         TenantId otherTenant = TenantId.generate();
-        repository.save(Post.create(otherTenant, "Other Post", "Content 3", PostLocale.english()));
+        AuthorId otherAuthor = AuthorId.generate();
+        repository.save(Post.create(otherTenant, otherAuthor, "Other Post", "Content 3", PostLocale.english()));
 
         List<Post> posts = repository.findAllByTenantId(tenantId);
         assertThat(posts).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("SWR-012: Save and retrieve post with sources")
+    void saveAndRetrievePostWithSources() {
+        Post post = Post.create(tenantId, authorId, "Post with Sources", "Content", PostLocale.german());
+        post.addSource(new Source("https://example.com", "Example"));
+        post.addSource(new Source("https://docs.spring.io", "Spring Docs"));
+
+        Post saved = repository.save(post);
+
+        Optional<Post> found = repository.findByIdAndTenantId(saved.getId(), tenantId);
+        assertThat(found).isPresent();
+        assertThat(found.get().getSources()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("Save and retrieve post with attachments")
+    void saveAndRetrievePostWithAttachments() {
+        Post post = Post.create(tenantId, authorId, "Post with Attachments", "Content", PostLocale.german());
+        post.addAttachment(Attachment.create("photo.jpg", "image/jpeg", 2048, true));
+
+        Post saved = repository.save(post);
+
+        Optional<Post> found = repository.findByIdAndTenantId(saved.getId(), tenantId);
+        assertThat(found).isPresent();
+        assertThat(found.get().getAttachments()).hasSize(1);
+        assertThat(found.get().getAttachments().getFirst().filename()).isEqualTo("photo.jpg");
+        assertThat(found.get().getAttachments().getFirst().show()).isTrue();
     }
 }

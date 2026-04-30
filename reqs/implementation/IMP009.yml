@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Translation Aggregate
+level: 9.0
+links:
+- SWA008: 5RDZTOMiJHMwZGI9iQ2RBeJkp4aLc_zLRcHWP1VHxt0=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/domain/model/Translation.java
+  type: file
+reviewed: 23Wwm11Rjq-KATR2oF1g5sxFWdtSWZcCWbDQofeoklM=
+text: |
+  Implementiert das Translation-Aggregate mit Lifecycle-Management.
+  Factories createManual() und createFromAi() mit unterschiedlichem Startstatus.
+  Methoden approve() und reject() mit Statusueberpruefung.
+  Registriert TranslationCreatedEvent und TranslationApprovedEvent.

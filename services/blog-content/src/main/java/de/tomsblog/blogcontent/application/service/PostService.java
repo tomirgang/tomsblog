@@ -31,7 +31,7 @@ public class PostService implements PostUseCase {
     @Override
     public Post createPost(CreatePostCommand command) {
         PostLocale locale = command.locale() != null ? PostLocale.of(command.locale()) : PostLocale.german();
-        Post post = Post.create(command.tenantId(), command.title(), command.content(), locale);
+        Post post = Post.create(command.tenantId(), command.authorId(), command.title(), command.content(), locale);
         Post saved = postRepository.save(post);
         eventPublisher.publish(post.getDomainEvents());
         post.clearDomainEvents();

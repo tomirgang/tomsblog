@@ -1,0 +1,20 @@
+active: true
+derived: false
+header: |
+  Attachment Value Object mit show-Flag
+level: 11.0
+links:
+- SWA007: EsGx3SkU5JbHb5d7Q9kJ-S73yN2I8vMVKvKNbNa4NmA=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/domain/model/Attachment.java
+  type: file
+reviewed: xyxmOS_HK2rUEBiIwhUWIE64DQ2CmEcutRjqwJOjIx8=
+text: |
+  Implementiert Attachment als Value Object (Java Record) mit AttachmentId, filename,
+  contentType, size, show und storageKey. Factory-Methode create() generiert ID.
+  Methode withStorageKey() erzeugt eine Kopie mit gesetztem Storage-Schluessel.
+  show=true: Attachment wird im Blog-Rendering angezeigt (Galerie, Download).
+  show=false: Attachment fuer eingebettete Inhalte (Inline-Bilder im Content).
+  storageKey darf null sein (Datei noch nicht hochgeladen).

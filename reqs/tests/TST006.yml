@@ -7,8 +7,11 @@ links:
 - SWR001: oD6Rn0QKvdfBWIxTDhBdJYrroqSrJ2VT_QgKIXZn4co=
 - SWR015: JNM3pldMpCtYtpwaKYvz_ciNwH9DwbXv4FzBVCedSMc=
 normative: true
-ref: services/blog-content/src/test/java/de/tomsblog/blogcontent/domain/PostTest.java
-reviewed: LIbWhkNclV_JXI6H-m5SZe4n579XgVrIb58z-DioxJs=
+ref: ''
+references:
+- path: services/blog-content/src/test/java/de/tomsblog/blogcontent/domain/PostTest.java
+  type: file
+reviewed: FDIkhVOAYU3hEMVKtMcol5HN00p3TZX4a6FOnikDJ1I=
 text: |
   Unit Test: Post.create() mit leerem Titel wirft IllegalArgumentException.
   Testmethode: createPostWithBlankTitleThrows()

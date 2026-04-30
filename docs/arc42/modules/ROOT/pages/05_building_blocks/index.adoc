@@ -13,17 +13,27 @@ plantuml::partial$../images/plantuml/building-blocks-l2.puml[format=svg]
 
 === Domain Layer (domain/)
 
-Reine Java-Klassen ohne Framework-Abhängigkeiten:
+Reine Java-Klassen ohne Framework-Abhaengigkeiten:
 
-[cols="1,2"]
+[cols="1,1,2"]
 |===
-| Baustein | Beschreibung
+| Baustein | Typ | Beschreibung
 
-| `Post` | Aggregate Root: Titel, Slug, Content, Status, Locale, Tags. Registriert Domain Events.
-| `PostId`, `Slug`, `PostLocale`, `Tag` | Value Objects mit Validierung im Konstruktor
-| `PostStatus` | Enum: DRAFT, PUBLISHED, ARCHIVED
-| `PostCreatedEvent`, `PostPublishedEvent` | Domain Events (Records)
+| `Post` | Aggregate Root | Titel, Slug, Content, Status, Locale, AuthorId (Referenz), TagIds, Sources, Attachments. Registriert Domain Events.
+| `Translation` | Aggregate Root | Uebersetzung eines Posts mit eigenem Lifecycle (DRAFT/REVIEW_PENDING/APPROVED/REJECTED).
+| `Tag` | Entity | TagId, TenantId, name, slug. Tenant-scoped mit eigener Identitaet.
+| `PostId`, `TagId`, `TranslationId`, `AttachmentId` | Value Objects | Typsichere IDs (Records)
+| `Slug`, `PostLocale` | Value Objects | Validierung im Konstruktor
+| `Source` | Value Object | Quellenreferenz: URL + Titel
+| `Attachment` | Value Object | AttachmentId, filename, contentType, size, show, storageKey. show=true fuer angezeigte, show=false fuer eingebettete Inhalte.
+| `PostStatus` | Enum | DRAFT, PUBLISHED, ARCHIVED
+| `TranslationStatus` | Enum | DRAFT, REVIEW_PENDING, APPROVED, REJECTED
+| `TranslationSource` | Enum | MANUAL, AI_GENERATED
+| `PostCreatedEvent`, `PostPublishedEvent`, `PostUpdatedEvent` | Domain Events | Post-Lifecycle-Events
+| `TranslationCreatedEvent`, `TranslationApprovedEvent` | Domain Events | Translation-Lifecycle-Events
 |===
+
+NOTE: `AuthorId` liegt im `shared-kernel`. Der blog-content Service haelt keine Author-Stammdaten vor (werden vom Auth-Service in Phase 3 bereitgestellt).
 
 === Application Layer (application/)
 
@@ -31,9 +41,11 @@ Reine Java-Klassen ohne Framework-Abhängigkeiten:
 |===
 | Baustein | Beschreibung
 
-| `PostUseCase` | Inbound Port: Interface für alle Post-Operationen
+| `PostUseCase` | Inbound Port: Interface fuer alle Post-Operationen
 | `CreatePostCommand`, `UpdatePostCommand` | Command Records
-| `PostRepository` | Outbound Port: Persistence-Abstraktion
+| `PostRepository` | Outbound Port: Persistence-Abstraktion fuer Posts
+| `TagRepository` | Outbound Port: Persistence-Abstraktion fuer Tags
+| `TranslationRepository` | Outbound Port: Persistence-Abstraktion fuer Uebersetzungen
 | `EventPublisher` | Outbound Port: Event-Publishing-Abstraktion
 | `PostService` | Implementiert PostUseCase, orchestriert Domain und Ports
 | `PostNotFoundException` | Fachliche Exception
@@ -48,8 +60,11 @@ Reine Java-Klassen ohne Framework-Abhängigkeiten:
 | `PostController` | REST Inbound Adapter: CRUD + Publish, Tenant via Header
 | `GlobalExceptionHandler` | Problem Details (RFC 9457) Fehlerbehandlung
 | `JpaPostRepository` | JPA Outbound Adapter: Implementiert PostRepository
+| `SpringDataPostRepository` | Spring Data JPA Interface fuer CRUD-Operationen
 | `PostJpaEntity` | JPA-Entity mit Audit-Feldern (@PrePersist/@PreUpdate)
+| `PostMapper` | Bidirektionales Mapping zwischen Domain-Post und PostJpaEntity
 | `LoggingEventPublisher` | Interim Event Adapter (wird durch Kafka ersetzt)
+| `BlogContentConfiguration` | Spring-Konfiguration: Wiring der Adapter an die Ports
 |===
 
 NOTE: Weitere Services werden analog strukturiert. Details werden ergänzt, sobald sie implementiert sind.

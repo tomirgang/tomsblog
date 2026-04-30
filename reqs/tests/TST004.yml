@@ -6,8 +6,11 @@ level: 4.0
 links:
 - SWR002: gLquDNEzBA1y1WDjWcNEncwW3Zd8uVhAtM0vHbwk1Bc=
 normative: true
-ref: services/blog-content/src/test/java/de/tomsblog/blogcontent/domain/PostTest.java
-reviewed: BnZC0zkb6skPpz9oHt8BGUd86F-lAaZn7qz1xevyvGw=
+ref: ''
+references:
+- path: services/blog-content/src/test/java/de/tomsblog/blogcontent/domain/PostTest.java
+  type: file
+reviewed: DWl8QtpcLG9gBr77aGkp8_pIP_mjoYxEnbU1u6AYFCA=
 text: |
   Unit Test: Erneutes publish() auf bereits veröffentlichten Post
   wirft IllegalStateException.

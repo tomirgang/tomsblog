@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  AuthorId im Shared Kernel
+level: 12.0
+links:
+- SWA002: PMHQHQf9z96pPrugJx4ou6h2RlOTVgq9v0HJG0Q9n3c=
+normative: true
+ref: ''
+references:
+- path: libs/shared-kernel/src/main/java/de/tomsblog/shared/domain/AuthorId.java
+  type: file
+reviewed: yw5kfRaLuC2nuuXS9aGPdVyHutTF_91CL5TfanLiOuw=
+text: |
+  Implementiert AuthorId als Record im Shared Kernel (implements EntityId).
+  Wird service-uebergreifend genutzt (Blog Content Service, spaeter Auth-Service).
+  Reine Java-Klasse ohne Framework-Abhaengigkeiten.

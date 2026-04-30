@@ -4,11 +4,14 @@ header: |
   PostService (Application Layer)
 level: 2.0
 links:
-- SWA001: APewKl2DjecSi9hEzZiGqeyowXSo9-ZhJBB-d0ja40w=
+- SWA001: 1csuDNcNuE9XFg5pSlGNgRQ5xd8hKiNgNOfrjK2qJK4=
 - SWA004: muOMKmHdWM_WGbTtvgOYgqQFtkFTwFSd-6Tr7WKETiI=
 normative: true
-ref: services/blog-content/src/main/java/de/tomsblog/blogcontent/application/service/PostService.java
-reviewed: enLWKF-dvhE_gkzV5F26FTCarHFspjfjIFFZDdkxuOs=
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/application/service/PostService.java
+  type: file
+reviewed: jcujg-94gNqclG8DwdCqzw1VIutbxah3RpRXguKQGkM=
 text: |
   Orchestriert Post-Use-Cases: Erstellen, Aktualisieren, Veröffentlichen, Löschen.
   Nutzt PostRepository (outbound port) und EventPublisher (outbound port).

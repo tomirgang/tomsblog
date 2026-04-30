@@ -7,8 +7,9 @@ links:
 - SWR009: dAvonN-IloOm4QiqwKMPhvRKa7gNGqqAvl6lr99HC34=
 normative: true
 ref: ''
-reviewed: Uno2IaBHKATqsAOZHHbAZfa1NbDzr19_pzGcD-rjN68=
+reviewed: 62_EItIWAsPWU-9QFJFJFOzOqLKpEaohhL_SOAjghqQ=
 text: |
   Alle Cross-Service Events (PostCreatedEvent, PostUpdatedEvent,
-  PostPublishedEvent) werden in libs/event-contracts definiert.
-  Consumer und Producer verwenden dieselben Event-Klassen.
+  PostPublishedEvent) und die gemeinsame EventMetadata werden in
+  libs/event-contracts definiert. Consumer und Producer verwenden
+  dieselben Event-Klassen.

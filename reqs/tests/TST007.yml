@@ -7,8 +7,11 @@ links:
 - SWR001: oD6Rn0QKvdfBWIxTDhBdJYrroqSrJ2VT_QgKIXZn4co=
 - SWR003: d2uW70nk_joetofqEToZSgV_jZbOMSDNC-SER0zo1ls=
 normative: true
-ref: services/blog-content/src/test/java/de/tomsblog/blogcontent/adapter/outbound/persistence/JpaPostRepositoryIntegrationTest.java
-reviewed: xQXP1_BhVwBBpTIBeFX7mW_XW79lBze0qsi6Sw7cBKE=
+ref: ''
+references:
+- path: services/blog-content/src/test/java/de/tomsblog/blogcontent/adapter/outbound/persistence/JpaPostRepositoryIntegrationTest.java
+  type: file
+reviewed: Iv0AGXZHkS2caNsfc6o4DvwQ4TiqtcfW7DmQKDNhhZQ=
 text: |
   Integrationstest mit Testcontainers (PostgreSQL):
   Post speichern und per ID+TenantId laden.

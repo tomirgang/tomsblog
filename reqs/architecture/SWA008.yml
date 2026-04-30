@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Translation als separates Aggregate mit eigenem Lifecycle
+level: 8.0
+links:
+- SWR004: SzqxTgoInuyoDlMR30o4ME_qqGRvrLjutbOXiXz736c=
+- SWR005: SA9pOE4hNkOSw6nj8rBk5h1G_Q79wJSXEbhbS_dgo40=
+normative: true
+ref: ''
+reviewed: PzZ4RkREqLEMfCPqvGzpyfTu91shm2aze9fZTRrTYcY=
+text: |
+  Uebersetzungen werden als eigenes Aggregate modelliert (nicht als Child im Post).
+  Der Lifecycle ist: DRAFT -> REVIEW_PENDING -> APPROVED oder REJECTED.
+  AI-generierte Uebersetzungen starten in REVIEW_PENDING (Autor muss pruefen).
+  Manuelle Uebersetzungen starten in DRAFT.
+  Bei Aenderung einer approbierten Uebersetzung wechselt der Status auf REVIEW_PENDING.

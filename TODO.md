@@ -22,7 +22,7 @@
 ### Phase 2: Blog Content Service
 
 - [x] Spring Boot Projekt mit hexagonaler Struktur aufsetzen
-- [ ] Domain-Modell entwerfen (Post, Author, Tenant, Tag, Attachment)
+- [x] Domain-Modell entwerfen (Post, Author, Tenant, Tag, Attachment)
 - [ ] Ports & Adapters implementieren (Inbound: REST API, Outbound: PostgreSQL)
 - [ ] CRUD-Operationen für Blog-Posts
 - [ ] Mehrsprachigkeit im Domain-Modell abbilden

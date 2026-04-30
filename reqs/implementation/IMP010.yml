@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Source Value Object
+level: 10.0
+links:
+- SWA007: EsGx3SkU5JbHb5d7Q9kJ-S73yN2I8vMVKvKNbNa4NmA=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/domain/model/Source.java
+  type: file
+reviewed: TQrSYX3LMiQbP1UvN-gHDeqfoiDPmsnWo22Xgg_qy7k=
+text: |
+  Implementiert Source als Value Object (Java Record) mit url und title.
+  Validierung: Beide Felder duerfen nicht null oder blank sein.
+  Wird als Liste im Post-Aggregate gefuehrt.

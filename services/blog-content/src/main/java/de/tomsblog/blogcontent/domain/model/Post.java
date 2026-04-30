@@ -1,12 +1,16 @@
 package de.tomsblog.blogcontent.domain.model;
 
 import de.tomsblog.shared.domain.AggregateRoot;
+import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.blogcontent.domain.event.PostCreatedEvent;
 import de.tomsblog.blogcontent.domain.event.PostPublishedEvent;
+import de.tomsblog.blogcontent.domain.event.PostUpdatedEvent;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,43 +19,52 @@ import java.util.Set;
  *
  * @req SWR-001
  * @req SWR-003
+ * @req SWR-012
  */
 public class Post extends AggregateRoot {
 
     private final PostId id;
     private final TenantId tenantId;
+    private final AuthorId authorId;
     private String title;
     private Slug slug;
     private String content;
     private PostStatus status;
     private PostLocale locale;
-    private final Set<Tag> tags;
+    private final Set<TagId> tags;
+    private final List<Source> sources;
+    private final List<Attachment> attachments;
     private Instant publishedAt;
 
-    private Post(PostId id, TenantId tenantId, String title, Slug slug, String content, PostLocale locale) {
+    private Post(PostId id, TenantId tenantId, AuthorId authorId, String title, Slug slug,
+            String content, PostLocale locale) {
         this.id = Objects.requireNonNull(id);
         this.tenantId = Objects.requireNonNull(tenantId);
+        this.authorId = Objects.requireNonNull(authorId);
         this.title = Objects.requireNonNull(title);
         this.slug = Objects.requireNonNull(slug);
         this.content = Objects.requireNonNull(content);
         this.locale = Objects.requireNonNull(locale);
         this.status = PostStatus.DRAFT;
         this.tags = new HashSet<>();
+        this.sources = new ArrayList<>();
+        this.attachments = new ArrayList<>();
     }
 
     /**
-     * Creates a new draft post for the given tenant.
+     * Creates a new draft post for the given tenant and author.
      *
      * @req SWR-001
      * @req SWR-003
      */
-    public static Post create(TenantId tenantId, String title, String content, PostLocale locale) {
+    public static Post create(TenantId tenantId, AuthorId authorId, String title, String content, PostLocale locale) {
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Title must not be blank");
         }
+        Objects.requireNonNull(authorId, "AuthorId must not be null");
         PostId id = PostId.generate();
         Slug slug = Slug.fromTitle(title);
-        Post post = new Post(id, tenantId, title, slug, content, locale);
+        Post post = new Post(id, tenantId, authorId, title, slug, content, locale);
         post.registerEvent(PostCreatedEvent.of(id, tenantId));
         return post;
     }
@@ -81,14 +94,36 @@ public class Post extends AggregateRoot {
         this.title = title;
         this.slug = Slug.fromTitle(title);
         this.content = content;
+        registerEvent(PostUpdatedEvent.of(this.id, this.tenantId));
     }
 
-    public void addTag(Tag tag) {
-        tags.add(tag);
+    public void addTag(TagId tagId) {
+        tags.add(tagId);
     }
 
-    public void removeTag(Tag tag) {
-        tags.remove(tag);
+    public void removeTag(TagId tagId) {
+        tags.remove(tagId);
+    }
+
+    /**
+     * @req SWR-012
+     */
+    public void addSource(Source source) {
+        Objects.requireNonNull(source, "Source must not be null");
+        sources.add(source);
+    }
+
+    public void removeSource(Source source) {
+        sources.remove(source);
+    }
+
+    public void addAttachment(Attachment attachment) {
+        Objects.requireNonNull(attachment, "Attachment must not be null");
+        attachments.add(attachment);
+    }
+
+    public void removeAttachment(AttachmentId attachmentId) {
+        attachments.removeIf(a -> a.id().equals(attachmentId));
     }
 
     public PostId getId() {
@@ -97,6 +132,10 @@ public class Post extends AggregateRoot {
 
     public TenantId getTenantId() {
         return tenantId;
+    }
+
+    public AuthorId getAuthorId() {
+        return authorId;
     }
 
     public String getTitle() {
@@ -119,8 +158,16 @@ public class Post extends AggregateRoot {
         return locale;
     }
 
-    public Set<Tag> getTags() {
+    public Set<TagId> getTags() {
         return Collections.unmodifiableSet(tags);
+    }
+
+    public List<Source> getSources() {
+        return Collections.unmodifiableList(sources);
+    }
+
+    public List<Attachment> getAttachments() {
+        return Collections.unmodifiableList(attachments);
     }
 
     public Instant getPublishedAt() {
@@ -131,17 +178,22 @@ public class Post extends AggregateRoot {
     public static Post reconstitute(
             PostId id,
             TenantId tenantId,
+            AuthorId authorId,
             String title,
             Slug slug,
             String content,
             PostStatus status,
             PostLocale locale,
-            Set<Tag> tags,
+            Set<TagId> tags,
+            List<Source> sources,
+            List<Attachment> attachments,
             Instant publishedAt) {
-        Post post = new Post(id, tenantId, title, slug, content, locale);
+        Post post = new Post(id, tenantId, authorId, title, slug, content, locale);
         post.status = status;
         post.publishedAt = publishedAt;
         post.tags.addAll(tags);
+        post.sources.addAll(sources);
+        post.attachments.addAll(attachments);
         return post;
     }
 }

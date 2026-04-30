@@ -6,8 +6,11 @@ level: 3.0
 links:
 - SWR002: gLquDNEzBA1y1WDjWcNEncwW3Zd8uVhAtM0vHbwk1Bc=
 normative: true
-ref: services/blog-content/src/test/java/de/tomsblog/blogcontent/domain/PostTest.java
-reviewed: HUzAf9TjQPX2KM3CGRr3TMO0v1LwvSbW3Ry_07fK09w=
+ref: ''
+references:
+- path: services/blog-content/src/test/java/de/tomsblog/blogcontent/domain/PostTest.java
+  type: file
+reviewed: LX3FkjB7YhMwXblORzc0j-f9P5Btu6372BfbJhOvZEQ=
 text: |
   Unit Test: publish() setzt Status auf PUBLISHED, setzt publishedAt
   und registriert PostPublishedEvent.
