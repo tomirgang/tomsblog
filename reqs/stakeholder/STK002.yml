@@ -8,6 +8,6 @@ normative: true
 ref: ''
 reviewed: evLZsjXR3mxOQtxmkgANEz_UWhgFAzRbCaOHAIHRsvk=
 text: |
-  Die Plattform muss mehrere Mandanten (Tenants) unterstuetzen.
+  Die Plattform muss mehrere Mandanten (Tenants) unterstützen.
   Jeder Tenant hat eigene Inhalte, Benutzer und Konfiguration.
-  Daten muessen mandantenuebergreifend isoliert sein.
+  Daten müssen mandantenübergreifend isoliert sein.

@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  PostController (REST Inbound Adapter)
+level: 3.0
+links:
+- SWA001: APewKl2DjecSi9hEzZiGqeyowXSo9-ZhJBB-d0ja40w=
+- SWA004: muOMKmHdWM_WGbTtvgOYgqQFtkFTwFSd-6Tr7WKETiI=
+normative: true
+ref: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/rest/PostController.java
+reviewed: _P8dSyOfCAu_omRv4NZV_zbTVEbJl9fK_MOMUhwvBUw=
+text: |
+  REST-Controller mit Endpunkten: POST, GET, PUT, DELETE /api/posts und
+  POST /api/posts/{id}/publish. Tenant-Isolation via X-Tenant-Id Header.
+  Input-Validierung via Bean Validation (@NotBlank).

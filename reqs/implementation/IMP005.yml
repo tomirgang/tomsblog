@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  LoggingEventPublisher (Interim Event Adapter)
+level: 5.0
+links:
+- SWA003: Np0TZPtoQkbdpj-4lPA-j3bDGOWJkC_P5jlR2XpfmJc=
+- SWA005: y8lz570UvZvWXE05eGwHcd0k5Bjp86RfRWsuuEWEXU4=
+normative: true
+ref: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/LoggingEventPublisher.java
+reviewed: c-193Ag25J2kJheB3cM7GuHMgY902tb4vtaxAcH44zM=
+text: |
+  Temporaere Implementierung des EventPublisher-Ports.
+  Loggt Domain-Events. Wird in Phase 4 durch KafkaEventPublisher ersetzt.

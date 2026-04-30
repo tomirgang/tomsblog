@@ -28,11 +28,11 @@ Alle persistierten Entities implementieren das `Auditable`-Interface:
 == Internationalisierung
 
 * Blog-Posts werden pro Locale gespeichert
-* Ein Post hat eine Haupt-Locale und optionale Uebersetzungen
-* Uebersetzungen werden vom Autor ueber die UI ausgeloest (nicht automatisch)
-* KI-gestuetzte Uebersetzung: Autor startet Anfrage, AI Service liefert Vorschlag, Autor prueft und uebernimmt
-* Manuelle Uebersetzung: Autor gibt Uebersetzung direkt ein
-* Kein automatisches Uebersetzen bei Veroeffentlichung; der Autor behaelt die volle Kontrolle
+* Ein Post hat eine Haupt-Locale und optionale Übersetzungen
+* Übersetzungen werden vom Autor über die UI ausgelöst (nicht automatisch)
+* KI-gestützte Übersetzung: Autor startet Anfrage, AI Service liefert Vorschlag, Autor prüft und übernimmt
+* Manuelle Übersetzung: Autor gibt Übersetzung direkt ein
+* Kein automatisches Übersetzen bei Veröffentlichung; der Autor behält die volle Kontrolle
 
 == Security
 

@@ -1,14 +1,14 @@
 active: true
 derived: false
 header: |
-  KI-Unterstuetzung fuer Autoren
+  KI-Unterstützung für Autoren
 level: 11.0
 links: []
 normative: true
 ref: ''
 reviewed: o_m75UlgAWAP0038nlXS6SaXhlTYZWKhkxctqtvV2nU=
 text: |
-  Das System soll KI-Features anbieten (Uebersetzung, Schreibassistenz,
+  Das System soll KI-Features anbieten (Übersetzung, Schreibassistenz,
   Titelbild-Generierung). Alle KI-Features sind optional und werden
-  vom Autor explizit ausgeloest. Ergebnisse muessen geprueft werden.
+  vom Autor explizit ausgelöst. Ergebnisse müssen geprüft werden.
   Bei Ausfall des KI-Providers muss das System ohne KI funktionieren.

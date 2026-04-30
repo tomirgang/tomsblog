@@ -21,7 +21,7 @@
 
 ### Phase 2: Blog Content Service
 
-- [ ] Spring Boot Projekt mit hexagonaler Struktur aufsetzen
+- [x] Spring Boot Projekt mit hexagonaler Struktur aufsetzen
 - [ ] Domain-Modell entwerfen (Post, Author, Tenant, Tag, Attachment)
 - [ ] Ports & Adapters implementieren (Inbound: REST API, Outbound: PostgreSQL)
 - [ ] CRUD-Operationen für Blog-Posts
@@ -43,12 +43,12 @@
 - [ ] Kafka-Cluster-Konfiguration definieren
 - [ ] Event-Schema-Design (Avro/Protobuf oder JSON Schema)
 - [ ] Events produzieren (Post erstellt, aktualisiert, veröffentlicht)
-- [ ] Consumer fuer nachgelagerte Prozesse (Feeds)
+- [ ] Consumer für nachgelagerte Prozesse (Feeds)
 
 ### Phase 5: KI-Integration (Text-Blog)
 
 - [ ] OpenRouter-Adapter implementieren
-- [ ] KI-gestuetzte Uebersetzung (Author-getriggert via UI, Ergebnis muss geprueft werden)
+- [ ] KI-gestützte Übersetzung (Author-getriggert via UI, Ergebnis muss geprüft werden)
 - [ ] Schreibassistenz-API
 - [ ] Titelbild-Generierung (optional, Author-getriggert)
 

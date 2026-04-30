@@ -12,4 +12,4 @@ reviewed: aIn55OfuW8JXZRUn_6lSN0nt_1m672EH4NsfsW6rlno=
 text: |
   Gemeinsame Domain Primitives (EntityId, TenantId, AggregateRoot, DomainEvent,
   Auditable) werden in libs/shared-kernel bereitgestellt.
-  Diese Library darf keine Spring- oder Framework-Abhaengigkeiten haben.
+  Diese Library darf keine Spring- oder Framework-Abhängigkeiten haben.

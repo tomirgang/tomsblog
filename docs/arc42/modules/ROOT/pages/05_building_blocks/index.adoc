@@ -11,4 +11,45 @@ Hexagonale Struktur des Blog Content Service:
 
 plantuml::partial$../images/plantuml/building-blocks-l2.puml[format=svg]
 
+=== Domain Layer (domain/)
+
+Reine Java-Klassen ohne Framework-Abhängigkeiten:
+
+[cols="1,2"]
+|===
+| Baustein | Beschreibung
+
+| `Post` | Aggregate Root: Titel, Slug, Content, Status, Locale, Tags. Registriert Domain Events.
+| `PostId`, `Slug`, `PostLocale`, `Tag` | Value Objects mit Validierung im Konstruktor
+| `PostStatus` | Enum: DRAFT, PUBLISHED, ARCHIVED
+| `PostCreatedEvent`, `PostPublishedEvent` | Domain Events (Records)
+|===
+
+=== Application Layer (application/)
+
+[cols="1,2"]
+|===
+| Baustein | Beschreibung
+
+| `PostUseCase` | Inbound Port: Interface für alle Post-Operationen
+| `CreatePostCommand`, `UpdatePostCommand` | Command Records
+| `PostRepository` | Outbound Port: Persistence-Abstraktion
+| `EventPublisher` | Outbound Port: Event-Publishing-Abstraktion
+| `PostService` | Implementiert PostUseCase, orchestriert Domain und Ports
+| `PostNotFoundException` | Fachliche Exception
+|===
+
+=== Adapter Layer (adapter/)
+
+[cols="1,2"]
+|===
+| Baustein | Beschreibung
+
+| `PostController` | REST Inbound Adapter: CRUD + Publish, Tenant via Header
+| `GlobalExceptionHandler` | Problem Details (RFC 9457) Fehlerbehandlung
+| `JpaPostRepository` | JPA Outbound Adapter: Implementiert PostRepository
+| `PostJpaEntity` | JPA-Entity mit Audit-Feldern (@PrePersist/@PreUpdate)
+| `LoggingEventPublisher` | Interim Event Adapter (wird durch Kafka ersetzt)
+|===
+
 NOTE: Weitere Services werden analog strukturiert. Details werden ergänzt, sobald sie implementiert sind.

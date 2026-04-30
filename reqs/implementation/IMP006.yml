@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Shared Kernel Domain Primitives
+level: 6.0
+links:
+- SWA002: 5c0Hwz1CZU2wqGaz7HdcrIwtOGjMBY74DTmauCfl3Ro=
+normative: true
+ref: libs/shared-kernel/src/main/java/de/tomsblog/shared/
+reviewed: IlvAKbIER8xVCkciLNNGG_oZKB_IHNEDLAQh7Ju1m1U=
+text: |
+  Framework-freie Domain Primitives: EntityId, AggregateRoot, DomainEvent,
+  TenantId, Auditable. Genutzt von allen Services als gemeinsame Basis.

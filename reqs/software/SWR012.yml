@@ -10,5 +10,5 @@ ref: ''
 reviewed: PCvp_Qrf8JHqCsPJyaPRhHEOTesMxO_jnbnUZ1ESOu0=
 text: |
   Ein Post kann eine Liste von Quellen (URL + Titel) enthalten.
-  Das System muss eine API zum Hinzufuegen, Entfernen und Auflisten
+  Das System muss eine API zum Hinzufügen, Entfernen und Auflisten
   von Quellen bereitstellen.

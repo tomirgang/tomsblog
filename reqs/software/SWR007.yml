@@ -9,7 +9,7 @@ normative: true
 ref: ''
 reviewed: _idI4rzQ2_WbYBmTwEWCjZjMSMtm1vzQ4tgSzjXWqI4=
 text: |
-  Das System muss drei Rollen unterstuetzen: ADMIN, AUTHOR, READER.
+  Das System muss drei Rollen unterstützen: ADMIN, AUTHOR, READER.
   Nur AUTHOR und ADMIN duerfen Posts erstellen/bearbeiten.
   Nur ADMIN darf Tenants und Benutzer verwalten.
-  READER hat nur Lesezugriff auf veroeffentlichte Posts.
+  READER hat nur Lesezugriff auf veröffentlichte Posts.

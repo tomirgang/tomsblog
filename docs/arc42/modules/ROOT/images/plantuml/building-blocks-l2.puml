@@ -1,31 +1,54 @@
-@startuml building-blocks-l2
+@startuml
 package "Blog Content Service" {
-  package "domain" {
-    [Post]
-    [Author]
-    [Tag]
+  package "domain/model" {
+    [Post] <<Aggregate Root>>
+    [PostId] <<Value Object>>
+    [Slug] <<Value Object>>
+    [PostLocale] <<Value Object>>
+    [Tag] <<Value Object>>
+    [PostStatus] <<Enum>>
+  }
+
+  package "domain/event" {
+    [PostCreatedEvent]
+    [PostPublishedEvent]
+  }
+
+  package "application/port/inbound" {
+    [PostUseCase] <<Port>>
+    [CreatePostCommand]
+    [UpdatePostCommand]
+  }
+
+  package "application/port/outbound" {
     [PostRepository] <<Port>>
+    [EventPublisher] <<Port>>
   }
 
-  package "application" {
-    [CreatePostUseCase]
-    [PublishPostUseCase]
+  package "application/service" {
+    [PostService]
+    [PostNotFoundException]
   }
 
-  package "adapter/inbound" {
-    [PostRestController]
-    [ThymeleafController]
+  package "adapter/inbound/rest" {
+    [PostController]
+    [GlobalExceptionHandler]
   }
 
-  package "adapter/outbound" {
+  package "adapter/outbound/persistence" {
     [JpaPostRepository]
-    [KafkaEventPublisher]
+    [PostJpaEntity]
+    [LoggingEventPublisher]
   }
 }
 
-[PostRestController] --> [CreatePostUseCase]
-[ThymeleafController] --> [CreatePostUseCase]
-[CreatePostUseCase] --> [PostRepository]
+[PostController] --> [PostUseCase]
+[PostService] ..|> [PostUseCase]
+[PostService] --> [PostRepository]
+[PostService] --> [EventPublisher]
+[PostService] --> [Post]
 [JpaPostRepository] ..|> [PostRepository]
-[PublishPostUseCase] --> [KafkaEventPublisher]
+[LoggingEventPublisher] ..|> [EventPublisher]
+[Post] --> [PostCreatedEvent]
+[Post] --> [PostPublishedEvent]
 @enduml

@@ -9,6 +9,6 @@ normative: true
 ref: ''
 reviewed: Y24aTlUOJLfp0jGZ9UGOK0qZ3iVtYQrn3G0vTA2RaQk=
 text: |
-  Das System muss bei Veroeffentlichung eines Posts automatisch den
-  RSS/Atom Feed aktualisieren. Feeds muessen nach Tags filterbar sein.
+  Das System muss bei Veröffentlichung eines Posts automatisch den
+  RSS/Atom Feed aktualisieren. Feeds müssen nach Tags filterbar sein.
   Der Feed-Service konsumiert PostPublishedEvents via Kafka.

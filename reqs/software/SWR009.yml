@@ -9,6 +9,6 @@ normative: true
 ref: ''
 reviewed: DWXp8IA0R0F4FksiJ3m6RMZbN0T4SNNcxyJoTnCphHM=
 text: |
-  Domain Events (PostCreated, PostUpdated, PostPublished) muessen
-  ueber Kafka publiziert werden. Jedes Event traegt EventMetadata
+  Domain Events (PostCreated, PostUpdated, PostPublished) müssen
+  über Kafka publiziert werden. Jedes Event traegt EventMetadata
   mit ID, Timestamp, TenantId und CorrelationId.

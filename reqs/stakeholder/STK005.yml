@@ -8,6 +8,6 @@ normative: true
 ref: ''
 reviewed: mDS-DAHBR4nu0Joa0VgI6H2rQWz8hx3yLAYv8ahqIcg=
 text: |
-  Das System muss verschiedene Benutzerrollen unterstuetzen:
+  Das System muss verschiedene Benutzerrollen unterstützen:
   Administrator, Autor und Leser. Zugriffsrechte werden
   rollenbasiert vergeben.

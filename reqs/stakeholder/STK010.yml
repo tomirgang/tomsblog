@@ -1,12 +1,12 @@
 active: true
 derived: false
 header: |
-  Quellenverwaltung fuer Posts
+  Quellenverwaltung für Posts
 level: 10.0
 links: []
 normative: true
 ref: ''
 reviewed: pyUzT_c-wsrFqPSKlvl6VQ2jVWPh-8HawNlhjGFc6jM=
 text: |
-  Als Autor moechte ich Quellen und Referenzen zu meinen Posts verwalten
-  koennen. Referenzierte Webseiten sollen automatisch archiviert werden.
+  Als Autor möchte ich Quellen und Referenzen zu meinen Posts verwalten
+  können. Referenzierte Webseiten sollen automatisch archiviert werden.

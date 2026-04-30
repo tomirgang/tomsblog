@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Post erstellen generiert ID und Slug
+level: 1.0
+links:
+- SWR001: oD6Rn0QKvdfBWIxTDhBdJYrroqSrJ2VT_QgKIXZn4co=
+normative: true
+ref: services/blog-content/src/test/java/de/tomsblog/blogcontent/domain/PostTest.java
+reviewed: vjU6QvXDUMJl6edEhXAgnDetXkENjyDavzcoQQ2w8p4=
+text: |
+  Unit Test: Post.create() generiert eine PostId, setzt TenantId,
+  erzeugt einen Slug aus dem Titel und setzt Status auf DRAFT.
+  Testmethode: createPostGeneratesIdAndSlug()

@@ -9,6 +9,6 @@ normative: true
 ref: ''
 reviewed: 7RueIrCKgVSH-45QEKXFx0FUFMK0Z7xi7zPpNv6Qo9w=
 text: |
-  Alle API-Eingaben muessen serverseitig validiert werden (Bean Validation).
+  Alle API-Eingaben müssen serverseitig validiert werden (Bean Validation).
   XSS-Schutz bei der Ausgabe von User-Content. CSRF-Schutz fuer
   zustandsbehaftete Endpunkte. SQL-Injection-Schutz durch Prepared Statements.

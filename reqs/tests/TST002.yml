@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Post erstellen registriert PostCreatedEvent
+level: 2.0
+links:
+- SWR001: oD6Rn0QKvdfBWIxTDhBdJYrroqSrJ2VT_QgKIXZn4co=
+- SWR009: dAvonN-IloOm4QiqwKMPhvRKa7gNGqqAvl6lr99HC34=
+normative: true
+ref: services/blog-content/src/test/java/de/tomsblog/blogcontent/domain/PostTest.java
+reviewed: jg3w5j5O9EzRMEfAxT88hN0WPvzBW7kK7SkrOa0TVg0=
+text: |
+  Unit Test: Post.create() registriert genau ein PostCreatedEvent.
+  Testmethode: createPostRegistersEvent()

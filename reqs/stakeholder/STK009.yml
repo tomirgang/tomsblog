@@ -8,6 +8,6 @@ normative: true
 ref: ''
 reviewed: aLH7PauDSKgFlGVN5q2KZCmXo34ZoLgQhI9QzSOy05g=
 text: |
-  Die Architektur muss so gestaltet sein, dass spaeter Audio-Podcast-
-  und Video-Podcast-Services ergaenzt werden koennen, ohne den
+  Die Architektur muss so gestaltet sein, dass später Audio-Podcast-
+  und Video-Podcast-Services ergänzt werden können, ohne den
   bestehenden Blog-Service umzubauen.

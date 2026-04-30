@@ -41,6 +41,7 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 - Requirement IDs in test names (`@DisplayName("SWR-042: ...")`) and Javadoc (`@req SWR-042`)
 - Diagrams: PlantUML as separate `.puml` files in `docs/arc42/modules/ROOT/images/plantuml/`, referenced from AsciiDoc via `plantuml::partial$...`
 - Only use plain ASCII chars in PlantUML (no umlauts, use ae/oe/ue instead)
+- All other files (AsciiDoc, Markdown, YAML, Java Javadoc) use proper German umlauts (ä, ö, ü, ß)
 
 ## Build & Test
 
@@ -72,6 +73,5 @@ Requirement document hierarchy:
 
 ## Formatting remarks
 
-- Only use plain ASCII chars.
 - Never use – as separator in texts.
 - All tables in Markdown files shall be formatted readable in the source.

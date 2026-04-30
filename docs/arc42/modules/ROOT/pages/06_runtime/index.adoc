@@ -1,13 +1,13 @@
 = 6. Laufzeitsicht
 :sectnums:
 
-== Post veroeffentlichen und uebersetzen
+== Post veröffentlichen und übersetzen
 
-Das Sequenzdiagramm zeigt drei Ablaeufe:
+Das Sequenzdiagramm zeigt drei Abläufe:
 
-1. **Veroeffentlichung**: Autor veroeffentlicht einen Post, Feed wird aktualisiert.
-2. **KI-gestuetzte Uebersetzung**: Autor loest Uebersetzung aus, prueft den Vorschlag und uebernimmt ihn.
-3. **Manuelle Uebersetzung**: Autor gibt die Uebersetzung direkt ein.
+1. **Veröffentlichung**: Autor veröffentlicht einen Post, Feed wird aktualisiert.
+2. **KI-gestützte Übersetzung**: Autor löst Übersetzung aus, prüft den Vorschlag und übernimmt ihn.
+3. **Manuelle Übersetzung**: Autor gibt die Übersetzung direkt ein.
 
 plantuml::partial$../images/plantuml/runtime-publish.puml[format=svg]
 

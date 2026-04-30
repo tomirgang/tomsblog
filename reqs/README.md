@@ -39,5 +39,5 @@ doorstop link SWR001 STK001                # SWR an STK verlinken
 | STK      | 12     |
 | SWR      | 15     |
 | SWA      | 6      |
-| IMP      | 0      |
-| TST      | 0      |
+| IMP      | 6      |
+| TST      | 8      |

@@ -1,7 +1,7 @@
 active: true
 derived: false
 header: |
-  Audit-Trail fuer Posts
+  Audit-Trail für Posts
 level: 6.0
 links:
 - STK004: JJO6mCJFnnR-Sd365V2Uo4kcRGSoNH6TGS2OaQ7TIV0=
@@ -10,4 +10,4 @@ ref: ''
 reviewed: m_eHrOG9FhtYpidguc1IrIg_yhp6fssrdOiD28yoANg=
 text: |
   Jede Post-Entity muss createdAt, updatedAt, createdBy und updatedBy
-  fuehren. Diese Felder werden automatisch beim Persistieren gesetzt.
+  führen. Diese Felder werden automatisch beim Persistieren gesetzt.

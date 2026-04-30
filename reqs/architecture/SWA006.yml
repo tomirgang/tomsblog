@@ -12,5 +12,5 @@ reviewed: V1QWBST3nZu4DfdIBH9TORXFKfX3K0hsicNk9ie_X_Q=
 text: |
   Die KI-Integration (OpenRouter) wird als Outbound-Adapter im
   Blog Content Service implementiert. Bei Ausfall liefert der
-  Adapter einen definierten Fehler; die restliche Funktionalitaet
-  bleibt unberuehrt (Circuit Breaker Pattern).
+  Adapter einen definierten Fehler; die restliche Funktionalität
+  bleibt unberührt (Circuit Breaker Pattern).

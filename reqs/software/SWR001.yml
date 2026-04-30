@@ -11,5 +11,5 @@ reviewed: QGedoGVCS9p100rWGg6YDgQ1_hpMaK8oECMlup3cT8w=
 text: |
   Das System muss eine REST API bereitstellen mit Endpunkten fuer:
   POST /api/posts (erstellen), GET /api/posts/{id} (lesen),
-  PUT /api/posts/{id} (aktualisieren), DELETE /api/posts/{id} (loeschen).
-  Alle Endpunkte muessen die TenantId des authentifizierten Benutzers beruecksichtigen.
+  PUT /api/posts/{id} (aktualisieren), DELETE /api/posts/{id} (löschen).
+  Alle Endpunkte müssen die TenantId des authentifizierten Benutzers berücksichtigen.

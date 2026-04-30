@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Post-Inhalt aktualisieren
+level: 5.0
+links:
+- SWR001: oD6Rn0QKvdfBWIxTDhBdJYrroqSrJ2VT_QgKIXZn4co=
+normative: true
+ref: services/blog-content/src/test/java/de/tomsblog/blogcontent/domain/PostTest.java
+reviewed: g5sQQUHhWbRoskQQKX-_57kV_7wM_sOXVy9vo5stqeE=
+text: |
+  Unit Test: updateContent() ändert Titel, generiert neuen Slug
+  und aktualisiert Content.
+  Testmethode: updateContentChangesFields()
