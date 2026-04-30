@@ -1,0 +1,14 @@
+= 5. Bausteinsicht
+:sectnums:
+
+== Ebene 1: System-Übersicht
+
+plantuml::partial$../images/plantuml/building-blocks-l1.puml[format=svg]
+
+== Ebene 2: Blog Content Service
+
+Hexagonale Struktur des Blog Content Service:
+
+plantuml::partial$../images/plantuml/building-blocks-l2.puml[format=svg]
+
+NOTE: Weitere Services werden analog strukturiert. Details werden ergänzt, sobald sie implementiert sind.

@@ -1,0 +1,22 @@
+@startuml
+package "Toms Blog Platform" {
+  [Blog Content Service] as blog
+  [Feed Service] as feed
+  [AI Service] as ai
+  [Podcast Service] as podcast
+  [Video Service] as video
+}
+
+database "PostgreSQL" as db
+queue "Apache Kafka" as kafka
+cloud "OpenRouter" as openrouter
+
+blog --> db
+blog --> kafka : Events
+feed --> kafka : Consumes
+ai --> kafka : Consumes
+ai --> openrouter
+podcast --> kafka : Consumes
+podcast --> db
+video --> db
+@enduml

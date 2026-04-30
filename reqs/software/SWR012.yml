@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Quellen-Verwaltung
+level: 12.0
+links:
+- STK010: pyUzT_c-wsrFqPSKlvl6VQ2jVWPh-8HawNlhjGFc6jM=
+normative: true
+ref: ''
+reviewed: PCvp_Qrf8JHqCsPJyaPRhHEOTesMxO_jnbnUZ1ESOu0=
+text: |
+  Ein Post kann eine Liste von Quellen (URL + Titel) enthalten.
+  Das System muss eine API zum Hinzufuegen, Entfernen und Auflisten
+  von Quellen bereitstellen.

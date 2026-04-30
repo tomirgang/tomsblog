@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Container-Image und Health-Checks
+level: 10.0
+links:
+- STK007: iX2S6pgvpMwvRMwltgGIZzM5UsFLFrkUx0xnk-fa1CU=
+normative: true
+ref: ''
+reviewed: RkKQEXHFLRqRORbxSNSaFfEZnztwmUMANQIc-J2LatE=
+text: |
+  Jeder Service muss als OCI-Container-Image gebaut werden.
+  Jeder Service muss /actuator/health (liveness) und
+  /actuator/health/readiness (readiness) Endpunkte bereitstellen.

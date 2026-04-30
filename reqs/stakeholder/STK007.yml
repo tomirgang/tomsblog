@@ -1,0 +1,12 @@
+active: true
+derived: false
+header: |
+  Cloud-Native Deployment
+level: 7.0
+links: []
+normative: true
+ref: ''
+reviewed: iX2S6pgvpMwvRMwltgGIZzM5UsFLFrkUx0xnk-fa1CU=
+text: |
+  Die Plattform muss containerisiert auf Kubernetes betrieben werden koennen.
+  Deployment erfolgt via GitOps (ArgoCD/Flux).

@@ -1,0 +1,20 @@
+= 9. Architekturentscheidungen
+:sectnums:
+
+Alle Architekturentscheidungen sind als ADRs dokumentiert:
+
+[cols="1,3,1"]
+|===
+| ADR | Titel | Status
+
+| link:{attachmentsdir}/../../../adr/0001-hexagonale-architektur.md[0001] | Hexagonale Architektur (Ports & Adapters) | Accepted
+| link:{attachmentsdir}/../../../adr/0002-java-und-maven.md[0002] | Java und Maven als Technologie-Basis | Accepted
+| link:{attachmentsdir}/../../../adr/0003-monorepo-struktur.md[0003] | Monorepo-Struktur | Accepted
+| link:{attachmentsdir}/../../../adr/0004-rest-und-graphql.md[0004] | REST für Text-Blog, GraphQL für Podcast/Video | Accepted
+| link:{attachmentsdir}/../../../adr/0005-ui-strategie.md[0005] | UI-Strategie (Thymeleaf → Angular + React) | Accepted
+| link:{attachmentsdir}/../../../adr/0006-event-driven-kafka.md[0006] | Event-Driven Architecture mit Kafka | Accepted
+| link:{attachmentsdir}/../../../adr/0007-doorstop-requirement-tracing.md[0007] | Doorstop für Requirement Tracing | Accepted
+| link:{attachmentsdir}/../../../adr/0008-shared-kernel-framework-frei.md[0008] | Shared Kernel als Framework-freie Library | Accepted
+|===
+
+NOTE: ADRs werden als Markdown-Dateien in `docs/adr/` gepflegt. Dieses Kapitel dient als Index.

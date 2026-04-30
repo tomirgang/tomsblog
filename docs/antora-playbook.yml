@@ -1,0 +1,20 @@
+site:
+  title: Toms Blog: Dokumentation
+  start_page: tomsblog-arc42::index.adoc
+
+content:
+  sources:
+    - url: .
+      start_path: docs/arc42
+
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true
+
+asciidoc:
+  extensions:
+    - asciidoctor-plantuml
+
+runtime:
+  fetch: true

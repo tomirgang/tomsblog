@@ -10,13 +10,13 @@
 ### Phase 1: Projekt-Setup & Grundlagen
 
 - [x] Monorepo-Struktur festlegen (Services, Infrastruktur, Docs)
-- [ ] Build-System aufsetzen (Maven, Multi-Module)
-- [ ] Gemeinsame Libraries definieren (Shared Kernel, Event-Contracts)
-- [ ] Entwicklungsumgebung dokumentieren (Docker Compose für lokale Deps)
-- [ ] arc42-Dokumentation initialisieren (AsciiDoc + Antora Skeleton)
-- [ ] ADR-Verzeichnis anlegen und erste ADRs schreiben
-- [ ] Doorstop einrichten (Requirement-Hierarchie: STK → SWR → SWA → IMP → TST)
-- [ ] Erste Stakeholder-Requirements erfassen
+- [x] Build-System aufsetzen (Maven, Multi-Module)
+- [x] Gemeinsame Libraries definieren (Shared Kernel, Event-Contracts)
+- [x] Entwicklungsumgebung dokumentieren (Docker Compose für lokale Deps)
+- [x] arc42-Dokumentation initialisieren (AsciiDoc + Antora Skeleton)
+- [x] ADR-Verzeichnis anlegen und erste ADRs schreiben
+- [x] Doorstop einrichten (Requirement-Hierarchie: STK -> SWR -> SWA -> IMP -> TST)
+- [x] Erste Stakeholder-Requirements erfassen (STK001-STK012, SWR001-SWR015, SWA001-SWA006)
 - [ ] CI-Pipeline einrichten (GitHub Actions: Build, Test, Container-Image)
 
 ### Phase 2: Blog Content Service
@@ -43,14 +43,14 @@
 - [ ] Kafka-Cluster-Konfiguration definieren
 - [ ] Event-Schema-Design (Avro/Protobuf oder JSON Schema)
 - [ ] Events produzieren (Post erstellt, aktualisiert, veröffentlicht)
-- [ ] Consumer für nachgelagerte Prozesse (Feeds, Übersetzung)
+- [ ] Consumer fuer nachgelagerte Prozesse (Feeds)
 
 ### Phase 5: KI-Integration (Text-Blog)
 
 - [ ] OpenRouter-Adapter implementieren
-- [ ] Automatische Übersetzung (Event-getriggert)
+- [ ] KI-gestuetzte Uebersetzung (Author-getriggert via UI, Ergebnis muss geprueft werden)
 - [ ] Schreibassistenz-API
-- [ ] Titelbild-Generierung (optional, Event-getriggert)
+- [ ] Titelbild-Generierung (optional, Author-getriggert)
 
 ### Phase 6: Feed-Service
 

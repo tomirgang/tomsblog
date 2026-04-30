@@ -1,0 +1,37 @@
+= 1. Einführung und Ziele
+:sectnums:
+
+== Aufgabenstellung
+
+Toms Blog ist eine multi-tenant Blog- und Podcast-Plattform, die als Lernprojekt für moderne Cloud-Native-Architekturen dient.
+
+.Wesentliche Features:
+* Multilingualer Text-Blog mit WYSIWYG-Editor
+* Audio- und Video-Podcast mit automatischer TTS-Generierung
+* KI-gestützte Content-Erstellung (Übersetzung, Schreibassistenz, Titelbilder)
+* Multi-Tenant-Fähigkeit für getrennte Blog-Instanzen
+* RSS/Atom Feeds (Mixed, Tag-basiert, Content-Type)
+
+== Qualitätsziele
+
+[cols="1,2,2"]
+|===
+| Priorität | Qualitätsziel | Motivation
+
+| 1 | Wartbarkeit | Hexagonale Architektur für unabhängige Testbarkeit und Austauschbarkeit
+| 2 | Nachvollziehbarkeit | Audit-Logging und Requirement Tracing (ASPICE)
+| 3 | Skalierbarkeit | Microservice-Architektur mit Event-Driven-Kommunikation
+| 4 | Lernwert | Einsatz moderner Technologien und Patterns
+|===
+
+== Stakeholder
+
+[cols="1,2"]
+|===
+| Rolle | Erwartung
+
+| Entwickler (Lernender) | Praxiserfahrung mit Cloud-Native, DDD, Hexagonal Architecture
+| Blog-Autoren | Komfortables Verfassen und Verwalten von Inhalten
+| Blog-Leser | Schneller Zugriff auf Inhalte, RSS-Feeds
+| AI-Agenten | Klare Konventionen, gute Dokumentation
+|===

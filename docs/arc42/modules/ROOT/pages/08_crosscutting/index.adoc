@@ -1,0 +1,41 @@
+= 8. Querschnittliche Konzepte
+:sectnums:
+
+== Multi-Tenancy
+
+Jede Domain-Entity trägt eine `TenantId`. Tenant-Isolation wird auf Datenbank-Ebene sichergestellt (Row-Level-Security oder Schema-basiert, noch zu entscheiden).
+
+== Audit
+
+Alle persistierten Entities implementieren das `Auditable`-Interface:
+
+* `createdAt` / `updatedAt` (automatisch gesetzt)
+* `createdBy` / `updatedBy` (aus Security Context)
+
+== Domain Events
+
+* Events werden im Aggregate gesammelt (`AggregateRoot.registerEvent()`)
+* Nach erfolgreicher Persistierung werden sie über Kafka publiziert
+* Event-Contracts als geteilte Library (`libs/event-contracts`)
+* Jedes Event trägt `EventMetadata` (ID, Timestamp, TenantId, CorrelationId)
+
+== Error Handling
+
+* Domain-Exceptions für fachliche Fehler
+* Globaler Exception Handler im REST-Adapter (Problem Details RFC 9457)
+* Keine Framework-Exceptions in der Domain-Schicht
+
+== Internationalisierung
+
+* Blog-Posts werden pro Locale gespeichert
+* Ein Post hat eine Haupt-Locale und optionale Uebersetzungen
+* Uebersetzungen werden vom Autor ueber die UI ausgeloest (nicht automatisch)
+* KI-gestuetzte Uebersetzung: Autor startet Anfrage, AI Service liefert Vorschlag, Autor prueft und uebernimmt
+* Manuelle Uebersetzung: Autor gibt Uebersetzung direkt ein
+* Kein automatisches Uebersetzen bei Veroeffentlichung; der Autor behaelt die volle Kontrolle
+
+== Security
+
+* Authentication via Keycloak oder eigenem Service (noch zu evaluieren)
+* RBAC: Admin, Autor, Leser
+* OWASP Top 10 wird bei Code-Reviews geprüft

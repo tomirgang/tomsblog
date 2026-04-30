@@ -1,0 +1,19 @@
+= 12. Glossar
+:sectnums:
+
+[cols="1,3"]
+|===
+| Begriff | Bedeutung
+
+| Aggregate Root | DDD-Muster: Einstiegspunkt in ein Cluster von Domain-Objekten
+| ADR | Architecture Decision Record, eine dokumentierte Architekturentscheidung
+| Adapter | Technische Implementierung eines Ports (z.B. JPA, REST, Kafka)
+| Bounded Context | DDD: Abgegrenzter fachlicher Bereich mit eigenem Modell
+| Domain Event | Fachliches Ereignis (z.B. "Post veröffentlicht")
+| Hexagonale Architektur | Architekturstil mit Ports (Interfaces) und Adaptern (Implementierungen)
+| KRaft | Kafka Raft, also Kafka ohne ZooKeeper
+| Multi-Tenant | System, das mehrere Mandanten (Kunden) isoliert bedient
+| Port | Interface zwischen Domain/Application und der Außenwelt
+| Shared Kernel | Geteilte Library mit Domain Primitives (EntityId, TenantId etc.)
+| STK, SWR, SWA, TST | Doorstop-Dokument-Prefixes (Stakeholder, Software Req, Architecture, Test)
+|===

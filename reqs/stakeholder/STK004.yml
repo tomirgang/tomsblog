@@ -1,0 +1,12 @@
+active: true
+derived: false
+header: |
+  Audit-Faehigkeit
+level: 4.0
+links: []
+normative: true
+ref: ''
+reviewed: JJO6mCJFnnR-Sd365V2Uo4kcRGSoNH6TGS2OaQ7TIV0=
+text: |
+  Alle relevanten Aktionen (Erstellen, Bearbeiten, Veroeffentlichen, Loeschen)
+  muessen nachvollziehbar protokolliert werden (Wer, Was, Wann).

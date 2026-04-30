@@ -1,0 +1,27 @@
+= 7. Verteilungssicht
+:sectnums:
+
+== Ziel-Deployment (Kubernetes)
+
+plantuml::partial$../images/plantuml/deployment.puml[format=svg]
+
+== Lokale Entwicklung
+
+Für die lokale Entwicklung werden externe Abhängigkeiten via Docker Compose bereitgestellt:
+
+[source,bash]
+----
+docker compose -f infra/docker/docker-compose.yml up -d
+----
+
+Siehe `infra/docker/README.md` für Details.
+
+[cols="1,1,1"]
+|===
+| Service | Port | Container
+
+| PostgreSQL | 5432 | tomsblog-postgres
+| Redis | 6379 | tomsblog-redis
+| Kafka | 9092 | tomsblog-kafka
+| Kafka UI | 8080 | tomsblog-kafka-ui
+|===

@@ -1,0 +1,16 @@
+= 6. Laufzeitsicht
+:sectnums:
+
+== Post veroeffentlichen und uebersetzen
+
+Das Sequenzdiagramm zeigt drei Ablaeufe:
+
+1. **Veroeffentlichung**: Autor veroeffentlicht einen Post, Feed wird aktualisiert.
+2. **KI-gestuetzte Uebersetzung**: Autor loest Uebersetzung aus, prueft den Vorschlag und uebernimmt ihn.
+3. **Manuelle Uebersetzung**: Autor gibt die Uebersetzung direkt ein.
+
+plantuml::partial$../images/plantuml/runtime-publish.puml[format=svg]
+
+== Post erstellen (vereinfacht)
+
+plantuml::partial$../images/plantuml/runtime-create.puml[format=svg]

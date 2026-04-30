@@ -1,0 +1,18 @@
+@startmindmap quality-tree
+* Qualitaet
+** Wartbarkeit
+*** Testbarkeit (Unit ohne Framework)
+*** Modularitaet (Hexagonal)
+*** Verstaendlichkeit (arc42, ADRs)
+** Nachvollziehbarkeit
+*** Audit-Trail (createdBy, updatedBy)
+*** Requirement Tracing (Doorstop)
+*** Event-Sourcing-Ready (Kafka-Log)
+** Zuverlaessigkeit
+*** Graceful Degradation
+*** Health Checks
+*** Backup & Recovery
+** Performance
+*** Antwortzeiten < 500ms (P95)
+*** Feed-Generierung < 5s
+@endmindmap

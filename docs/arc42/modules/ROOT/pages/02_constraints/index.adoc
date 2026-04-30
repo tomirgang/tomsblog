@@ -1,0 +1,44 @@
+= 2. Randbedingungen
+:sectnums:
+
+== Technische Randbedingungen
+
+[cols="1,2"]
+|===
+| Randbedingung | Erläuterung
+
+| Java 25 | Neuestes LTS, lokal installiert
+| Maven | Build-System (Multi-Module, Parent POM mit Spring Boot Starter)
+| Spring Boot 3.4.x | Framework für alle Microservices
+| PostgreSQL | Relationale Datenbank (CloudNativePG im Cluster)
+| Apache Kafka | Event-Broker (KRaft-Mode, Strimzi auf K8s)
+| Kubernetes | Deployment-Plattform (Hetzner, 3-Node-Cluster)
+| Docker | Container-Runtime und lokale Entwicklungsumgebung
+|===
+
+== Organisatorische Randbedingungen
+
+[cols="1,2"]
+|===
+| Randbedingung | Erläuterung
+
+| Ein-Personen-Projekt | Alle Rollen in einer Person (Dev, Ops, Architect)
+| Lernprojekt | Technologie-Entscheidungen dürfen Lernwert priorisieren
+| Budget-limitiert | Hetzner Cloud, Netcup VM (kein Enterprise-Tooling)
+| Open Source | Apache License 2.0
+|===
+
+== Konventionen
+
+[cols="1,2"]
+|===
+| Konvention | Details
+
+| Sprache Code/Commits | Englisch
+| Sprache Dokumentation | Deutsch
+| Architektur | Hexagonal (Ports & Adapters) pro Service
+| API-Dokumentation | OpenAPI (REST), GraphQL Schema (Podcast/Video)
+| Requirements | Doorstop (ASPICE-orientiert: STK → SWR → SWA → TST)
+| Architektur-Docs | arc42 (AsciiDoc + Antora)
+| Entscheidungen | ADRs in `docs/adr/`
+|===

@@ -39,6 +39,8 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 - Events: publish domain events for cross-service communication (Post created/updated/published)
 - Requirements: Doorstop for multi-level tracing (Stakeholder → Software Req → Design → Implementation → Test)
 - Requirement IDs in test names (`@DisplayName("SWR-042: ...")`) and Javadoc (`@req SWR-042`)
+- Diagrams: PlantUML as separate `.puml` files in `docs/arc42/modules/ROOT/images/plantuml/`, referenced from AsciiDoc via `plantuml::partial$...`
+- Only use plain ASCII chars in PlantUML (no umlauts, use ae/oe/ue instead)
 
 ## Build & Test
 
@@ -67,3 +69,9 @@ Requirement document hierarchy:
 - GraphQL for podcast/video services (consumed by React UIs)
 - Keycloak or custom auth (to be evaluated) for identity
 - S3-compatible storage (Garage on Netcup VM) for media and backups
+
+## Formatting remarks
+
+- Only use plain ASCII chars.
+- Never use – as separator in texts.
+- All tables in Markdown files shall be formatted readable in the source.

@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Tenant-Isolation auf Datenebene
+level: 3.0
+links:
+- STK002: evLZsjXR3mxOQtxmkgANEz_UWhgFAzRbCaOHAIHRsvk=
+normative: true
+ref: ''
+reviewed: HcvwMUkzXgsvNmY2jRjulG90zdxmQl_edK01ZmqjOX4=
+text: |
+  Jede Domain-Entity muss eine TenantId tragen.
+  Datenbankabfragen muessen immer nach TenantId filtern.
+  Ein Benutzer darf niemals Daten eines anderen Tenants sehen oder aendern.

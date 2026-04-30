@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Graceful Degradation bei KI-Ausfall
+level: 14.0
+links:
+- STK011: o_m75UlgAWAP0038nlXS6SaXhlTYZWKhkxctqtvV2nU=
+normative: true
+ref: ''
+reviewed: nttk9rE0jm3PW79cq4uB8u5uu4LpcfKSFHtRhVx3yVc=
+text: |
+  Bei Nichterreichbarkeit des KI-Providers (OpenRouter) muss das System
+  eine aussagekraeftige Fehlermeldung anzeigen. Alle nicht-KI-Funktionen
+  muessen weiterhin uneingeschraenkt verfuegbar sein.

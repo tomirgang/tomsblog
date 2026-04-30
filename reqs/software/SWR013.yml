@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Web-Snapshot von Quellen
+level: 13.0
+links:
+- STK010: pyUzT_c-wsrFqPSKlvl6VQ2jVWPh-8HawNlhjGFc6jM=
+normative: true
+ref: ''
+reviewed: Kf2IHnySxLXhhxvkrW8fStJFrvosn7OvcgP5Cf2oauQ=
+text: |
+  Beim Hinzufuegen einer Quelle soll das System automatisch einen
+  Snapshot (HTML/PDF) der referenzierten Webseite erstellen und
+  in S3-kompatiblem Storage ablegen.

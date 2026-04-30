@@ -1,0 +1,41 @@
+@startuml
+actor Author
+participant "Thymeleaf UI" as ui
+participant "Blog Content Service" as blog
+participant "AI Service" as ai
+participant "Kafka" as kafka
+participant "Feed Service" as feed
+
+== Veroeffentlichung ==
+
+Author -> ui : Klick "Veroeffentlichen"
+ui -> blog : POST /api/posts/{id}/publish
+blog -> blog : Post.publish()
+blog -> kafka : PostPublishedEvent
+blog --> ui : 200 OK
+
+kafka -> feed : PostPublishedEvent
+feed -> feed : Feed neu generieren
+
+== Uebersetzung (AI-gestuetzt) ==
+
+Author -> ui : Klick "Uebersetzen"
+ui -> blog : POST /api/posts/{id}/translate
+blog -> ai : Uebersetzungsanfrage
+ai --> blog : Uebersetzungsvorschlag
+blog -> blog : Entwurf speichern
+blog --> ui : Entwurf anzeigen
+
+Author -> ui : Uebersetzung pruefen / anpassen
+Author -> ui : Klick "Uebersetzung uebernehmen"
+ui -> blog : PUT /api/posts/{id}/translation
+blog -> blog : Uebersetzung speichern
+blog --> ui : 200 OK
+
+== Uebersetzung (manuell) ==
+
+Author -> ui : Manuelle Uebersetzung eingeben
+ui -> blog : PUT /api/posts/{id}/translation
+blog -> blog : Uebersetzung speichern
+blog --> ui : 200 OK
+@enduml

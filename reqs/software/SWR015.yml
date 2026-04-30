@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Input-Validierung und OWASP-Schutz
+level: 15.0
+links:
+- STK012: ckQcXaP3v0kHxqLaapMqDFKCPmEqjufWwk-C8ABem1g=
+normative: true
+ref: ''
+reviewed: 7RueIrCKgVSH-45QEKXFx0FUFMK0Z7xi7zPpNv6Qo9w=
+text: |
+  Alle API-Eingaben muessen serverseitig validiert werden (Bean Validation).
+  XSS-Schutz bei der Ausgabe von User-Content. CSRF-Schutz fuer
+  zustandsbehaftete Endpunkte. SQL-Injection-Schutz durch Prepared Statements.

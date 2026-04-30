@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Metriken und Tracing
+level: 11.0
+links:
+- STK008: acTLdAT1g5m99wDmzbfir_cKw2FU0-cbQS4U0d-vOjc=
+normative: true
+ref: ''
+reviewed: 0bJ_fEE_rS-c4eMCaPeIJR0VWJ530W97m1y2Ykk4ZzY=
+text: |
+  Jeder Service muss Metriken im Prometheus-Format unter /actuator/prometheus
+  exponieren. Distributed Tracing via OpenTelemetry muss integriert sein.

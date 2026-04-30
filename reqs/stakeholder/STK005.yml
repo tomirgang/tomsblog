@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Benutzerverwaltung und Rollen
+level: 5.0
+links: []
+normative: true
+ref: ''
+reviewed: mDS-DAHBR4nu0Joa0VgI6H2rQWz8hx3yLAYv8ahqIcg=
+text: |
+  Das System muss verschiedene Benutzerrollen unterstuetzen:
+  Administrator, Autor und Leser. Zugriffsrechte werden
+  rollenbasiert vergeben.

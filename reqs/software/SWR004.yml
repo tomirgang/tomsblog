@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Uebersetzung per KI (Author-getriggert)
+level: 4.0
+links:
+- STK003: Jfv4gntaQucZkaLjBMry42kizBTS-yt67FJUO_zYATc=
+- STK011: o_m75UlgAWAP0038nlXS6SaXhlTYZWKhkxctqtvV2nU=
+normative: true
+ref: ''
+reviewed: ZfmhmiThtHsDjnLCM9R6BM_RoeOI9nf2Z4kEQY5VgGo=
+text: |
+  Der Autor kann ueber POST /api/posts/{id}/translate eine KI-Uebersetzung
+  ausloesen. Das Ergebnis wird als Entwurf gespeichert und dem Autor
+  zur Pruefung angezeigt. Erst nach expliziter Freigabe wird die
+  Uebersetzung uebernommen.

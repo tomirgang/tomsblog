@@ -1,0 +1,12 @@
+active: true
+derived: false
+header: |
+  Blog-Posts erstellen und veroeffentlichen
+level: 1.0
+links: []
+normative: true
+ref: ''
+reviewed: xaUM16J5pKtdWpOq47OSFLWJHqcw82ItCEztSBh2uSs=
+text: |
+  Als Autor moechte ich Blog-Posts im Markdown- oder WYSIWYG-Format erstellen,
+  bearbeiten und veroeffentlichen koennen.

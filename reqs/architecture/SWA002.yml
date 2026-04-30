@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Shared Kernel als Framework-freie Library
+level: 2.0
+links:
+- SWR001: oD6Rn0QKvdfBWIxTDhBdJYrroqSrJ2VT_QgKIXZn4co=
+- SWR003: d2uW70nk_joetofqEToZSgV_jZbOMSDNC-SER0zo1ls=
+normative: true
+ref: ''
+reviewed: aIn55OfuW8JXZRUn_6lSN0nt_1m672EH4NsfsW6rlno=
+text: |
+  Gemeinsame Domain Primitives (EntityId, TenantId, AggregateRoot, DomainEvent,
+  Auditable) werden in libs/shared-kernel bereitgestellt.
+  Diese Library darf keine Spring- oder Framework-Abhaengigkeiten haben.

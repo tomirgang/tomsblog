@@ -1,0 +1,12 @@
+active: true
+derived: false
+header: |
+  Observability
+level: 8.0
+links: []
+normative: true
+ref: ''
+reviewed: acTLdAT1g5m99wDmzbfir_cKw2FU0-cbQS4U0d-vOjc=
+text: |
+  Das System muss ueberwachbar sein: Metriken (Prometheus), Logs (Loki),
+  Traces (Tempo) und Dashboards (Grafana) muessen integriert werden.

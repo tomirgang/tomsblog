@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Manuelle Uebersetzung
+level: 5.0
+links:
+- STK003: Jfv4gntaQucZkaLjBMry42kizBTS-yt67FJUO_zYATc=
+normative: true
+ref: ''
+reviewed: 3sUsvl5ohqpfRz8SsrgUTttzTxSnAzB5ZnLUEB_2QnA=
+text: |
+  Der Autor kann ueber PUT /api/posts/{id}/translation eine manuelle
+  Uebersetzung direkt eingeben und speichern.

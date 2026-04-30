@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Post veroeffentlichen
+level: 2.0
+links:
+- STK001: xaUM16J5pKtdWpOq47OSFLWJHqcw82ItCEztSBh2uSs=
+normative: true
+ref: ''
+reviewed: fr4m8SZ_GmYKU9Bw9-XGnqOLM3d9JZTxoUAgrfVI02E=
+text: |
+  Ein Post kann ueber POST /api/posts/{id}/publish veroeffentlicht werden.
+  Dabei wird der Status auf PUBLISHED gesetzt und ein PostPublishedEvent erzeugt.
+  Ein bereits veroeffentlichter Post kann nicht erneut veroeffentlicht werden.

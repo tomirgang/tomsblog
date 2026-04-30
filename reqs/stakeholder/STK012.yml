@@ -1,0 +1,12 @@
+active: true
+derived: false
+header: |
+  Sicherheit (OWASP Top 10)
+level: 12.0
+links: []
+normative: true
+ref: ''
+reviewed: ckQcXaP3v0kHxqLaapMqDFKCPmEqjufWwk-C8ABem1g=
+text: |
+  Das System muss gegen die OWASP Top 10 Schwachstellen abgesichert sein.
+  Security-Reviews sind Bestandteil des Entwicklungsprozesses.

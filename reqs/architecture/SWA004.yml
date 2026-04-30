@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Blog Content Service als Spring Boot Applikation
+level: 4.0
+links:
+- SWR001: oD6Rn0QKvdfBWIxTDhBdJYrroqSrJ2VT_QgKIXZn4co=
+- SWR002: gLquDNEzBA1y1WDjWcNEncwW3Zd8uVhAtM0vHbwk1Bc=
+- SWR006: j0BrrD4lOOBipvQhcAWqoJYsXuxqnfmyPziUzdvxopE=
+normative: true
+ref: ''
+reviewed: lUxDigRGQVI6O42bNeTXHacX7dG-O5hgPCK6PffaD8A=
+text: |
+  Der Blog Content Service wird als Spring Boot 3.x Applikation
+  mit Spring Web (REST), Spring Data JPA (PostgreSQL) und
+  Thymeleaf (SSR UI) implementiert.

@@ -1,5 +1,10 @@
 {
     "reqtrace.sources": [
         "."
-    ]
+    ],
+    "plantuml.render": "PlantUMLServer",
+    "plantuml.server": "https://www.plantuml.com/plantuml",
+    "files.associations": {
+        "*.puml": "plantuml"
+    }
 }

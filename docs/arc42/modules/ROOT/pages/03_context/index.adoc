@@ -1,0 +1,20 @@
+= 3. Kontextabgrenzung
+:sectnums:
+
+== Fachlicher Kontext
+
+plantuml::partial$../images/plantuml/context-diagram.puml[format=svg]
+
+== Technischer Kontext
+
+[cols="1,1,2"]
+|===
+| Schnittstelle | Technologie | Beschreibung
+
+| Blog REST API | HTTP/JSON | CRUD für Posts, Tags, Autoren (Thymeleaf + Angular)
+| Podcast GraphQL API | HTTP/GraphQL | Queries/Mutations für Podcast-Episoden (React)
+| Video GraphQL API | HTTP/GraphQL | Queries/Mutations für Video-Episoden (React)
+| OpenRouter | HTTPS/JSON | KI-Funktionen (Übersetzung, TTS, Bildgenerierung)
+| Kafka Events | Kafka Protocol | Asynchrone Service-Kommunikation
+| RSS/Atom Feeds | HTTP/XML | Öffentliche Feeds für Reader
+|===

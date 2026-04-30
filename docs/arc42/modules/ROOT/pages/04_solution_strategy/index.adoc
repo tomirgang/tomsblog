@@ -1,0 +1,37 @@
+= 4. Lösungsstrategie
+:sectnums:
+
+== Architekturansatz
+
+[cols="1,2"]
+|===
+| Entscheidung | Begründung
+
+| Hexagonale Architektur | Framework-unabhängige Domain, austauschbare Adapter
+| Microservices | Unabhängige Deployments, Technologie-Heterogenität (REST + GraphQL)
+| Event-Driven (Kafka) | Lose Kopplung, Replay-Fähigkeit, Audit-Trail
+| Multi-Tenant | Mandantenfähigkeit von Anfang an im Design
+|===
+
+== Technologie-Entscheidungen
+
+[cols="1,1,2"]
+|===
+| Bereich | Wahl | Siehe ADR
+
+| Sprache/Build | Java 25 + Maven | link:../09_decisions/index.adoc[ADR-0002]
+| Architektur | Hexagonal | link:../09_decisions/index.adoc[ADR-0001]
+| Repository | Monorepo | link:../09_decisions/index.adoc[ADR-0003]
+| API (Blog) | REST | link:../09_decisions/index.adoc[ADR-0004]
+| API (Podcast/Video) | GraphQL | link:../09_decisions/index.adoc[ADR-0004]
+| UI-Strategie | Thymeleaf → Angular + React | link:../09_decisions/index.adoc[ADR-0005]
+| Messaging | Apache Kafka | link:../09_decisions/index.adoc[ADR-0006]
+| Requirements | Doorstop | link:../09_decisions/index.adoc[ADR-0007]
+|===
+
+== Qualitätsstrategien
+
+* *Testbarkeit*: Domain ohne Framework-Abhängigkeiten → Pure Unit Tests
+* *Nachvollziehbarkeit*: Audit-Felder in allen Entities, Requirement Tracing
+* *Beobachtbarkeit*: Prometheus + Grafana + Loki + Tempo von Anfang an
+* *Inkrementell*: Meilenstein-basierter Ausbau (Text-Blog → Kommentare → SPA → Podcast → Video)

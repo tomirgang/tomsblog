@@ -1,0 +1,18 @@
+@startuml context-diagram
+!include <C4/C4_Context>
+
+Person(author, "Blog-Autor", "Verfasst und verwaltet Inhalte")
+Person(reader, "Blog-Leser", "Liest Blog-Posts, hoert Podcasts")
+
+System(tomsblog, "Toms Blog Platform", "Multi-Tenant Blog & Podcast")
+
+System_Ext(openrouter, "OpenRouter", "KI-APIs (Uebersetzung, TTS, Bilder)")
+System_Ext(feedreader, "Feed-Reader", "RSS/Atom Clients")
+System_Ext(podcastclient, "Podcast-Client", "Apple Podcasts, Spotify etc.")
+
+Rel(author, tomsblog, "Erstellt/verwaltet Inhalte")
+Rel(reader, tomsblog, "Liest Blog, hoert Podcasts")
+Rel(tomsblog, openrouter, "KI-Anfragen (REST)")
+Rel(feedreader, tomsblog, "Abonniert Feeds (RSS/Atom)")
+Rel(podcastclient, tomsblog, "Abonniert Podcast-Feed")
+@enduml

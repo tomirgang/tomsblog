@@ -1,0 +1,12 @@
+active: true
+derived: false
+header: |
+  RSS/Atom Feeds
+level: 6.0
+links: []
+normative: true
+ref: ''
+reviewed: umxdVPSHWZFVOqcmDWuoz-iwycyK-yR1gpJh8L0p4iY=
+text: |
+  Leser muessen Blog-Inhalte ueber standardisierte Feeds (RSS/Atom)
+  abonnieren koennen. Feeds sollen nach Tags filterbar sein.

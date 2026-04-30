@@ -1,0 +1,31 @@
+@startuml building-blocks-l2
+package "Blog Content Service" {
+  package "domain" {
+    [Post]
+    [Author]
+    [Tag]
+    [PostRepository] <<Port>>
+  }
+
+  package "application" {
+    [CreatePostUseCase]
+    [PublishPostUseCase]
+  }
+
+  package "adapter/inbound" {
+    [PostRestController]
+    [ThymeleafController]
+  }
+
+  package "adapter/outbound" {
+    [JpaPostRepository]
+    [KafkaEventPublisher]
+  }
+}
+
+[PostRestController] --> [CreatePostUseCase]
+[ThymeleafController] --> [CreatePostUseCase]
+[CreatePostUseCase] --> [PostRepository]
+[JpaPostRepository] ..|> [PostRepository]
+[PublishPostUseCase] --> [KafkaEventPublisher]
+@enduml

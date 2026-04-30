@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Rollenbasierte Zugriffskontrolle
+level: 7.0
+links:
+- STK005: mDS-DAHBR4nu0Joa0VgI6H2rQWz8hx3yLAYv8ahqIcg=
+normative: true
+ref: ''
+reviewed: _idI4rzQ2_WbYBmTwEWCjZjMSMtm1vzQ4tgSzjXWqI4=
+text: |
+  Das System muss drei Rollen unterstuetzen: ADMIN, AUTHOR, READER.
+  Nur AUTHOR und ADMIN duerfen Posts erstellen/bearbeiten.
+  Nur ADMIN darf Tenants und Benutzer verwalten.
+  READER hat nur Lesezugriff auf veroeffentlichte Posts.

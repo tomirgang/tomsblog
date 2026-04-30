@@ -1,0 +1,36 @@
+@startuml deployment
+node "Hetzner K8s Cluster (3 Nodes)" {
+  node "Namespace: tomsblog" {
+    [Blog Content Service] as blog
+    [Feed Service] as feed
+    [AI Service] as ai
+  }
+
+  node "Namespace: data" {
+    database "PostgreSQL\n(CloudNativePG)" as db
+    [Redis] as redis
+    queue "Kafka\n(Strimzi)" as kafka
+  }
+
+  node "Namespace: observability" {
+    [Prometheus] as prom
+    [Grafana] as grafana
+    [Loki] as loki
+    [Tempo] as tempo
+  }
+}
+
+node "Netcup VM" {
+  [Garage (S3)] as s3
+}
+
+cloud "OpenRouter" as openrouter
+
+blog --> db
+blog --> kafka
+blog --> redis
+feed --> kafka
+ai --> kafka
+ai --> openrouter
+blog --> s3 : Attachments
+@enduml

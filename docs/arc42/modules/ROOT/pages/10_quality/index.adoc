@@ -1,0 +1,18 @@
+= 10. Qualitätsanforderungen
+:sectnums:
+
+== Qualitätsbaum
+
+plantuml::partial$../images/plantuml/quality-tree.puml[format=svg]
+
+== Qualitätsszenarien
+
+[cols="1,1,3,1"]
+|===
+| ID | Qualitätsziel | Szenario | Metrik
+
+| QS-01 | Testbarkeit | Domain-Logik lässt sich ohne ApplicationContext testen | 100% Domain-Tests ohne Spring
+| QS-02 | Wartbarkeit | Neuer Adapter (z.B. MongoDB statt JPA) erfordert keine Domain-Änderung | 0 Domain-Dateien geändert
+| QS-03 | Nachvollziehbarkeit | Jede fachliche Aktion ist im Audit-Log nachvollziehbar | Audit-Coverage 100%
+| QS-04 | Verfügbarkeit | Service startet nach Neustart innerhalb 30s | Startup < 30s
+|===

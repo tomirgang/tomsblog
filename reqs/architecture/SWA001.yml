@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Hexagonale Architektur pro Service
+level: 1.0
+links:
+- SWR001: oD6Rn0QKvdfBWIxTDhBdJYrroqSrJ2VT_QgKIXZn4co=
+- SWR009: dAvonN-IloOm4QiqwKMPhvRKa7gNGqqAvl6lr99HC34=
+normative: true
+ref: ''
+reviewed: sFvvxFNyX7UHya5mL03A2_VeVOlxEoxaPMlWy0ERnxA=
+text: |
+  Jeder Microservice folgt der hexagonalen Architektur mit den Schichten:
+  domain/ (reine Fachlogik, keine Framework-Abhaengigkeiten),
+  application/ (Ports, Use Cases),
+  adapter/inbound (REST Controller, Event Listener),
+  adapter/outbound (JPA Repositories, Kafka Producer, HTTP Clients).

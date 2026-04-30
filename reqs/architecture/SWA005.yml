@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Kafka als Event-Broker
+level: 5.0
+links:
+- SWR008: 9MqWb6aaGUyz6CTjmyCGOO8kXoMcIsTkA4IsVlG5_OM=
+- SWR009: dAvonN-IloOm4QiqwKMPhvRKa7gNGqqAvl6lr99HC34=
+normative: true
+ref: ''
+reviewed: ZbGbkFW6WUmajcmn3Uoku77ImU0A-plzW7Cln_1inAw=
+text: |
+  Apache Kafka (KRaft Mode) dient als zentraler Event-Broker.
+  Topics werden pro Event-Typ angelegt.
+  Consumer Groups ermoeglichen unabhaengige Verarbeitung.
