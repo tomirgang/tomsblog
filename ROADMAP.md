@@ -7,7 +7,7 @@
 │                        MEILENSTEIN 1                                    │
 │              Vollständiger Text-Blog (Thymeleaf)                        │
 │                                                                         │
-│  Setup → Domain → API → Auth → Feeds → KI → Thymeleaf-UI → Deploy       │
+│  Setup → Domain+UI → Deploy → Auth → Kafka → KI → Feeds → Attach → Obs │
 └─────────────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
@@ -42,22 +42,21 @@
 
 ## Meilenstein 1: Vollständiger Text-Blog (Thymeleaf)
 
-**Ziel:** Ein produktionsfähiger, multilingualer Text-Blog mit allen Kernfeatures – deployed auf Kubernetes.
+**Ziel:** Ein produktionsfähiger, multilingualer Text-Blog mit allen Kernfeatures auf Kubernetes. Infrastruktur wächst inkrementell mit jedem Feature.
 
-| Schritt | Beschreibung                                                |
-| ------- | ----------------------------------------------------------- |
-| 1.1     | Projekt-Setup: Monorepo, Build-System, CI                   |
-| 1.2     | Blog Content Service (Hexagonale Architektur, Spring Boot)  |
-| 1.3     | Benutzerverwaltung & Multi-Tenancy                          |
-| 1.4     | Messaging (Kafka) für Event-Driven-Flows                    |
-| 1.5     | KI-Integration (Übersetzung, Schreibassistenz, Titelbilder) |
-| 1.6     | Feed-Service (RSS/Atom)                                     |
-| 1.7     | Web-Snapshots & Attachments                                 |
-| 1.8     | Thymeleaf-UI (WYSIWYG-Editor, Admin, Public Blog)           |
-| 1.9     | Infrastruktur & Deployment (K8s, GitOps)                    |
-| 1.10    | Observability (Prometheus, Grafana, Loki, Tempo)            |
+| Phase | Beschreibung                                                         | MVP danach                                                      |
+| ----- | -------------------------------------------------------------------- | --------------------------------------------------------------- |
+| 1     | Projekt-Setup: Monorepo, Build-System, CI, Docs, Requirements        | Build + Tests laufen                                            |
+| 2     | Blog Content Service + Thymeleaf-Grundgerüst (Post CRUD, Layout)     | Blog-Posts lesen, erstellen, bearbeiten lokal im Browser        |
+| 3     | Infrastruktur & erstes Deployment (K8s, PostgreSQL, GitOps, Ingress) | Blog ist öffentlich erreichbar                                  |
+| 4     | Benutzerverwaltung & Multi-Tenancy (Auth, Rollen, Admin-UI)          | Mehrbenutzerfähiger Blog mit Login und Tenant-Trennung          |
+| 5     | Messaging & Event-Driven (Kafka, Event-Produktion)                   | Asynchrone Verarbeitung aktiv, Events fließen zwischen Services |
+| 6     | KI-Integration (Übersetzung, Schreibassistenz, WYSIWYG-Editor)       | WYSIWYG-Editor + KI-Übersetzung mit Review-Schritt              |
+| 7     | Feed-Service (RSS/Atom, Tag-Navigation)                              | RSS-Feeds und navigierbare Tag-Seiten                           |
+| 8     | Web-Snapshots & Attachments (Upload, Archivierung, S3-Storage)       | Vollständiges Content-Management mit Anhängen                   |
+| 9     | Observability (Prometheus, Grafana, Loki, Tempo, Redis)              | Produktionsreife Observability                                  |
 
-**Ergebnis:** Vollständig nutzbarer Text-Blog mit Admin-UI und öffentlicher Ansicht.
+**Ergebnis:** Vollständig nutzbarer Text-Blog mit Admin-UI, öffentlicher Ansicht und professionellem Betrieb.
 
 ---
 

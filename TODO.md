@@ -29,65 +29,89 @@
 - [ ] Quellenverwaltung für Posts
 - [ ] Unit- und Integrationstests (Testcontainers für PostgreSQL)
 - [ ] API-Dokumentation (OpenAPI/Swagger)
+- [ ] Thymeleaf: Layout-Grundgerüst (responsiv, einfaches CSS-Framework)
+- [ ] Thymeleaf: Öffentliche Blog-Ansicht (Post-Liste, Einzelansicht)
+- [ ] Thymeleaf: Einfaches Formular zum Erstellen/Bearbeiten von Posts
 
-### Phase 3: Benutzerverwaltung & Multi-Tenancy
+> **MVP nach Phase 2:** Blog-Posts lesen, erstellen und bearbeiten lokal im Browser.
+
+### Phase 3: Infrastruktur & erstes Deployment
+
+- [ ] Hetzner Kubernetes Cluster aufsetzen (kube-hetzner / Terraform)
+- [ ] CloudNativePG Operator für PostgreSQL
+- [ ] GitOps einrichten (ArgoCD oder Flux)
+- [ ] Helm Chart / Kustomize für blog-content Service
+- [ ] Ingress-Controller + TLS (Let's Encrypt)
+- [ ] Container-Image bauen und deployen (CI/CD Pipeline)
+- [ ] Einfacher Admin-Login (Spring Security, formbasiert) zum Schutz der Schreiboperationen
+
+> **MVP nach Phase 3:** Blog ist öffentlich lesbar, Schreibzugriff nur mit Admin-Login.
+
+### Phase 4: Benutzerverwaltung & Multi-Tenancy
 
 - [ ] Identity-Provider evaluieren (Keycloak vs. eigener Service)
 - [ ] Auth-Service oder Keycloak-Integration
 - [ ] Multi-Tenant-Isolation (Schema-basiert vs. Row-Level-Security)
 - [ ] Rollen- und Berechtigungsmodell (Admin, Autor, Leser)
 - [ ] Audit-Logging für alle relevanten Aktionen
+- [ ] Thymeleaf: Login-/Registrierungsseiten
+- [ ] Thymeleaf: Multi-Tenant-Navigation (Tenant-Branding, Umschaltung)
+- [ ] Thymeleaf: Admin-Oberfläche (Benutzer, Tenants, Einstellungen)
+- [ ] Infra: Keycloak-Deployment auf K8s
 
-### Phase 4: Messaging & Event-Driven Architecture
+> **MVP nach Phase 4:** Mehrbenutzerfähiger Blog mit Login, Tenant-Trennung und Admin-UI.
+
+### Phase 5: Messaging & Event-Driven Architecture
 
 - [ ] Kafka-Cluster-Konfiguration definieren
 - [ ] Event-Schema-Design (Avro/Protobuf oder JSON Schema)
 - [ ] Events produzieren (Post erstellt, aktualisiert, veröffentlicht)
 - [ ] Consumer für nachgelagerte Prozesse (Feeds)
+- [ ] Infra: Kafka Deployment (Strimzi Operator)
 
-### Phase 5: KI-Integration (Text-Blog)
+> **MVP nach Phase 5:** Asynchrone Verarbeitung aktiv, Events fließen zwischen Services.
+
+### Phase 6: KI-Integration (Text-Blog)
 
 - [ ] OpenRouter-Adapter implementieren
 - [ ] KI-gestützte Übersetzung (Author-getriggert via UI, Ergebnis muss geprüft werden)
 - [ ] Schreibassistenz-API
 - [ ] Titelbild-Generierung (optional, Author-getriggert)
+- [ ] Thymeleaf: WYSIWYG-Editor für Autoren (ersetzt einfaches Formular)
+- [ ] Thymeleaf: Übersetzungs-UI (Review/Approve-Workflow)
 
-### Phase 6: Feed-Service
+> **MVP nach Phase 6:** Autoren schreiben mit WYSIWYG-Editor und nutzen KI-Übersetzung mit Review-Schritt.
+
+### Phase 7: Feed-Service
 
 - [ ] RSS/Atom Feed-Generierung
 - [ ] Tag-basierte Feeds
 - [ ] Single Content Type Feeds
+- [ ] Thymeleaf: Tag-basierte Navigation und Filteransicht
 
-### Phase 7: Web-Snapshots & Attachments
+> **MVP nach Phase 7:** Blog mit RSS-Feeds und navigierbaren Tag-Seiten.
+
+### Phase 8: Web-Snapshots & Attachments
 
 - [ ] Automatische Archivierung referenzierter Webseiten
 - [ ] Attachment-Upload und -Verwaltung
 - [ ] Storage-Backend (S3/Garage)
+- [ ] Thymeleaf: Attachment-Upload im Editor (Drag & Drop)
+- [ ] Thymeleaf: Quellen-Verwaltung mit Vorschau archivierter Seiten
+- [ ] Infra: S3-kompatibles Storage (Garage auf Netcup VM)
 
-### Phase 8: Thymeleaf-UI
+> **MVP nach Phase 8:** Vollständiges Content-Management mit Dateianhängen und Quellenarchiv.
 
-- [ ] Layout & Navigation (Multi-Tenant-fähig)
-- [ ] Öffentliche Blog-Ansicht (Post-Liste, Einzelansicht, Tags)
-- [ ] WYSIWYG-Editor für Autoren
-- [ ] Admin-Oberfläche (Benutzer, Tenants, Einstellungen)
-- [ ] Responsives Design
-
-### Phase 9: Infrastruktur & Deployment
-
-- [ ] Hetzner Kubernetes Cluster aufsetzen (kube-hetzner / Terraform)
-- [ ] CloudNativePG Operator für PostgreSQL
-- [ ] Redis Deployment
-- [ ] Kafka Deployment (Strimzi Operator)
-- [ ] GitOps einrichten (ArgoCD oder Flux)
-- [ ] Helm Charts oder Kustomize für alle Services
-
-### Phase 10: Observability
+### Phase 9: Observability
 
 - [ ] Prometheus + Grafana aufsetzen
 - [ ] Loki für Log-Aggregation
 - [ ] Tempo für Distributed Tracing
 - [ ] Dashboards und Alerting
 - [ ] Health-Checks und Readiness/Liveness Probes
+- [ ] Infra: Redis Deployment
+
+> **MVP nach Phase 9:** Produktionsreife Observability mit Monitoring, Logging und Tracing.
 
 ---
 
