@@ -10,12 +10,14 @@
 ### Phase 1: Projekt-Setup & Grundlagen
 
 - [ ] Monorepo-Struktur festlegen (Services, Infrastruktur, Docs)
-- [ ] Build-System aufsetzen (Gradle mit Kotlin DSL, Multi-Module)
+- [ ] Build-System aufsetzen (Maven, Multi-Module)
 - [ ] Gemeinsame Libraries definieren (Shared Kernel, Event-Contracts)
 - [ ] CI-Pipeline einrichten (GitHub Actions: Build, Test, Container-Image)
 - [ ] Entwicklungsumgebung dokumentieren (Docker Compose für lokale Deps)
 - [ ] arc42-Dokumentation initialisieren (AsciiDoc + Antora Skeleton)
 - [ ] ADR-Verzeichnis anlegen und erste ADRs schreiben
+- [ ] Doorstop einrichten (Requirement-Hierarchie: STK → SWR → SWA → IMP → TST)
+- [ ] Erste Stakeholder-Requirements erfassen
 
 ### Phase 2: Blog Content Service
 

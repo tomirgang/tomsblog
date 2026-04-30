@@ -1,0 +1,11 @@
+{
+    "hooks": {
+        "PostToolUse": [
+            {
+                "type": "command",
+                "command": "if [[ -f mvnw ]] && git diff --name-only HEAD 2>/dev/null | grep -qE '\\.java$'; then ./mvnw spotless:apply -q 2>/dev/null || true; fi",
+                "timeout": 30
+            }
+        ]
+    }
+}

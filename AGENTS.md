@@ -1,0 +1,69 @@
+# Project Guidelines
+
+## Overview
+
+Multi-tenant blog & podcast platform as a learning project for cloud-native architectures.
+Current focus: **Meilenstein 1 – vollständiger Text-Blog mit Thymeleaf-UI**.
+
+See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) for actionable tasks.
+
+## Architecture
+
+- **Hexagonale Architektur** (Ports & Adapters) for each service
+- **Microservice-Landschaft** with event-driven communication via Kafka
+- **Audit-fähig**: all relevant actions must be traceable
+- **Multi-Tenant**: tenant isolation at the data layer
+
+## Tech Stack
+
+| Layer         | Technology                                                                   |
+| ------------- | ---------------------------------------------------------------------------- |
+| Backend       | Spring Boot (Java), Maven                                                    |
+| Database      | PostgreSQL (CloudNativePG), Redis                                            |
+| Messaging     | Apache Kafka                                                                 |
+| UI (Phase 1)  | Thymeleaf (SSR)                                                              |
+| UI (later)    | Angular + Nx + Native Federation (REST), React + Module Federation (GraphQL) |
+| Infra         | Kubernetes (Hetzner), ArgoCD/Flux, Helm/Kustomize                            |
+| Observability | Prometheus, Grafana, Loki, Tempo                                             |
+| AI            | OpenRouter                                                                   |
+| Requirements  | Doorstop (YAML in Git, ASPICE-oriented traceability)                         |
+| Docs          | arc42 (AsciiDoc + Antora), ADRs (Markdown + MkDocs)                          |
+
+## Conventions
+
+- Sprache im Code und Commits: **Englisch**
+- Dokumentation und Planungsdateien: **Deutsch**
+- Hexagonal structure per service: `domain/`, `application/` (ports), `adapter/` (inbound + outbound)
+- Tests: Unit tests + Integration tests with Testcontainers
+- API documentation: OpenAPI/Swagger for REST, GraphQL schema for GraphQL services
+- Events: publish domain events for cross-service communication (Post created/updated/published)
+- Requirements: Doorstop for multi-level tracing (Stakeholder → Software Req → Design → Implementation → Test)
+- Requirement IDs in test names (`@DisplayName("SWR-042: ...")`) and Javadoc (`@req SWR-042`)
+
+## Build & Test
+
+```bash
+# (will be configured once the Maven project is set up)
+./mvnw verify
+./mvnw test
+```
+
+## Requirements (Doorstop)
+
+```bash
+doorstop publish all docs/requirements/   # Export HTML traceability report
+doorstop                                   # Validate all links & coverage
+```
+
+Requirement document hierarchy:
+- `STK` – Stakeholder Requirements
+- `SWR` – Software Requirements
+- `SWA` – Software Architecture/Design
+- `TST` – Test Specifications
+
+## Key Decisions
+
+- REST for the text-blog APIs (consumed by Thymeleaf and later Angular)
+- GraphQL for podcast/video services (consumed by React UIs)
+- Keycloak or custom auth (to be evaluated) for identity
+- S3-compatible storage (Garage on Netcup VM) for media and backups
