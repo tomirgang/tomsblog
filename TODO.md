@@ -17,7 +17,7 @@
 - [x] ADR-Verzeichnis anlegen und erste ADRs schreiben
 - [x] Doorstop einrichten (Requirement-Hierarchie: STK -> SWR -> SWA -> IMP -> TST)
 - [x] Erste Stakeholder-Requirements erfassen (STK001-STK012, SWR001-SWR015, SWA001-SWA006)
-- [ ] CI-Pipeline einrichten (GitHub Actions: Build, Test, Container-Image)
+- [x] CI-Pipeline einrichten (GitHub Actions: Build, Test, Container-Image)
 
 ### Phase 2: Blog Content Service
 
