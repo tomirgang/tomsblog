@@ -8,16 +8,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- ADR-0019: Database per Service (PostgreSQL / MongoDB, dedizierte Instanz pro Service)
 - ADR-0018: Dual-Broker-Strategie (Kafka für Event-Streaming, RabbitMQ für Task-Queues)
 - RabbitMQ in Docker Compose für lokale Entwicklung (Port 5672, Management UI 15672)
 - Architektur-Requirement SWA-014: RabbitMQ als Task-Queue-Broker
+- Architektur-Requirement SWA-015: Database per Service
 - RabbitMQ-Konfiguration in application-local.yml
 
 ### Changed
 
+- Docker Compose: PostgreSQL-Container auf service-spezifischen Namen und DB umgestellt (blog_content)
 - ADR-0006 auf Status "Superseded by ADR-0018" gesetzt
 - SWA-005 aktualisiert: Kafka-Verantwortung auf Event-Streaming eingegrenzt
-- Arc42-Dokumentation um RabbitMQ-Abschnitte erweitert (Constraints, Lösungsstrategie, Querschnittliche Konzepte, Risiken)
+- Arc42-Dokumentation um RabbitMQ- und Database-per-Service-Abschnitte erweitert
 - ROADMAP Phase 5 um RabbitMQ-Tasks erweitert
 - Tech-Stack-Beschreibung in AGENTS.md, README.md und libs/README.md aktualisiert
 

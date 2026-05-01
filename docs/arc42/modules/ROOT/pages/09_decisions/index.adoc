@@ -25,6 +25,7 @@ Alle Architekturentscheidungen sind als ADRs dokumentiert:
 | link:{attachmentsdir}/adr/0016-backend-for-frontend.md[0016] | Backend for Frontend (BFF) | Accepted
 | link:{attachmentsdir}/adr/0017-api-gateway.md[0017] | API Gateway (Spring Cloud Gateway) | Accepted
 | link:{attachmentsdir}/adr/0018-dual-broker-kafka-rabbitmq.md[0018] | Dual-Broker-Strategie (Kafka + RabbitMQ) | Accepted
+| link:{attachmentsdir}/adr/0019-database-per-service.md[0019] | Database per Service (PostgreSQL / MongoDB) | Accepted
 |===
 
 NOTE: ADRs werden als Markdown-Dateien in `docs/adr/` gepflegt. Dieses Kapitel dient als Index.

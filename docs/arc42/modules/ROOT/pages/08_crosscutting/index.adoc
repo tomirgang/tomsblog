@@ -7,6 +7,16 @@ Die Multi-Tenancy-Fähigkeit setzt die Stakeholder-Anforderung STK-002 um und wi
 
 Jede Domain-Entity trägt eine `TenantId`. Die Tenant-Zuordnung eines Requests erfolgt über die verwendete Domain (SWR-017, SWA-011): Der Host-Header wird am Ingress in eine TenantId aufgelöst und als `X-Tenant-Id` an Backend-Services propagiert. Ein Tenant kann mehrere Domains besitzen. Tenant-Isolation wird auf Datenbank-Ebene sichergestellt (Row-Level-Security oder Schema-basiert, noch zu entscheiden).
 
+== Database per Service
+
+Jeder Microservice besitzt seine eigene, dedizierte Datenbank-Instanz (SWA-015, ADR-0019). Die Technologiewahl (PostgreSQL oder MongoDB) erfolgt pro Service anhand des Datenmodells. Kein Service darf direkt auf die Datenbank eines anderen Services zugreifen.
+
+* Blog Content Service: PostgreSQL (relationale Daten, Flyway-Migrationen)
+* Auth Service: PostgreSQL (User/Role-Management)
+* Service-übergreifender Datenzugriff ausschließlich über gRPC (SWA-009) oder Domain Events (SWA-005)
+* Lokale Entwicklung: dedizierte Datenbank-Container pro Service
+* Kubernetes: CloudNativePG Operator (PostgreSQL), MongoDB Community Operator
+
 == Audit
 
 Das Audit-Konzept erfüllt die Anforderungen STK-004 (Audit-Fähigkeit) und SWR-006 (Audit-Trail für Posts).

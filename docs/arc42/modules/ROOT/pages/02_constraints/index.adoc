@@ -10,7 +10,7 @@
 | Java 25 | Neuestes LTS, lokal installiert
 | Maven | Build-System (Multi-Module, Parent POM mit Spring Boot Starter)
 | Spring Boot 3.4.x | Framework für alle Microservices
-| PostgreSQL | Relationale Datenbank (CloudNativePG im Cluster)
+| PostgreSQL / MongoDB | Database per Service: Technologiewahl pro Service (CloudNativePG / MongoDB Operator)
 | Apache Kafka | Event-Broker für Domain Events (KRaft-Mode, Strimzi auf K8s)
 | RabbitMQ | Task-Queue-Broker für Job-Verteilung (Quorum Queues, RabbitMQ Cluster Operator)
 | Kubernetes | Deployment-Plattform (Hetzner, 3-Node-Cluster)

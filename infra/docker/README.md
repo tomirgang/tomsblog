@@ -32,14 +32,18 @@ docker compose -f infra/docker/docker-compose.yml down -v
 
 ## Services & Ports
 
-| Service       | Port  | Zugangsdaten                             |
-| ------------- | ----- | ---------------------------------------- |
-| PostgreSQL    | 5432  | `tomsblog` / `tomsblog` / DB: `tomsblog` |
-| Redis         | 6379  | kein Passwort                            |
-| Kafka         | 9092  | -                                        |
-| Kafka UI      | 8080  | -                                        |
-| RabbitMQ      | 5672  | `tomsblog` / `tomsblog` / VHost: `tomsblog` |
-| RabbitMQ Mgmt | 15672 | `tomsblog` / `tomsblog`                  |
+Database per Service (ADR-0019): Jeder Service erhält eine eigene Datenbank-Instanz.
+
+| Service                  | Port  | Zugangsdaten                                     |
+| ------------------------ | ----- | ------------------------------------------------ |
+| PostgreSQL (Blog Content)| 5432  | `tomsblog` / `tomsblog` / DB: `blog_content`    |
+| Redis                    | 6379  | kein Passwort                                    |
+| Kafka                    | 9092  | -                                                |
+| Kafka UI                 | 8080  | -                                                |
+| RabbitMQ                 | 5672  | `tomsblog` / `tomsblog` / VHost: `tomsblog`     |
+| RabbitMQ Mgmt            | 15672 | `tomsblog` / `tomsblog`                          |
+
+Weitere Service-Datenbanken werden bei Bedarf hinzugefügt (eigene Container, eigene Ports).
 
 ## Spring-Profil
 

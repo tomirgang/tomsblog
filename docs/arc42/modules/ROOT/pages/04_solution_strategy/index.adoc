@@ -14,6 +14,7 @@ Die zentralen Architekturentscheidungen setzen die Stakeholder-Anforderungen an 
 | Event-Driven (Kafka + RabbitMQ) | Kafka: Event-Streaming, Replay, Audit-Trail; RabbitMQ: Task-Queues, Job-Verteilung | SWA-005, SWR-009
 | gRPC (synchron) | Typsichere Service-Contracts, effizientes Binary-Protokoll | SWA-009
 | Multi-Tenant | Mandantenfähigkeit von Anfang an im Design | STK-002, SWR-003
+| Database per Service | Eigene DB-Instanz pro Service, Technologiewahl (PostgreSQL/MongoDB) pro Service | SWA-015
 |===
 
 == Technologie-Entscheidungen
@@ -29,6 +30,7 @@ Die zentralen Architekturentscheidungen setzen die Stakeholder-Anforderungen an 
 | API (Podcast/Video) | GraphQL | link:../09_decisions/index.adoc[ADR-0004]
 | UI-Strategie | Thymeleaf → Angular + React | link:../09_decisions/index.adoc[ADR-0005]
 | Messaging | Apache Kafka + RabbitMQ | link:../09_decisions/index.adoc[ADR-0018]
+| Datenbank | Database per Service (PostgreSQL / MongoDB) | link:../09_decisions/index.adoc[ADR-0019]
 | Sync. Service-Komm. | gRPC | --
 | Requirements | Doorstop | link:../09_decisions/index.adoc[ADR-0007]
 |===

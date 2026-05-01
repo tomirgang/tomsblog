@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Database per Service
+level: 15.0
+links:
+- SWR001: cMy_Lz6FRlFzeqYCwiHsMZkTkd5oJUYXgxqSP_NhD5M=
+- SWR003: x08iTWndzHfGhW8IlW2BGH-Xf3dDgoDgklYM_pwMWKo=
+normative: true
+ref: ''
+reviewed: EguOn1gROsfDvJul1Koxj3LAb6elVztVZ2pOS7bYnL4=
+text: |
+  Jeder Microservice besitzt seine eigene, dedizierte Datenbank-Instanz.
+  Die Technologiewahl (PostgreSQL oder MongoDB) wird pro Service entschieden.
+  Auch wenn mehrere Services PostgreSQL verwenden, erhaelt jeder eine eigene
+  Instanz. Kein Service darf direkt auf die Datenbank eines anderen Services
+  zugreifen. Service-uebergreifender Datenzugriff erfolgt ausschliesslich
+  ueber gRPC (SWA-009) oder Domain Events (SWA-005).

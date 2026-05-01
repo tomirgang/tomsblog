@@ -1,16 +1,17 @@
 services:
 
-  postgres:
+  # Database per Service: each service gets its own PostgreSQL/MongoDB instance (ADR-0019)
+  postgres-blog-content:
     image: postgres:17
-    container_name: tomsblog-postgres
+    container_name: tomsblog-postgres-blog-content
     environment:
-      POSTGRES_DB: tomsblog
+      POSTGRES_DB: blog_content
       POSTGRES_USER: tomsblog
       POSTGRES_PASSWORD: tomsblog
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_blog_content_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U tomsblog"]
       interval: 5s
@@ -81,5 +82,5 @@ services:
       retries: 5
 
 volumes:
-  postgres_data:
+  postgres_blog_content_data:
   rabbitmq_data:

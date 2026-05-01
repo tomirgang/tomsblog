@@ -19,7 +19,7 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 | Layer         | Technology                                                                   |
 | ------------- | ---------------------------------------------------------------------------- |
 | Backend       | Spring Boot (Java), Maven                                                    |
-| Database      | PostgreSQL (CloudNativePG), Redis                                            |
+| Database      | PostgreSQL, MongoDB (Database per Service), Redis                             |
 | Messaging     | Apache Kafka (Event-Streaming), RabbitMQ (Task-Queues)                       |
 | UI (Phase 1)  | Thymeleaf (SSR)                                                              |
 | UI (later)    | Angular + Nx + Native Federation (REST), React + Module Federation (GraphQL) |
@@ -79,6 +79,7 @@ Requirement document hierarchy:
 - REST for the text-blog APIs (consumed by Thymeleaf and later Angular)
 - GraphQL for podcast/video services (consumed by React UIs)
 - gRPC for synchronous inter-service communication
+- Database per Service: each service owns its dedicated DB instance (PostgreSQL or MongoDB)
 - Custom Auth Service (no Keycloak) with OIDC login support
 - Domain-based tenant resolution (tenant selected via Host header)
 - S3-compatible storage (Garage on Netcup VM) for media and backups

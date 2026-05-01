@@ -18,8 +18,8 @@ Das System folgt einer **hexagonalen Architektur** (Ports & Adapters) und ist al
 | -------------- | ---------------------------------------------------- |
 | Orchestrierung | Hetzner Kubernetes (3-Node-Cluster via kube-hetzner) |
 | Messaging      | Apache Kafka (Event-Streaming), RabbitMQ (Task-Queues) |
-| Relationale DB | PostgreSQL (CloudNativePG Operator)                  |
-| Dokument-DB    | MongoDB                                              |
+| Relationale DB | PostgreSQL (CloudNativePG Operator) - Database per Service   |
+| Dokument-DB    | MongoDB (per Service, wo passend)                            |
 | Caching        | Redis                                                |
 | Observability  | Prometheus, Grafana, Loki, Tempo                     |
 | GitOps         | ArgoCD oder Flux                                     |
