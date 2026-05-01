@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-05-01
+
+### Fixed
+
+- Release-Skript: doppelte Testausführung (clean install + verify) zu einem einzigen clean verify zusammengefasst, um Testcontainers-Ressourcenkonflikte zu vermeiden
+
+## [0.3.1] - 2026-05-01
+
 ### Fixed
 
 - Release-Skript aktualisiert jetzt die Antora-Dokumentationsversionen (prerelease-Marker und Versionsnummer in arc42 index.adoc)

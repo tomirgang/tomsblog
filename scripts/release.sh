@@ -103,15 +103,10 @@ if [[ -f "$ARC42_INDEX" ]]; then
     sed -i "s/| Version | .*/| Version | $NEW_VERSION/" "$ARC42_INDEX"
 fi
 
-# Clean build and install
-info "Running clean build and install..."
-./mvnw clean install --batch-mode --no-transfer-progress
-info "Build successful."
-
-# Run all tests (verify includes tests + coverage checks)
-info "Running full verification (tests + coverage)..."
-./mvnw verify --batch-mode --no-transfer-progress
-info "All tests passed."
+# Clean build with full verification (includes tests + coverage checks)
+info "Running clean build and verification..."
+./mvnw clean verify --batch-mode --no-transfer-progress
+info "Build and verification successful."
 
 # Commit the release
 info "Committing release..."
