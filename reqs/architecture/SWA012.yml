@@ -4,10 +4,10 @@ header: |
   LLM-basierte Kommentar-Moderation als Adapter
 level: 12.0
 links:
-- SWR018: null
+- SWR018: -yPspfb26L1W4oOLJb6aCQaSsx2Ro8SLmivcwsJUp3o=
 normative: true
 ref: ''
-reviewed: ''
+reviewed: bAgFjymCbF5vo84GqG7aqDbH6cPap2VWZJmW2zU54AA=
 text: |
   Die automatisierte Kommentar-Überprüfung wird als Outbound-Adapter im
   Kommentar-Service implementiert. Der Adapter nutzt das OpenRouter-Backend

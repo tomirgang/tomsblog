@@ -7,7 +7,7 @@ links:
 - SWR009: DWXp8IA0R0F4FksiJ3m6RMZbN0T4SNNcxyJoTnCphHM=
 normative: true
 ref: ''
-reviewed: ''
+reviewed: MORYigwwAtBdHsQruHoconCsM4cHqz5i2SchlUGRMdw=
 text: |
   Für synchrone Kommunikation zwischen Microservices wird gRPC verwendet.
   Kafka bleibt für asynchrone, event-basierte Kommunikation zuständig.

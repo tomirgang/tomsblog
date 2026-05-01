@@ -1,6 +1,6 @@
 name: tomsblog-arc42
 version: ~
-title: Toms Blog: Architekturdokumentation
+title: 'Toms Blog: Architekturdokumentation'
 start_page: ROOT:index.adoc
 nav:
   - modules/ROOT/nav.adoc

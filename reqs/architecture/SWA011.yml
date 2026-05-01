@@ -5,10 +5,10 @@ header: |
 level: 11.0
 links:
 - SWR003: HcvwMUkzXgsvNmY2jRjulG90zdxmQl_edK01ZmqjOX4=
-- SWR017: null
+- SWR017: 9YKP26yEWZoSw3cZUIZfltDyONa6Wg6BNT4dHuH8OoE=
 normative: true
 ref: ''
-reviewed: ''
+reviewed: QtbOYbCVLNp3s2Jzi246frFFNDtEYSnV1ls4FrFxCpE=
 text: |
   Die Tenant-Auflösung erfolgt am Ingress-Level über den Host-Header.
   Ein Tenant-Resolution-Service mappt Domains auf TenantIds.

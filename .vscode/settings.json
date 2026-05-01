@@ -1,11 +1,9 @@
 {
-    "reqtrace.sources": [
-        "."
-    ],
     "plantuml.render": "PlantUMLServer",
     "plantuml.server": "https://www.plantuml.com/plantuml",
     "files.associations": {
         "*.puml": "plantuml"
     },
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "automatic"
 }

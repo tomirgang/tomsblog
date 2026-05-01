@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "asciidoctor.asciidoctor-vscode",
+    "yzhang.markdown-all-in-one",
+    "jebbs.plantuml",
+    "bierner.markdown-mermaid",
+    "tomoyukim.vscode-mermaid-editor"
+  ]
+}

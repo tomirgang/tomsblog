@@ -14,6 +14,13 @@ target/
 *.iml
 .vscode/.history/
 
+# Node
+node_modules/
+package-lock.json
+
+# Antora
+build/
+
 # OS
 .DS_Store
 Thumbs.db

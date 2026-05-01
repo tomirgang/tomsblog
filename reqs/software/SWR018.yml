@@ -4,10 +4,10 @@ header: |
   Automatisierte Kommentar-Moderation via LLM
 level: 18.0
 links:
-- STK001: null
+- STK001: 7nIt6jQu61g0LN6dl90kyg6r_lOlDzLfbV88NMUGVZQ=
 normative: true
 ref: ''
-reviewed: ''
+reviewed: Zd1xo0KZzZ85UzU_nh4RJdbABR5UHnBLhYTDwySVCds=
 text: |
   Neue Kommentare müssen automatisiert durch ein LLM überprüft werden.
   Die Überprüfung nutzt das OpenRouter-Backend und bewertet Kommentare

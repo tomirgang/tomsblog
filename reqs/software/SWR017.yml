@@ -7,7 +7,7 @@ links:
 - STK002: evLZsjXR3mxOQtxmkgANEz_UWhgFAzRbCaOHAIHRsvk=
 normative: true
 ref: ''
-reviewed: ''
+reviewed: pmBCQCojiudULXPKLpBbnkdke5FP4uj5IHNF853b1YA=
 text: |
   Die Tenant-Zuordnung eines Requests muss über die verwendete Domain
   oder Subdomain erfolgen. Ein Tenant kann mehrere Domains und Subdomains

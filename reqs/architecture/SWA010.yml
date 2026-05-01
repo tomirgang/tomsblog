@@ -5,10 +5,10 @@ header: |
 level: 10.0
 links:
 - SWR007: _idI4rzQ2_WbYBmTwEWCjZjMSMtm1vzQ4tgSzjXWqI4=
-- SWR016: null
+- SWR016: ExkjqXs8FWf_jsZRobxBrk9xE9iDBRKYBU46eDsmhIA=
 normative: true
 ref: ''
-reviewed: ''
+reviewed: 34sMDpUrh37fKEHWJ3OoClk5jSh-qPbQzN7RUoCi75o=
 text: |
   Die Authentifizierung und Autorisierung wird als eigener Microservice
   implementiert (kein Keycloak). Der Auth Service unterstützt OIDC als
