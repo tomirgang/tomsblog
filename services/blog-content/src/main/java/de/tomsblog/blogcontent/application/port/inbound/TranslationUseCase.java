@@ -6,6 +6,13 @@ import de.tomsblog.blogcontent.domain.model.TranslationId;
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
 
+/**
+ * Inbound port for translation management use cases.
+ *
+ * @req SWR-021
+ * @req SWR-004
+ * @req SWR-005
+ */
 public interface TranslationUseCase {
 
     Translation createManualTranslation(CreateTranslationCommand command);

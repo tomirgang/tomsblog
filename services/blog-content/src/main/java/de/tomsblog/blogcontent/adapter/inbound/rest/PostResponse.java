@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/** @req SWR-001 */
 public record PostResponse(
         UUID id,
         UUID tenantId,

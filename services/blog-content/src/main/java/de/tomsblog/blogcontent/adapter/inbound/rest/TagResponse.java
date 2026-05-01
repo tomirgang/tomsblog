@@ -3,6 +3,7 @@ package de.tomsblog.blogcontent.adapter.inbound.rest;
 import de.tomsblog.blogcontent.domain.model.Tag;
 import java.util.UUID;
 
+/** @req SWR-020 */
 public record TagResponse(UUID id, UUID tenantId, String name, String slug) {
 
     public static TagResponse from(Tag tag) {

@@ -6,6 +6,12 @@ import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Outbound port for tag persistence.
+ *
+ * @req SWR-020
+ * @req SWR-003
+ */
 public interface TagRepository {
 
     Tag save(Tag tag);

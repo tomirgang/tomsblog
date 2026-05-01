@@ -14,6 +14,12 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST adapter for translation management.
+ *
+ * @req SWR-021
+ * @req SWR-015
+ */
 @RestController
 @RequestMapping("/api/posts/{postId}/translations")
 @SuppressWarnings("null")

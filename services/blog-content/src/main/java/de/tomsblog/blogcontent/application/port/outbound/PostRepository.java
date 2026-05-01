@@ -6,6 +6,12 @@ import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Outbound port for post persistence.
+ *
+ * @req SWR-001
+ * @req SWR-003
+ */
 public interface PostRepository {
 
     Post save(Post post);

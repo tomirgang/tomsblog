@@ -13,6 +13,12 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST adapter for tag management.
+ *
+ * @req SWR-020
+ * @req SWR-015
+ */
 @RestController
 @RequestMapping("/api/tags")
 @SuppressWarnings("null")

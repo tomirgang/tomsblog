@@ -1,6 +1,6 @@
 ---
 description: "Use when working with requirements, traceability, Doorstop documents, or linking requirements to code/tests. Covers ASPICE-oriented requirement tracing conventions."
-applyTo: ["**/reqs/**", "**/.doorstop.yml"]
+applyTo: ["**/reqs/**", "**/.doorstop.yml", "**/src/main/**/*.java", "**/src/test/**/*.java"]
 ---
 # Requirement Tracing Conventions (Doorstop)
 
@@ -20,17 +20,50 @@ applyTo: ["**/reqs/**", "**/.doorstop.yml"]
 - Every `TST` MUST link to the `SWR` it verifies
 - No orphaned requirements – run `doorstop` to validate
 
-## Code Tracing
+## Code Tracing – @req Annotations
 
-Reference requirement IDs in code to enable implementation tracing:
+Every Java class, interface, or record that implements or contributes to a requirement MUST have a `@req` tag in its Javadoc. This is mandatory, not optional.
+
+### Rules
+
+1. **Every public class/interface/record** in `src/main/java` MUST have a class-level Javadoc with at least one `@req SWR-xxx` tag
+2. **Method-level `@req`** is required when a single method fulfills a different requirement than the class
+3. **Multiple requirements** are expressed as separate `@req` lines
+4. **Never create a class without determining which requirement it traces to**
+
+### Requirement Mapping Reference
+
+| Requirement | Scope |
+|-------------|-------|
+| SWR-001 | Post CRUD operations (controllers, use cases, services, commands, DTOs) |
+| SWR-002 | Post publishing |
+| SWR-003 | Tenant isolation (repositories, tenant-scoped queries) |
+| SWR-004 | AI translation |
+| SWR-005 | Manual translation |
+| SWR-009 | Domain events (event classes, EventPublisher) |
+| SWR-012 | Source management (Source, SourceController, commands) |
+| SWR-015 | Input validation (GlobalExceptionHandler, validation annotations) |
+| SWR-020 | Tag CRUD (TagController, TagUseCase, TagService, commands, DTOs) |
+| SWR-021 | Translation CRUD (TranslationController, TranslationUseCase, commands, DTOs) |
+
+### Examples
 
 ```java
 /**
- * Creates a new blog post for the given tenant.
+ * REST adapter for post management.
  *
- * @req SWR-042
+ * @req SWR-001
+ * @req SWR-002
+ * @req SWR-015
  */
-public Post createPost(CreatePostCommand command) { ... }
+@RestController
+public class PostController { ... }
+
+/** @req SWR-001 */
+public record CreatePostCommand(TenantId tenantId, ...) {}
+
+/** @req SWR-009 */
+public record PostCreatedEvent(...) implements DomainEvent {}
 ```
 
 ## Test Tracing

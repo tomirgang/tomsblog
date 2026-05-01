@@ -8,6 +8,7 @@ import de.tomsblog.shared.tenant.TenantId;
 import java.time.Instant;
 import java.util.UUID;
 
+/** @req SWR-009 */
 public record TranslationApprovedEvent(
         UUID eventId,
         Instant occurredAt,

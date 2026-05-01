@@ -4,6 +4,7 @@ import de.tomsblog.blogcontent.domain.model.Translation;
 import java.time.Instant;
 import java.util.UUID;
 
+/** @req SWR-021 */
 public record TranslationResponse(
         UUID id,
         UUID postId,

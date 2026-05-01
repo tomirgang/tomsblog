@@ -9,6 +9,11 @@ import de.tomsblog.blogcontent.domain.model.TagId;
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
 
+/**
+ * Application service orchestrating tag use cases.
+ *
+ * @req SWR-020
+ */
 public class TagService implements TagUseCase {
 
     private final TagRepository tagRepository;

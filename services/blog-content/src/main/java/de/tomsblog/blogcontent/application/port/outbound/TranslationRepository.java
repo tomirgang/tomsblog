@@ -7,6 +7,12 @@ import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Outbound port for translation persistence.
+ *
+ * @req SWR-021
+ * @req SWR-003
+ */
 public interface TranslationRepository {
 
     Translation save(Translation translation);

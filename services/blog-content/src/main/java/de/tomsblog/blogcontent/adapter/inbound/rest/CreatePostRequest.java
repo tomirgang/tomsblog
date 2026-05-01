@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
+/** @req SWR-001 */
 public record CreatePostRequest(
         @NotNull UUID authorId,
         @NotBlank String title,

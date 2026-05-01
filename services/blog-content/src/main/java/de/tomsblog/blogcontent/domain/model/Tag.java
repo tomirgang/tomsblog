@@ -5,6 +5,8 @@ import java.util.Objects;
 
 /**
  * Tag entity with identity, scoped to a tenant.
+ *
+ * @req SWR-020
  */
 public class Tag {
 

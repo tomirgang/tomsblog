@@ -6,6 +6,7 @@ import de.tomsblog.shared.tenant.TenantId;
 import java.time.Instant;
 import java.util.UUID;
 
+/** @req SWR-009 */
 public record PostUpdatedEvent(UUID eventId, Instant occurredAt, String eventType, PostId postId, TenantId tenantId)
         implements DomainEvent {
 

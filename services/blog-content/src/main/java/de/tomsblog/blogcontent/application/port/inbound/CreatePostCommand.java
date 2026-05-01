@@ -3,6 +3,7 @@ package de.tomsblog.blogcontent.application.port.inbound;
 import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
 
+/** @req SWR-001 */
 public record CreatePostCommand(
         TenantId tenantId,
         AuthorId authorId,
