@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -39,6 +40,9 @@ class JpaPostRepositoryIntegrationTest {
 
     @Autowired
     private JpaPostRepository repository;
+
+    @Autowired
+    private TestEntityManager entityManager;
 
     private final TenantId tenantId = TenantId.generate();
     private final AuthorId authorId = AuthorId.generate();
@@ -112,5 +116,49 @@ class JpaPostRepositoryIntegrationTest {
         assertThat(found.get().getAttachments()).hasSize(1);
         assertThat(found.get().getAttachments().getFirst().filename()).isEqualTo("photo.jpg");
         assertThat(found.get().getAttachments().getFirst().show()).isTrue();
+    }
+
+    @Test
+    @DisplayName("SWR-001: Delete post by ID and tenant")
+    void deleteByIdAndTenantId() {
+        Post post = Post.create(tenantId, authorId, "To Delete", "Content", PostLocale.german());
+        Post saved = repository.save(post);
+
+        repository.deleteByIdAndTenantId(saved.getId(), tenantId);
+
+        Optional<Post> found = repository.findByIdAndTenantId(saved.getId(), tenantId);
+        assertThat(found).isEmpty();
+    }
+
+    @Test
+    @DisplayName("SWR-001: Audit fields are populated on persist")
+    void auditFieldsPopulatedOnPersist() {
+        Post post = Post.create(tenantId, authorId, "Audit Test", "Content", PostLocale.german());
+        repository.save(post);
+        entityManager.flush();
+
+        PostJpaEntity entity =
+                entityManager.find(PostJpaEntity.class, post.getId().value());
+        assertThat(entity.getCreatedAt()).isNotNull();
+        assertThat(entity.getUpdatedAt()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("SWR-001: UpdatedAt changes on entity update")
+    void updatedAtChangesOnUpdate() {
+        Post post = Post.create(tenantId, authorId, "Update Audit", "Content", PostLocale.german());
+        Post saved = repository.save(post);
+        entityManager.flush();
+
+        PostJpaEntity entityBefore =
+                entityManager.find(PostJpaEntity.class, saved.getId().value());
+        entityBefore.setCreatedBy("test-user");
+        entityBefore.setUpdatedBy("test-user");
+        entityManager.persistAndFlush(entityBefore);
+
+        PostJpaEntity entityAfter =
+                entityManager.find(PostJpaEntity.class, saved.getId().value());
+        assertThat(entityAfter.getCreatedBy()).isEqualTo("test-user");
+        assertThat(entityAfter.getUpdatedBy()).isEqualTo("test-user");
     }
 }

@@ -1,0 +1,32 @@
+active: true
+derived: false
+header: |
+  OpenAPI-Konfiguration und Annotationen im Blog Content Service
+level: 20.0
+links:
+- SWA016: OXaVlNAu0R-2Hy_wR4fTyJOx0icR3mnoIn2iBRTX4FY=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/rest/OpenApiConfiguration.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/rest/PostController.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/rest/TagController.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/rest/TranslationController.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/rest/SourceController.java
+  type: file
+- path: services/blog-content/src/main/resources/application.yml
+  type: file
+reviewed: mOlvTSMklHXgIjFTuxweeemOnOuXd5F0wWrovXG42YQ=
+text: |
+  Implementierung der OpenAPI-Dokumentation im Blog Content Service:
+  - OpenApiConfiguration: Zentrale Konfiguration mit API-Metadaten und
+    OperationCustomizer fuer X-Tenant-Id Header.
+  - PostController: @Tag("Posts"), @Operation/@ApiResponse an allen Endpunkten.
+  - TagController: @Tag("Tags"), @Operation/@ApiResponse an allen Endpunkten.
+  - TranslationController: @Tag("Translations"), @Operation/@ApiResponse.
+  - SourceController: @Tag("Sources"), @Operation/@ApiResponse.
+  - application.yml: springdoc Konfiguration (api-docs path, swagger-ui path).

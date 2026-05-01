@@ -115,7 +115,9 @@ class TranslationServiceTest {
         UpdateTranslationCommand command = new UpdateTranslationCommand(translationId, tenantId, "Title", "Content");
 
         assertThatThrownBy(() -> translationService.updateTranslation(command))
-                .isInstanceOf(TranslationNotFoundException.class);
+                .isInstanceOf(TranslationNotFoundException.class)
+                .satisfies(ex -> assertThat(((TranslationNotFoundException) ex).getTranslationId())
+                        .isEqualTo(translationId));
     }
 
     @Test

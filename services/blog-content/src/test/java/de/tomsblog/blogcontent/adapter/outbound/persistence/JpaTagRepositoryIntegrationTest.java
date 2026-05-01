@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -38,6 +39,9 @@ class JpaTagRepositoryIntegrationTest {
 
     @Autowired
     private JpaTagRepository repository;
+
+    @Autowired
+    private TestEntityManager entityManager;
 
     private final TenantId tenantId = TenantId.generate();
 
@@ -106,5 +110,34 @@ class JpaTagRepositoryIntegrationTest {
 
         Optional<Tag> found = repository.findByIdAndTenantId(saved.getId(), tenantId);
         assertThat(found).isEmpty();
+    }
+
+    @Test
+    @DisplayName("SWR-006: Audit fields are populated on persist")
+    void auditFieldsPopulatedOnPersist() {
+        Tag tag = Tag.create(tenantId, "AuditTag");
+        repository.save(tag);
+        entityManager.flush();
+
+        TagJpaEntity entity = entityManager.find(TagJpaEntity.class, tag.getId().value());
+        assertThat(entity.getCreatedAt()).isNotNull();
+        assertThat(entity.getUpdatedAt()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("SWR-006: UpdatedAt changes on entity update")
+    void updatedAtChangesOnUpdate() {
+        Tag tag = Tag.create(tenantId, "UpdateTag");
+        repository.save(tag);
+        entityManager.flush();
+        entityManager.clear();
+
+        TagJpaEntity entity = entityManager.find(TagJpaEntity.class, tag.getId().value());
+        entity.setName("RenamedTag");
+        entityManager.persistAndFlush(entity);
+
+        TagJpaEntity updated =
+                entityManager.find(TagJpaEntity.class, tag.getId().value());
+        assertThat(updated.getUpdatedAt()).isNotNull();
     }
 }

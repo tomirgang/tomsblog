@@ -128,7 +128,10 @@ class PostServiceTest {
         PostId postId = PostId.generate();
         when(postRepository.findByIdAndTenantId(postId, tenantId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> postService.getPost(postId, tenantId)).isInstanceOf(PostNotFoundException.class);
+        assertThatThrownBy(() -> postService.getPost(postId, tenantId))
+                .isInstanceOf(PostNotFoundException.class)
+                .satisfies(ex ->
+                        assertThat(((PostNotFoundException) ex).getPostId()).isEqualTo(postId));
     }
 
     @Test
@@ -161,8 +164,7 @@ class PostServiceTest {
         when(postRepository.findByIdAndTenantId(post.getId(), tenantId)).thenReturn(Optional.of(post));
         when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        AddSourceCommand command =
-                new AddSourceCommand(post.getId(), tenantId, "https://example.com", "Example");
+        AddSourceCommand command = new AddSourceCommand(post.getId(), tenantId, "https://example.com", "Example");
 
         Post result = postService.addSource(command);
 
@@ -192,13 +194,23 @@ class PostServiceTest {
         when(postRepository.findByIdAndTenantId(post.getId(), tenantId)).thenReturn(Optional.of(post));
         when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        RemoveSourceCommand command =
-                new RemoveSourceCommand(post.getId(), tenantId, "https://example.com", "Example");
+        RemoveSourceCommand command = new RemoveSourceCommand(post.getId(), tenantId, "https://example.com", "Example");
 
         Post result = postService.removeSource(command);
 
         assertThat(result.getSources()).isEmpty();
         verify(postRepository).save(post);
+    }
+
+    @Test
+    @DisplayName("SWR-012: removeSource throws when post not found")
+    void removeSource_throwsWhenPostNotFound() {
+        PostId postId = PostId.generate();
+        when(postRepository.findByIdAndTenantId(postId, tenantId)).thenReturn(Optional.empty());
+
+        RemoveSourceCommand command = new RemoveSourceCommand(postId, tenantId, "https://example.com", "Example");
+
+        assertThatThrownBy(() -> postService.removeSource(command)).isInstanceOf(PostNotFoundException.class);
     }
 
     @Test

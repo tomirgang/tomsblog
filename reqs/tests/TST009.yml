@@ -1,0 +1,20 @@
+active: true
+derived: false
+header: |
+  OpenAPI-Spezifikation und Swagger UI (Integration)
+level: 9.0
+links:
+- SWR024: gxYvhmyH_y1Z5ZJAe1STbdWtOEvecU1csAIjySKTg4c=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/test/java/de/tomsblog/blogcontent/adapter/inbound/rest/OpenApiIntegrationTest.java
+  type: file
+reviewed: -3rVqb_88derVDDBmRVc76qaKaxwip7p9JsfGfgNiPE=
+text: |
+  Integrationstest mit Testcontainers (PostgreSQL):
+  - OpenAPI JSON-Spezifikation unter /api-docs erreichbar
+  - Swagger UI unter /swagger-ui/index.html erreichbar
+  - Alle dokumentierten Endpunkte in der Spezifikation vorhanden
+  - X-Tenant-Id Header in der Spezifikation dokumentiert
+  Testklasse: OpenApiIntegrationTest

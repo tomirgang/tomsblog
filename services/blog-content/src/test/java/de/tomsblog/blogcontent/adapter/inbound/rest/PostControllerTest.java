@@ -10,7 +10,9 @@ import de.tomsblog.blogcontent.application.service.PostNotFoundException;
 import de.tomsblog.blogcontent.domain.model.*;
 import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
+import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,6 +70,37 @@ class PostControllerTest {
         mockMvc.perform(get("/api/posts/{id}", post.getId().value()).header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("My Post"));
+    }
+
+    @Test
+    @DisplayName("SWR-001: GET /api/posts/{id} includes sources and attachments in response")
+    void getPost_returnsSourcesAndAttachments() throws Exception {
+        Post post = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                AuthorId.of(authorId),
+                "Rich Post",
+                Slug.fromTitle("Rich Post"),
+                "Content with references",
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                Set.of(),
+                List.of(new Source("https://example.com", "Example Site")),
+                List.of(new Attachment(
+                        AttachmentId.generate(), "photo.jpg", "image/jpeg", 4096, true, "s3://bucket/photo.jpg")),
+                Instant.now(),
+                null,
+                null);
+        when(postUseCase.getPost(any(), any())).thenReturn(post);
+
+        mockMvc.perform(get("/api/posts/{id}", post.getId().value()).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sources[0].url").value("https://example.com"))
+                .andExpect(jsonPath("$.sources[0].title").value("Example Site"))
+                .andExpect(jsonPath("$.attachments[0].filename").value("photo.jpg"))
+                .andExpect(jsonPath("$.attachments[0].contentType").value("image/jpeg"))
+                .andExpect(jsonPath("$.attachments[0].size").value(4096))
+                .andExpect(jsonPath("$.attachments[0].show").value(true));
     }
 
     @Test

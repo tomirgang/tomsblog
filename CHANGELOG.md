@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Integrationstests mit Testcontainers (PostgreSQL 17) fuer Blog Content Service
+- Vollstaendiger SpringBootTest (BlogContentApplicationTest) mit Testcontainers
+- Audit-Feld-Tests fuer JPA Entities (createdAt, updatedAt, createdBy, updatedBy)
+- PreUpdate-Callback-Tests fuer alle JPA Entities (Post, Tag, Translation)
+- Delete-Integrationstest fuer JpaPostRepository
+- PostController-Test fuer Posts mit Sources und Attachments (PostResponse.SourceResponse, AttachmentResponse)
+- TagController-Test fuer GET /api/tags/{id} Happy Path
+- PostService-Test fuer removeSource wenn Post nicht gefunden
+- Exception-Accessor-Tests (getPostId, getTagId, getTranslationId)
+- Code Coverage von 95.4% auf 99.9% Line Coverage und 97.3% Branch Coverage verbessert
+- OpenAPI/Swagger API-Dokumentation fuer Blog Content Service (springdoc-openapi 2.8.8)
+- Swagger UI unter /swagger-ui.html, OpenAPI Spec unter /api-docs
+- OpenAPI-Annotationen an allen REST-Controllern (PostController, TagController, TranslationController, SourceController)
+- OpenApiConfiguration mit Metadaten und automatischer X-Tenant-Id Header-Dokumentation
+- Integrationstest fuer OpenAPI-Verfuegbarkeit (OpenApiIntegrationTest)
+
 ## [0.1.0] - 2026-05-01
 
 ### Added

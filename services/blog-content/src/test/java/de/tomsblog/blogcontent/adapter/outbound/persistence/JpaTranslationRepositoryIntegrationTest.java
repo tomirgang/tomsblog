@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -43,6 +44,9 @@ class JpaTranslationRepositoryIntegrationTest {
 
     @Autowired
     private JpaPostRepository postRepository;
+
+    @Autowired
+    private TestEntityManager entityManager;
 
     private final TenantId tenantId = TenantId.generate();
     private final AuthorId authorId = AuthorId.generate();
@@ -121,5 +125,38 @@ class JpaTranslationRepositoryIntegrationTest {
         assertThat(found).isPresent();
         assertThat(found.get().getSource()).isEqualTo(TranslationSource.AI_GENERATED);
         assertThat(found.get().getStatus()).isEqualTo(TranslationStatus.REVIEW_PENDING);
+    }
+
+    @Test
+    @DisplayName("SWR-005: Audit fields are populated on persist")
+    void auditFieldsPopulatedOnPersist() {
+        Translation translation =
+                Translation.createManual(postId, tenantId, PostLocale.english(), "Audit Title", "Content");
+        repository.save(translation);
+        entityManager.flush();
+
+        TranslationJpaEntity entity = entityManager.find(
+                TranslationJpaEntity.class, translation.getId().value());
+        assertThat(entity.getCreatedAt()).isNotNull();
+        assertThat(entity.getUpdatedAt()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("SWR-005: UpdatedAt changes on entity update")
+    void updatedAtChangesOnUpdate() {
+        Translation translation =
+                Translation.createManual(postId, tenantId, PostLocale.english(), "Update Title", "Content");
+        repository.save(translation);
+        entityManager.flush();
+        entityManager.clear();
+
+        TranslationJpaEntity entity = entityManager.find(
+                TranslationJpaEntity.class, translation.getId().value());
+        entity.setTitle("Updated Title");
+        entityManager.persistAndFlush(entity);
+
+        TranslationJpaEntity updated = entityManager.find(
+                TranslationJpaEntity.class, translation.getId().value());
+        assertThat(updated.getUpdatedAt()).isNotNull();
     }
 }

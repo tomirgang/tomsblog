@@ -37,6 +37,7 @@
         <spotless.version>3.4.0</spotless.version>
         <jacoco.version>0.8.14</jacoco.version>
         <jazzer.version>0.24.0</jazzer.version>
+        <springdoc.version>2.8.8</springdoc.version>
 
         <!-- Coverage thresholds -->
         <jacoco.line.minimum>0.95</jacoco.line.minimum>
@@ -89,6 +90,13 @@
                 <artifactId>jazzer-junit</artifactId>
                 <version>${jazzer.version}</version>
                 <scope>test</scope>
+            </dependency>
+
+            <!-- API Documentation -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

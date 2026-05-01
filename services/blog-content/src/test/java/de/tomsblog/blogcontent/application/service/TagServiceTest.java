@@ -123,7 +123,10 @@ class TagServiceTest {
         TagId tagId = TagId.generate();
         when(tagRepository.findByIdAndTenantId(tagId, tenantId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> tagService.getTag(tagId, tenantId)).isInstanceOf(TagNotFoundException.class);
+        assertThatThrownBy(() -> tagService.getTag(tagId, tenantId))
+                .isInstanceOf(TagNotFoundException.class)
+                .satisfies(
+                        ex -> assertThat(((TagNotFoundException) ex).getTagId()).isEqualTo(tagId));
     }
 
     @Test

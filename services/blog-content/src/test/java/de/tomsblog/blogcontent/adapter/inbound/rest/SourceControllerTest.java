@@ -36,8 +36,8 @@ class SourceControllerTest {
     @Test
     @DisplayName("SWR-012: POST /api/posts/{postId}/sources adds source and returns 200")
     void addSource_returns200() throws Exception {
-        Post post = Post.create(
-                TenantId.of(tenantId), AuthorId.generate(), "Test Post", "Content", PostLocale.german());
+        Post post =
+                Post.create(TenantId.of(tenantId), AuthorId.generate(), "Test Post", "Content", PostLocale.german());
         when(postUseCase.addSource(any())).thenReturn(post);
 
         String body = """
@@ -147,8 +147,8 @@ class SourceControllerTest {
     @Test
     @DisplayName("SWR-012: DELETE /api/posts/{postId}/sources removes source and returns 204")
     void removeSource_returns204() throws Exception {
-        Post post = Post.create(
-                TenantId.of(tenantId), AuthorId.generate(), "Test Post", "Content", PostLocale.german());
+        Post post =
+                Post.create(TenantId.of(tenantId), AuthorId.generate(), "Test Post", "Content", PostLocale.german());
         when(postUseCase.removeSource(any())).thenReturn(post);
 
         String body = """

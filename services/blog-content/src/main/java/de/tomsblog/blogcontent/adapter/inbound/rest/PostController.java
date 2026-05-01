@@ -7,6 +7,10 @@ import de.tomsblog.blogcontent.domain.model.Post;
 import de.tomsblog.blogcontent.domain.model.PostId;
 import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/posts")
+@Tag(name = "Posts", description = "Blog post CRUD and lifecycle operations")
 @SuppressWarnings("null")
 public class PostController {
 
@@ -33,8 +38,12 @@ public class PostController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new blog post", description = "Creates a draft blog post for the given tenant.")
+    @ApiResponse(responseCode = "201", description = "Post created successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid request body")
     public ResponseEntity<PostResponse> createPost(
-            @RequestHeader("X-Tenant-Id") UUID tenantId, @Valid @RequestBody CreatePostRequest request) {
+            @Parameter(hidden = true) @RequestHeader("X-Tenant-Id") UUID tenantId,
+            @Valid @RequestBody CreatePostRequest request) {
         CreatePostCommand command = new CreatePostCommand(
                 TenantId.of(tenantId),
                 AuthorId.of(request.authorId()),
@@ -50,21 +59,31 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostResponse> getPost(@RequestHeader("X-Tenant-Id") UUID tenantId, @PathVariable UUID id) {
+    @Operation(summary = "Get a blog post by ID")
+    @ApiResponse(responseCode = "200", description = "Post found")
+    @ApiResponse(responseCode = "404", description = "Post not found")
+    public ResponseEntity<PostResponse> getPost(
+            @Parameter(hidden = true) @RequestHeader("X-Tenant-Id") UUID tenantId, @PathVariable UUID id) {
         Post post = postUseCase.getPost(PostId.of(id), TenantId.of(tenantId));
         return ResponseEntity.ok(PostResponse.from(post));
     }
 
     @GetMapping
-    public ResponseEntity<List<PostResponse>> listPosts(@RequestHeader("X-Tenant-Id") UUID tenantId) {
+    @Operation(summary = "List all posts for a tenant")
+    @ApiResponse(responseCode = "200", description = "List of posts")
+    public ResponseEntity<List<PostResponse>> listPosts(
+            @Parameter(hidden = true) @RequestHeader("X-Tenant-Id") UUID tenantId) {
         List<Post> posts = postUseCase.listPosts(TenantId.of(tenantId));
         List<PostResponse> responses = posts.stream().map(PostResponse::from).toList();
         return ResponseEntity.ok(responses);
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a blog post", description = "Updates title, content, and social media fields.")
+    @ApiResponse(responseCode = "200", description = "Post updated")
+    @ApiResponse(responseCode = "404", description = "Post not found")
     public ResponseEntity<PostResponse> updatePost(
-            @RequestHeader("X-Tenant-Id") UUID tenantId,
+            @Parameter(hidden = true) @RequestHeader("X-Tenant-Id") UUID tenantId,
             @PathVariable UUID id,
             @Valid @RequestBody UpdatePostRequest request) {
         UpdatePostCommand command = new UpdatePostCommand(
@@ -79,13 +98,21 @@ public class PostController {
     }
 
     @PostMapping("/{id}/publish")
-    public ResponseEntity<Void> publishPost(@RequestHeader("X-Tenant-Id") UUID tenantId, @PathVariable UUID id) {
+    @Operation(summary = "Publish a blog post", description = "Transitions the post from DRAFT to PUBLISHED status.")
+    @ApiResponse(responseCode = "200", description = "Post published")
+    @ApiResponse(responseCode = "404", description = "Post not found")
+    @ApiResponse(responseCode = "409", description = "Post is already published or archived")
+    public ResponseEntity<Void> publishPost(
+            @Parameter(hidden = true) @RequestHeader("X-Tenant-Id") UUID tenantId, @PathVariable UUID id) {
         postUseCase.publishPost(PostId.of(id), TenantId.of(tenantId));
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@RequestHeader("X-Tenant-Id") UUID tenantId, @PathVariable UUID id) {
+    @Operation(summary = "Delete a blog post")
+    @ApiResponse(responseCode = "204", description = "Post deleted")
+    public ResponseEntity<Void> deletePost(
+            @Parameter(hidden = true) @RequestHeader("X-Tenant-Id") UUID tenantId, @PathVariable UUID id) {
         postUseCase.deletePost(PostId.of(id), TenantId.of(tenantId));
         return ResponseEntity.noContent().build();
     }

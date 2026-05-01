@@ -9,7 +9,7 @@ plantuml::partial$plantuml/building-blocks-l1.puml[format=svg]
 
 == Ebene 2: Blog Content Service
 
-Der Blog Content Service setzt die zentrale Blog-Funktionalität um (SWR-001, SWR-002, SWR-003, SWR-006, SWR-012, SWR-013). Seine hexagonale Struktur (SWA-001) wird im folgenden Diagramm dargestellt:
+Der Blog Content Service setzt die zentrale Blog-Funktionalität um (SWR-001, SWR-002, SWR-003, SWR-006, SWR-012, SWR-013, SWR-024). Seine hexagonale Struktur (SWA-001) wird im folgenden Diagramm dargestellt:
 
 plantuml::partial$plantuml/building-blocks-l2.puml[format=svg]
 
@@ -72,7 +72,9 @@ NOTE: `AuthorId` liegt im `shared-kernel` (SWA-002). Der blog-content Service ha
 | `PostController` | REST Inbound Adapter: CRUD + Publish, Tenant via Header
 | `TagController` | REST Inbound Adapter: Tag CRUD (SWR-020), Tenant via Header
 | `TranslationController` | REST Inbound Adapter: Translation CRUD + Workflow (SWR-021), Tenant via Header
+| `SourceController` | REST Inbound Adapter: Quellenverwaltung (SWR-012), Tenant via Header
 | `GlobalExceptionHandler` | Problem Details (RFC 9457) Fehlerbehandlung
+| `OpenApiConfiguration` | OpenAPI/Swagger Konfiguration: API-Metadaten, X-Tenant-Id Header (SWR-024, SWA-016)
 | `JpaPostRepository` | JPA Outbound Adapter: Implementiert PostRepository
 | `JpaTagRepository` | JPA Outbound Adapter: Implementiert TagRepository
 | `JpaTranslationRepository` | JPA Outbound Adapter: Implementiert TranslationRepository

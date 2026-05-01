@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  OpenAPI/Swagger API-Dokumentation
+level: 24.0
+links:
+- STK009: yDsLlrKOc4WD3pa6Zuz7r9e-ZLF5cbnCERB3Xs-Tj3k=
+normative: true
+ref: ''
+reviewed: 33_ifitBckfXlUYQU1Lt9HG6ZsOErA1mgMJGG-3SWAM=
+text: |
+  Jeder REST-Service muss eine maschinenlesbare OpenAPI 3.x Spezifikation bereitstellen:
+  - Die Spezifikation wird automatisch aus dem Code generiert (springdoc-openapi).
+  - Alle Endpunkte, Request/Response-Schemas und Parameter müssen dokumentiert sein.
+  - Ein Swagger UI muss unter /swagger-ui.html erreichbar sein.
+  - Die OpenAPI JSON-Spezifikation muss unter /api-docs abrufbar sein.
+  - Der X-Tenant-Id Header muss als erforderlicher Parameter dokumentiert werden.
+  - Jede Operation muss einen Summary-Text und die möglichen HTTP-Statuscodes enthalten.

@@ -56,13 +56,13 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 ./mvnw test
 ```
 
-After every code change, always run `./mvnw verify --batch-mode --no-transfer-progress` and check for warnings (compiler warnings, deprecations, test warnings). All warnings must be resolved before considering the task complete.
+After every code change, always run `./mvnw spotless:apply verify --batch-mode --no-transfer-progress` and check for warnings (compiler warnings, deprecations, test warnings). All warnings must be resolved before considering the task complete.
 
 ### Warning Policy
 
 The build must produce **zero warnings**. After each code change:
 
-1. Run `./mvnw verify --batch-mode --no-transfer-progress`
+1. Run `./mvnw spotless:apply verify --batch-mode --no-transfer-progress`
 2. Check output for any lines matching `WARNING:`, `WARN:`, `[WARNING]`, or `OpenJDK 64-Bit Server VM warning:`
 3. If warnings exist, fix them before proceeding
 4. Common suppression mechanisms:

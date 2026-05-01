@@ -7,7 +7,7 @@ links:
 - STK012: ckQcXaP3v0kHxqLaapMqDFKCPmEqjufWwk-C8ABem1g=
 normative: true
 ref: ''
-reviewed: null
+reviewed: 6-VN2zBzEenD8qLW7F2dlqbTdkObkf9Q91PG7yRcRrI=
 text: |
   Alle externen Interfaces (REST-Endpoints) müssen durch Fuzz Tests abgesichert werden:
   - Jeder öffentliche REST-Endpoint muss einen zugehörigen Fuzz Test besitzen.

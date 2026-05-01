@@ -320,6 +320,22 @@ Die Tenant-ID wird über einen HTTP-Header (`X-Tenant-Id`) übergeben, um die Te
 
 Fehler werden über den `GlobalExceptionHandler` als Problem Details nach RFC 9457 zurückgegeben. Input-Validierung erfolgt gemäß SWR-015 zum Schutz vor ungültigen Eingaben.
 
+==== OpenAPI/Swagger-Konfiguration
+
+Die automatische API-Dokumentation (SWR-024) wird über springdoc-openapi (SWA-016) realisiert. Die `OpenApiConfiguration` enthält:
+
+* API-Metadaten (Titel, Version, Beschreibung)
+* Einen globalen `OperationCustomizer`, der den `X-Tenant-Id`-Header automatisch als optionalen Parameter zu allen Operationen hinzufügt
+
+Alle Controller verwenden die folgenden Swagger-Annotationen:
+
+* `@Tag` zur Gruppierung der Endpunkte (Posts, Tags, Translations, Sources)
+* `@Operation` mit Summary und Beschreibung für jede Methode
+* `@ApiResponse` für die möglichen HTTP-Statuscodes
+* `@Parameter(hidden = true)` auf dem X-Tenant-Id-Header-Parameter, da dieser global dokumentiert wird
+
+Die Spezifikation ist unter `/api-docs` (JSON) und die interaktive Oberfläche unter `/swagger-ui.html` erreichbar.
+
 === Outbound Adapter: JPA Persistence
 
 ==== JpaPostRepository
@@ -479,4 +495,6 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWA-007 | Domain-Modell (DDD) | Post, Translation, Tag, Value Objects
 | SWA-008 | Translation als separates Aggregate | Translation mit eigenem Lifecycle
 | SWA-013 | Flyway Migrationen | db/migration/ SQL-Skripte, validate-Modus
+| SWR-024 | OpenAPI/Swagger API-Dokumentation | OpenApiConfiguration, Controller-Annotationen (@Operation, @ApiResponse, @Tag)
+| SWA-016 | springdoc-openapi für API-Dokumentation | springdoc-openapi-starter-webmvc-ui, OperationCustomizer
 |===

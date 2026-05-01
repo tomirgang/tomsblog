@@ -73,6 +73,18 @@ class TagControllerTest {
     }
 
     @Test
+    @DisplayName("GET /api/tags/{id} returns tag")
+    void getTag_returns200() throws Exception {
+        Tag tag = Tag.create(TenantId.of(tenantId), "Spring");
+        when(tagUseCase.getTag(any(), any())).thenReturn(tag);
+
+        mockMvc.perform(get("/api/tags/{id}", tag.getId().value()).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Spring"))
+                .andExpect(jsonPath("$.slug").value("spring"));
+    }
+
+    @Test
     @DisplayName("PUT /api/tags/{id} renames tag")
     void renameTag_returns200() throws Exception {
         Tag tag = Tag.create(TenantId.of(tenantId), "Java");

@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  springdoc-openapi für API-Dokumentation
+level: 16.0
+links:
+- SWR024: gxYvhmyH_y1Z5ZJAe1STbdWtOEvecU1csAIjySKTg4c=
+normative: true
+ref: ''
+reviewed: 0RDWbS4U_CYFCpbqIMgv8kpFv7kJYn0FZj2iSqV9JKY=
+text: |
+  Die API-Dokumentation wird mit springdoc-openapi (v2.x) automatisch aus dem
+  Code generiert. springdoc-openapi-starter-webmvc-ui stellt sowohl die
+  OpenAPI-Spezifikation als auch das Swagger UI bereit. Die Annotationen
+  @Operation, @ApiResponse und @Tag aus io.swagger.v3.oas.annotations werden
+  an den REST-Controllern verwendet. Ein globaler OperationCustomizer fügt
+  den X-Tenant-Id Header automatisch zu allen Operationen hinzu.
+  Die Version wird zentral im Parent POM verwaltet.

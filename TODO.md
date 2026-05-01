@@ -27,8 +27,8 @@
 - [x] CRUD-Operationen für Blog-Posts
 - [x] Mehrsprachigkeit im Domain-Modell abbilden
 - [x] Quellenverwaltung für Posts
-- [ ] Unit- und Integrationstests (Testcontainers für PostgreSQL)
-- [ ] API-Dokumentation (OpenAPI/Swagger)
+- [x] Unit- und Integrationstests (Testcontainers für PostgreSQL)
+- [x] API-Dokumentation (OpenAPI/Swagger)
 - [ ] Thymeleaf: Layout-Grundgerüst (responsiv, einfaches CSS-Framework)
 - [ ] Thymeleaf: Öffentliche Blog-Ansicht (Post-Liste, Einzelansicht)
 - [ ] Thymeleaf: Einfaches Formular zum Erstellen/Bearbeiten von Posts
