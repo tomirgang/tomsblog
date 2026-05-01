@@ -33,6 +33,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - CI release-assets job attaches JAR, documentation, and requirements report to GitHub releases
 - Antora versioning: docs are versioned from tags (v*), main branch produces dev prerelease
 - CI deploys generated documentation to GitHub Pages via docs branch
+- Stakeholder requirement STK-013: zeitgesteuerte Veröffentlichung
+- Software requirement SWR-022: time-based auto publishing API
+- ADR-0016: Backend for Frontend (BFF) pattern
+- ADR-0017: API Gateway (Spring Cloud Gateway)
+- Milestone 7: Android-App für Autoren (Kotlin, Jetpack Compose, Mobile BFF)
 
 ### Fixed
 

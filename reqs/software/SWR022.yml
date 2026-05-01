@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Time-based Auto Publishing
+level: 22.0
+links:
+- STK013: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Das System muss zeitgesteuerte Veröffentlichung (Scheduled Publishing) unterstützen:
+  - Ein Post kann mit einem zukünftigen Veröffentlichungszeitpunkt (publishAt) versehen werden.
+  - Ein Scheduler prüft periodisch, ob Posts zur Veröffentlichung anstehen.
+  - Zum geplanten Zeitpunkt wird der Post automatisch in den Status PUBLISHED überführt.
+  - Ein PostPublishedEvent wird dabei ausgelöst (wie bei manueller Veröffentlichung).
+  - Der Autor kann den geplanten Zeitpunkt bis zur Veröffentlichung ändern oder stornieren.
+  - Die REST API wird um das Feld publishAt erweitert (optional bei POST/PUT /api/posts/{id}).

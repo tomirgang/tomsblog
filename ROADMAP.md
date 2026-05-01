@@ -43,6 +43,13 @@
 │                Social Media Promotion                                   │
 │       Automatisierte Bewerbung auf Mastodon & LinkedIn                  │
 └─────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        MEILENSTEIN 7                                    │
+│              Android-App für Autoren (Kotlin)                           │
+│         Jetpack Compose + Mobile BFF + API Gateway                      │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -167,6 +174,32 @@
 - Autoren konfigurieren ihre Plattform-Verbindungen einmalig im Backend (OAuth-Flow)
 - Pro Post wählt der Autor aus, auf welchen Plattformen beworben werden soll
 - Beim Publizieren wird ein `PostPublishedEvent` ausgelöst, das die Social-Media-Adapter triggert
+
+---
+
+## Meilenstein 7: Android-App für Autoren (Kotlin)
+
+**Ziel:** Native Android-App für Post-Autoren zum Erstellen und Bearbeiten von Blog-Posts von unterwegs. Kommunikation über das Mobile BFF.
+
+| Schritt | Beschreibung                                                              |
+| ------- | ------------------------------------------------------------------------- |
+| 7.1     | Mobile BFF Service (Spring Boot, REST API, optimiert für Mobile-Clients)  |
+| 7.2     | API Gateway Routing für Mobile BFF (/mobile/api/**)                       |
+| 7.3     | Android-Projekt-Setup (Kotlin, Jetpack Compose, Gradle)                   |
+| 7.4     | Authentifizierung (OAuth2/OIDC, Token-basiert)                            |
+| 7.5     | Post-Liste: Übersicht eigener Posts mit Status                            |
+| 7.6     | Post-Editor: Erstellen und Bearbeiten (Markdown-Editor)                   |
+| 7.7     | Scheduled Publishing: Veröffentlichungszeitpunkt planen                   |
+| 7.8     | Offline-Fähigkeit: Entwürfe lokal speichern und synchronisieren           |
+| 7.9     | Push-Benachrichtigungen (Post veröffentlicht, Kommentar erhalten)         |
+| 7.10    | Bild-Upload: Fotos direkt vom Gerät als Attachment hinzufügen             |
+
+**Technologie-Stack:**
+- Kotlin
+- Jetpack Compose (UI)
+- Ktor oder Retrofit (HTTP-Client)
+- Room (lokale Datenbank für Offline-Entwürfe)
+- Kommunikation: REST via Mobile BFF
 
 ---
 

@@ -81,6 +81,8 @@ Requirement document hierarchy:
 - Custom Auth Service (no Keycloak) with OIDC login support
 - Domain-based tenant resolution (tenant selected via Host header)
 - S3-compatible storage (Garage on Netcup VM) for media and backups
+- Backend for Frontend (BFF) pattern: dedicated BFF per client type (Web, Mobile, Media)
+- Spring Cloud Gateway as API Gateway (routing, rate-limiting, auth propagation)
 
 ## Formatting remarks
 
