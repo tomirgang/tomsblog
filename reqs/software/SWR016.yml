@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Custom Identity Provider mit OIDC
+level: 16.0
+links:
+- STK005: mDS-DAHBR4nu0Joa0VgI6H2rQWz8hx3yLAYv8ahqIcg=
+normative: true
+ref: ''
+reviewed: ''
+text: |
+  Das System muss einen eigenen Identity Provider Service bereitstellen.
+  Dieser Service muss OpenID Connect (OIDC) Login unterstützen, sodass
+  Benutzer sich über externe OIDC Provider (z.B. Google, GitHub) anmelden
+  können. Der Service verwaltet Benutzerkonten, Rollen und Sessions.

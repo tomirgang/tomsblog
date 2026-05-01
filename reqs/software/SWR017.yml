@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Domain-basierte Tenant-Auswahl
+level: 17.0
+links:
+- STK002: evLZsjXR3mxOQtxmkgANEz_UWhgFAzRbCaOHAIHRsvk=
+normative: true
+ref: ''
+reviewed: ''
+text: |
+  Die Tenant-Zuordnung eines Requests muss über die verwendete Domain
+  oder Subdomain erfolgen. Ein Tenant kann mehrere Domains und Subdomains
+  konfigurieren (z.B. eigene Domain, Subdomain der Plattform). Das System
+  muss die TenantId aus dem Host-Header des eingehenden Requests auflösen.

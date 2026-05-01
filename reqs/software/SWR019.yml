@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Shadow-Banning für Kommentare
+level: 19.0
+links:
+- STK001: null
+normative: true
+ref: ''
+reviewed: ''
+text: |
+  Das Kommentarsystem muss Shadow-Banning unterstützen. Ein
+  shadow-gebannter Benutzer sieht seine eigenen Kommentare weiterhin
+  normal, andere Benutzer sehen diese Kommentare jedoch nicht.
+  Administratoren und Autoren können Shadow-Bans vergeben und aufheben.

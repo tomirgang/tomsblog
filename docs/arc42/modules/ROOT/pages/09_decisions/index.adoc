@@ -16,6 +16,10 @@ Alle Architekturentscheidungen sind als ADRs dokumentiert:
 | link:{attachmentsdir}/../../../adr/0007-doorstop-requirement-tracing.md[0007] | Doorstop für Requirement Tracing | Accepted
 | link:{attachmentsdir}/../../../adr/0008-shared-kernel-framework-frei.md[0008] | Shared Kernel als Framework-freie Library | Accepted
 | link:{attachmentsdir}/../../../adr/0010-grpc-service-kommunikation.md[0010] | gRPC für synchrone Service-Kommunikation | Accepted
+| link:{attachmentsdir}/../../../adr/0011-custom-identity-provider.md[0011] | Custom Identity Provider mit OIDC | Accepted
+| link:{attachmentsdir}/../../../adr/0012-domain-basierte-tenant-auswahl.md[0012] | Domain-basierte Tenant-Auswahl | Accepted
+| link:{attachmentsdir}/../../../adr/0013-llm-kommentar-moderation.md[0013] | LLM-basierte Kommentar-Moderation | Accepted
+| link:{attachmentsdir}/../../../adr/0014-shadow-banning.md[0014] | Shadow-Banning im Kommentarsystem | Accepted
 |===
 
 NOTE: ADRs werden als Markdown-Dateien in `docs/adr/` gepflegt. Dieses Kapitel dient als Index.

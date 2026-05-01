@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Domain-basierte Tenant-Resolution am Ingress
+level: 11.0
+links:
+- SWR003: HcvwMUkzXgsvNmY2jRjulG90zdxmQl_edK01ZmqjOX4=
+- SWR017: null
+normative: true
+ref: ''
+reviewed: ''
+text: |
+  Die Tenant-Auflösung erfolgt am Ingress-Level über den Host-Header.
+  Ein Tenant-Resolution-Service mappt Domains auf TenantIds.
+  Ein Tenant kann mehrere Domains besitzen (Custom-Domain + Plattform-Subdomain).
+  Die aufgelöste TenantId wird als Header (X-Tenant-Id) an nachgelagerte
+  Services propagiert.

@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Automatisierte Kommentar-Moderation via LLM
+level: 18.0
+links:
+- STK001: null
+normative: true
+ref: ''
+reviewed: ''
+text: |
+  Neue Kommentare müssen automatisiert durch ein LLM überprüft werden.
+  Die Überprüfung nutzt das OpenRouter-Backend und bewertet Kommentare
+  auf Spam, Beleidigungen und Off-Topic-Inhalte. Kommentare werden
+  automatisch als approved, rejected oder review_pending klassifiziert.
+  Bei LLM-Ausfall greift Graceful Degradation (Kommentar wird als
+  review_pending markiert).

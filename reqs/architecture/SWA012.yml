@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  LLM-basierte Kommentar-Moderation als Adapter
+level: 12.0
+links:
+- SWR018: null
+normative: true
+ref: ''
+reviewed: ''
+text: |
+  Die automatisierte Kommentar-Überprüfung wird als Outbound-Adapter im
+  Kommentar-Service implementiert. Der Adapter nutzt das OpenRouter-Backend
+  (analog zum AI-Adapter im Blog Content Service, SWA-006).
+  Das Moderation-Interface ist als Port definiert, sodass der LLM-Adapter
+  austauschbar bleibt (z.B. durch regelbasierte Moderation als Fallback).

@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Custom Auth Service als eigener Microservice
+level: 10.0
+links:
+- SWR007: _idI4rzQ2_WbYBmTwEWCjZjMSMtm1vzQ4tgSzjXWqI4=
+- SWR016: null
+normative: true
+ref: ''
+reviewed: ''
+text: |
+  Die Authentifizierung und Autorisierung wird als eigener Microservice
+  implementiert (kein Keycloak). Der Auth Service unterstützt OIDC als
+  Relying Party und stellt JWTs für die interne Service-Kommunikation aus.
+  Andere Services validieren Tokens lokal via Public Key.

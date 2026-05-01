@@ -5,7 +5,7 @@
 
 Die Multi-Tenancy-Fähigkeit setzt die Stakeholder-Anforderung STK-002 um und wird durch SWR-003 (Tenant-Isolation auf Datenebene) detailliert.
 
-Jede Domain-Entity trägt eine `TenantId`. Tenant-Isolation wird auf Datenbank-Ebene sichergestellt (Row-Level-Security oder Schema-basiert, noch zu entscheiden).
+Jede Domain-Entity trägt eine `TenantId`. Die Tenant-Zuordnung eines Requests erfolgt über die verwendete Domain (SWR-017, SWA-011): Der Host-Header wird am Ingress in eine TenantId aufgelöst und als `X-Tenant-Id` an Backend-Services propagiert. Ein Tenant kann mehrere Domains besitzen. Tenant-Isolation wird auf Datenbank-Ebene sichergestellt (Row-Level-Security oder Schema-basiert, noch zu entscheiden).
 
 == Audit
 
@@ -54,7 +54,8 @@ Die Mehrsprachigkeit setzt STK-003 um. Übersetzungen können manuell (SWR-005) 
 
 Die Sicherheitsanforderungen leiten sich aus STK-012 (Sicherheit) und STK-005 (Benutzerverwaltung) ab. SWR-015 definiert die Input-Validierung und den OWASP-Schutz, SWR-007 die rollenbasierte Zugriffskontrolle.
 
-* Authentication via Keycloak oder eigenem Service (noch zu evaluieren)
+* Authentication über eigenen Auth Service mit OIDC-Unterstützung (SWR-016, SWA-010)
 * RBAC: Admin, Autor, Leser (SWR-007)
+* JWT-basierte Token-Validierung in allen Services (Public Key lokal)
 * OWASP Top 10 wird bei Code-Reviews geprüft (SWR-015)
 * Input-Validierung an den Systemgrenzen (SWR-015)
