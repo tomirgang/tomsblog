@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-01
+
 ### Added
 
 - Integrationstests mit Testcontainers (PostgreSQL 17) fuer Blog Content Service
