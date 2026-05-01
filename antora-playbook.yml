@@ -5,10 +5,12 @@ site:
 content:
   sources:
     - url: .
-      branches: HEAD
+      branches: [main, HEAD]
+      tags: ['v*']
       start_path: docs/arc42
     - url: .
-      branches: HEAD
+      branches: [main, HEAD]
+      tags: ['v*']
       start_path: docs/design
 
 ui:

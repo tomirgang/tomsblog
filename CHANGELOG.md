@@ -8,18 +8,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
-- Upgrade spotless-maven-plugin from 2.44.0 to 3.4.0 (JDK 25 compatibility)
-- Build & Test verification rule in AGENTS.md
-
-### Fixed
-
-- Spotless/Palantir Java Format crash on JDK 25
-- Compiler warnings (null safety, unused imports)
-
-## [0.0.1-SNAPSHOT] - 2026-05-01
-
-### Added
-
 - Hexagonal architecture for blog-content service with ports and adapters
 - Domain model: Post, Translation, Tag, Attachment, Source, PostLocale
 - Application layer: PostUseCase, TagUseCase, TranslationUseCase with service implementations
@@ -37,3 +25,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - Docker Compose for local development (PostgreSQL, Redis, Kafka)
 - Roadmap with 6 milestones
 - Maven multi-module project structure (parent, shared-kernel, event-contracts, blog-content)
+- Upgrade spotless-maven-plugin from 2.44.0 to 3.4.0 (JDK 25 compatibility)
+- Build & Test verification rule in AGENTS.md
+- CI job to generate Antora documentation and attach as workflow artifact
+- CI job to validate Doorstop requirements and attach coverage report as workflow artifact
+- CI build triggers on tags and releases
+- CI release-assets job attaches JAR, documentation, and requirements report to GitHub releases
+- Antora versioning: docs are versioned from tags (v*), main branch produces dev prerelease
+- CI deploys generated documentation to GitHub Pages via docs branch
+
+### Fixed
+
+- CI Node.js 20 deprecation warnings by opting into Node.js 24 for actions
+- Spotless/Palantir Java Format crash on JDK 25
+- Compiler warnings (null safety, unused imports)
