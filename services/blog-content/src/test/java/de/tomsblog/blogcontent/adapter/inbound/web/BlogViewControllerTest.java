@@ -2,6 +2,7 @@ package de.tomsblog.blogcontent.adapter.inbound.web;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -18,10 +19,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(BlogViewController.class)
+@Import(SecurityConfiguration.class)
 class BlogViewControllerTest {
 
     @Autowired
@@ -40,22 +44,41 @@ class BlogViewControllerTest {
     }
 
     @Test
-    @DisplayName("SWR-026: GET /posts returns post list view with all posts")
-    void listPosts_returnsListView() throws Exception {
+    @DisplayName("SWR-028: GET /posts without auth returns only published posts")
+    void listPosts_anonymous_returnsPublishedOnly() throws Exception {
         Post post = Post.create(TenantId.of(tenantId), authorId, "Published Post", "Content", PostLocale.german());
         post.publish();
+        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of(post));
+
+        mockMvc.perform(get("/posts").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/list"))
+                .andExpect(model().attributeExists("posts"));
+
+        verify(postUseCase).listPublishedPosts(any(TenantId.class));
+        verify(postUseCase, never()).listPosts(any(TenantId.class));
+    }
+
+    @Test
+    @DisplayName("SWR-028: GET /posts with auth returns all posts")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void listPosts_authenticated_returnsAllPosts() throws Exception {
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Draft Post", "Content", PostLocale.german());
         when(postUseCase.listPosts(any(TenantId.class))).thenReturn(List.of(post));
 
         mockMvc.perform(get("/posts").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/list"))
                 .andExpect(model().attributeExists("posts"));
+
+        verify(postUseCase).listPosts(any(TenantId.class));
+        verify(postUseCase, never()).listPublishedPosts(any(TenantId.class));
     }
 
     @Test
     @DisplayName("SWR-026: GET /posts returns empty list when no posts")
     void listPosts_returnsEmptyList() throws Exception {
-        when(postUseCase.listPosts(any(TenantId.class))).thenReturn(List.of());
+        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of());
 
         mockMvc.perform(get("/posts").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
@@ -89,6 +112,7 @@ class BlogViewControllerTest {
 
     @Test
     @DisplayName("SWR-027: GET /posts/new returns empty form")
+    @WithMockUser(username = "admin", roles = "ADMIN")
     void newPostForm_returnsEmptyForm() throws Exception {
         mockMvc.perform(get("/posts/new"))
                 .andExpect(status().isOk())
@@ -99,11 +123,13 @@ class BlogViewControllerTest {
 
     @Test
     @DisplayName("SWR-027: POST /posts creates post and redirects on valid input")
+    @WithMockUser(username = "admin", roles = "ADMIN")
     void createPost_validInput_redirects() throws Exception {
         Post post = Post.create(TenantId.of(tenantId), authorId, "New Post", "Content", PostLocale.german());
         when(postUseCase.createPost(any(CreatePostCommand.class))).thenReturn(post);
 
         mockMvc.perform(post("/posts")
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .header("X-Author-Id", authorId.value().toString())
                         .param("title", "New Post")
@@ -117,8 +143,10 @@ class BlogViewControllerTest {
 
     @Test
     @DisplayName("SWR-027: POST /posts returns form with errors on blank title")
+    @WithMockUser(username = "admin", roles = "ADMIN")
     void createPost_blankTitle_returnsFormWithErrors() throws Exception {
         mockMvc.perform(post("/posts")
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .header("X-Author-Id", authorId.value().toString())
                         .param("title", "")
@@ -134,8 +162,10 @@ class BlogViewControllerTest {
 
     @Test
     @DisplayName("SWR-027: POST /posts returns form with errors on blank content")
+    @WithMockUser(username = "admin", roles = "ADMIN")
     void createPost_blankContent_returnsFormWithErrors() throws Exception {
         mockMvc.perform(post("/posts")
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .header("X-Author-Id", authorId.value().toString())
                         .param("title", "Title")
@@ -150,8 +180,10 @@ class BlogViewControllerTest {
 
     @Test
     @DisplayName("SWR-027: POST /posts returns form with errors on blank locale")
+    @WithMockUser(username = "admin", roles = "ADMIN")
     void createPost_blankLocale_returnsFormWithErrors() throws Exception {
         mockMvc.perform(post("/posts")
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .header("X-Author-Id", authorId.value().toString())
                         .param("title", "Title")
@@ -166,6 +198,7 @@ class BlogViewControllerTest {
 
     @Test
     @DisplayName("SWR-027: GET /posts/{id}/edit returns pre-filled form")
+    @WithMockUser(username = "admin", roles = "ADMIN")
     void editPostForm_returnsPreFilledForm() throws Exception {
         UUID postId = UUID.randomUUID();
         Post post =
@@ -182,6 +215,7 @@ class BlogViewControllerTest {
 
     @Test
     @DisplayName("SWR-027: POST /posts/{id} updates post and redirects on valid input")
+    @WithMockUser(username = "admin", roles = "ADMIN")
     void updatePost_validInput_redirects() throws Exception {
         UUID postId = UUID.randomUUID();
         Post post =
@@ -189,6 +223,7 @@ class BlogViewControllerTest {
         when(postUseCase.updatePost(any(UpdatePostCommand.class))).thenReturn(post);
 
         mockMvc.perform(post("/posts/{id}", postId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .param("title", "Updated Post")
                         .param("content", "Updated content")
@@ -201,10 +236,12 @@ class BlogViewControllerTest {
 
     @Test
     @DisplayName("SWR-027: POST /posts/{id} returns form with errors on blank title")
+    @WithMockUser(username = "admin", roles = "ADMIN")
     void updatePost_blankTitle_returnsFormWithErrors() throws Exception {
         UUID postId = UUID.randomUUID();
 
         mockMvc.perform(post("/posts/{id}", postId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .param("title", "")
                         .param("content", "Content")
@@ -220,10 +257,11 @@ class BlogViewControllerTest {
 
     @Test
     @DisplayName("SWR-002: POST /posts/{id}/publish publishes post and redirects")
+    @WithMockUser(username = "admin", roles = "ADMIN")
     void publishPost_redirects() throws Exception {
         UUID postId = UUID.randomUUID();
 
-        mockMvc.perform(post("/posts/{id}/publish", postId).header("X-Tenant-Id", tenantId.toString()))
+        mockMvc.perform(post("/posts/{id}/publish", postId).with(csrf()).header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/posts"));
 

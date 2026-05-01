@@ -14,6 +14,9 @@ spring:
 blog:
   default-tenant-id: "00000000-0000-0000-0000-000000000001"
   default-author-id: "00000000-0000-0000-0000-000000000001"
+  admin:
+    username: admin
+    password: ${BLOG_ADMIN_PASSWORD:admin}
 
 springdoc:
   api-docs:

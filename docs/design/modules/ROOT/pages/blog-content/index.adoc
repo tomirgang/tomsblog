@@ -709,4 +709,109 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWA-016 | springdoc-openapi für API-Dokumentation | springdoc-openapi-starter-webmvc-ui, OperationCustomizer
 | SWR-025 | Thymeleaf Layout-Grundgerüst | BlogViewController, layout/default.html, PicoCSS, custom.css
 | SWR-026 | Öffentliche Blog-Ansicht (Post-Liste, Einzelansicht) | BlogViewController.listPosts/showPost, posts/list.html, posts/show.html, PostRepository.findPublishedByTenantId/findBySlugAndTenantId
+| SWR-027 | Thymeleaf Post-Formular | BlogViewController.newPostForm/createPost/editPostForm/updatePost, posts/form.html
+| SWR-028 | Admin-Login zum Schutz der Schreiboperationen | SecurityConfiguration, login.html, HTTP Basic für REST API
 |===
+
+== Sicherheit: Admin-Login (SWR-028)
+
+Der Blog Content Service schützt alle Schreiboperationen über Spring Security mit einem einfachen formbasierten Login.
+Dies ist eine MVP-Lösung für Phase 2. In Phase 4 wird sie durch den Custom Identity Provider (SWR-016, SWA-010) ersetzt.
+
+=== Schutzkonzept
+
+Die Zugriffsregeln teilen die Endpunkte in öffentliche (lesende) und geschützte (schreibende) Bereiche:
+
+[cols="1,2,1"]
+|===
+| Bereich | Endpunkte | Zugriff
+
+| Öffentlich (Web) | GET /posts, GET /posts/{slug} | Anonym (nur PUBLISHED-Posts sichtbar)
+| Geschützt (Web) | GET /posts/new, GET /posts/{id}/edit, POST /posts, POST /posts/{id} | Formular-Login (ADMIN)
+| Geschützt (API) | GET/POST/PUT/DELETE /api/posts/**, /api/tags/**, /api/posts/{id}/translations/**, /api/posts/{id}/sources/** | HTTP Basic (ADMIN)
+| Öffentlich (Infra) | Swagger UI (/swagger-ui.html, /api-docs), Actuator Health | Anonym
+| Login | GET/POST /login, POST /logout | Anonym
+|===
+
+Die öffentliche Post-Liste (`/posts`) verwendet `listPublishedPosts()` und zeigt nur veröffentlichte Posts.
+Nach Login verwendet dieselbe Route `listPosts()` und zeigt alle Posts mit Status-Badge (DRAFT, PUBLISHED, ARCHIVED).
+
+=== Architektur
+
+[mermaid]
+----
+classDiagram
+    class SecurityConfiguration {
+        +securityFilterChain(http) SecurityFilterChain
+        +userDetailsService() InMemoryUserDetailsManager
+        +passwordEncoder() PasswordEncoder
+    }
+
+    class AdminProperties {
+        -String username
+        -String password
+    }
+
+    SecurityConfiguration --> AdminProperties : reads credentials
+    SecurityConfiguration --> SecurityFilterChain : configures
+
+    note for SecurityConfiguration "Package: adapter.inbound.web"
+    note for AdminProperties "@ConfigurationProperties(prefix = blog.admin)"
+----
+
+Die `SecurityConfiguration` ist ein Inbound-Adapter (Package `adapter.inbound.web`), da sie die HTTP-Zugangsschicht konfiguriert.
+Die Admin-Credentials werden über `@ConfigurationProperties` aus den Spring-Properties `blog.admin.username` und `blog.admin.password` gelesen.
+
+=== Ablauf: Login und geschützte Operation
+
+[mermaid]
+----
+sequenceDiagram
+    actor Admin
+    participant Filter as Spring Security Filter
+    participant Login as /login
+    participant Controller as BlogViewController
+
+    Admin->>Controller: GET /posts/new
+    Filter->>Login: redirect (nicht authentifiziert)
+    Login-->>Admin: login.html (Formular)
+
+    Admin->>Login: POST /login (username, password)
+    Filter->>Filter: Authentifizierung prüfen
+    alt Credentials korrekt
+        Filter-->>Admin: redirect /posts (oder ursprüngliche URL)
+        Admin->>Controller: GET /posts/new
+        Controller-->>Admin: posts/form.html
+    else Credentials falsch
+        Login-->>Admin: login.html (Fehlermeldung)
+    end
+----
+
+=== Login-Template
+
+Das Login-Template (`login.html`) nutzt das bestehende Layout-Grundgerüst (SWR-025) und zeigt:
+
+* Ein Formular mit Feldern für Benutzername und Passwort
+* Eine Fehlermeldung bei fehlgeschlagenem Login
+* Eine Erfolgsmeldung nach Logout
+
+=== Header-Integration
+
+Der Header-Fragment (`fragments/header.html`) zeigt kontextabhängig:
+
+* Wenn eingeloggt: den Benutzernamen und einen Logout-Link
+* Wenn nicht eingeloggt: einen Login-Link
+
+=== Konfiguration
+
+Die Admin-Credentials werden über Spring-Properties konfiguriert:
+
+[source,yaml]
+----
+blog:
+  admin:
+    username: admin
+    password: ${BLOG_ADMIN_PASSWORD:admin}
+----
+
+In der lokalen Entwicklung wird ein Default-Passwort gesetzt. Im Produktionsbetrieb wird das Passwort über eine Umgebungsvariable injiziert.

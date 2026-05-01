@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout/default}">
 <head>
     <title>Posts</title>
@@ -9,7 +10,7 @@
     <section layout:fragment="content">
         <h1>Blog Posts</h1>
 
-        <p><a th:href="@{/posts/new}" role="button">Neuen Post erstellen</a></p>
+        <p sec:authorize="isAuthenticated()"><a th:href="@{/posts/new}" role="button">Neuen Post erstellen</a></p>
 
         <p th:if="${#lists.isEmpty(posts)}">Noch keine Beiträge vorhanden.</p>
 
@@ -38,8 +39,10 @@
             <footer>
                 <a th:if="${post.status.name() == 'PUBLISHED'}"
                    th:href="@{/posts/{slug}(slug=${post.slug.value})}">Weiterlesen</a>
-                <a th:href="@{/posts/{id}/edit(id=${post.id.value})}">Bearbeiten</a>
-                <form th:if="${post.status.name() == 'DRAFT'}"
+                <a sec:authorize="isAuthenticated()"
+                   th:href="@{/posts/{id}/edit(id=${post.id.value})}">Bearbeiten</a>
+                <form sec:authorize="isAuthenticated()"
+                      th:if="${post.status.name() == 'DRAFT'}"
                       th:action="@{/posts/{id}/publish(id=${post.id.value})}"
                       method="post" style="display:inline">
                     <button type="submit" class="secondary outline">Veröffentlichen</button>

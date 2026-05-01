@@ -1,5 +1,6 @@
 package de.tomsblog.blogcontent.adapter.inbound.web;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -11,11 +12,13 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(BlogViewController.class)
-@Import(DefaultTenantFilter.class)
+@Import({DefaultTenantFilter.class, SecurityConfiguration.class})
+@WithMockUser(username = "admin", roles = "ADMIN")
 class DefaultTenantFilterTest {
 
     @Autowired
@@ -30,6 +33,7 @@ class DefaultTenantFilterTest {
         Mockito.when(postUseCase.createPost(Mockito.any())).thenReturn(null);
 
         mockMvc.perform(post("/posts")
+                        .with(csrf())
                         .param("title", "Test")
                         .param("content", "Content")
                         .param("locale", "de"))
@@ -42,6 +46,7 @@ class DefaultTenantFilterTest {
         Mockito.when(postUseCase.createPost(Mockito.any())).thenReturn(null);
 
         mockMvc.perform(post("/posts")
+                        .with(csrf())
                         .header("X-Tenant-Id", "11111111-1111-1111-1111-111111111111")
                         .param("title", "Test")
                         .param("content", "Content")

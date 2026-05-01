@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- Einfacher Admin-Login mit Spring Security zum Schutz aller Schreiboperationen (SWR-028)
+- SecurityConfiguration: Formular-Login für Web-UI, HTTP Basic für REST API, CSRF-Schutz
+- AdminProperties: Konfigurierbare Admin-Credentials via Spring Properties (blog.admin.username/password)
+- Login-Template (login.html) im PicoCSS-Layout mit Fehler- und Logout-Meldungen
+- Header-Fragment zeigt Login/Logout-Link je nach Authentifizierungsstatus
+- Post-Liste zeigt nur veröffentlichte Posts für anonyme Besucher, alle Posts nach Login
+- SecurityConfigurationTest: Tests für öffentliche, geschützte und API-Endpunkte
+- AdminPropertiesTest: Tests für Default-Werte bei null/blank Credentials
 - Veröffentlichen-Button in Post-Liste (POST /posts/{id}/publish) für Draft-Posts
 - DefaultTenantFilter: Property-basierter Filter (blog.default-tenant-id, blog.default-author-id) injiziert Default-Header in allen Profilen (ersetzt LocalDevHeaderFilter)
 - Post-Liste zeigt alle Posts (inkl. Drafts) mit Status-Anzeige und Publish-Aktion

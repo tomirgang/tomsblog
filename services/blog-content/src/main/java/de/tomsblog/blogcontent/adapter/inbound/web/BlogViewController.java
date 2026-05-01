@@ -9,6 +9,7 @@ import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Controller;
@@ -41,11 +42,18 @@ public class BlogViewController {
         return "index";
     }
 
-    /** @req SWR-026 */
+    /** @req SWR-026 @req SWR-028 */
     @GetMapping("/posts")
-    public String listPosts(@RequestHeader("X-Tenant-Id") UUID tenantId, Model model) {
-        List<Post> posts = postUseCase.listPosts(new TenantId(tenantId));
+    public String listPosts(@RequestHeader("X-Tenant-Id") UUID tenantId, Model model, Principal principal) {
+        TenantId tenant = new TenantId(tenantId);
+        List<Post> posts;
+        if (principal != null) {
+            posts = postUseCase.listPosts(tenant);
+        } else {
+            posts = postUseCase.listPublishedPosts(tenant);
+        }
         model.addAttribute("posts", posts);
+        model.addAttribute("authenticated", principal != null);
         return "posts/list";
     }
 
