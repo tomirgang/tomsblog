@@ -27,7 +27,7 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 | Observability | Prometheus, Grafana, Loki, Tempo                                             |
 | AI            | OpenRouter                                                                   |
 | Requirements  | Doorstop (YAML in Git, ASPICE-oriented traceability)                         |
-| Docs          | arc42 (AsciiDoc + Antora), ADRs (Markdown + MkDocs)                          |
+| Docs          | arc42 (AsciiDoc + Antora), Detail Design (AsciiDoc + Antora + Mermaid), ADRs (Markdown + MkDocs) |
 
 ## Conventions
 
@@ -39,9 +39,13 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 - Events: publish domain events for cross-service communication (Post created/updated/published)
 - Requirements: Doorstop for multi-level tracing (Stakeholder → Software Req → Design → Implementation → Test)
 - Requirement IDs in test names (`@DisplayName("SWR-042: ...")`) and Javadoc (`@req SWR-042`)
-- Diagrams: PlantUML as separate `.puml` files in `docs/arc42/modules/ROOT/images/plantuml/`, referenced from AsciiDoc via `plantuml::partial$...`
+- Diagrams in arc42: PlantUML as separate `.puml` files in `docs/arc42/modules/ROOT/images/plantuml/`, referenced from AsciiDoc via `plantuml::partial$...`
+- Diagrams in design docs: Mermaid diagrams inline in AsciiDoc via `[mermaid]` blocks
 - Only use plain ASCII chars in PlantUML (no umlauts, use ae/oe/ue instead)
 - All other files (AsciiDoc, Markdown, YAML, Java Javadoc) use proper German umlauts (ä, ö, ü, ß)
+- Software Detail Design documentation in `docs/design/` using AsciiDoc + Antora (separate Antora component)
+- All Doorstop requirements (SWR, SWA) must be referenced from the architecture docs (arc42) and software detail design docs at the appropriate locations
+- Requirement references and diagram includes must be accompanied by explaining text that provides context (never a bare include/reference without surrounding prose)
 
 ## Build & Test
 

@@ -3,14 +3,16 @@
 
 == Architekturansatz
 
-[cols="1,2"]
-|===
-| Entscheidung | Begründung
+Die zentralen Architekturentscheidungen setzen die Stakeholder-Anforderungen an Erweiterbarkeit (STK-009), Multi-Tenancy (STK-002) und Audit-Fähigkeit (STK-004) um:
 
-| Hexagonale Architektur | Framework-unabhängige Domain, austauschbare Adapter
-| Microservices | Unabhängige Deployments, Technologie-Heterogenität (REST + GraphQL)
-| Event-Driven (Kafka) | Lose Kopplung, Replay-Fähigkeit, Audit-Trail
-| Multi-Tenant | Mandantenfähigkeit von Anfang an im Design
+[cols="1,2,1"]
+|===
+| Entscheidung | Begründung | Anforderungen
+
+| Hexagonale Architektur | Framework-unabhängige Domain, austauschbare Adapter | SWA-001
+| Microservices | Unabhängige Deployments, Technologie-Heterogenität (REST + GraphQL) | STK-009
+| Event-Driven (Kafka) | Lose Kopplung, Replay-Fähigkeit, Audit-Trail | SWA-005, SWR-009
+| Multi-Tenant | Mandantenfähigkeit von Anfang an im Design | STK-002, SWR-003
 |===
 
 == Technologie-Entscheidungen

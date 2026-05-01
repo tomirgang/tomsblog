@@ -3,13 +3,17 @@
 
 == Ebene 1: System-Übersicht
 
+Das folgende Diagramm zeigt die Gesamtstruktur des Systems mit seinen Services und externen Schnittstellen:
+
 plantuml::partial$../images/plantuml/building-blocks-l1.puml[format=svg]
 
 == Ebene 2: Blog Content Service
 
-Hexagonale Struktur des Blog Content Service:
+Der Blog Content Service setzt die zentrale Blog-Funktionalität um (SWR-001, SWR-002, SWR-003, SWR-006, SWR-012). Seine hexagonale Struktur (SWA-001) wird im folgenden Diagramm dargestellt:
 
 plantuml::partial$../images/plantuml/building-blocks-l2.puml[format=svg]
+
+Das Detail Design des Blog Content Service mit Klassendiagrammen und Ablaufbeschreibungen ist in der xref:tomsblog-design::blog-content/index.adoc[Software Detail Design Dokumentation] beschrieben.
 
 === Domain Layer (domain/)
 

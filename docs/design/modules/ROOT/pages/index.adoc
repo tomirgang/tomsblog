@@ -1,0 +1,28 @@
+= Toms Blog: Software Detail Design
+:toc: left
+:toclevels: 3
+:sectnums:
+
+== Über dieses Dokument
+
+Dieses Dokument beschreibt das Software Detail Design der *Toms Blog*-Plattform.
+Es ergänzt die xref:tomsblog-arc42::index.adoc[arc42-Architekturdokumentation] um detaillierte Entwurfsentscheidungen auf Klassen- und Komponentenebene.
+
+Während die arc42-Dokumentation die übergreifende Systemarchitektur beschreibt, konzentriert sich das Detail Design auf die innere Struktur der einzelnen Services, ihre Klassen, Schnittstellen und Zusammenspiel.
+
+=== Zielgruppe
+
+* Entwickler, die an der Implementierung arbeiten
+* Reviewer, die Entwurfsentscheidungen nachvollziehen wollen
+
+=== Konventionen
+
+* Diagramme werden als Mermaid-Diagramme inline in AsciiDoc erstellt
+* Anforderungsreferenzen verweisen auf Doorstop-IDs (SWR-xxx, SWA-xxx)
+* Jeder Service hat ein eigenes Kapitel
+
+== Services
+
+Die folgenden Services sind dokumentiert:
+
+* xref:blog-content/index.adoc[Blog Content Service] -- der zentrale Service für die Verwaltung von Blog-Inhalten (Posts, Tags, Übersetzungen)

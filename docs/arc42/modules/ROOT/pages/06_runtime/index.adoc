@@ -3,14 +3,16 @@
 
 == Post veröffentlichen und übersetzen
 
-Das Sequenzdiagramm zeigt drei Abläufe:
+Das Sequenzdiagramm zeigt drei Abläufe, die zentrale Anforderungen abdecken:
 
-1. **Veröffentlichung**: Autor veröffentlicht einen Post, Feed wird aktualisiert.
-2. **KI-gestützte Übersetzung**: Autor löst Übersetzung aus, prüft den Vorschlag und übernimmt ihn.
-3. **Manuelle Übersetzung**: Autor gibt die Übersetzung direkt ein.
+1. **Veröffentlichung**: Autor veröffentlicht einen Post, Feed wird aktualisiert (SWR-002, SWR-008).
+2. **KI-gestützte Übersetzung**: Autor löst Übersetzung aus, prüft den Vorschlag und übernimmt ihn (SWR-004, SWA-006).
+3. **Manuelle Übersetzung**: Autor gibt die Übersetzung direkt ein (SWR-005).
 
 plantuml::partial$../images/plantuml/runtime-publish.puml[format=svg]
 
 == Post erstellen (vereinfacht)
+
+Der Ablauf der Post-Erstellung zeigt das Zusammenspiel von REST-Adapter, Application Layer und Domain (SWR-001, SWA-001). Bei erfolgreicher Erstellung wird ein `PostCreatedEvent` registriert (SWR-009).
 
 plantuml::partial$../images/plantuml/runtime-create.puml[format=svg]

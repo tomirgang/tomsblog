@@ -1,0 +1,6 @@
+name: tomsblog-design
+version: ~
+title: "Toms Blog: Software Detail Design"
+start_page: ROOT:index.adoc
+nav:
+  - modules/ROOT/nav.adoc

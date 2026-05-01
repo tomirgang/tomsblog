@@ -3,9 +3,13 @@
 
 == Multi-Tenancy
 
+Die Multi-Tenancy-Fähigkeit setzt die Stakeholder-Anforderung STK-002 um und wird durch SWR-003 (Tenant-Isolation auf Datenebene) detailliert.
+
 Jede Domain-Entity trägt eine `TenantId`. Tenant-Isolation wird auf Datenbank-Ebene sichergestellt (Row-Level-Security oder Schema-basiert, noch zu entscheiden).
 
 == Audit
+
+Das Audit-Konzept erfüllt die Anforderungen STK-004 (Audit-Fähigkeit) und SWR-006 (Audit-Trail für Posts).
 
 Alle persistierten Entities implementieren das `Auditable`-Interface:
 
@@ -14,9 +18,11 @@ Alle persistierten Entities implementieren das `Auditable`-Interface:
 
 == Domain Events
 
+Domain Events bilden die Grundlage für die serviceübergreifende Kommunikation (SWR-009) und werden über Kafka als zentralen Event-Broker (SWA-005) verteilt. Die Event-Contracts sind als geteilte Library (SWA-003) definiert.
+
 * Events werden im Aggregate gesammelt (`AggregateRoot.registerEvent()`)
 * Nach erfolgreicher Persistierung werden sie über Kafka publiziert
-* Event-Contracts als geteilte Library (`libs/event-contracts`)
+* Event-Contracts als geteilte Library (`libs/event-contracts`) (SWA-003)
 * Jedes Event trägt `EventMetadata` (ID, Timestamp, TenantId, CorrelationId)
 
 == Error Handling
@@ -27,15 +33,20 @@ Alle persistierten Entities implementieren das `Auditable`-Interface:
 
 == Internationalisierung
 
+Die Mehrsprachigkeit setzt STK-003 um. Übersetzungen können manuell (SWR-005) oder KI-gestützt (SWR-004) erstellt werden, wobei das Translation-Aggregate einen eigenen Lifecycle besitzt (SWA-008). Bei KI-Ausfällen greift Graceful Degradation (SWR-014).
+
 * Blog-Posts werden pro Locale gespeichert
 * Ein Post hat eine Haupt-Locale und optionale Übersetzungen
 * Übersetzungen werden vom Autor über die UI ausgelöst (nicht automatisch)
-* KI-gestützte Übersetzung: Autor startet Anfrage, AI Service liefert Vorschlag, Autor prüft und übernimmt
-* Manuelle Übersetzung: Autor gibt Übersetzung direkt ein
+* KI-gestützte Übersetzung: Autor startet Anfrage, AI Service liefert Vorschlag, Autor prüft und übernimmt (SWR-004, SWA-006)
+* Manuelle Übersetzung: Autor gibt Übersetzung direkt ein (SWR-005)
 * Kein automatisches Übersetzen bei Veröffentlichung; der Autor behält die volle Kontrolle
 
 == Security
 
+Die Sicherheitsanforderungen leiten sich aus STK-012 (Sicherheit) und STK-005 (Benutzerverwaltung) ab. SWR-015 definiert die Input-Validierung und den OWASP-Schutz, SWR-007 die rollenbasierte Zugriffskontrolle.
+
 * Authentication via Keycloak oder eigenem Service (noch zu evaluieren)
-* RBAC: Admin, Autor, Leser
-* OWASP Top 10 wird bei Code-Reviews geprüft
+* RBAC: Admin, Autor, Leser (SWR-007)
+* OWASP Top 10 wird bei Code-Reviews geprüft (SWR-015)
+* Input-Validierung an den Systemgrenzen (SWR-015)

@@ -6,6 +6,8 @@ content:
   sources:
     - url: .
       start_path: docs/arc42
+    - url: .
+      start_path: docs/design
 
 ui:
   bundle:
@@ -15,6 +17,7 @@ ui:
 asciidoc:
   extensions:
     - asciidoctor-plantuml
+    - asciidoctor-kroki
 
 runtime:
   fetch: true

@@ -1,0 +1,289 @@
+= Blog Content Service: Detail Design
+:toc: left
+:toclevels: 3
+:sectnums:
+
+== Überblick
+
+Der Blog Content Service ist der zentrale Service für die Verwaltung von Blog-Inhalten.
+Er implementiert die Post-CRUD-Operationen (SWR-001), das Veröffentlichen von Posts (SWR-002), Tenant-Isolation (SWR-003), Quellenverwaltung (SWR-012) und den Audit-Trail (SWR-006).
+
+Die Architektur folgt der hexagonalen Architektur (SWA-001) mit einer klaren Trennung von Domain, Application und Adapter Layer.
+
+== Domain-Modell
+
+Das Domain-Modell basiert auf DDD-Prinzipien mit Aggregates, Entities und Value Objects (SWA-007).
+Das folgende Diagramm zeigt die Klassenstruktur des Domain Layers:
+
+[mermaid]
+----
+classDiagram
+    class Post {
+        -PostId id
+        -TenantId tenantId
+        -String title
+        -Slug slug
+        -String content
+        -PostStatus status
+        -PostLocale locale
+        -AuthorId authorId
+        -Set~TagId~ tagIds
+        -List~Source~ sources
+        -List~Attachment~ attachments
+        -List~DomainEvent~ domainEvents
+        +publish() void
+        +updateContent(title, content) void
+        +addSource(source) void
+        +addAttachment(attachment) void
+        +registerEvent(event) void
+        +clearEvents() List~DomainEvent~
+    }
+
+    class Translation {
+        -TranslationId id
+        -PostId postId
+        -TenantId tenantId
+        -PostLocale targetLocale
+        -String title
+        -String content
+        -TranslationStatus status
+        -TranslationSource source
+        +approve() void
+        +reject() void
+    }
+
+    class Tag {
+        -TagId id
+        -TenantId tenantId
+        -String name
+        -Slug slug
+    }
+
+    class Source {
+        -String url
+        -String title
+    }
+
+    class Attachment {
+        -AttachmentId id
+        -String filename
+        -String contentType
+        -long size
+        -boolean show
+        -String storageKey
+    }
+
+    class PostStatus {
+        <<enumeration>>
+        DRAFT
+        PUBLISHED
+        ARCHIVED
+    }
+
+    class TranslationStatus {
+        <<enumeration>>
+        DRAFT
+        REVIEW_PENDING
+        APPROVED
+        REJECTED
+    }
+
+    Post "1" *-- "*" Source : sources
+    Post "1" *-- "*" Attachment : attachments
+    Post "1" o-- "*" TagId : tagIds
+    Post "1" -- "*" Translation : postId
+    Post -- PostStatus
+    Translation -- TranslationStatus
+----
+
+=== Post Aggregate
+
+Das `Post`-Aggregate ist das zentrale Aggregate Root und kapselt die gesamte Fachlogik rund um Blog-Posts.
+Es erfüllt die Anforderungen SWR-001 (CRUD-Operationen) und SWR-002 (Veröffentlichung).
+
+Jeder Post ist einem Tenant zugeordnet (SWR-003) und registriert bei Zustandsänderungen Domain Events (SWR-009), die für die serviceübergreifende Kommunikation genutzt werden.
+
+=== Translation Aggregate
+
+Das `Translation`-Aggregate hat gemäß SWA-008 einen eigenen Lifecycle, der unabhängig vom Post verwaltet wird.
+Es unterstützt sowohl manuelle Übersetzungen (SWR-005) als auch KI-gestützte Übersetzungen (SWR-004).
+
+Der Übersetzungsprozess durchläuft die Status DRAFT -> REVIEW_PENDING -> APPROVED/REJECTED, sodass eine Qualitätskontrolle gewährleistet ist.
+
+=== Value Objects
+
+Die Value Objects `Slug`, `PostLocale`, `Source` und `Attachment` sorgen für Validierung direkt im Konstruktor.
+`Source` implementiert die Quellenverwaltung gemäß SWR-012. `Attachment` unterscheidet über das `show`-Flag zwischen angezeigten und eingebetteten Inhalten.
+
+== Application Layer
+
+Der Application Layer definiert die Ports und Use Cases gemäß der hexagonalen Architektur (SWA-001).
+Das folgende Diagramm zeigt die Zusammenhänge:
+
+[mermaid]
+----
+classDiagram
+    class PostUseCase {
+        <<interface>>
+        +createPost(command) Post
+        +updatePost(command) Post
+        +publishPost(postId, tenantId) Post
+        +getPost(postId, tenantId) Post
+        +listPosts(tenantId) List~Post~
+        +deletePost(postId, tenantId) void
+    }
+
+    class PostRepository {
+        <<interface>>
+        +save(post) Post
+        +findById(postId, tenantId) Optional~Post~
+        +findAllByTenantId(tenantId) List~Post~
+        +deleteById(postId, tenantId) void
+    }
+
+    class TagRepository {
+        <<interface>>
+        +save(tag) Tag
+        +findById(tagId, tenantId) Optional~Tag~
+        +findAllByTenantId(tenantId) List~Tag~
+    }
+
+    class TranslationRepository {
+        <<interface>>
+        +save(translation) Translation
+        +findByPostIdAndLocale(postId, locale) Optional~Translation~
+        +findAllByPostId(postId) List~Translation~
+    }
+
+    class EventPublisher {
+        <<interface>>
+        +publish(event) void
+    }
+
+    class PostService {
+        -PostRepository postRepository
+        -EventPublisher eventPublisher
+        +createPost(command) Post
+        +updatePost(command) Post
+        +publishPost(postId, tenantId) Post
+    }
+
+    PostService ..|> PostUseCase : implements
+    PostService --> PostRepository : uses
+    PostService --> EventPublisher : uses
+----
+
+=== Inbound Ports
+
+Das Interface `PostUseCase` definiert alle fachlichen Operationen, die der Service nach außen anbietet.
+Es bildet die Grundlage für die REST-API (SWR-001) und stellt sicher, dass die Fachlogik unabhängig vom Aufrufkontext bleibt.
+
+=== Outbound Ports
+
+Die Outbound Ports `PostRepository`, `TagRepository`, `TranslationRepository` und `EventPublisher` abstrahieren die technischen Abhängigkeiten.
+`PostRepository` stellt die Persistenz sicher, wobei alle Abfragen Tenant-scoped sind (SWR-003).
+`EventPublisher` ermöglicht die asynchrone Kommunikation via Domain Events (SWR-009).
+
+=== PostService
+
+Der `PostService` orchestriert Domain-Objekte und Ports. Er sorgt dafür, dass bei jeder Post-Erstellung ein `PostCreatedEvent` und bei jeder Veröffentlichung ein `PostPublishedEvent` publiziert wird.
+
+== Adapter Layer
+
+Der Adapter Layer implementiert die technische Anbindung an Spring Boot (SWA-004) und externe Systeme.
+
+=== Inbound Adapter: REST API
+
+Der `PostController` bildet den REST Inbound Adapter und setzt die in SWR-001 definierten Endpunkte um:
+
+[cols="1,1,2"]
+|===
+| HTTP-Methode | Pfad | Beschreibung
+
+| POST | /api/posts | Post erstellen
+| GET  | /api/posts/{id} | Post lesen
+| PUT  | /api/posts/{id} | Post aktualisieren
+| DELETE | /api/posts/{id} | Post löschen
+| PUT  | /api/posts/{id}/publish | Post veröffentlichen (SWR-002)
+|===
+
+Die Tenant-ID wird über einen HTTP-Header (`X-Tenant-Id`) übergeben, um die Tenant-Isolation (SWR-003) auf API-Ebene sicherzustellen.
+
+Fehler werden über den `GlobalExceptionHandler` als Problem Details nach RFC 9457 zurückgegeben. Input-Validierung erfolgt gemäß SWR-015 zum Schutz vor ungültigen Eingaben.
+
+=== Outbound Adapter: JPA Persistence
+
+Der `JpaPostRepository` implementiert den `PostRepository`-Port mit Spring Data JPA.
+Die `PostJpaEntity` enthält Audit-Felder (`createdAt`, `updatedAt`), die über `@PrePersist` und `@PreUpdate` automatisch befüllt werden und den Audit-Trail (SWR-006) auf Datenbankebene unterstützen.
+
+Der `PostMapper` übernimmt das bidirektionale Mapping zwischen Domain-Modell und JPA-Entity, sodass die Domain-Schicht frei von JPA-Annotationen bleibt (SWA-001).
+
+=== Outbound Adapter: Event Publishing
+
+Der `LoggingEventPublisher` ist ein Interim-Adapter, der Domain Events zunächst nur loggt.
+Er wird in einer späteren Phase durch einen Kafka-Producer ersetzt (SWA-005), der die Events an den zentralen Event-Broker sendet (SWR-009).
+
+== Ablauf: Post erstellen und veröffentlichen
+
+Der folgende Ablauf zeigt den typischen Lifecycle eines Posts von der Erstellung bis zur Veröffentlichung:
+
+[mermaid]
+----
+sequenceDiagram
+    actor Author
+    participant Controller as PostController
+    participant Service as PostService
+    participant Post as Post (Domain)
+    participant Repo as PostRepository
+    participant Events as EventPublisher
+
+    Author->>Controller: POST /api/posts
+    Controller->>Service: createPost(command)
+    Service->>Post: new Post(title, content, ...)
+    Post->>Post: registerEvent(PostCreatedEvent)
+    Service->>Repo: save(post)
+    Service->>Events: publish(PostCreatedEvent)
+    Service-->>Controller: Post
+    Controller-->>Author: 201 Created
+
+    Author->>Controller: PUT /api/posts/{id}/publish
+    Controller->>Service: publishPost(postId, tenantId)
+    Service->>Repo: findById(postId, tenantId)
+    Service->>Post: publish()
+    Post->>Post: status = PUBLISHED
+    Post->>Post: registerEvent(PostPublishedEvent)
+    Service->>Repo: save(post)
+    Service->>Events: publish(PostPublishedEvent)
+    Service-->>Controller: Post
+    Controller-->>Author: 200 OK
+----
+
+Dieser Ablauf erfüllt die Anforderungen SWR-001 (Post erstellen) und SWR-002 (Post veröffentlichen) und zeigt, wie Domain Events (SWR-009) bei jeder Zustandsänderung registriert und publiziert werden.
+
+== Konfiguration
+
+Die `BlogContentConfiguration` ist die zentrale Spring-Konfiguration, die das Wiring der Adapter an die Ports vornimmt.
+Sie stellt sicher, dass die hexagonale Architektur (SWA-001) eingehalten wird: Der `PostService` erhält seine Abhängigkeiten ausschließlich über Constructor Injection der Port-Interfaces.
+
+== Anforderungsabdeckung
+
+Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt werden:
+
+[cols="1,3,2"]
+|===
+| ID | Beschreibung | Abdeckung im Service
+
+| SWR-001 | Post CRUD API | PostController, PostUseCase, PostService
+| SWR-002 | Post veröffentlichen | Post.publish(), PostService.publishPost()
+| SWR-003 | Tenant-Isolation | TenantId in allen Queries, X-Tenant-Id Header
+| SWR-004 | KI-Übersetzung | Translation Aggregate (AI Service Adapter in Phase 2)
+| SWR-005 | Manuelle Übersetzung | Translation Aggregate
+| SWR-006 | Audit-Trail | JPA Audit-Felder, Domain Events
+| SWR-009 | Domain Events | EventPublisher, PostCreatedEvent, PostPublishedEvent
+| SWR-012 | Quellenverwaltung | Source Value Object, Post.addSource()
+| SWR-015 | Input-Validierung | GlobalExceptionHandler, Slug/PostLocale Validierung
+| SWA-001 | Hexagonale Architektur | Domain/Application/Adapter Trennung
+| SWA-004 | Spring Boot Applikation | BlogContentConfiguration, Starter Dependencies
+| SWA-007 | Domain-Modell (DDD) | Post, Translation, Tag, Value Objects
+| SWA-008 | Translation als separates Aggregate | Translation mit eigenem Lifecycle
+|===

@@ -6,22 +6,26 @@
 Toms Blog ist eine multi-tenant Blog- und Podcast-Plattform, die als Lernprojekt für moderne Cloud-Native-Architekturen dient.
 
 .Wesentliche Features:
-* Multilingualer Text-Blog mit WYSIWYG-Editor
-* Audio- und Video-Podcast mit automatischer TTS-Generierung
-* KI-gestützte Content-Erstellung (Übersetzung, Schreibassistenz, Titelbilder)
-* Multi-Tenant-Fähigkeit für getrennte Blog-Instanzen
-* RSS/Atom Feeds (Mixed, Tag-basiert, Content-Type)
+* Multilingualer Text-Blog mit WYSIWYG-Editor (STK-001, STK-003)
+* Audio- und Video-Podcast mit automatischer TTS-Generierung (STK-009)
+* KI-gestützte Content-Erstellung (Übersetzung, Schreibassistenz, Titelbilder) (STK-011)
+* Multi-Tenant-Fähigkeit für getrennte Blog-Instanzen (STK-002)
+* RSS/Atom Feeds (Mixed, Tag-basiert, Content-Type) (STK-006)
+
+Diese Features leiten sich aus den Stakeholder-Anforderungen STK-001 bis STK-012 ab und werden über Software Requirements (SWR) weiter detailliert.
 
 == Qualitätsziele
 
-[cols="1,2,2"]
-|===
-| Priorität | Qualitätsziel | Motivation
+Die Qualitätsziele adressieren zentrale Stakeholder-Erwartungen und bilden die Grundlage für die architekturellen Entscheidungen:
 
-| 1 | Wartbarkeit | Hexagonale Architektur für unabhängige Testbarkeit und Austauschbarkeit
-| 2 | Nachvollziehbarkeit | Audit-Logging und Requirement Tracing (ASPICE)
-| 3 | Skalierbarkeit | Microservice-Architektur mit Event-Driven-Kommunikation
-| 4 | Lernwert | Einsatz moderner Technologien und Patterns
+[cols="1,2,2,1"]
+|===
+| Priorität | Qualitätsziel | Motivation | Anforderungen
+
+| 1 | Wartbarkeit | Hexagonale Architektur für unabhängige Testbarkeit und Austauschbarkeit | SWA-001
+| 2 | Nachvollziehbarkeit | Audit-Logging und Requirement Tracing (ASPICE) | STK-004, SWR-006
+| 3 | Skalierbarkeit | Microservice-Architektur mit Event-Driven-Kommunikation | STK-007, SWR-009
+| 4 | Lernwert | Einsatz moderner Technologien und Patterns | --
 |===
 
 == Stakeholder
