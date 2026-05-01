@@ -67,7 +67,7 @@
 | 4     | Benutzerverwaltung & Multi-Tenancy (Auth, Rollen, Admin-UI)          | Mehrbenutzerfähiger Blog mit Login und Tenant-Trennung          |
 | 5     | Messaging & Event-Driven (Kafka + RabbitMQ)                          | Asynchrone Verarbeitung aktiv, Events fließen zwischen Services |
 | 6     | KI-Integration (Übersetzung, Schreibassistenz, WYSIWYG-Editor)       | WYSIWYG-Editor + KI-Übersetzung mit Review-Schritt              |
-| 7     | Feed-Service (RSS/Atom, Tag-Navigation)                              | RSS-Feeds und navigierbare Tag-Seiten                           |
+| 7     | Feed-Service & Chaos Testing (RSS/Atom, Tag-Navigation, Resilience)  | RSS-Feeds, navigierbare Tag-Seiten und nachgewiesene Resilience |
 | 8     | Web-Snapshots & Attachments (Upload, Archivierung, S3-Storage)       | Vollständiges Content-Management mit Anhängen                   |
 | 9     | Observability (Prometheus, Grafana, Loki, Tempo, Redis)              | Produktionsreife Observability                                  |
 

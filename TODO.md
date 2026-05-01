@@ -29,7 +29,7 @@
 - [x] Quellenverwaltung für Posts
 - [x] Unit- und Integrationstests (Testcontainers für PostgreSQL)
 - [x] API-Dokumentation (OpenAPI/Swagger)
-- [ ] Thymeleaf: Layout-Grundgerüst (responsiv, einfaches CSS-Framework)
+- [x] Thymeleaf: Layout-Grundgerüst (responsiv, einfaches CSS-Framework)
 - [ ] Thymeleaf: Öffentliche Blog-Ansicht (Post-Liste, Einzelansicht)
 - [ ] Thymeleaf: Einfaches Formular zum Erstellen/Bearbeiten von Posts
 
@@ -85,14 +85,19 @@
 
 > **MVP nach Phase 6:** Autoren schreiben mit WYSIWYG-Editor und nutzen KI-Übersetzung mit Review-Schritt.
 
-### Phase 7: Feed-Service
+### Phase 7: Feed-Service & Chaos Testing
 
 - [ ] RSS/Atom Feed-Generierung
 - [ ] Tag-basierte Feeds
 - [ ] Single Content Type Feeds
 - [ ] Thymeleaf: Tag-basierte Navigation und Filteransicht
+- [ ] Chaos Testing: Resilience-Szenarien definieren (Netzwerkausfälle, Pod-Crashes, Latenz)
+- [ ] Chaos Testing: Chaos Mesh oder Litmus auf K8s einrichten
+- [ ] Chaos Testing: Steady-State-Hypothesen und Experimente formulieren
+- [ ] Chaos Testing: Automatisierte Chaos-Experimente in CI/CD integrieren
+- [ ] Chaos Testing: Ergebnisse auswerten und Resilience-Verbesserungen umsetzen
 
-> **MVP nach Phase 7:** Blog mit RSS-Feeds und navigierbaren Tag-Seiten.
+> **MVP nach Phase 7:** Blog mit RSS-Feeds, navigierbaren Tag-Seiten und nachgewiesener Resilience durch Chaos Testing.
 
 ### Phase 8: Web-Snapshots & Attachments
 
