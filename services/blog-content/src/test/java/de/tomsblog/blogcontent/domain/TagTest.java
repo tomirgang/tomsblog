@@ -68,4 +68,50 @@ class TagTest {
         assertThat(tag.getName()).isEqualTo("Kotlin");
         assertThat(tag.getSlug().value()).isEqualTo("kotlin");
     }
+
+    @Test
+    @DisplayName("Rename tag with blank name throws exception")
+    void renameTagWithBlankNameThrows() {
+        Tag tag = Tag.create(tenantId, "Java");
+
+        assertThatThrownBy(() -> tag.rename(""))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Tag name must not be blank");
+    }
+
+    @Test
+    @DisplayName("Rename tag with null name throws exception")
+    void renameTagWithNullNameThrows() {
+        Tag tag = Tag.create(tenantId, "Java");
+
+        assertThatThrownBy(() -> tag.rename(null)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("Tag equals returns true for same reference")
+    void tagEqualsSameReference() {
+        Tag tag = Tag.create(tenantId, "Java");
+        assertThat(tag).isEqualTo(tag);
+    }
+
+    @Test
+    @DisplayName("Tag equals returns false for null")
+    void tagEqualsNull() {
+        Tag tag = Tag.create(tenantId, "Java");
+        assertThat(tag).isNotEqualTo(null);
+    }
+
+    @Test
+    @DisplayName("Tag equals returns false for different type")
+    void tagEqualsDifferentType() {
+        Tag tag = Tag.create(tenantId, "Java");
+        assertThat(tag).isNotEqualTo("not a tag");
+    }
+
+    @Test
+    @DisplayName("Tag hashCode is consistent with equals")
+    void tagHashCodeConsistent() {
+        Tag tag = Tag.create(tenantId, "Java");
+        assertThat(tag.hashCode()).isEqualTo(tag.hashCode());
+    }
 }

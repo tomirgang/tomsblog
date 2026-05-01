@@ -120,4 +120,124 @@ class PostTest {
         post.removeAttachment(attachment.id());
         assertThat(post.getAttachments()).isEmpty();
     }
+
+    @Test
+    @DisplayName("Archive changes status to ARCHIVED")
+    void archiveChangesStatus() {
+        Post post = Post.create(tenantId, authorId, "Test", "Content", PostLocale.german());
+
+        post.archive();
+
+        assertThat(post.getStatus()).isEqualTo(PostStatus.ARCHIVED);
+    }
+
+    @Test
+    @DisplayName("Effective social media title returns title when no explicit value")
+    void effectiveSocialMediaTitleFallsBackToTitle() {
+        Post post = Post.create(tenantId, authorId, "My Title", "Content", PostLocale.german());
+
+        assertThat(post.getEffectiveSocialMediaTitle()).isEqualTo("My Title");
+    }
+
+    @Test
+    @DisplayName("Effective social media title returns explicit value when set")
+    void effectiveSocialMediaTitleReturnsExplicit() {
+        Post post = Post.create(tenantId, authorId, "My Title", "Content", PostLocale.german());
+        post.updateSocialMedia("SM Title", null);
+
+        assertThat(post.getEffectiveSocialMediaTitle()).isEqualTo("SM Title");
+    }
+
+    @Test
+    @DisplayName("Effective social media title treats blank as absent")
+    void effectiveSocialMediaTitleTreatsBlankAsAbsent() {
+        Post post = Post.create(tenantId, authorId, "My Title", "Content", PostLocale.german());
+        post.updateSocialMedia("   ", null);
+
+        assertThat(post.getEffectiveSocialMediaTitle()).isEqualTo("My Title");
+    }
+
+    @Test
+    @DisplayName("Effective social media summary returns first paragraph")
+    void effectiveSocialMediaSummaryReturnsFirstParagraph() {
+        Post post =
+                Post.create(tenantId, authorId, "Title", "First paragraph\n\nSecond paragraph", PostLocale.german());
+
+        assertThat(post.getEffectiveSocialMediaSummary()).isEqualTo("First paragraph");
+    }
+
+    @Test
+    @DisplayName("Effective social media summary returns explicit value when set")
+    void effectiveSocialMediaSummaryReturnsExplicit() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+        post.updateSocialMedia(null, "SM Summary");
+
+        assertThat(post.getEffectiveSocialMediaSummary()).isEqualTo("SM Summary");
+    }
+
+    @Test
+    @DisplayName("Effective social media summary treats blank as absent")
+    void effectiveSocialMediaSummaryTreatsBlankAsAbsent() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+        post.updateSocialMedia(null, "  ");
+
+        assertThat(post.getEffectiveSocialMediaSummary()).isEqualTo("Content");
+    }
+
+    @Test
+    @DisplayName("Effective social media summary handles empty content")
+    void effectiveSocialMediaSummaryHandlesEmptyContent() {
+        Post post = Post.create(tenantId, authorId, "Title", "   ", PostLocale.german());
+
+        assertThat(post.getEffectiveSocialMediaSummary()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Effective social media summary handles content starting with paragraph break")
+    void effectiveSocialMediaSummaryContentStartsWithParagraphBreak() {
+        Post post = Post.create(tenantId, authorId, "Title", "\n\nSecond paragraph", PostLocale.german());
+
+        // index == 0, so falls through to text.strip()
+        assertThat(post.getEffectiveSocialMediaSummary()).isEqualTo("Second paragraph");
+    }
+
+    @Test
+    @DisplayName("Effective social media summary returns full content if no double newline")
+    void effectiveSocialMediaSummaryReturnsFullContentWhenNoParagraphBreak() {
+        Post post = Post.create(tenantId, authorId, "Title", "Single paragraph content", PostLocale.german());
+
+        assertThat(post.getEffectiveSocialMediaSummary()).isEqualTo("Single paragraph content");
+    }
+
+    @Test
+    @DisplayName("Update content with blank title throws")
+    void updateContentBlankTitleThrows() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+
+        assertThatThrownBy(() -> post.updateContent("", "New content")).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("Update content with null title throws")
+    void updateContentNullTitleThrows() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+
+        assertThatThrownBy(() -> post.updateContent(null, "New content")).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("addSource with null throws")
+    void addSourceNullThrows() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+
+        assertThatThrownBy(() -> post.addSource(null)).isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    @DisplayName("addAttachment with null throws")
+    void addAttachmentNullThrows() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+
+        assertThatThrownBy(() -> post.addAttachment(null)).isInstanceOf(NullPointerException.class);
+    }
 }

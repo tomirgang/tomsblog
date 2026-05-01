@@ -130,4 +130,85 @@ class TranslationTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("content must not be blank");
     }
+
+    @Test
+    @DisplayName("Cannot reject an approved translation")
+    void cannotRejectApproved() {
+        Translation translation = Translation.createManual(postId, tenantId, PostLocale.english(), "Title", "Content");
+        translation.approve();
+
+        assertThatThrownBy(translation::reject)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Cannot reject an approved translation");
+    }
+
+    @Test
+    @DisplayName("Update content on DRAFT translation keeps DRAFT status")
+    void updateContentOnDraftKeepsDraft() {
+        Translation translation = Translation.createManual(postId, tenantId, PostLocale.english(), "Title", "Content");
+
+        translation.updateContent("New Title", "New Content");
+
+        assertThat(translation.getStatus()).isEqualTo(TranslationStatus.DRAFT);
+        assertThat(translation.getTitle()).isEqualTo("New Title");
+        assertThat(translation.getContent()).isEqualTo("New Content");
+    }
+
+    @Test
+    @DisplayName("Update content with blank title throws")
+    void updateContentWithBlankTitleThrows() {
+        Translation translation = Translation.createManual(postId, tenantId, PostLocale.english(), "Title", "Content");
+
+        assertThatThrownBy(() -> translation.updateContent("", "Content")).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("Update content with null title throws")
+    void updateContentWithNullTitleThrows() {
+        Translation translation = Translation.createManual(postId, tenantId, PostLocale.english(), "Title", "Content");
+
+        assertThatThrownBy(() -> translation.updateContent(null, "Content"))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("Update content with blank content throws")
+    void updateContentWithBlankContentThrows() {
+        Translation translation = Translation.createManual(postId, tenantId, PostLocale.english(), "Title", "Content");
+
+        assertThatThrownBy(() -> translation.updateContent("Title", "")).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("Update content with null content throws")
+    void updateContentWithNullContentThrows() {
+        Translation translation = Translation.createManual(postId, tenantId, PostLocale.english(), "Title", "Content");
+
+        assertThatThrownBy(() -> translation.updateContent("Title", null)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("Create translation with null title throws exception")
+    void createTranslationWithNullTitleThrows() {
+        assertThatThrownBy(() -> Translation.createManual(postId, tenantId, PostLocale.english(), null, "Content"))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("Create translation with null content throws exception")
+    void createTranslationWithNullContentThrows() {
+        assertThatThrownBy(() -> Translation.createManual(postId, tenantId, PostLocale.english(), "Title", null))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("Translation getters return correct values")
+    void translationGetters() {
+        Translation translation =
+                Translation.createManual(postId, tenantId, PostLocale.english(), "My Title", "My Content");
+
+        assertThat(translation.getTitle()).isEqualTo("My Title");
+        assertThat(translation.getContent()).isEqualTo("My Content");
+        assertThat(translation.getTranslatedAt()).isNotNull();
+    }
 }

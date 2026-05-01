@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- JaCoCo Code-Coverage-Plugin mit 95% Minimum-Schwellwert (Line + Branch Coverage)
+- GitHub Actions CI: Coverage-Report als Artifact und Job Summary
 - ADR-0019: Database per Service (PostgreSQL / MongoDB, dedizierte Instanz pro Service)
 - ADR-0018: Dual-Broker-Strategie (Kafka für Event-Streaming, RabbitMQ für Task-Queues)
 - RabbitMQ in Docker Compose für lokale Entwicklung (Port 5672, Management UI 15672)

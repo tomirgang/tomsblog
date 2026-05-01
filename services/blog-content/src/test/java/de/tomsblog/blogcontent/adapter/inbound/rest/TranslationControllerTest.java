@@ -96,4 +96,67 @@ class TranslationControllerTest {
                         .header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    @DisplayName("POST /api/posts/{postId}/translations with AI_GENERATED source creates AI translation")
+    void createAiTranslation_returns201() throws Exception {
+        Translation translation = Translation.createFromAi(
+                PostId.of(postId), TenantId.of(tenantId), PostLocale.english(), "AI Title", "AI Content");
+        when(translationUseCase.createAiTranslation(any())).thenReturn(translation);
+
+        mockMvc.perform(post("/api/posts/{postId}/translations", postId)
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"locale": "en", "title": "AI Title", "content": "AI Content", "source": "AI_GENERATED"}
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.source").value("AI_GENERATED"))
+                .andExpect(jsonPath("$.status").value("REVIEW_PENDING"));
+    }
+
+    @Test
+    @DisplayName("PUT /api/posts/{postId}/translations/{id} updates translation")
+    void updateTranslation_returns200() throws Exception {
+        Translation translation = Translation.createManual(
+                PostId.of(postId), TenantId.of(tenantId), PostLocale.english(), "Updated Title", "Updated Content");
+        when(translationUseCase.updateTranslation(any())).thenReturn(translation);
+
+        UUID translationId = UUID.randomUUID();
+        mockMvc.perform(put("/api/posts/{postId}/translations/{id}", postId, translationId)
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"title": "Updated Title", "content": "Updated Content"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Updated Title"));
+    }
+
+    @Test
+    @DisplayName("POST /api/posts/{postId}/translations/{id}/reject returns 204")
+    void rejectTranslation_returns204() throws Exception {
+        UUID translationId = UUID.randomUUID();
+        doNothing().when(translationUseCase).rejectTranslation(any(), any());
+
+        mockMvc.perform(post("/api/posts/{postId}/translations/{id}/reject", postId, translationId)
+                        .header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("GET /api/posts/{postId}/translations/{id} returns translation")
+    void getTranslation_returns200() throws Exception {
+        Translation translation = Translation.createManual(
+                PostId.of(postId), TenantId.of(tenantId), PostLocale.english(), "Title", "Content");
+        when(translationUseCase.getTranslation(any(), any())).thenReturn(translation);
+
+        mockMvc.perform(get(
+                                "/api/posts/{postId}/translations/{id}",
+                                postId,
+                                translation.getId().value())
+                        .header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Title"));
+    }
 }

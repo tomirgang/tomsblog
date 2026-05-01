@@ -58,6 +58,14 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 
 After every code change, always run `./mvnw verify --batch-mode --no-transfer-progress` and check for warnings (compiler warnings, deprecations, test warnings). All warnings must be resolved before considering the task complete.
 
+### Code Coverage
+
+- Minimum required: **95%** (line and branch coverage), enforced by JaCoCo during `verify`
+- Target: **100%** coverage. Strive to cover every line and branch
+- For every uncovered line/branch, a justification must be provided (e.g., in a code comment or PR description)
+- Coverage reports are generated at `target/site/jacoco/index.html` per module
+- GitHub Actions CI attaches coverage reports as artifacts and posts a summary to the job
+
 All changes must be documented in `CHANGELOG.md` under the `[Unreleased]` section following the [Keep a Changelog](https://keepachangelog.com/) format (Added, Changed, Deprecated, Removed, Fixed, Security).
 
 ## Requirements (Doorstop)

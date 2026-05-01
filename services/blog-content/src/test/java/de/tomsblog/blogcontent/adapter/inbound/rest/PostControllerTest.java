@@ -121,4 +121,51 @@ class PostControllerTest {
                         .content(body))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @DisplayName("PUT /api/posts/{id} updates post and returns 200")
+    void updatePost_returns200() throws Exception {
+        Post post = Post.create(
+                TenantId.of(tenantId), AuthorId.of(authorId), "Updated", "New Content", PostLocale.german());
+        when(postUseCase.updatePost(any())).thenReturn(post);
+
+        UUID postId = UUID.randomUUID();
+        String body = """
+                {
+                    "title": "Updated",
+                    "content": "New Content",
+                    "socialMediaTitle": "SM Title",
+                    "socialMediaSummary": "SM Summary"
+                }
+                """;
+
+        mockMvc.perform(put("/api/posts/{id}", postId)
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Updated"));
+    }
+
+    @Test
+    @DisplayName("DELETE /api/posts/{id} returns 204")
+    void deletePost_returns204() throws Exception {
+        UUID postId = UUID.randomUUID();
+        doNothing().when(postUseCase).deletePost(any(), any());
+
+        mockMvc.perform(delete("/api/posts/{id}", postId).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("POST /api/posts/{id}/publish returns 409 on IllegalStateException")
+    void publishPost_returns409OnConflict() throws Exception {
+        UUID postId = UUID.randomUUID();
+        doThrow(new IllegalStateException("Post is already published"))
+                .when(postUseCase)
+                .publishPost(any(), any());
+
+        mockMvc.perform(post("/api/posts/{id}/publish", postId).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isConflict());
+    }
 }

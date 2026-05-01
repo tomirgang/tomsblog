@@ -36,6 +36,40 @@ jobs:
       - name: Check formatting
         run: ./mvnw spotless:check --batch-mode --no-transfer-progress
 
+      - name: Generate coverage summary
+        if: always()
+        run: |
+          echo "## Test Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          for report in $(find . -path '*/target/site/jacoco/jacoco.csv' 2>/dev/null); do
+            module=$(echo "$report" | sed 's|^\./||;s|/target/site/jacoco/jacoco.csv||')
+            echo "### Module: \`$module\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            # Parse CSV: columns are GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,...
+            total_missed=0
+            total_covered=0
+            branch_missed=0
+            branch_covered=0
+            while IFS=',' read -r group package class instr_m instr_c br_m br_c line_m line_c _ _ _ _; do
+              if [[ "$group" == "GROUP" ]]; then continue; fi
+              total_missed=$((total_missed + line_m))
+              total_covered=$((total_covered + line_c))
+              branch_missed=$((branch_missed + br_m))
+              branch_covered=$((branch_covered + br_c))
+            done < "$report"
+            total=$((total_missed + total_covered))
+            branch_total=$((branch_missed + branch_covered))
+            if [[ $total -gt 0 ]]; then
+              pct=$((total_covered * 100 / total))
+              echo "- **Line coverage**: ${pct}% (${total_covered}/${total})" >> $GITHUB_STEP_SUMMARY
+            fi
+            if [[ $branch_total -gt 0 ]]; then
+              br_pct=$((branch_covered * 100 / branch_total))
+              echo "- **Branch coverage**: ${br_pct}% (${branch_covered}/${branch_total})" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+          done
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -43,6 +77,14 @@ jobs:
           name: test-results
           path: '**/target/surefire-reports/'
           retention-days: 7
+
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: '**/target/site/jacoco/'
+          retention-days: 14
 
   docs:
     runs-on: ubuntu-latest
