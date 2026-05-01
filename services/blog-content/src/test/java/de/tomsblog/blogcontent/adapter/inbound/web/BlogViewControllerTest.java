@@ -5,7 +5,9 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import de.tomsblog.blogcontent.application.port.inbound.CreatePostCommand;
 import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
+import de.tomsblog.blogcontent.application.port.inbound.UpdatePostCommand;
 import de.tomsblog.blogcontent.application.service.PostNotFoundException;
 import de.tomsblog.blogcontent.domain.model.*;
 import de.tomsblog.shared.domain.AuthorId;
@@ -83,5 +85,136 @@ class BlogViewControllerTest {
 
         mockMvc.perform(get("/posts/nonexistent").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("SWR-027: GET /posts/new returns empty form")
+    void newPostForm_returnsEmptyForm() throws Exception {
+        mockMvc.perform(get("/posts/new"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/form"))
+                .andExpect(model().attributeExists("postForm"))
+                .andExpect(model().attribute("editMode", false));
+    }
+
+    @Test
+    @DisplayName("SWR-027: POST /posts creates post and redirects on valid input")
+    void createPost_validInput_redirects() throws Exception {
+        Post post = Post.create(TenantId.of(tenantId), authorId, "New Post", "Content", PostLocale.german());
+        when(postUseCase.createPost(any(CreatePostCommand.class))).thenReturn(post);
+
+        mockMvc.perform(post("/posts")
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", authorId.value().toString())
+                        .param("title", "New Post")
+                        .param("content", "Some content")
+                        .param("locale", "de"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts"));
+
+        verify(postUseCase).createPost(any(CreatePostCommand.class));
+    }
+
+    @Test
+    @DisplayName("SWR-027: POST /posts returns form with errors on blank title")
+    void createPost_blankTitle_returnsFormWithErrors() throws Exception {
+        mockMvc.perform(post("/posts")
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", authorId.value().toString())
+                        .param("title", "")
+                        .param("content", "Some content")
+                        .param("locale", "de"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/form"))
+                .andExpect(model().attributeHasFieldErrors("postForm", "title"))
+                .andExpect(model().attribute("editMode", false));
+
+        verifyNoInteractions(postUseCase);
+    }
+
+    @Test
+    @DisplayName("SWR-027: POST /posts returns form with errors on blank content")
+    void createPost_blankContent_returnsFormWithErrors() throws Exception {
+        mockMvc.perform(post("/posts")
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", authorId.value().toString())
+                        .param("title", "Title")
+                        .param("content", "")
+                        .param("locale", "de"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/form"))
+                .andExpect(model().attributeHasFieldErrors("postForm", "content"));
+
+        verifyNoInteractions(postUseCase);
+    }
+
+    @Test
+    @DisplayName("SWR-027: POST /posts returns form with errors on blank locale")
+    void createPost_blankLocale_returnsFormWithErrors() throws Exception {
+        mockMvc.perform(post("/posts")
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", authorId.value().toString())
+                        .param("title", "Title")
+                        .param("content", "Content")
+                        .param("locale", ""))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/form"))
+                .andExpect(model().attributeHasFieldErrors("postForm", "locale"));
+
+        verifyNoInteractions(postUseCase);
+    }
+
+    @Test
+    @DisplayName("SWR-027: GET /posts/{id}/edit returns pre-filled form")
+    void editPostForm_returnsPreFilledForm() throws Exception {
+        UUID postId = UUID.randomUUID();
+        Post post =
+                Post.create(TenantId.of(tenantId), authorId, "Existing Post", "Existing content", PostLocale.german());
+        when(postUseCase.getPost(any(PostId.class), any(TenantId.class))).thenReturn(post);
+
+        mockMvc.perform(get("/posts/{id}/edit", postId).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/form"))
+                .andExpect(model().attributeExists("postForm"))
+                .andExpect(model().attribute("editMode", true))
+                .andExpect(model().attribute("postId", postId));
+    }
+
+    @Test
+    @DisplayName("SWR-027: POST /posts/{id} updates post and redirects on valid input")
+    void updatePost_validInput_redirects() throws Exception {
+        UUID postId = UUID.randomUUID();
+        Post post =
+                Post.create(TenantId.of(tenantId), authorId, "Updated Post", "Updated content", PostLocale.german());
+        when(postUseCase.updatePost(any(UpdatePostCommand.class))).thenReturn(post);
+
+        mockMvc.perform(post("/posts/{id}", postId)
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .param("title", "Updated Post")
+                        .param("content", "Updated content")
+                        .param("locale", "de"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts"));
+
+        verify(postUseCase).updatePost(any(UpdatePostCommand.class));
+    }
+
+    @Test
+    @DisplayName("SWR-027: POST /posts/{id} returns form with errors on blank title")
+    void updatePost_blankTitle_returnsFormWithErrors() throws Exception {
+        UUID postId = UUID.randomUUID();
+
+        mockMvc.perform(post("/posts/{id}", postId)
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .param("title", "")
+                        .param("content", "Content")
+                        .param("locale", "de"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/form"))
+                .andExpect(model().attributeHasFieldErrors("postForm", "title"))
+                .andExpect(model().attribute("editMode", true))
+                .andExpect(model().attribute("postId", postId));
+
+        verifyNoInteractions(postUseCase);
     }
 }

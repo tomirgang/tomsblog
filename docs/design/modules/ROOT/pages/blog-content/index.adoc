@@ -355,19 +355,38 @@ classDiagram
         +index(model, tenantId) String
         +listPosts(model, tenantId) String
         +showPost(slug, model, tenantId) String
+        +newPostForm(model) String
+        +createPost(form, result, tenantId, authorId, model) String
+        +editPostForm(id, tenantId, model) String
+        +updatePost(id, form, result, tenantId, model) String
+    }
+
+    class PostFormData {
+        +String title
+        +String content
+        +String locale
+        +String socialMediaTitle
+        +String socialMediaSummary
     }
 
     class PostUseCase {
         <<interface>>
+        +createPost(command) Post
+        +updatePost(command) Post
+        +getPost(postId, tenantId) Post
+        +listPosts(tenantId) List~Post~
         +listPublishedPosts(tenantId) List~Post~
         +getPublishedPostBySlug(slug, tenantId) Post
     }
 
     BlogViewController --> PostUseCase : uses
+    BlogViewController --> PostFormData : binds
 ----
 
 Der `BlogViewController` liegt im Package `adapter.inbound.web` und greift über die bestehenden Inbound Ports (`PostUseCase`) auf die Fachlogik zu.
 Er gibt Thymeleaf-View-Namen zurück, die vom Spring MVC ViewResolver aufgelöst werden.
+
+Die `PostFormData`-Klasse dient als Form-Backing-Bean für die Thymeleaf-Formulare und kapselt die Eingabefelder mit Bean-Validation-Annotationen.
 
 ==== Öffentliche Blog-Ansicht (SWR-026)
 
@@ -412,6 +431,79 @@ Am `PostUseCase`-Port werden entsprechend zwei neue Methoden definiert:
 * `listPublishedPosts(TenantId)` - Delegiert an das Repository und gibt nur PUBLISHED-Posts zurück.
 * `getPublishedPostBySlug(Slug, TenantId)` - Gibt den Post zurück, wenn er existiert und den Status PUBLISHED hat. Wirft `PostNotFoundException` falls nicht gefunden oder nicht veröffentlicht.
 
+==== Formular zum Erstellen und Bearbeiten von Posts (SWR-027)
+
+Das Formular ermöglicht das Erstellen neuer Posts und das Bearbeiten bestehender Posts über eine einheitliche Template-Datei (`posts/form.html`).
+Es nutzt die bestehenden Inbound Ports `PostUseCase.createPost()` und `PostUseCase.updatePost()`.
+
+===== Form-Backing-Bean
+
+Die Klasse `PostFormData` kapselt die Formulareingaben und stellt die serverseitige Validierung über Bean Validation sicher:
+
+* `title` (NotBlank) - Titel des Posts
+* `content` (NotBlank) - Inhalt des Posts
+* `locale` (NotBlank) - Sprache des Posts (z.B. "de", "en")
+* `socialMediaTitle` (optional) - Titel für Social Media
+* `socialMediaSummary` (optional) - Zusammenfassung für Social Media
+
+===== Endpunkte
+
+[cols="1,1,2"]
+|===
+| HTTP-Methode | Pfad | Beschreibung
+
+| GET  | /posts/new | Leeres Formular anzeigen (Erstellen)
+| POST | /posts | Neuen Post erstellen (Form-Submit)
+| GET  | /posts/{id}/edit | Vorausgefülltes Formular anzeigen (Bearbeiten)
+| POST | /posts/{id} | Bestehenden Post aktualisieren (Form-Submit)
+|===
+
+===== Ablauf: Post erstellen
+
+[mermaid]
+----
+sequenceDiagram
+    actor Author
+    participant Controller as BlogViewController
+    participant Service as PostService
+
+    Author->>Controller: GET /posts/new
+    Controller-->>Author: posts/form.html (leeres Formular)
+
+    Author->>Controller: POST /posts (Formulardaten)
+    alt Validierung erfolgreich
+        Controller->>Service: createPost(CreatePostCommand)
+        Service-->>Controller: Post
+        Controller-->>Author: redirect:/posts
+    else Validierung fehlgeschlagen
+        Controller-->>Author: posts/form.html (Fehler + eingegebene Werte)
+    end
+----
+
+===== Ablauf: Post bearbeiten
+
+[mermaid]
+----
+sequenceDiagram
+    actor Author
+    participant Controller as BlogViewController
+    participant Service as PostService
+
+    Author->>Controller: GET /posts/{id}/edit
+    Controller->>Service: getPost(postId, tenantId)
+    Service-->>Controller: Post
+    Controller-->>Author: posts/form.html (vorausgefülltes Formular)
+
+    Author->>Controller: POST /posts/{id} (Formulardaten)
+    alt Validierung erfolgreich
+        Controller->>Service: updatePost(UpdatePostCommand)
+        Service-->>Controller: Post
+        Controller-->>Author: redirect:/posts
+    else Validierung fehlgeschlagen
+        Controller-->>Author: posts/form.html (Fehler + eingegebene Werte)
+    end
+----
+
 ==== Template-Struktur
 
 Die Templates folgen einer hierarchischen Struktur mit dem Thymeleaf Layout Dialect:
@@ -422,6 +514,7 @@ graph TD
     A[layout/default.html] -->|layout:fragment=content| B[index.html]
     A -->|layout:fragment=content| E[posts/list.html]
     A -->|layout:fragment=content| F[posts/show.html]
+    A -->|layout:fragment=content| G[posts/form.html]
     A --> C[fragments/header.html]
     A --> D[fragments/footer.html]
 ----
@@ -430,8 +523,9 @@ graph TD
 * **fragments/header.html**: Seitenkopf mit Blog-Titel und Navigationslinks (inkl. Link auf /posts)
 * **fragments/footer.html**: Fußzeile mit Copyright und Links
 * **index.html**: Startseite, dekoriert das Default-Layout via `layout:decorate`
-* **posts/list.html**: Post-Liste mit `th:each` über die Posts (SWR-026)
+* **posts/list.html**: Post-Liste mit `th:each` über die Posts (SWR-026), Links zum Erstellen und Bearbeiten (SWR-027)
 * **posts/show.html**: Einzelansicht eines Posts mit vollem Inhalt, Quellen und Tags (SWR-026)
+* **posts/form.html**: Wiederverwendbares Formular für Erstellen und Bearbeiten eines Posts (SWR-027)
 
 ==== CSS-Framework: PicoCSS
 

@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- Thymeleaf-Formular zum Erstellen (GET /posts/new, POST /posts) und Bearbeiten (GET /posts/{id}/edit, POST /posts/{id}) von Posts
+- PostFormData: Form-Backing-Bean mit Bean Validation für serverseitige Validierung
+- Post-Liste: Links zum Erstellen und Bearbeiten von Posts
+- SWR-027: Anforderung für Thymeleaf-Formular zum Erstellen/Bearbeiten von Posts
+- IMP-023: Implementierungsverweis für Thymeleaf-Formular
 - Öffentliche Blog-Ansicht mit Post-Liste (GET /posts) und Einzelansicht (GET /posts/{slug})
 - PostUseCase: listPublishedPosts() und getPublishedPostBySlug() für öffentliche Leseansicht
 - PostRepository: findPublishedByTenantId() und findBySlugAndTenantId() für Status-Filter und Slug-Suche

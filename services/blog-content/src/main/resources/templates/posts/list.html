@@ -9,6 +9,8 @@
     <section layout:fragment="content">
         <h1>Blog Posts</h1>
 
+        <p><a th:href="@{/posts/new}" role="button">Neuen Post erstellen</a></p>
+
         <p th:if="${#lists.isEmpty(posts)}">Noch keine Beiträge vorhanden.</p>
 
         <article th:each="post : ${posts}">
@@ -29,6 +31,8 @@
             </p>
             <footer>
                 <a th:href="@{/posts/{slug}(slug=${post.slug.value})}">Weiterlesen</a>
+                <span> | </span>
+                <a th:href="@{/posts/{id}/edit(id=${post.id.value})}">Bearbeiten</a>
             </footer>
         </article>
     </section>

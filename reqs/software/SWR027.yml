@@ -1,0 +1,22 @@
+active: true
+derived: false
+header: |
+  Thymeleaf-Formular zum Erstellen und Bearbeiten von Posts
+level: 27.0
+links:
+- STK001: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Der Blog Content Service muss ein Thymeleaf-basiertes Formular bereitstellen, mit dem Posts erstellt und bearbeitet werden können:
+  - Ein Formular unter /posts/new ermöglicht das Erstellen eines neuen Posts mit Feldern für Titel, Inhalt, Sprache (Locale), Social-Media-Titel (optional) und Social-Media-Zusammenfassung (optional).
+  - Ein Formular unter /posts/{id}/edit ermöglicht das Bearbeiten eines bestehenden Posts (gleiche Felder wie beim Erstellen, vorausgefüllt mit den aktuellen Werten).
+  - Nach erfolgreichem Erstellen oder Bearbeiten wird der Benutzer zur Post-Liste weitergeleitet (/posts).
+  - Das Formular validiert serverseitig: Titel und Inhalt dürfen nicht leer sein.
+  - Bei Validierungsfehlern wird das Formular erneut angezeigt mit Fehlermeldungen und den eingegebenen Werten.
+  - Die Post-Liste (/posts) enthält einen Link zum Erstellen eines neuen Posts.
+  - Jeder Post in der Liste enthält einen Link zum Bearbeiten.
+  - Die Views nutzen das bestehende Layout-Grundgerüst (SWR-025) via Thymeleaf Layout Dialect.
+  - Der Controller nutzt die bestehenden Inbound Ports (PostUseCase) mit CreatePostCommand und UpdatePostCommand.
+  - Die TenantId und AuthorId werden aus dem Request-Header (X-Tenant-Id, X-Author-Id) bezogen.

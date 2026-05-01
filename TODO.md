@@ -30,8 +30,8 @@
 - [x] Unit- und Integrationstests (Testcontainers für PostgreSQL)
 - [x] API-Dokumentation (OpenAPI/Swagger)
 - [x] Thymeleaf: Layout-Grundgerüst (responsiv, einfaches CSS-Framework)
-- [ ] Thymeleaf: Öffentliche Blog-Ansicht (Post-Liste, Einzelansicht)
-- [ ] Thymeleaf: Einfaches Formular zum Erstellen/Bearbeiten von Posts
+- [x] Thymeleaf: Öffentliche Blog-Ansicht (Post-Liste, Einzelansicht)
+- [x] Thymeleaf: Einfaches Formular zum Erstellen/Bearbeiten von Posts
 
 > **MVP nach Phase 2:** Blog-Posts lesen, erstellen und bearbeiten lokal im Browser.
 

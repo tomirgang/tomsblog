@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title th:text="${editMode} ? 'Post bearbeiten' : 'Neuer Post'">Post Formular</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1 th:text="${editMode} ? 'Post bearbeiten' : 'Neuer Post'">Post Formular</h1>
+
+        <form th:action="${editMode} ? @{/posts/{id}(id=${postId})} : @{/posts}"
+              th:object="${postForm}" method="post">
+
+            <label for="title">Titel</label>
+            <input type="text" id="title" th:field="*{title}"
+                   th:aria-invalid="${#fields.hasErrors('title') ? 'true' : 'false'}"
+                   placeholder="Titel des Posts">
+            <small th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error">Fehler</small>
+
+            <label for="content">Inhalt</label>
+            <textarea id="content" th:field="*{content}" rows="12"
+                      th:aria-invalid="${#fields.hasErrors('content') ? 'true' : 'false'}"
+                      placeholder="Inhalt des Posts"></textarea>
+            <small th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="error">Fehler</small>
+
+            <label for="locale">Sprache</label>
+            <select id="locale" th:field="*{locale}"
+                    th:aria-invalid="${#fields.hasErrors('locale') ? 'true' : 'false'}">
+                <option value="">Sprache wählen</option>
+                <option value="de">Deutsch</option>
+                <option value="en">English</option>
+            </select>
+            <small th:if="${#fields.hasErrors('locale')}" th:errors="*{locale}" class="error">Fehler</small>
+
+            <details>
+                <summary>Social Media (optional)</summary>
+
+                <label for="socialMediaTitle">Social Media Titel</label>
+                <input type="text" id="socialMediaTitle" th:field="*{socialMediaTitle}"
+                       placeholder="Titel für Social Media">
+
+                <label for="socialMediaSummary">Social Media Zusammenfassung</label>
+                <textarea id="socialMediaSummary" th:field="*{socialMediaSummary}" rows="3"
+                          placeholder="Zusammenfassung für Social Media"></textarea>
+            </details>
+
+            <div role="group">
+                <button type="submit" th:text="${editMode} ? 'Speichern' : 'Erstellen'">Absenden</button>
+                <a th:href="@{/posts}" role="button" class="secondary">Abbrechen</a>
+            </div>
+        </form>
+    </section>
+</body>
+</html>

@@ -1,0 +1,25 @@
+active: true
+derived: false
+header: |
+  Thymeleaf-Formular zum Erstellen und Bearbeiten von Posts
+level: 23.0
+links:
+- SWR027: null
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/web/BlogViewController.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/web/PostFormData.java
+  type: file
+- path: services/blog-content/src/main/resources/templates/posts/form.html
+  type: file
+- path: services/blog-content/src/main/resources/templates/posts/list.html
+  type: file
+reviewed: null
+text: |
+  Implementierung des Thymeleaf-Formulars zum Erstellen und Bearbeiten von Blog-Posts (SWR-027).
+  Der BlogViewController wurde um vier Handler-Methoden erweitert: newPostForm (GET /posts/new),
+  createPost (POST /posts), editPostForm (GET /posts/{id}/edit) und updatePost (POST /posts/{id}).
+  Die PostFormData-Klasse dient als Form-Backing-Bean mit Bean Validation.
+  Die Post-Liste zeigt Links zum Erstellen und Bearbeiten.
