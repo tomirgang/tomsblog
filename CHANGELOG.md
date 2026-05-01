@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-05-01
+
 ### Added
 
 - REST-API für Quellenverwaltung (SWR-012): POST/GET/DELETE /api/posts/{postId}/sources
