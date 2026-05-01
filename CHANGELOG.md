@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Release-Skript aktualisiert jetzt die Antora-Dokumentationsversionen (prerelease-Marker und Versionsnummer in arc42 index.adoc)
+
 ## [0.3.0] - 2026-05-01
 
 ### Added

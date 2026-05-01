@@ -89,6 +89,20 @@ else
     die "Could not find '## [Unreleased]' section in CHANGELOG.md"
 fi
 
+# Update Antora documentation versions (remove prerelease marker for release)
+info "Updating Antora documentation versions..."
+for antora_file in docs/arc42/antora.yml docs/design/antora.yml; do
+    if [[ -f "$antora_file" ]]; then
+        sed -i '/^prerelease: -dev$/d' "$antora_file"
+    fi
+done
+
+# Update version in arc42 index page
+ARC42_INDEX="docs/arc42/modules/ROOT/pages/index.adoc"
+if [[ -f "$ARC42_INDEX" ]]; then
+    sed -i "s/| Version | .*/| Version | $NEW_VERSION/" "$ARC42_INDEX"
+fi
+
 # Clean build and install
 info "Running clean build and install..."
 ./mvnw clean install --batch-mode --no-transfer-progress
@@ -121,6 +135,19 @@ git push github "v$NEW_VERSION"
 NEXT_SNAPSHOT="$NEW_VERSION-SNAPSHOT"
 info "Setting development version to $NEXT_SNAPSHOT..."
 ./mvnw versions:set -DnewVersion="$NEXT_SNAPSHOT" -DgenerateBackupPoms=false --batch-mode --no-transfer-progress -q
+
+# Restore Antora prerelease marker for development
+for antora_file in docs/arc42/antora.yml docs/design/antora.yml; do
+    if [[ -f "$antora_file" ]]; then
+        sed -i '/^version:/a prerelease: -dev' "$antora_file"
+    fi
+done
+
+# Update version in arc42 index page to SNAPSHOT
+if [[ -f "$ARC42_INDEX" ]]; then
+    sed -i "s/| Version | .*/| Version | $NEXT_SNAPSHOT/" "$ARC42_INDEX"
+fi
+
 git add -A
 git commit -m "chore: set development version $NEXT_SNAPSHOT"
 git push origin "$BRANCH"
