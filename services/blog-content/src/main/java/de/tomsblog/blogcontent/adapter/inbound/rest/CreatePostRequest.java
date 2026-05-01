@@ -8,5 +8,7 @@ public record CreatePostRequest(
         @NotNull UUID authorId,
         @NotBlank String title,
         @NotBlank String content,
-        String locale) {
+        String locale,
+        String socialMediaTitle,
+        String socialMediaSummary) {
 }

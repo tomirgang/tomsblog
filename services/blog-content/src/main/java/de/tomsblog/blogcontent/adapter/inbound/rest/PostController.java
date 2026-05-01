@@ -36,7 +36,8 @@ public class PostController {
             @RequestHeader("X-Tenant-Id") UUID tenantId, @Valid @RequestBody CreatePostRequest request) {
         CreatePostCommand command = new CreatePostCommand(
                 TenantId.of(tenantId), AuthorId.of(request.authorId()),
-                request.title(), request.content(), request.locale());
+                request.title(), request.content(), request.locale(),
+                request.socialMediaTitle(), request.socialMediaSummary());
         Post post = postUseCase.createPost(command);
         PostResponse response = PostResponse.from(post);
         URI location = URI.create("/api/posts/" + post.getId().asString());
@@ -63,7 +64,7 @@ public class PostController {
             @PathVariable UUID id,
             @Valid @RequestBody UpdatePostRequest request) {
         UpdatePostCommand command = new UpdatePostCommand(PostId.of(id), TenantId.of(tenantId), request.title(),
-                request.content());
+                request.content(), request.socialMediaTitle(), request.socialMediaSummary());
         Post post = postUseCase.updatePost(command);
         return ResponseEntity.ok(PostResponse.from(post));
     }

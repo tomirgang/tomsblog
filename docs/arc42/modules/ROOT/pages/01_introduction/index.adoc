@@ -11,6 +11,7 @@ Toms Blog ist eine multi-tenant Blog- und Podcast-Plattform, die als Lernprojekt
 * KI-gestützte Content-Erstellung (Übersetzung, Schreibassistenz, Titelbilder) (STK-011)
 * Multi-Tenant-Fähigkeit für getrennte Blog-Instanzen (STK-002)
 * RSS/Atom Feeds (Mixed, Tag-basiert, Content-Type) (STK-006)
+* Quellenverwaltung mit automatischer Archivierung referenzierter Webseiten (STK-010)
 
 Diese Features leiten sich aus den Stakeholder-Anforderungen STK-001 bis STK-012 ab und werden über Software Requirements (SWR) weiter detailliert.
 

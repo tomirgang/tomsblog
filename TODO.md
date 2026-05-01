@@ -50,7 +50,7 @@
 ### Phase 4: Benutzerverwaltung & Multi-Tenancy
 
 - [ ] Identity-Provider evaluieren (Keycloak vs. eigener Service)
-- [ ] Auth-Service oder Keycloak-Integration
+- [ ] Auth-Ser= vice oder Keycloak-Integration
 - [ ] Multi-Tenant-Isolation (Schema-basiert vs. Row-Level-Security)
 - [ ] Rollen- und Berechtigungsmodell (Admin, Autor, Leser)
 - [ ] Audit-Logging für alle relevanten Aktionen
@@ -161,6 +161,24 @@
 - [ ] Video-Feed
 - [ ] React-UI: Video-Player & Verwaltung (Module Federation Remote)
 - [ ] GraphQL-Anbindung (Apollo Client)
+
+---
+
+## Meilenstein 6: Social Media Promotion
+
+> Automatisierte Bewerbung von Blog-Posts auf Mastodon und LinkedIn beim Publizieren.
+
+- [ ] Domain-Erweiterung: `socialMediaTitle` und `socialMediaSummary` am Post
+- [ ] Fallback-Logik: Titel = Post-Titel wenn leer, Summary = erster Absatz wenn leer
+- [ ] Social Media Connection Service (OAuth-Anbindung für Mastodon & LinkedIn)
+- [ ] Backend-UI: Plattform-Verbindungen pro Autor konfigurieren (einmalig im Profil)
+- [ ] Post-Editor: Auswahl der Ziel-Plattformen pro Post
+- [ ] Post-Editor: Optionale Felder für Social Media Title und Summary
+- [ ] Event-basierte Promotion: PostPublishedEvent triggert Social-Media-Adapter
+- [ ] Mastodon-Adapter (Mastodon API, Toot mit Link + Summary)
+- [ ] LinkedIn-Adapter (LinkedIn Share API, Post mit Link + Summary)
+- [ ] Fehlerbehandlung & Retry (Graceful Degradation bei Plattform-Ausfall)
+- [ ] Status-Anzeige: Promotion-Status pro Post und Plattform im Backend sichtbar
 
 ---
 

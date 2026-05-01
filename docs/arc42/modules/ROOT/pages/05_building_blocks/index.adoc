@@ -9,7 +9,7 @@ plantuml::partial$../images/plantuml/building-blocks-l1.puml[format=svg]
 
 == Ebene 2: Blog Content Service
 
-Der Blog Content Service setzt die zentrale Blog-Funktionalität um (SWR-001, SWR-002, SWR-003, SWR-006, SWR-012). Seine hexagonale Struktur (SWA-001) wird im folgenden Diagramm dargestellt:
+Der Blog Content Service setzt die zentrale Blog-Funktionalität um (SWR-001, SWR-002, SWR-003, SWR-006, SWR-012, SWR-013). Seine hexagonale Struktur (SWA-001) wird im folgenden Diagramm dargestellt:
 
 plantuml::partial$../images/plantuml/building-blocks-l2.puml[format=svg]
 
@@ -17,7 +17,7 @@ Das Detail Design des Blog Content Service mit Klassendiagrammen und Ablaufbesch
 
 === Domain Layer (domain/)
 
-Reine Java-Klassen ohne Framework-Abhaengigkeiten:
+Reine Java-Klassen ohne Framework-Abhaengigkeiten. Die gemeinsamen Domain Primitives (EntityId, TenantId, AuthorId, AggregateRoot, DomainEvent, Auditable) werden über das Shared Kernel (SWA-002) als Framework-freie Library bereitgestellt.
 
 [cols="1,1,2"]
 |===
@@ -37,7 +37,7 @@ Reine Java-Klassen ohne Framework-Abhaengigkeiten:
 | `TranslationCreatedEvent`, `TranslationApprovedEvent` | Domain Events | Translation-Lifecycle-Events
 |===
 
-NOTE: `AuthorId` liegt im `shared-kernel`. Der blog-content Service haelt keine Author-Stammdaten vor (werden vom Auth-Service in Phase 3 bereitgestellt).
+NOTE: `AuthorId` liegt im `shared-kernel` (SWA-002). Der blog-content Service haelt keine Author-Stammdaten vor (werden vom Auth-Service in Phase 3 bereitgestellt).
 
 === Application Layer (application/)
 

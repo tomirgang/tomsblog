@@ -31,6 +31,8 @@ public final class PostMapper {
                         a.show(), a.storageKey()))
                 .toList());
         entity.setPublishedAt(post.getPublishedAt());
+        entity.setSocialMediaTitle(post.getSocialMediaTitle());
+        entity.setSocialMediaSummary(post.getSocialMediaSummary());
         return entity;
     }
 
@@ -55,6 +57,8 @@ public final class PostMapper {
                 tags,
                 sources,
                 attachments,
-                entity.getPublishedAt());
+                entity.getPublishedAt(),
+                entity.getSocialMediaTitle(),
+                entity.getSocialMediaSummary());
     }
 }

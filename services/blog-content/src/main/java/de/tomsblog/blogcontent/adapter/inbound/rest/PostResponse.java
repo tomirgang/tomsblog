@@ -22,7 +22,11 @@ public record PostResponse(
         Set<UUID> tags,
         List<SourceResponse> sources,
         List<AttachmentResponse> attachments,
-        Instant publishedAt) {
+        Instant publishedAt,
+        String socialMediaTitle,
+        String socialMediaSummary,
+        String effectiveSocialMediaTitle,
+        String effectiveSocialMediaSummary) {
 
     public static PostResponse from(Post post) {
         return new PostResponse(
@@ -37,7 +41,11 @@ public record PostResponse(
                 post.getTags().stream().map(TagId::value).collect(Collectors.toSet()),
                 post.getSources().stream().map(SourceResponse::from).toList(),
                 post.getAttachments().stream().map(AttachmentResponse::from).toList(),
-                post.getPublishedAt());
+                post.getPublishedAt(),
+                post.getSocialMediaTitle(),
+                post.getSocialMediaSummary(),
+                post.getEffectiveSocialMediaTitle(),
+                post.getEffectiveSocialMediaSummary());
     }
 
     public record SourceResponse(String url, String title) {

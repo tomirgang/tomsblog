@@ -35,6 +35,8 @@ public class Post extends AggregateRoot {
     private final List<Source> sources;
     private final List<Attachment> attachments;
     private Instant publishedAt;
+    private String socialMediaTitle;
+    private String socialMediaSummary;
 
     private Post(PostId id, TenantId tenantId, AuthorId authorId, String title, Slug slug,
             String content, PostLocale locale) {
@@ -95,6 +97,11 @@ public class Post extends AggregateRoot {
         this.slug = Slug.fromTitle(title);
         this.content = content;
         registerEvent(PostUpdatedEvent.of(this.id, this.tenantId));
+    }
+
+    public void updateSocialMedia(String socialMediaTitle, String socialMediaSummary) {
+        this.socialMediaTitle = socialMediaTitle;
+        this.socialMediaSummary = socialMediaSummary;
     }
 
     public void addTag(TagId tagId) {
@@ -174,6 +181,43 @@ public class Post extends AggregateRoot {
         return publishedAt;
     }
 
+    public String getSocialMediaTitle() {
+        return socialMediaTitle;
+    }
+
+    public String getSocialMediaSummary() {
+        return socialMediaSummary;
+    }
+
+    /**
+     * Returns the effective social media title: the explicit value if set, otherwise the post title.
+     */
+    public String getEffectiveSocialMediaTitle() {
+        return (socialMediaTitle != null && !socialMediaTitle.isBlank()) ? socialMediaTitle : title;
+    }
+
+    /**
+     * Returns the effective social media summary: the explicit value if set,
+     * otherwise the first paragraph of the post content.
+     */
+    public String getEffectiveSocialMediaSummary() {
+        if (socialMediaSummary != null && !socialMediaSummary.isBlank()) {
+            return socialMediaSummary;
+        }
+        return extractFirstParagraph(content);
+    }
+
+    private static String extractFirstParagraph(String text) {
+        if (text == null || text.isBlank()) {
+            return "";
+        }
+        int index = text.indexOf("\n\n");
+        if (index > 0) {
+            return text.substring(0, index).strip();
+        }
+        return text.strip();
+    }
+
     // Reconstitution from persistence (no events fired)
     public static Post reconstitute(
             PostId id,
@@ -187,10 +231,14 @@ public class Post extends AggregateRoot {
             Set<TagId> tags,
             List<Source> sources,
             List<Attachment> attachments,
-            Instant publishedAt) {
+            Instant publishedAt,
+            String socialMediaTitle,
+            String socialMediaSummary) {
         Post post = new Post(id, tenantId, authorId, title, slug, content, locale);
         post.status = status;
         post.publishedAt = publishedAt;
+        post.socialMediaTitle = socialMediaTitle;
+        post.socialMediaSummary = socialMediaSummary;
         post.tags.addAll(tags);
         post.sources.addAll(sources);
         post.attachments.addAll(attachments);

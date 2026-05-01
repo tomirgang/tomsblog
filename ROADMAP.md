@@ -36,6 +36,13 @@
 │                       Video-Podcast                                     │
 │         React-UI (Module Federation) + GraphQL-API                      │
 └─────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        MEILENSTEIN 6                                    │
+│                Social Media Promotion                                   │
+│       Automatisierte Bewerbung auf Mastodon & LinkedIn                  │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -132,6 +139,34 @@
 **Technologie-Stack:**
 - React (shared mit Podcast-UI via Module Federation)
 - Kommunikation: GraphQL
+
+---
+
+## Meilenstein 6: Social Media Promotion
+
+**Ziel:** Beim Publizieren eines Blog-Posts wird dieser automatisiert auf konfigurierten Social-Media-Plattformen beworben. Unterstützte Plattformen: Mastodon und LinkedIn.
+
+| Schritt | Beschreibung                                                                           |
+| ------- | -------------------------------------------------------------------------------------- |
+| 6.1     | Domain-Erweiterung: Social Media Title und Social Media Summary am Post                |
+| 6.2     | Fallback-Logik: Social Media Title = Post-Titel, Summary = erster Absatz des Textes    |
+| 6.3     | Social Media Connection Service (OAuth-Anbindung Mastodon & LinkedIn)                  |
+| 6.4     | Backend-UI: Autor konfiguriert Plattform-Verbindungen einmalig im Profil               |
+| 6.5     | Post-Editor: Auswahl der Ziel-Plattformen pro Post                                    |
+| 6.6     | Event-basierte Promotion: PostPublishedEvent triggert Social-Media-Adapter             |
+| 6.7     | Mastodon-Adapter (Mastodon API, Toot mit Link + Summary)                               |
+| 6.8     | LinkedIn-Adapter (LinkedIn Share API, Post mit Link + Summary)                         |
+| 6.9     | Fehlerbehandlung & Retry (Graceful Degradation bei Plattform-Ausfall)                  |
+| 6.10    | Status-Anzeige: Autor sieht Promotion-Status pro Post und Plattform                    |
+
+**Funktionsweise:**
+
+- Jeder Post hat optionale Felder `socialMediaTitle` und `socialMediaSummary`
+- Wenn `socialMediaTitle` leer ist, wird der normale Post-Titel verwendet
+- Wenn `socialMediaSummary` leer ist, wird der erste Absatz des Post-Textes verwendet
+- Autoren konfigurieren ihre Plattform-Verbindungen einmalig im Backend (OAuth-Flow)
+- Pro Post wählt der Autor aus, auf welchen Plattformen beworben werden soll
+- Beim Publizieren wird ein `PostPublishedEvent` ausgelöst, das die Social-Media-Adapter triggert
 
 ---
 

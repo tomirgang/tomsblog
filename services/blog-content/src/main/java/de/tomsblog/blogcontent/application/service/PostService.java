@@ -32,6 +32,7 @@ public class PostService implements PostUseCase {
     public Post createPost(CreatePostCommand command) {
         PostLocale locale = command.locale() != null ? PostLocale.of(command.locale()) : PostLocale.german();
         Post post = Post.create(command.tenantId(), command.authorId(), command.title(), command.content(), locale);
+        post.updateSocialMedia(command.socialMediaTitle(), command.socialMediaSummary());
         Post saved = postRepository.save(post);
         eventPublisher.publish(post.getDomainEvents());
         post.clearDomainEvents();
@@ -42,6 +43,7 @@ public class PostService implements PostUseCase {
     public Post updatePost(UpdatePostCommand command) {
         Post post = findOrThrow(command.postId(), command.tenantId());
         post.updateContent(command.title(), command.content());
+        post.updateSocialMedia(command.socialMediaTitle(), command.socialMediaSummary());
         return postRepository.save(post);
     }
 

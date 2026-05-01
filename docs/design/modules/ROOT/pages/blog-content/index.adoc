@@ -6,9 +6,9 @@
 == Überblick
 
 Der Blog Content Service ist der zentrale Service für die Verwaltung von Blog-Inhalten.
-Er implementiert die Post-CRUD-Operationen (SWR-001), das Veröffentlichen von Posts (SWR-002), Tenant-Isolation (SWR-003), Quellenverwaltung (SWR-012) und den Audit-Trail (SWR-006).
+Er implementiert die Post-CRUD-Operationen (SWR-001), das Veröffentlichen von Posts (SWR-002), Tenant-Isolation (SWR-003), Quellenverwaltung mit Web-Snapshots (SWR-012, SWR-013) und den Audit-Trail (SWR-006).
 
-Die Architektur folgt der hexagonalen Architektur (SWA-001) mit einer klaren Trennung von Domain, Application und Adapter Layer.
+Die Architektur folgt der hexagonalen Architektur (SWA-001) mit einer klaren Trennung von Domain, Application und Adapter Layer. Gemeinsame Domain Primitives wie EntityId, TenantId und AggregateRoot stammen aus dem Shared Kernel (SWA-002).
 
 == Domain-Modell
 
@@ -281,8 +281,10 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWR-006 | Audit-Trail | JPA Audit-Felder, Domain Events
 | SWR-009 | Domain Events | EventPublisher, PostCreatedEvent, PostPublishedEvent
 | SWR-012 | Quellenverwaltung | Source Value Object, Post.addSource()
+| SWR-013 | Web-Snapshot von Quellen | Snapshot-Adapter (S3 Storage, Phase 2)
 | SWR-015 | Input-Validierung | GlobalExceptionHandler, Slug/PostLocale Validierung
 | SWA-001 | Hexagonale Architektur | Domain/Application/Adapter Trennung
+| SWA-002 | Shared Kernel | EntityId, TenantId, AuthorId, AggregateRoot aus libs/shared-kernel
 | SWA-004 | Spring Boot Applikation | BlogContentConfiguration, Starter Dependencies
 | SWA-007 | Domain-Modell (DDD) | Post, Translation, Tag, Value Objects
 | SWA-008 | Translation als separates Aggregate | Translation mit eigenem Lifecycle

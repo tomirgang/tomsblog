@@ -55,6 +55,12 @@ public class PostJpaEntity implements Auditable {
     @Column(name = "published_at")
     private Instant publishedAt;
 
+    @Column(name = "social_media_title")
+    private String socialMediaTitle;
+
+    @Column(name = "social_media_summary", columnDefinition = "TEXT")
+    private String socialMediaSummary;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -177,6 +183,22 @@ public class PostJpaEntity implements Auditable {
 
     public void setPublishedAt(Instant publishedAt) {
         this.publishedAt = publishedAt;
+    }
+
+    public String getSocialMediaTitle() {
+        return socialMediaTitle;
+    }
+
+    public void setSocialMediaTitle(String socialMediaTitle) {
+        this.socialMediaTitle = socialMediaTitle;
+    }
+
+    public String getSocialMediaSummary() {
+        return socialMediaSummary;
+    }
+
+    public void setSocialMediaSummary(String socialMediaSummary) {
+        this.socialMediaSummary = socialMediaSummary;
     }
 
     @Override
