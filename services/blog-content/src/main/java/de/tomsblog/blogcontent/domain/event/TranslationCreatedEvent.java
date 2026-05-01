@@ -17,12 +17,23 @@ public record TranslationCreatedEvent(
         PostId postId,
         TenantId tenantId,
         PostLocale locale,
-        TranslationSource source) implements DomainEvent {
+        TranslationSource source)
+        implements DomainEvent {
 
-    public static TranslationCreatedEvent of(TranslationId translationId, PostId postId,
-            TenantId tenantId, PostLocale locale,
+    public static TranslationCreatedEvent of(
+            TranslationId translationId,
+            PostId postId,
+            TenantId tenantId,
+            PostLocale locale,
             TranslationSource source) {
-        return new TranslationCreatedEvent(UUID.randomUUID(), Instant.now(), "translation.created",
-                translationId, postId, tenantId, locale, source);
+        return new TranslationCreatedEvent(
+                UUID.randomUUID(),
+                Instant.now(),
+                "translation.created",
+                translationId,
+                postId,
+                tenantId,
+                locale,
+                source);
     }
 }

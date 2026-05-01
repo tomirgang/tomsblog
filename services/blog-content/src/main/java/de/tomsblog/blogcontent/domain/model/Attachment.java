@@ -11,8 +11,8 @@ import java.util.Objects;
  * The storageKey may be null if the file has not yet been uploaded to external
  * storage.
  */
-public record Attachment(AttachmentId id, String filename, String contentType, long size, boolean show,
-        String storageKey) {
+public record Attachment(
+        AttachmentId id, String filename, String contentType, long size, boolean show, String storageKey) {
 
     public Attachment {
         Objects.requireNonNull(id, "AttachmentId must not be null");

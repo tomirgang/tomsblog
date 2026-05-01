@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional
+@SuppressWarnings("null")
 public class JpaPostRepository implements PostRepository {
 
     private final SpringDataPostRepository springDataRepo;
@@ -36,9 +37,7 @@ public class JpaPostRepository implements PostRepository {
     @Override
     @Transactional(readOnly = true)
     public Optional<Post> findByIdAndTenantId(PostId id, TenantId tenantId) {
-        return springDataRepo
-                .findByIdAndTenantId(id.value(), tenantId.value())
-                .map(PostMapper::toDomain);
+        return springDataRepo.findByIdAndTenantId(id.value(), tenantId.value()).map(PostMapper::toDomain);
     }
 
     @Override

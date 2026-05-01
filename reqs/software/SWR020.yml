@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Tag CRUD API
+level: 20.0
+links:
+- STK001: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Das System muss eine REST API für Tag-Verwaltung bereitstellen:
+  POST /api/tags (Tag erstellen), GET /api/tags (alle Tags des Tenants),
+  GET /api/tags/{id} (einzelnen Tag lesen),
+  PUT /api/tags/{id} (Tag umbenennen), DELETE /api/tags/{id} (Tag löschen).
+  Tag-Namen müssen pro Tenant eindeutig sein.
+  Alle Endpunkte sind Tenant-scoped über den X-Tenant-Id Header.

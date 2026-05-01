@@ -1,0 +1,23 @@
+active: true
+derived: false
+header: |
+  JpaTranslationRepository (Outbound Adapter)
+level: 18.0
+links:
+- SWA001: null
+- SWA004: null
+- SWA013: null
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/JpaTranslationRepository.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/TranslationJpaEntity.java
+  type: file
+reviewed: null
+text: |
+  JPA Outbound Adapter für den TranslationRepository Port.
+  Implementiert Persistenz über Spring Data JPA mit TranslationJpaEntity.
+  Alle Abfragen sind Tenant-scoped. TranslationMapper übernimmt bidirektionales
+  Mapping zwischen Domain-Translation und TranslationJpaEntity.
+  FK-Beziehung zu posts-Tabelle, Unique Constraint auf (post_id, locale).

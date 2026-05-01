@@ -73,8 +73,7 @@ public class PostJpaEntity implements Auditable {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    protected PostJpaEntity() {
-    }
+    protected PostJpaEntity() {}
 
     @PrePersist
     void prePersist() {

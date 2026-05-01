@@ -1,6 +1,5 @@
 package de.tomsblog.shared.domain;
 
-import java.util.Objects;
 import java.util.UUID;
 
 /**

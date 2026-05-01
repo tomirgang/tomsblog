@@ -17,8 +17,8 @@ class TranslationTest {
     @Test
     @DisplayName("SWR-005: Create manual translation starts in DRAFT status")
     void createManualTranslationStartsInDraft() {
-        Translation translation = Translation.createManual(postId, tenantId, PostLocale.english(),
-                "Translated Title", "Translated Content");
+        Translation translation = Translation.createManual(
+                postId, tenantId, PostLocale.english(), "Translated Title", "Translated Content");
 
         assertThat(translation.getId()).isNotNull();
         assertThat(translation.getPostId()).isEqualTo(postId);
@@ -31,8 +31,8 @@ class TranslationTest {
     @Test
     @DisplayName("SWR-004: Create AI translation starts in REVIEW_PENDING status")
     void createAiTranslationStartsInReviewPending() {
-        Translation translation = Translation.createFromAi(postId, tenantId, PostLocale.english(),
-                "AI Title", "AI Content");
+        Translation translation =
+                Translation.createFromAi(postId, tenantId, PostLocale.english(), "AI Title", "AI Content");
 
         assertThat(translation.getStatus()).isEqualTo(TranslationStatus.REVIEW_PENDING);
         assertThat(translation.getSource()).isEqualTo(TranslationSource.AI_GENERATED);
@@ -41,8 +41,7 @@ class TranslationTest {
     @Test
     @DisplayName("SWR-005: Manual translation registers TranslationCreatedEvent")
     void manualTranslationRegistersEvent() {
-        Translation translation = Translation.createManual(postId, tenantId, PostLocale.english(),
-                "Title", "Content");
+        Translation translation = Translation.createManual(postId, tenantId, PostLocale.english(), "Title", "Content");
 
         assertThat(translation.getDomainEvents()).hasSize(1);
         assertThat(translation.getDomainEvents().getFirst()).isInstanceOf(TranslationCreatedEvent.class);
@@ -51,8 +50,7 @@ class TranslationTest {
     @Test
     @DisplayName("SWR-004: Approve translation changes status and registers event")
     void approveTranslationChangesStatus() {
-        Translation translation = Translation.createFromAi(postId, tenantId, PostLocale.english(),
-                "Title", "Content");
+        Translation translation = Translation.createFromAi(postId, tenantId, PostLocale.english(), "Title", "Content");
         translation.clearDomainEvents();
 
         translation.approve();
@@ -65,8 +63,7 @@ class TranslationTest {
     @Test
     @DisplayName("SWR-004: Reject translation changes status")
     void rejectTranslationChangesStatus() {
-        Translation translation = Translation.createFromAi(postId, tenantId, PostLocale.english(),
-                "Title", "Content");
+        Translation translation = Translation.createFromAi(postId, tenantId, PostLocale.english(), "Title", "Content");
 
         translation.reject();
 
@@ -76,8 +73,7 @@ class TranslationTest {
     @Test
     @DisplayName("Cannot approve an already approved translation")
     void cannotApproveAlreadyApproved() {
-        Translation translation = Translation.createManual(postId, tenantId, PostLocale.english(),
-                "Title", "Content");
+        Translation translation = Translation.createManual(postId, tenantId, PostLocale.english(), "Title", "Content");
         translation.approve();
 
         assertThatThrownBy(translation::approve)
@@ -88,8 +84,7 @@ class TranslationTest {
     @Test
     @DisplayName("Cannot reject an already rejected translation")
     void cannotRejectAlreadyRejected() {
-        Translation translation = Translation.createFromAi(postId, tenantId, PostLocale.english(),
-                "Title", "Content");
+        Translation translation = Translation.createFromAi(postId, tenantId, PostLocale.english(), "Title", "Content");
         translation.reject();
 
         assertThatThrownBy(translation::reject)
@@ -100,8 +95,7 @@ class TranslationTest {
     @Test
     @DisplayName("Cannot approve a rejected translation")
     void cannotApproveRejected() {
-        Translation translation = Translation.createFromAi(postId, tenantId, PostLocale.english(),
-                "Title", "Content");
+        Translation translation = Translation.createFromAi(postId, tenantId, PostLocale.english(), "Title", "Content");
         translation.reject();
 
         assertThatThrownBy(translation::approve)
@@ -112,8 +106,7 @@ class TranslationTest {
     @Test
     @DisplayName("Update content on approved translation reverts to REVIEW_PENDING")
     void updateContentOnApprovedRevertsToReviewPending() {
-        Translation translation = Translation.createManual(postId, tenantId, PostLocale.english(),
-                "Title", "Content");
+        Translation translation = Translation.createManual(postId, tenantId, PostLocale.english(), "Title", "Content");
         translation.approve();
 
         translation.updateContent("Updated Title", "Updated Content");

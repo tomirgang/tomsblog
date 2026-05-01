@@ -1,0 +1,26 @@
+package de.tomsblog.blogcontent.application.port.inbound;
+
+import de.tomsblog.blogcontent.domain.model.PostId;
+import de.tomsblog.blogcontent.domain.model.Translation;
+import de.tomsblog.blogcontent.domain.model.TranslationId;
+import de.tomsblog.shared.tenant.TenantId;
+import java.util.List;
+
+public interface TranslationUseCase {
+
+    Translation createManualTranslation(CreateTranslationCommand command);
+
+    Translation createAiTranslation(CreateTranslationCommand command);
+
+    Translation updateTranslation(UpdateTranslationCommand command);
+
+    void approveTranslation(TranslationId translationId, TenantId tenantId);
+
+    void rejectTranslation(TranslationId translationId, TenantId tenantId);
+
+    void deleteTranslation(TranslationId translationId, TenantId tenantId);
+
+    Translation getTranslation(TranslationId translationId, TenantId tenantId);
+
+    List<Translation> listTranslations(PostId postId, TenantId tenantId);
+}

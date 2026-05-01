@@ -28,8 +28,7 @@ class SourceTest {
     @Test
     @DisplayName("Source with null URL throws exception")
     void sourceWithNullUrlThrows() {
-        assertThatThrownBy(() -> new Source(null, "Title"))
-                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> new Source(null, "Title")).isInstanceOf(NullPointerException.class);
     }
 
     @Test
@@ -43,7 +42,6 @@ class SourceTest {
     @Test
     @DisplayName("Source with null title throws exception")
     void sourceWithNullTitleThrows() {
-        assertThatThrownBy(() -> new Source("https://example.com", null))
-                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> new Source("https://example.com", null)).isInstanceOf(NullPointerException.class);
     }
 }

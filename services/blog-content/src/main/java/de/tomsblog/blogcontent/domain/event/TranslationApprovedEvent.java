@@ -15,11 +15,12 @@ public record TranslationApprovedEvent(
         TranslationId translationId,
         PostId postId,
         TenantId tenantId,
-        PostLocale locale) implements DomainEvent {
+        PostLocale locale)
+        implements DomainEvent {
 
-    public static TranslationApprovedEvent of(TranslationId translationId, PostId postId,
-            TenantId tenantId, PostLocale locale) {
-        return new TranslationApprovedEvent(UUID.randomUUID(), Instant.now(), "translation.approved",
-                translationId, postId, tenantId, locale);
+    public static TranslationApprovedEvent of(
+            TranslationId translationId, PostId postId, TenantId tenantId, PostLocale locale) {
+        return new TranslationApprovedEvent(
+                UUID.randomUUID(), Instant.now(), "translation.approved", translationId, postId, tenantId, locale);
     }
 }

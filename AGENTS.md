@@ -46,14 +46,16 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 - Software Detail Design documentation in `docs/design/` using AsciiDoc + Antora (separate Antora component)
 - All Doorstop requirements (SWR, SWA) must be referenced from the architecture docs (arc42) and software detail design docs at the appropriate locations
 - Requirement references and diagram includes must be accompanied by explaining text that provides context (never a bare include/reference without surrounding prose)
+- **Design-first workflow**: every feature implementation MUST start with requirements, ADRs, architecture and software detail design. Code implementation only begins after user approval of the design (see `.github/instructions/documentation-sync.instructions.md`)
 
 ## Build & Test
 
 ```bash
-# (will be configured once the Maven project is set up)
 ./mvnw verify
 ./mvnw test
 ```
+
+After every code change, always run `./mvnw verify --batch-mode --no-transfer-progress` and check for warnings (compiler warnings, deprecations, test warnings). All warnings must be resolved before considering the task complete.
 
 ## Requirements (Doorstop)
 
@@ -66,6 +68,7 @@ Requirement document hierarchy:
 - `STK` – Stakeholder Requirements
 - `SWR` – Software Requirements
 - `SWA` – Software Architecture/Design
+- `IMP` – Implementation (links to source files)
 - `TST` – Test Specifications
 
 ## Key Decisions

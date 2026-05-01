@@ -12,8 +12,7 @@ public class SourceEmbeddable {
     @Column(name = "title", nullable = false)
     private String title;
 
-    protected SourceEmbeddable() {
-    }
+    protected SourceEmbeddable() {}
 
     public SourceEmbeddable(String url, String title) {
         this.url = url;

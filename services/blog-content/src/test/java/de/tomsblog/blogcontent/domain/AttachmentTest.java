@@ -3,7 +3,6 @@ package de.tomsblog.blogcontent.domain;
 import static org.assertj.core.api.Assertions.*;
 
 import de.tomsblog.blogcontent.domain.model.Attachment;
-import de.tomsblog.blogcontent.domain.model.AttachmentId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

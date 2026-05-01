@@ -1,0 +1,20 @@
+active: true
+derived: false
+header: |
+  TranslationController (REST Inbound Adapter)
+level: 17.0
+links:
+- SWA001: null
+- SWA004: null
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/rest/TranslationController.java
+  type: file
+reviewed: null
+text: |
+  REST Controller für Translation CRUD-Operationen (SWR-021).
+  Endpunkte unter /api/posts/{postId}/translations für CRUD sowie
+  /approve und /reject Sub-Ressourcen für Workflow-Aktionen.
+  Tenant-Isolation über X-Tenant-Id Header.
+  Unterstützt manuelles und AI-generiertes Erstellen über source-Parameter.

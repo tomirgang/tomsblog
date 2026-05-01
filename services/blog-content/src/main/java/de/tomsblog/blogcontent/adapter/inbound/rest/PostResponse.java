@@ -57,8 +57,11 @@ public record PostResponse(
     public record AttachmentResponse(UUID id, String filename, String contentType, long size, boolean show) {
         public static AttachmentResponse from(Attachment attachment) {
             return new AttachmentResponse(
-                    attachment.id().value(), attachment.filename(),
-                    attachment.contentType(), attachment.size(), attachment.show());
+                    attachment.id().value(),
+                    attachment.filename(),
+                    attachment.contentType(),
+                    attachment.size(),
+                    attachment.show());
         }
     }
 }

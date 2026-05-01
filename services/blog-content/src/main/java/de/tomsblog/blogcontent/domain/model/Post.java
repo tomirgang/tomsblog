@@ -1,11 +1,11 @@
 package de.tomsblog.blogcontent.domain.model;
 
-import de.tomsblog.shared.domain.AggregateRoot;
-import de.tomsblog.shared.domain.AuthorId;
-import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.blogcontent.domain.event.PostCreatedEvent;
 import de.tomsblog.blogcontent.domain.event.PostPublishedEvent;
 import de.tomsblog.blogcontent.domain.event.PostUpdatedEvent;
+import de.tomsblog.shared.domain.AggregateRoot;
+import de.tomsblog.shared.domain.AuthorId;
+import de.tomsblog.shared.tenant.TenantId;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,8 +38,14 @@ public class Post extends AggregateRoot {
     private String socialMediaTitle;
     private String socialMediaSummary;
 
-    private Post(PostId id, TenantId tenantId, AuthorId authorId, String title, Slug slug,
-            String content, PostLocale locale) {
+    private Post(
+            PostId id,
+            TenantId tenantId,
+            AuthorId authorId,
+            String title,
+            Slug slug,
+            String content,
+            PostLocale locale) {
         this.id = Objects.requireNonNull(id);
         this.tenantId = Objects.requireNonNull(tenantId);
         this.authorId = Objects.requireNonNull(authorId);

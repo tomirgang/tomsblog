@@ -127,50 +127,85 @@ classDiagram
         <<interface>>
         +createPost(command) Post
         +updatePost(command) Post
-        +publishPost(postId, tenantId) Post
+        +publishPost(postId, tenantId) void
         +getPost(postId, tenantId) Post
         +listPosts(tenantId) List~Post~
         +deletePost(postId, tenantId) void
     }
 
+    class TagUseCase {
+        <<interface>>
+        +createTag(command) Tag
+        +renameTag(command) Tag
+        +deleteTag(tagId, tenantId) void
+        +getTag(tagId, tenantId) Tag
+        +listTags(tenantId) List~Tag~
+    }
+
+    class TranslationUseCase {
+        <<interface>>
+        +createManualTranslation(command) Translation
+        +createAiTranslation(command) Translation
+        +updateTranslation(command) Translation
+        +approveTranslation(id, tenantId) void
+        +rejectTranslation(id, tenantId) void
+        +deleteTranslation(id, tenantId) void
+        +getTranslation(id, tenantId) Translation
+        +listTranslations(postId, tenantId) List~Translation~
+    }
+
     class PostRepository {
         <<interface>>
         +save(post) Post
-        +findById(postId, tenantId) Optional~Post~
+        +findByIdAndTenantId(postId, tenantId) Optional~Post~
         +findAllByTenantId(tenantId) List~Post~
-        +deleteById(postId, tenantId) void
+        +deleteByIdAndTenantId(postId, tenantId) void
     }
 
     class TagRepository {
         <<interface>>
         +save(tag) Tag
-        +findById(tagId, tenantId) Optional~Tag~
+        +findByIdAndTenantId(tagId, tenantId) Optional~Tag~
         +findAllByTenantId(tenantId) List~Tag~
+        +deleteByIdAndTenantId(tagId, tenantId) void
+        +existsByTenantIdAndName(tenantId, name) boolean
     }
 
     class TranslationRepository {
         <<interface>>
         +save(translation) Translation
-        +findByPostIdAndLocale(postId, locale) Optional~Translation~
-        +findAllByPostId(postId) List~Translation~
+        +findByIdAndTenantId(id, tenantId) Optional~Translation~
+        +findAllByPostIdAndTenantId(postId, tenantId) List~Translation~
+        +deleteByIdAndTenantId(id, tenantId) void
     }
 
     class EventPublisher {
         <<interface>>
-        +publish(event) void
+        +publish(events) void
     }
 
     class PostService {
         -PostRepository postRepository
         -EventPublisher eventPublisher
-        +createPost(command) Post
-        +updatePost(command) Post
-        +publishPost(postId, tenantId) Post
+    }
+
+    class TagService {
+        -TagRepository tagRepository
+    }
+
+    class TranslationService {
+        -TranslationRepository translationRepository
+        -EventPublisher eventPublisher
     }
 
     PostService ..|> PostUseCase : implements
     PostService --> PostRepository : uses
     PostService --> EventPublisher : uses
+    TagService ..|> TagUseCase : implements
+    TagService --> TagRepository : uses
+    TranslationService ..|> TranslationUseCase : implements
+    TranslationService --> TranslationRepository : uses
+    TranslationService --> EventPublisher : uses
 ----
 
 === Inbound Ports
@@ -178,21 +213,50 @@ classDiagram
 Das Interface `PostUseCase` definiert alle fachlichen Operationen, die der Service nach außen anbietet.
 Es bildet die Grundlage für die REST-API (SWR-001) und stellt sicher, dass die Fachlogik unabhängig vom Aufrufkontext bleibt.
 
+Das Interface `TagUseCase` kapselt die Tag-Verwaltung (SWR-020) mit Operationen für Erstellen, Umbenennen, Löschen und Lesen.
+Das Interface `TranslationUseCase` kapselt den Übersetzungs-Workflow (SWR-021) inklusive manueller und KI-gestützter Erstellung sowie Freigabe und Ablehnung.
+
 === Outbound Ports
 
 Die Outbound Ports `PostRepository`, `TagRepository`, `TranslationRepository` und `EventPublisher` abstrahieren die technischen Abhängigkeiten.
 `PostRepository` stellt die Persistenz sicher, wobei alle Abfragen Tenant-scoped sind (SWR-003).
+`TagRepository` bietet zusätzlich eine Duplikat-Prüfung über `existsByTenantIdAndName()` (SWR-020).
+`TranslationRepository` unterstützt Abfragen nach PostId und Locale (SWR-021).
 `EventPublisher` ermöglicht die asynchrone Kommunikation via Domain Events (SWR-009).
 
 === PostService
 
 Der `PostService` orchestriert Domain-Objekte und Ports. Er sorgt dafür, dass bei jeder Post-Erstellung ein `PostCreatedEvent` und bei jeder Veröffentlichung ein `PostPublishedEvent` publiziert wird.
 
+=== TagService
+
+Der `TagService` implementiert den `TagUseCase` und prüft vor der Tag-Erstellung, ob bereits ein Tag mit gleichem Namen im Tenant existiert.
+Bei Duplikat wird eine `IllegalArgumentException` geworfen. Das Umbenennen delegiert an die Domain-Methode `Tag.rename()`, die den Slug automatisch aktualisiert.
+
+=== TranslationService
+
+Der `TranslationService` implementiert den `TranslationUseCase` und orchestriert den Übersetzungs-Lifecycle:
+
+[mermaid]
+----
+stateDiagram-v2
+    [*] --> DRAFT : createManualTranslation
+    [*] --> REVIEW_PENDING : createAiTranslation
+    DRAFT --> REVIEW_PENDING : updateContent (nach Approval)
+    REVIEW_PENDING --> APPROVED : approve
+    REVIEW_PENDING --> REJECTED : reject
+    APPROVED --> REVIEW_PENDING : updateContent
+----
+
+Bei jeder Erstellung wird ein `TranslationCreatedEvent` publiziert, bei Freigabe ein `TranslationApprovedEvent` (SWR-009).
+
 == Adapter Layer
 
 Der Adapter Layer implementiert die technische Anbindung an Spring Boot (SWA-004) und externe Systeme.
 
 === Inbound Adapter: REST API
+
+==== PostController
 
 Der `PostController` bildet den REST Inbound Adapter und setzt die in SWR-001 definierten Endpunkte um:
 
@@ -207,21 +271,132 @@ Der `PostController` bildet den REST Inbound Adapter und setzt die in SWR-001 de
 | PUT  | /api/posts/{id}/publish | Post veröffentlichen (SWR-002)
 |===
 
+==== TagController
+
+Der `TagController` setzt die Tag-Verwaltungs-API (SWR-020) um:
+
+[cols="1,1,2"]
+|===
+| HTTP-Methode | Pfad | Beschreibung
+
+| POST | /api/tags | Tag erstellen
+| GET  | /api/tags | Alle Tags des Tenants auflisten
+| GET  | /api/tags/{id} | Einzelnen Tag lesen
+| PUT  | /api/tags/{id} | Tag umbenennen
+| DELETE | /api/tags/{id} | Tag löschen
+|===
+
+==== TranslationController
+
+Der `TranslationController` setzt die Übersetzungs-API (SWR-021) als Sub-Ressource von Posts um:
+
+[cols="1,1,2"]
+|===
+| HTTP-Methode | Pfad | Beschreibung
+
+| POST | /api/posts/{postId}/translations | Übersetzung erstellen (manuell oder KI)
+| GET  | /api/posts/{postId}/translations | Alle Übersetzungen eines Posts
+| GET  | /api/posts/{postId}/translations/{id} | Einzelne Übersetzung lesen
+| PUT  | /api/posts/{postId}/translations/{id} | Übersetzung aktualisieren
+| POST | /api/posts/{postId}/translations/{id}/approve | Übersetzung freigeben
+| POST | /api/posts/{postId}/translations/{id}/reject | Übersetzung ablehnen
+| DELETE | /api/posts/{postId}/translations/{id} | Übersetzung löschen
+|===
+
 Die Tenant-ID wird über einen HTTP-Header (`X-Tenant-Id`) übergeben, um die Tenant-Isolation (SWR-003) auf API-Ebene sicherzustellen.
 
 Fehler werden über den `GlobalExceptionHandler` als Problem Details nach RFC 9457 zurückgegeben. Input-Validierung erfolgt gemäß SWR-015 zum Schutz vor ungültigen Eingaben.
 
 === Outbound Adapter: JPA Persistence
 
+==== JpaPostRepository
+
 Der `JpaPostRepository` implementiert den `PostRepository`-Port mit Spring Data JPA.
 Die `PostJpaEntity` enthält Audit-Felder (`createdAt`, `updatedAt`), die über `@PrePersist` und `@PreUpdate` automatisch befüllt werden und den Audit-Trail (SWR-006) auf Datenbankebene unterstützen.
 
 Der `PostMapper` übernimmt das bidirektionale Mapping zwischen Domain-Modell und JPA-Entity, sodass die Domain-Schicht frei von JPA-Annotationen bleibt (SWA-001).
 
+==== JpaTagRepository
+
+Der `JpaTagRepository` implementiert den `TagRepository`-Port. Die `TagJpaEntity` bildet die tags-Tabelle ab mit Unique-Constraints auf `(tenant_id, name)` und `(tenant_id, slug)`.
+Der `TagMapper` konvertiert zwischen Domain-Tag (mit `Slug` Value Object) und JPA-Entity.
+
+==== JpaTranslationRepository
+
+Der `JpaTranslationRepository` implementiert den `TranslationRepository`-Port. Die `TranslationJpaEntity` bildet die translations-Tabelle ab mit FK auf posts und Unique Constraint auf `(post_id, locale)`.
+Status und Source werden als Strings persistiert und im `TranslationMapper` über `valueOf()` und `PostLocale.of()` zurückgemappt.
+
 === Outbound Adapter: Event Publishing
 
 Der `LoggingEventPublisher` ist ein Interim-Adapter, der Domain Events zunächst nur loggt.
 Er wird in einer späteren Phase durch einen Kafka-Producer ersetzt (SWA-005), der die Events an den zentralen Event-Broker sendet (SWR-009).
+
+== Datenbank-Schema (Flyway)
+
+Die Schema-Verwaltung erfolgt über Flyway-Migrationen (SWA-013, ADR-0015). Hibernate validiert das Schema gegen die Entity-Klassen (`ddl-auto: validate`), nimmt aber keine Änderungen vor.
+
+Das folgende ER-Diagramm zeigt das aktuelle Datenbankschema:
+
+[mermaid]
+----
+erDiagram
+    posts {
+        uuid id PK
+        uuid tenant_id
+        uuid author_id
+        varchar title
+        varchar slug
+        text content
+        varchar status
+        varchar locale
+        varchar social_media_title
+        varchar social_media_summary
+        timestamp created_at
+        timestamp updated_at
+    }
+    tags {
+        uuid id PK
+        uuid tenant_id
+        varchar name
+        varchar slug
+    }
+    translations {
+        uuid id PK
+        uuid post_id FK
+        uuid tenant_id
+        varchar locale
+        varchar title
+        text content
+        varchar status
+        varchar source
+        timestamp translated_at
+    }
+    post_tags {
+        uuid post_id FK
+        uuid tag_id
+    }
+    post_sources {
+        uuid post_id FK
+        varchar url
+        varchar title
+    }
+    post_attachments {
+        uuid post_id FK
+        uuid id
+        varchar filename
+        varchar content_type
+        bigint size
+        boolean show
+        varchar storage_key
+    }
+
+    posts ||--o{ post_tags : "hat"
+    posts ||--o{ post_sources : "hat"
+    posts ||--o{ post_attachments : "hat"
+    posts ||--o{ translations : "wird uebersetzt"
+----
+
+Die Migrationen liegen unter `src/main/resources/db/migration/` und werden beim Service-Start automatisch ausgeführt.
 
 == Ablauf: Post erstellen und veröffentlichen
 
@@ -276,16 +451,19 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWR-001 | Post CRUD API | PostController, PostUseCase, PostService
 | SWR-002 | Post veröffentlichen | Post.publish(), PostService.publishPost()
 | SWR-003 | Tenant-Isolation | TenantId in allen Queries, X-Tenant-Id Header
-| SWR-004 | KI-Übersetzung | Translation Aggregate (AI Service Adapter in Phase 2)
-| SWR-005 | Manuelle Übersetzung | Translation Aggregate
+| SWR-004 | KI-Übersetzung | TranslationService.createAiTranslation()
+| SWR-005 | Manuelle Übersetzung | TranslationService.createManualTranslation()
 | SWR-006 | Audit-Trail | JPA Audit-Felder, Domain Events
-| SWR-009 | Domain Events | EventPublisher, PostCreatedEvent, PostPublishedEvent
+| SWR-009 | Domain Events | EventPublisher, Post/Translation Events
 | SWR-012 | Quellenverwaltung | Source Value Object, Post.addSource()
 | SWR-013 | Web-Snapshot von Quellen | Snapshot-Adapter (S3 Storage, Phase 2)
-| SWR-015 | Input-Validierung | GlobalExceptionHandler, Slug/PostLocale Validierung
+| SWR-015 | Input-Validierung | GlobalExceptionHandler, Jakarta Validation
+| SWR-020 | Tag CRUD API | TagController, TagUseCase, TagService
+| SWR-021 | Translation CRUD API | TranslationController, TranslationUseCase, TranslationService
 | SWA-001 | Hexagonale Architektur | Domain/Application/Adapter Trennung
 | SWA-002 | Shared Kernel | EntityId, TenantId, AuthorId, AggregateRoot aus libs/shared-kernel
 | SWA-004 | Spring Boot Applikation | BlogContentConfiguration, Starter Dependencies
 | SWA-007 | Domain-Modell (DDD) | Post, Translation, Tag, Value Objects
 | SWA-008 | Translation als separates Aggregate | Translation mit eigenem Lifecycle
+| SWA-013 | Flyway Migrationen | db/migration/ SQL-Skripte, validate-Modus
 |===

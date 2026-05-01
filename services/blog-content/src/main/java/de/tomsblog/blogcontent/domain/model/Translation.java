@@ -1,9 +1,9 @@
 package de.tomsblog.blogcontent.domain.model;
 
+import de.tomsblog.blogcontent.domain.event.TranslationApprovedEvent;
+import de.tomsblog.blogcontent.domain.event.TranslationCreatedEvent;
 import de.tomsblog.shared.domain.AggregateRoot;
 import de.tomsblog.shared.tenant.TenantId;
-import de.tomsblog.blogcontent.domain.event.TranslationCreatedEvent;
-import de.tomsblog.blogcontent.domain.event.TranslationApprovedEvent;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -26,9 +26,16 @@ public class Translation extends AggregateRoot {
     private final TranslationSource source;
     private final Instant translatedAt;
 
-    private Translation(TranslationId id, PostId postId, TenantId tenantId, PostLocale locale,
-            String title, String content, TranslationStatus status,
-            TranslationSource source, Instant translatedAt) {
+    private Translation(
+            TranslationId id,
+            PostId postId,
+            TenantId tenantId,
+            PostLocale locale,
+            String title,
+            String content,
+            TranslationStatus status,
+            TranslationSource source,
+            Instant translatedAt) {
         this.id = Objects.requireNonNull(id);
         this.postId = Objects.requireNonNull(postId);
         this.tenantId = Objects.requireNonNull(tenantId);
@@ -45,12 +52,20 @@ public class Translation extends AggregateRoot {
      *
      * @req SWR-005
      */
-    public static Translation createManual(PostId postId, TenantId tenantId, PostLocale locale,
-            String title, String content) {
+    public static Translation createManual(
+            PostId postId, TenantId tenantId, PostLocale locale, String title, String content) {
         validateContent(title, content);
         TranslationId id = TranslationId.generate();
-        Translation translation = new Translation(id, postId, tenantId, locale, title, content,
-                TranslationStatus.DRAFT, TranslationSource.MANUAL, Instant.now());
+        Translation translation = new Translation(
+                id,
+                postId,
+                tenantId,
+                locale,
+                title,
+                content,
+                TranslationStatus.DRAFT,
+                TranslationSource.MANUAL,
+                Instant.now());
         translation.registerEvent(TranslationCreatedEvent.of(id, postId, tenantId, locale, TranslationSource.MANUAL));
         return translation;
     }
@@ -60,12 +75,20 @@ public class Translation extends AggregateRoot {
      *
      * @req SWR-004
      */
-    public static Translation createFromAi(PostId postId, TenantId tenantId, PostLocale locale,
-            String title, String content) {
+    public static Translation createFromAi(
+            PostId postId, TenantId tenantId, PostLocale locale, String title, String content) {
         validateContent(title, content);
         TranslationId id = TranslationId.generate();
-        Translation translation = new Translation(id, postId, tenantId, locale, title, content,
-                TranslationStatus.REVIEW_PENDING, TranslationSource.AI_GENERATED, Instant.now());
+        Translation translation = new Translation(
+                id,
+                postId,
+                tenantId,
+                locale,
+                title,
+                content,
+                TranslationStatus.REVIEW_PENDING,
+                TranslationSource.AI_GENERATED,
+                Instant.now());
         translation.registerEvent(
                 TranslationCreatedEvent.of(id, postId, tenantId, locale, TranslationSource.AI_GENERATED));
         return translation;
@@ -106,9 +129,15 @@ public class Translation extends AggregateRoot {
         }
     }
 
-    public static Translation reconstitute(TranslationId id, PostId postId, TenantId tenantId,
-            PostLocale locale, String title, String content,
-            TranslationStatus status, TranslationSource source,
+    public static Translation reconstitute(
+            TranslationId id,
+            PostId postId,
+            TenantId tenantId,
+            PostLocale locale,
+            String title,
+            String content,
+            TranslationStatus status,
+            TranslationSource source,
             Instant translatedAt) {
         return new Translation(id, postId, tenantId, locale, title, content, status, source, translatedAt);
     }

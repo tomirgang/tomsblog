@@ -25,11 +25,10 @@ public class AttachmentEmbeddable {
     @Column(name = "storage_key")
     private String storageKey;
 
-    protected AttachmentEmbeddable() {
-    }
+    protected AttachmentEmbeddable() {}
 
-    public AttachmentEmbeddable(UUID id, String filename, String contentType, long size, boolean show,
-            String storageKey) {
+    public AttachmentEmbeddable(
+            UUID id, String filename, String contentType, long size, boolean show, String storageKey) {
         this.id = id;
         this.filename = filename;
         this.contentType = contentType;

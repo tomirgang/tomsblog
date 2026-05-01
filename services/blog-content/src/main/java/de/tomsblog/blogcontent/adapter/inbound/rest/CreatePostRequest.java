@@ -10,5 +10,4 @@ public record CreatePostRequest(
         @NotBlank String content,
         String locale,
         String socialMediaTitle,
-        String socialMediaSummary) {
-}
+        String socialMediaSummary) {}

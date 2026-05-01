@@ -1,0 +1,21 @@
+active: true
+derived: false
+header: |
+  TranslationService und TranslationUseCase
+level: 16.0
+links:
+- SWA001: null
+- SWA008: null
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/application/service/TranslationService.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/application/port/inbound/TranslationUseCase.java
+  type: file
+reviewed: null
+text: |
+  Implementiert den TranslationUseCase als Inbound Port und den TranslationService
+  als Application Service. Unterstützt manuelle und AI-generierte Übersetzungen
+  mit unterschiedlichem Initial-Status. Publiziert Domain Events bei Erstellung
+  und Freigabe. Orchestriert den Lifecycle DRAFT -> REVIEW_PENDING -> APPROVED/REJECTED.

@@ -1,8 +1,6 @@
 package de.tomsblog.events;
 
-import de.tomsblog.shared.domain.DomainEvent;
 import de.tomsblog.shared.tenant.TenantId;
-
 import java.time.Instant;
 import java.util.UUID;
 
@@ -11,27 +9,14 @@ import java.util.UUID;
  * tracking.
  */
 public record EventMetadata(
-        UUID eventId,
-        Instant occurredAt,
-        TenantId tenantId,
-        String correlationId,
-        String causedBy) {
+        UUID eventId, Instant occurredAt, TenantId tenantId, String correlationId, String causedBy) {
 
     public static EventMetadata now(TenantId tenantId, String causedBy) {
         return new EventMetadata(
-                UUID.randomUUID(),
-                Instant.now(),
-                tenantId,
-                UUID.randomUUID().toString(),
-                causedBy);
+                UUID.randomUUID(), Instant.now(), tenantId, UUID.randomUUID().toString(), causedBy);
     }
 
     public static EventMetadata withCorrelation(TenantId tenantId, String correlationId, String causedBy) {
-        return new EventMetadata(
-                UUID.randomUUID(),
-                Instant.now(),
-                tenantId,
-                correlationId,
-                causedBy);
+        return new EventMetadata(UUID.randomUUID(), Instant.now(), tenantId, correlationId, causedBy);
     }
 }

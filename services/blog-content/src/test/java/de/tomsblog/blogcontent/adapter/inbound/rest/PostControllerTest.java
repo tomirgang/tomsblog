@@ -1,0 +1,124 @@
+package de.tomsblog.blogcontent.adapter.inbound.rest;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
+import de.tomsblog.blogcontent.application.service.PostNotFoundException;
+import de.tomsblog.blogcontent.domain.model.*;
+import de.tomsblog.shared.domain.AuthorId;
+import de.tomsblog.shared.tenant.TenantId;
+import java.util.List;
+import java.util.UUID;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+@WebMvcTest(PostController.class)
+@SuppressWarnings("null")
+class PostControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockitoBean
+    private PostUseCase postUseCase;
+
+    private final UUID tenantId = UUID.randomUUID();
+    private final UUID authorId = UUID.randomUUID();
+
+    @Test
+    @DisplayName("SWR-001: POST /api/posts creates post and returns 201")
+    void createPost_returns201() throws Exception {
+        Post post = Post.create(
+                TenantId.of(tenantId), AuthorId.of(authorId), "Test Post", "Test Content", PostLocale.german());
+        when(postUseCase.createPost(any())).thenReturn(post);
+
+        String body = """
+                {
+                    "authorId": "%s",
+                    "title": "Test Post",
+                    "content": "Test Content"
+                }
+                """.formatted(authorId);
+
+        mockMvc.perform(post("/api/posts")
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"))
+                .andExpect(jsonPath("$.title").value("Test Post"))
+                .andExpect(jsonPath("$.slug").value("test-post"));
+    }
+
+    @Test
+    @DisplayName("SWR-001: GET /api/posts/{id} returns post")
+    void getPost_returns200() throws Exception {
+        Post post =
+                Post.create(TenantId.of(tenantId), AuthorId.of(authorId), "My Post", "Content", PostLocale.german());
+        when(postUseCase.getPost(any(), any())).thenReturn(post);
+
+        mockMvc.perform(get("/api/posts/{id}", post.getId().value()).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("My Post"));
+    }
+
+    @Test
+    @DisplayName("SWR-001: GET /api/posts/{id} returns 404 when not found")
+    void getPost_returns404WhenNotFound() throws Exception {
+        PostId postId = PostId.generate();
+        when(postUseCase.getPost(any(), any())).thenThrow(new PostNotFoundException(postId));
+
+        mockMvc.perform(get("/api/posts/{id}", postId.value()).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("SWR-009: GET /api/posts returns list of posts")
+    void listPosts_returns200() throws Exception {
+        Post post1 =
+                Post.create(TenantId.of(tenantId), AuthorId.of(authorId), "Post One", "Content 1", PostLocale.german());
+        Post post2 =
+                Post.create(TenantId.of(tenantId), AuthorId.of(authorId), "Post Two", "Content 2", PostLocale.german());
+        when(postUseCase.listPosts(any())).thenReturn(List.of(post1, post2));
+
+        mockMvc.perform(get("/api/posts").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2));
+    }
+
+    @Test
+    @DisplayName("SWR-002: POST /api/posts/{id}/publish returns 200")
+    void publishPost_returns200() throws Exception {
+        UUID postId = UUID.randomUUID();
+        doNothing().when(postUseCase).publishPost(any(), any());
+
+        mockMvc.perform(post("/api/posts/{id}/publish", postId).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("POST /api/posts with missing title returns 400")
+    void createPost_returns400WhenTitleMissing() throws Exception {
+        String body = """
+                {
+                    "authorId": "%s",
+                    "title": "",
+                    "content": "Content"
+                }
+                """.formatted(authorId);
+
+        mockMvc.perform(post("/api/posts")
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest());
+    }
+}

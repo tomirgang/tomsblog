@@ -1,7 +1,7 @@
 package de.tomsblog.blogcontent.adapter.outbound.persistence;
 
-import de.tomsblog.shared.domain.DomainEvent;
 import de.tomsblog.blogcontent.application.port.outbound.EventPublisher;
+import de.tomsblog.shared.domain.DomainEvent;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

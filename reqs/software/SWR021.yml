@@ -1,0 +1,20 @@
+active: true
+derived: false
+header: |
+  Translation CRUD API
+level: 21.0
+links:
+- STK001: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Das System muss eine REST API für die Verwaltung von Übersetzungen bereitstellen:
+  POST /api/posts/{postId}/translations (Übersetzung erstellen),
+  GET /api/posts/{postId}/translations (alle Übersetzungen eines Posts),
+  GET /api/posts/{postId}/translations/{id} (einzelne Übersetzung lesen),
+  PUT /api/posts/{postId}/translations/{id} (Übersetzung aktualisieren),
+  POST /api/posts/{postId}/translations/{id}/approve (Übersetzung freigeben),
+  POST /api/posts/{postId}/translations/{id}/reject (Übersetzung ablehnen),
+  DELETE /api/posts/{postId}/translations/{id} (Übersetzung löschen).
+  Alle Endpunkte sind Tenant-scoped über den X-Tenant-Id Header.

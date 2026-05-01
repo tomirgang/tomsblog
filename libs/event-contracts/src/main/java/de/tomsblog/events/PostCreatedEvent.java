@@ -1,19 +1,14 @@
 package de.tomsblog.events;
 
 import de.tomsblog.shared.domain.DomainEvent;
-
 import java.time.Instant;
 import java.util.UUID;
 
 /**
  * Published when a blog post is created.
  */
-public record PostCreatedEvent(
-        EventMetadata metadata,
-        UUID postId,
-        String title,
-        String slug,
-        String locale) implements DomainEvent {
+public record PostCreatedEvent(EventMetadata metadata, UUID postId, String title, String slug, String locale)
+        implements DomainEvent {
 
     @Override
     public UUID eventId() {

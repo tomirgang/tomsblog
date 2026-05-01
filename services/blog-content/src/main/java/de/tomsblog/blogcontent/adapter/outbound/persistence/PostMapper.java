@@ -9,8 +9,7 @@ import java.util.stream.Collectors;
 
 public final class PostMapper {
 
-    private PostMapper() {
-    }
+    private PostMapper() {}
 
     public static PostJpaEntity toEntity(Post post) {
         PostJpaEntity entity = new PostJpaEntity();
@@ -27,8 +26,8 @@ public final class PostMapper {
                 .map(s -> new SourceEmbeddable(s.url(), s.title()))
                 .toList());
         entity.setAttachments(post.getAttachments().stream()
-                .map(a -> new AttachmentEmbeddable(a.id().value(), a.filename(), a.contentType(), a.size(),
-                        a.show(), a.storageKey()))
+                .map(a -> new AttachmentEmbeddable(
+                        a.id().value(), a.filename(), a.contentType(), a.size(), a.show(), a.storageKey()))
                 .toList());
         entity.setPublishedAt(post.getPublishedAt());
         entity.setSocialMediaTitle(post.getSocialMediaTitle());
@@ -42,8 +41,13 @@ public final class PostMapper {
                 .map(s -> new Source(s.getUrl(), s.getTitle()))
                 .toList();
         List<Attachment> attachments = entity.getAttachments().stream()
-                .map(a -> new Attachment(AttachmentId.of(a.getId()), a.getFilename(), a.getContentType(), a.getSize(),
-                        a.isShow(), a.getStorageKey()))
+                .map(a -> new Attachment(
+                        AttachmentId.of(a.getId()),
+                        a.getFilename(),
+                        a.getContentType(),
+                        a.getSize(),
+                        a.isShow(),
+                        a.getStorageKey()))
                 .toList();
         return Post.reconstitute(
                 PostId.of(entity.getId()),

@@ -46,13 +46,21 @@ NOTE: `AuthorId` liegt im `shared-kernel` (SWA-002). Der blog-content Service ha
 | Baustein | Beschreibung
 
 | `PostUseCase` | Inbound Port: Interface fuer alle Post-Operationen
-| `CreatePostCommand`, `UpdatePostCommand` | Command Records
+| `TagUseCase` | Inbound Port: Interface fuer alle Tag-Operationen (SWR-020)
+| `TranslationUseCase` | Inbound Port: Interface fuer alle Uebersetzungs-Operationen (SWR-021)
+| `CreatePostCommand`, `UpdatePostCommand` | Command Records fuer Post-Operationen
+| `CreateTagCommand`, `RenameTagCommand` | Command Records fuer Tag-Operationen
+| `CreateTranslationCommand`, `UpdateTranslationCommand` | Command Records fuer Uebersetzungs-Operationen
 | `PostRepository` | Outbound Port: Persistence-Abstraktion fuer Posts
 | `TagRepository` | Outbound Port: Persistence-Abstraktion fuer Tags
 | `TranslationRepository` | Outbound Port: Persistence-Abstraktion fuer Uebersetzungen
 | `EventPublisher` | Outbound Port: Event-Publishing-Abstraktion
 | `PostService` | Implementiert PostUseCase, orchestriert Domain und Ports
+| `TagService` | Implementiert TagUseCase, prueft Duplikate bei Erstellung
+| `TranslationService` | Implementiert TranslationUseCase, publiziert Domain Events bei Lifecycle-Uebergaengen
 | `PostNotFoundException` | Fachliche Exception
+| `TagNotFoundException` | Fachliche Exception
+| `TranslationNotFoundException` | Fachliche Exception
 |===
 
 === Adapter Layer (adapter/)
@@ -62,13 +70,36 @@ NOTE: `AuthorId` liegt im `shared-kernel` (SWA-002). Der blog-content Service ha
 | Baustein | Beschreibung
 
 | `PostController` | REST Inbound Adapter: CRUD + Publish, Tenant via Header
+| `TagController` | REST Inbound Adapter: Tag CRUD (SWR-020), Tenant via Header
+| `TranslationController` | REST Inbound Adapter: Translation CRUD + Workflow (SWR-021), Tenant via Header
 | `GlobalExceptionHandler` | Problem Details (RFC 9457) Fehlerbehandlung
 | `JpaPostRepository` | JPA Outbound Adapter: Implementiert PostRepository
-| `SpringDataPostRepository` | Spring Data JPA Interface fuer CRUD-Operationen
+| `JpaTagRepository` | JPA Outbound Adapter: Implementiert TagRepository
+| `JpaTranslationRepository` | JPA Outbound Adapter: Implementiert TranslationRepository
+| `SpringDataPostRepository` | Spring Data JPA Interface fuer Post CRUD-Operationen
+| `SpringDataTagRepository` | Spring Data JPA Interface fuer Tag CRUD-Operationen
+| `SpringDataTranslationRepository` | Spring Data JPA Interface fuer Translation CRUD-Operationen
 | `PostJpaEntity` | JPA-Entity mit Audit-Feldern (@PrePersist/@PreUpdate)
+| `TagJpaEntity` | JPA-Entity fuer Tags mit Unique-Constraints
+| `TranslationJpaEntity` | JPA-Entity fuer Uebersetzungen mit FK auf Posts
 | `PostMapper` | Bidirektionales Mapping zwischen Domain-Post und PostJpaEntity
+| `TagMapper` | Bidirektionales Mapping zwischen Domain-Tag und TagJpaEntity
+| `TranslationMapper` | Bidirektionales Mapping zwischen Domain-Translation und TranslationJpaEntity
 | `LoggingEventPublisher` | Interim Event Adapter (wird durch Kafka ersetzt)
 | `BlogContentConfiguration` | Spring-Konfiguration: Wiring der Adapter an die Ports
+|===
+
+=== Datenbank-Migrationen (Flyway)
+
+Die Datenbank-Schema-Verwaltung erfolgt über Flyway (SWA-013). Alle Migrationen liegen unter `src/main/resources/db/migration/` und werden beim Service-Start automatisch ausgefuehrt. Hibernate validiert das Schema gegen die Entity-Klassen (`ddl-auto: validate`).
+
+[cols="1,2"]
+|===
+| Migration | Beschreibung
+
+| `V1__create_posts_schema.sql` | posts, post_tags, post_sources, post_attachments
+| `V2__create_tags_schema.sql` | tags mit Unique-Index auf (tenant_id, name) und (tenant_id, slug)
+| `V3__create_translations_schema.sql` | translations mit FK auf posts, Unique auf (post_id, locale)
 |===
 
 NOTE: Weitere Services werden analog strukturiert. Details werden ergänzt, sobald sie implementiert sind.

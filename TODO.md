@@ -23,7 +23,7 @@
 
 - [x] Spring Boot Projekt mit hexagonaler Struktur aufsetzen
 - [x] Domain-Modell entwerfen (Post, Author, Tenant, Tag, Attachment)
-- [ ] Ports & Adapters implementieren (Inbound: REST API, Outbound: PostgreSQL)
+- [x] Ports & Adapters implementieren (Inbound: REST API, Outbound: PostgreSQL)
 - [ ] CRUD-Operationen für Blog-Posts
 - [ ] Mehrsprachigkeit im Domain-Modell abbilden
 - [ ] Quellenverwaltung für Posts

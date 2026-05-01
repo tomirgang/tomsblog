@@ -1,0 +1,20 @@
+active: true
+derived: false
+header: |
+  TagController (REST Inbound Adapter)
+level: 14.0
+links:
+- SWA001: null
+- SWA004: null
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/rest/TagController.java
+  type: file
+reviewed: null
+text: |
+  REST Controller für Tag CRUD-Operationen (SWR-020).
+  Endpunkte: POST /api/tags, GET /api/tags, GET /api/tags/{id},
+  PUT /api/tags/{id}, DELETE /api/tags/{id}.
+  Tenant-Isolation über X-Tenant-Id Header.
+  Input-Validierung mit Jakarta Validation (@NotBlank auf Tag-Name).

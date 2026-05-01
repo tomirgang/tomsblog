@@ -34,8 +34,7 @@ class TagTest {
     @Test
     @DisplayName("Create tag with null name throws exception")
     void createTagWithNullNameThrows() {
-        assertThatThrownBy(() -> Tag.create(tenantId, null))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> Tag.create(tenantId, null)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

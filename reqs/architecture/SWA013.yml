@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Flyway für versionierte Datenbank-Migrationen
+level: 13.0
+links:
+- SWR001: null
+- SWR020: null
+- SWR021: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Alle Datenbank-Schema-Änderungen werden über Flyway-Migrationen verwaltet.
+  Migrationsdateien liegen unter src/main/resources/db/migration/ mit dem
+  Benennungsschema V{nummer}__{beschreibung}.sql.
+  Hibernate ddl-auto ist auf validate gesetzt (nur Validierung, keine Änderung).
+  Flyway wird beim Service-Start automatisch ausgeführt.

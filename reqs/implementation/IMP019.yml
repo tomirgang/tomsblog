@@ -1,0 +1,24 @@
+active: true
+derived: false
+header: |
+  Flyway Migrationen für Blog Content Service
+level: 19.0
+links:
+- SWA013: null
+- SWA004: null
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/resources/db/migration/V1__create_posts_schema.sql
+  type: file
+- path: services/blog-content/src/main/resources/db/migration/V2__create_tags_schema.sql
+  type: file
+- path: services/blog-content/src/main/resources/db/migration/V3__create_translations_schema.sql
+  type: file
+reviewed: null
+text: |
+  Flyway SQL-Migrationen für den Blog Content Service.
+  V1: posts (mit post_tags, post_sources, post_attachments Tabellen).
+  V2: tags (mit Unique-Indexes auf tenant_id+name und tenant_id+slug).
+  V3: translations (mit FK auf posts, Unique auf post_id+locale).
+  Schema wird beim Anwendungsstart automatisch migriert.

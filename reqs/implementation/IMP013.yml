@@ -1,0 +1,21 @@
+active: true
+derived: false
+header: |
+  TagService und TagUseCase
+level: 13.0
+links:
+- SWA001: null
+- SWA007: null
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/application/service/TagService.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/application/port/inbound/TagUseCase.java
+  type: file
+reviewed: null
+text: |
+  Implementiert den TagUseCase als Inbound Port und den TagService als
+  Application Service. Der TagService orchestriert Tag-Erstellung (mit
+  Duplikat-Prüfung auf Name+Tenant), Umbenennung und Löschung.
+  Prüft vor Erstellung, ob ein Tag mit gleichem Namen im Tenant existiert.

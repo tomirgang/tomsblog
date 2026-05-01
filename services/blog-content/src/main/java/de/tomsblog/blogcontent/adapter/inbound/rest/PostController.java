@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/posts")
+@SuppressWarnings("null")
 public class PostController {
 
     private final PostUseCase postUseCase;
@@ -35,9 +36,13 @@ public class PostController {
     public ResponseEntity<PostResponse> createPost(
             @RequestHeader("X-Tenant-Id") UUID tenantId, @Valid @RequestBody CreatePostRequest request) {
         CreatePostCommand command = new CreatePostCommand(
-                TenantId.of(tenantId), AuthorId.of(request.authorId()),
-                request.title(), request.content(), request.locale(),
-                request.socialMediaTitle(), request.socialMediaSummary());
+                TenantId.of(tenantId),
+                AuthorId.of(request.authorId()),
+                request.title(),
+                request.content(),
+                request.locale(),
+                request.socialMediaTitle(),
+                request.socialMediaSummary());
         Post post = postUseCase.createPost(command);
         PostResponse response = PostResponse.from(post);
         URI location = URI.create("/api/posts/" + post.getId().asString());
@@ -45,8 +50,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostResponse> getPost(
-            @RequestHeader("X-Tenant-Id") UUID tenantId, @PathVariable UUID id) {
+    public ResponseEntity<PostResponse> getPost(@RequestHeader("X-Tenant-Id") UUID tenantId, @PathVariable UUID id) {
         Post post = postUseCase.getPost(PostId.of(id), TenantId.of(tenantId));
         return ResponseEntity.ok(PostResponse.from(post));
     }
@@ -63,8 +67,13 @@ public class PostController {
             @RequestHeader("X-Tenant-Id") UUID tenantId,
             @PathVariable UUID id,
             @Valid @RequestBody UpdatePostRequest request) {
-        UpdatePostCommand command = new UpdatePostCommand(PostId.of(id), TenantId.of(tenantId), request.title(),
-                request.content(), request.socialMediaTitle(), request.socialMediaSummary());
+        UpdatePostCommand command = new UpdatePostCommand(
+                PostId.of(id),
+                TenantId.of(tenantId),
+                request.title(),
+                request.content(),
+                request.socialMediaTitle(),
+                request.socialMediaSummary());
         Post post = postUseCase.updatePost(command);
         return ResponseEntity.ok(PostResponse.from(post));
     }

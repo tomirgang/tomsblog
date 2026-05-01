@@ -1,0 +1,22 @@
+active: true
+derived: false
+header: |
+  JpaTagRepository (Outbound Adapter)
+level: 15.0
+links:
+- SWA001: null
+- SWA004: null
+- SWA013: null
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/JpaTagRepository.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/TagJpaEntity.java
+  type: file
+reviewed: null
+text: |
+  JPA Outbound Adapter für den TagRepository Port.
+  Implementiert Persistenz über Spring Data JPA mit TagJpaEntity.
+  Alle Abfragen sind Tenant-scoped. TagMapper übernimmt das bidirektionale
+  Mapping zwischen Domain-Tag und TagJpaEntity.
