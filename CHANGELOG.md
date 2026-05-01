@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed
+
+- GitHub Pages Deployment: Race Condition bei konkurrierenden Pushes auf docs-Branch behoben (force_orphan: true)
+
 ## [0.2.0] - 2026-05-01
 
 ### Added
