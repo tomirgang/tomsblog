@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head><title>doc-IMP</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="../template/bootstrap.min.css" />
+  <link rel="stylesheet" href="../template/general.css" />
+  <link type="text/css" rel="stylesheet" href="../template/doorstop.css" />
+  <script src="../template/tex-mml-chtml.js" id="MathJax-script" async></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+  </script>
+</head>
+<body>
+
+  <header class="navbar navbar-expand-lg navbar-dark bd-navbar sticky-top text-bg-secondary">
+  <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap" aria-label="Document attributes">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">Documents</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../traceability.html">Traceability</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Contents
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#toc">Table of Contents</a></li>
+                <ul>
+                <li><a class="dropdown-item" href="#IMP001">1.0 Post Aggregate Root</a></li>
+                <li><a class="dropdown-item" href="#IMP002">2.0 PostService (Application Layer)</a></li>
+                <li><a class="dropdown-item" href="#IMP003">3.0 PostController (REST Inbound Adapter)</a></li>
+                <li><a class="dropdown-item" href="#IMP004">4.0 JpaPostRepository (Persistence Outbound Adapter)</a></li>
+                <li><a class="dropdown-item" href="#IMP005">5.0 LoggingEventPublisher (Interim Event Adapter)</a></li>
+                <li><a class="dropdown-item" href="#IMP006">6.0 Shared Kernel Domain Primitives</a></li>
+                <li><a class="dropdown-item" href="#IMP008">8.0 Tag Entity mit Identity</a></li>
+                <li><a class="dropdown-item" href="#IMP009">9.0 Translation Aggregate</a></li>
+                <li><a class="dropdown-item" href="#IMP010">10 Source Value Object</a></li>
+                <li><a class="dropdown-item" href="#IMP011">11 Attachment Value Object mit show-Flag</a></li>
+                <li><a class="dropdown-item" href="#IMP012">12 AuthorId im Shared Kernel</a></li>
+                <li><a class="dropdown-item" href="#IMP013">13 TagService und TagUseCase</a></li>
+                <li><a class="dropdown-item" href="#IMP014">14 TagController (REST Inbound Adapter)</a></li>
+                <li><a class="dropdown-item" href="#IMP015">15 JpaTagRepository (Outbound Adapter)</a></li>
+                <li><a class="dropdown-item" href="#IMP016">16 TranslationService und TranslationUseCase</a></li>
+                <li><a class="dropdown-item" href="#IMP017">17 TranslationController (REST Inbound Adapter)</a></li>
+                <li><a class="dropdown-item" href="#IMP018">18 JpaTranslationRepository (Outbound Adapter)</a></li>
+                <li><a class="dropdown-item" href="#IMP019">19 Flyway Migrationen für Blog Content Service</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <!-- Insert logotype. -->
+            <img src="../template/logo-black-white.png" alt="Doorstop" height="128" class="d-inline-block align-text-top">
+          </div>
+        </div>
+        <div class="col-6 align-self-center">
+          <div class="bd-lead text-nowrap text-center">
+            <span class="text-monospace"><strong>doc-IMP</strong></span>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">Ref</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">By</span>
+            <p><span class="text-monospace">-</span></p>
+            <span class="text-muted">Issue</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </nav>
+</header>
+<div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout">
+  <main class="bd-main order-1">
+    <div class="bd-intro ps-lg-4">
+      <H1><p>Test document for development of <em>Doorstop</em></p></H1>
+      <h1 id="IMP001">1.0 Post Aggregate Root <small>IMP001</small></h1>
+<p>Implementiert das Post-Aggregate mit Statusübergängen (DRAFT -&gt; PUBLISHED -&gt; ARCHIVED),
+Slug-Generierung, AuthorId-Referenz, TagId-basierter Verschlagwortung,
+Quellenverwaltung (List<Source>), Attachment-Verwaltung (List<Attachment>)
+und Domain-Event-Registrierung. Reine Java-Klasse ohne Framework-Abhängigkeiten.</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/domain/model/Post.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a>, <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a>, <a href="SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></p>
+<h1 id="IMP002">2.0 PostService (Application Layer) <small>IMP002</small></h1>
+<p>Orchestriert Post-Use-Cases: Erstellen, Aktualisieren, Veröffentlichen, Löschen.
+Nutzt PostRepository (outbound port) und EventPublisher (outbound port).
+Keine Framework-Annotationen, wird via Configuration als Bean registriert.</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/application/service/PostService.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a>, <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></p>
+<h1 id="IMP003">3.0 PostController (REST Inbound Adapter) <small>IMP003</small></h1>
+<p>REST-Controller mit Endpunkten: POST, GET, PUT, DELETE /api/posts und
+POST /api/posts/{id}/publish. Tenant-Isolation via X-Tenant-Id Header.
+Input-Validierung via Bean Validation (@NotBlank).</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/rest/PostController.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a>, <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></p>
+<h1 id="IMP004">4.0 JpaPostRepository (Persistence Outbound Adapter) <small>IMP004</small></h1>
+<p>JPA-basierte Implementierung des PostRepository-Ports.
+Mappt zwischen Domain-Model (Post) und JPA-Entity (PostJpaEntity).
+Automatische Audit-Felder (createdAt, updatedAt) via @PrePersist/@PreUpdate.</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/JpaPostRepository.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a>, <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></p>
+<h1 id="IMP005">5.0 LoggingEventPublisher (Interim Event Adapter) <small>IMP005</small></h1>
+<p>Temporaere Implementierung des EventPublisher-Ports.
+Loggt Domain-Events. Wird in Phase 4 durch KafkaEventPublisher ersetzt.</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/LoggingEventPublisher.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA003">SWA003 Event-Contracts als geteilte Library</a>, <a href="SWA.html#SWA005">SWA005 Kafka als Event-Broker</a></p>
+<h1 id="IMP006">6.0 Shared Kernel Domain Primitives <small>IMP006</small></h1>
+<p>Framework-freie Domain Primitives: EntityId, AggregateRoot, DomainEvent,
+TenantId, Auditable. Genutzt von allen Services als gemeinsame Basis.</p>
+<blockquote>
+<p><code>libs/shared-kernel/src/main/java/de/tomsblog/shared/domain/EntityId.java</code>
+<code>libs/shared-kernel/src/main/java/de/tomsblog/shared/domain/AggregateRoot.java</code>
+<code>libs/shared-kernel/src/main/java/de/tomsblog/shared/domain/DomainEvent.java</code>
+<code>libs/shared-kernel/src/main/java/de/tomsblog/shared/tenant/TenantId.java</code>
+<code>libs/shared-kernel/src/main/java/de/tomsblog/shared/audit/Auditable.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA002">SWA002 Shared Kernel als Framework-freie Library</a></p>
+<h1 id="IMP008">8.0 Tag Entity mit Identity <small>IMP008</small></h1>
+<p>Implementiert Tag als Entity mit TagId, TenantId, name und slug.
+Factory-Methode create() generiert ID und Slug aus dem Namen.
+Rename-Methode aktualisiert Name und Slug. Equality basiert auf ID.</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/domain/model/Tag.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></p>
+<h1 id="IMP009">9.0 Translation Aggregate <small>IMP009</small></h1>
+<p>Implementiert das Translation-Aggregate mit Lifecycle-Management.
+Factories createManual() und createFromAi() mit unterschiedlichem Startstatus.
+Methoden approve() und reject() mit Statusueberpruefung.
+Registriert TranslationCreatedEvent und TranslationApprovedEvent.</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/domain/model/Translation.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA008">SWA008 Translation als separates Aggregate mit eigenem Lifecycle</a></p>
+<h1 id="IMP010">10 Source Value Object <small>IMP010</small></h1>
+<p>Implementiert Source als Value Object (Java Record) mit url und title.
+Validierung: Beide Felder duerfen nicht null oder blank sein.
+Wird als Liste im Post-Aggregate gefuehrt.</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/domain/model/Source.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></p>
+<h1 id="IMP011">11 Attachment Value Object mit show-Flag <small>IMP011</small></h1>
+<p>Implementiert Attachment als Value Object (Java Record) mit AttachmentId, filename,
+contentType, size, show und storageKey. Factory-Methode create() generiert ID.
+Methode withStorageKey() erzeugt eine Kopie mit gesetztem Storage-Schluessel.
+show=true: Attachment wird im Blog-Rendering angezeigt (Galerie, Download).
+show=false: Attachment fuer eingebettete Inhalte (Inline-Bilder im Content).
+storageKey darf null sein (Datei noch nicht hochgeladen).</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/domain/model/Attachment.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></p>
+<h1 id="IMP012">12 AuthorId im Shared Kernel <small>IMP012</small></h1>
+<p>Implementiert AuthorId als Record im Shared Kernel (implements EntityId).
+Wird service-uebergreifend genutzt (Blog Content Service, spaeter Auth-Service).
+Reine Java-Klasse ohne Framework-Abhaengigkeiten.</p>
+<blockquote>
+<p><code>libs/shared-kernel/src/main/java/de/tomsblog/shared/domain/AuthorId.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA002">SWA002 Shared Kernel als Framework-freie Library</a></p>
+<h1 id="IMP013">13 TagService und TagUseCase <small>IMP013</small></h1>
+<p>Implementiert den TagUseCase als Inbound Port und den TagService als
+Application Service. Der TagService orchestriert Tag-Erstellung (mit
+Duplikat-Prüfung auf Name+Tenant), Umbenennung und Löschung.
+Prüft vor Erstellung, ob ein Tag mit gleichem Namen im Tenant existiert.</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/application/service/TagService.java</code>
+<code>services/blog-content/src/main/java/de/tomsblog/blogcontent/application/port/inbound/TagUseCase.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a>, <a href="SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></p>
+<h1 id="IMP014">14 TagController (REST Inbound Adapter) <small>IMP014</small></h1>
+<p>REST Controller für Tag CRUD-Operationen (SWR-020).
+Endpunkte: POST /api/tags, GET /api/tags, GET /api/tags/{id},
+PUT /api/tags/{id}, DELETE /api/tags/{id}.
+Tenant-Isolation über X-Tenant-Id Header.
+Input-Validierung mit Jakarta Validation (@NotBlank auf Tag-Name).</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/rest/TagController.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a>, <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></p>
+<h1 id="IMP015">15 JpaTagRepository (Outbound Adapter) <small>IMP015</small></h1>
+<p>JPA Outbound Adapter für den TagRepository Port.
+Implementiert Persistenz über Spring Data JPA mit TagJpaEntity.
+Alle Abfragen sind Tenant-scoped. TagMapper übernimmt das bidirektionale
+Mapping zwischen Domain-Tag und TagJpaEntity.</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/JpaTagRepository.java</code>
+<code>services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/TagJpaEntity.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a>, <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a>, <a href="SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></p>
+<h1 id="IMP016">16 TranslationService und TranslationUseCase <small>IMP016</small></h1>
+<p>Implementiert den TranslationUseCase als Inbound Port und den TranslationService
+als Application Service. Unterstützt manuelle und AI-generierte Übersetzungen
+mit unterschiedlichem Initial-Status. Publiziert Domain Events bei Erstellung
+und Freigabe. Orchestriert den Lifecycle DRAFT -&gt; REVIEW_PENDING -&gt; APPROVED/REJECTED.</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/application/service/TranslationService.java</code>
+<code>services/blog-content/src/main/java/de/tomsblog/blogcontent/application/port/inbound/TranslationUseCase.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a>, <a href="SWA.html#SWA008">SWA008 Translation als separates Aggregate mit eigenem Lifecycle</a></p>
+<h1 id="IMP017">17 TranslationController (REST Inbound Adapter) <small>IMP017</small></h1>
+<p>REST Controller für Translation CRUD-Operationen (SWR-021).
+Endpunkte unter /api/posts/{postId}/translations für CRUD sowie
+/approve und /reject Sub-Ressourcen für Workflow-Aktionen.
+Tenant-Isolation über X-Tenant-Id Header.
+Unterstützt manuelles und AI-generiertes Erstellen über source-Parameter.</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/rest/TranslationController.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a>, <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></p>
+<h1 id="IMP018">18 JpaTranslationRepository (Outbound Adapter) <small>IMP018</small></h1>
+<p>JPA Outbound Adapter für den TranslationRepository Port.
+Implementiert Persistenz über Spring Data JPA mit TranslationJpaEntity.
+Alle Abfragen sind Tenant-scoped. TranslationMapper übernimmt bidirektionales
+Mapping zwischen Domain-Translation und TranslationJpaEntity.
+FK-Beziehung zu posts-Tabelle, Unique Constraint auf (post_id, locale).</p>
+<blockquote>
+<p><code>services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/JpaTranslationRepository.java</code>
+<code>services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/TranslationJpaEntity.java</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a>, <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a>, <a href="SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></p>
+<h1 id="IMP019">19 Flyway Migrationen für Blog Content Service <small>IMP019</small></h1>
+<p>Flyway SQL-Migrationen für den Blog Content Service.
+V1: posts (mit post_tags, post_sources, post_attachments Tabellen).
+V2: tags (mit Unique-Indexes auf tenant_id+name und tenant_id+slug).
+V3: translations (mit FK auf posts, Unique auf post_id+locale).
+Schema wird beim Anwendungsstart automatisch migriert.</p>
+<blockquote>
+<p><code>services/blog-content/src/main/resources/db/migration/V1__create_posts_schema.sql</code>
+<code>services/blog-content/src/main/resources/db/migration/V2__create_tags_schema.sql</code>
+<code>services/blog-content/src/main/resources/db/migration/V3__create_translations_schema.sql</code></p>
+</blockquote>
+<p><em>Parent links:</em> <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a>, <a href="SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></p>
+    </div>
+  </main>
+</div>
+<script src="../template/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

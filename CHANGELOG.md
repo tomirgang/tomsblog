@@ -41,6 +41,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Fixed
 
+- Removed default "Products" and "Services" entries from Antora documentation header
+- Added navigation header with links to Architektur (arc42), Software Detail Design, and Requirements
+- Doorstop requirements report integrated into GitHub Pages docs site
+- PlantUML diagrams: moved puml files to partials/ directory for correct Antora partial$ resolution
+- ADR links: fixed broken attachmentsdir paths, symlinked ADRs into Antora attachments
+- ADR index updated with missing ADRs (0009, 0015, 0016, 0017)
 - CI Node.js 20 deprecation warnings by opting into Node.js 24 for actions
 - Spotless/Palantir Java Format crash on JDK 25
 - Compiler warnings (null safety, unused imports)

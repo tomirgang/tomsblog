@@ -7,19 +7,23 @@ Alle Architekturentscheidungen sind als ADRs dokumentiert:
 |===
 | ADR | Titel | Status
 
-| link:{attachmentsdir}/../../../adr/0001-hexagonale-architektur.md[0001] | Hexagonale Architektur (Ports & Adapters) | Accepted
-| link:{attachmentsdir}/../../../adr/0002-java-und-maven.md[0002] | Java und Maven als Technologie-Basis | Accepted
-| link:{attachmentsdir}/../../../adr/0003-monorepo-struktur.md[0003] | Monorepo-Struktur | Accepted
-| link:{attachmentsdir}/../../../adr/0004-rest-und-graphql.md[0004] | REST für Text-Blog, GraphQL für Podcast/Video | Accepted
-| link:{attachmentsdir}/../../../adr/0005-ui-strategie.md[0005] | UI-Strategie (Thymeleaf → Angular + React) | Accepted
-| link:{attachmentsdir}/../../../adr/0006-event-driven-kafka.md[0006] | Event-Driven Architecture mit Kafka | Accepted
-| link:{attachmentsdir}/../../../adr/0007-doorstop-requirement-tracing.md[0007] | Doorstop für Requirement Tracing | Accepted
-| link:{attachmentsdir}/../../../adr/0008-shared-kernel-framework-frei.md[0008] | Shared Kernel als Framework-freie Library | Accepted
-| link:{attachmentsdir}/../../../adr/0010-grpc-service-kommunikation.md[0010] | gRPC für synchrone Service-Kommunikation | Accepted
-| link:{attachmentsdir}/../../../adr/0011-custom-identity-provider.md[0011] | Custom Identity Provider mit OIDC | Accepted
-| link:{attachmentsdir}/../../../adr/0012-domain-basierte-tenant-auswahl.md[0012] | Domain-basierte Tenant-Auswahl | Accepted
-| link:{attachmentsdir}/../../../adr/0013-llm-kommentar-moderation.md[0013] | LLM-basierte Kommentar-Moderation | Accepted
-| link:{attachmentsdir}/../../../adr/0014-shadow-banning.md[0014] | Shadow-Banning im Kommentarsystem | Accepted
+| link:{attachmentsdir}/adr/0001-hexagonale-architektur.md[0001] | Hexagonale Architektur (Ports & Adapters) | Accepted
+| link:{attachmentsdir}/adr/0002-java-und-maven.md[0002] | Java und Maven als Technologie-Basis | Accepted
+| link:{attachmentsdir}/adr/0003-monorepo-struktur.md[0003] | Monorepo-Struktur | Accepted
+| link:{attachmentsdir}/adr/0004-rest-und-graphql.md[0004] | REST für Text-Blog, GraphQL für Podcast/Video | Accepted
+| link:{attachmentsdir}/adr/0005-ui-strategie.md[0005] | UI-Strategie (Thymeleaf → Angular + React) | Accepted
+| link:{attachmentsdir}/adr/0006-event-driven-kafka.md[0006] | Event-Driven Architecture mit Kafka | Accepted
+| link:{attachmentsdir}/adr/0007-doorstop-requirement-tracing.md[0007] | Doorstop für Requirement Tracing | Accepted
+| link:{attachmentsdir}/adr/0008-shared-kernel-framework-frei.md[0008] | Shared Kernel als Framework-freie Library | Accepted
+| link:{attachmentsdir}/adr/0009-domain-modell-blog-content.md[0009] | Domain-Modell Blog Content | Accepted
+| link:{attachmentsdir}/adr/0010-grpc-service-kommunikation.md[0010] | gRPC für synchrone Service-Kommunikation | Accepted
+| link:{attachmentsdir}/adr/0011-custom-identity-provider.md[0011] | Custom Identity Provider mit OIDC | Accepted
+| link:{attachmentsdir}/adr/0012-domain-basierte-tenant-auswahl.md[0012] | Domain-basierte Tenant-Auswahl | Accepted
+| link:{attachmentsdir}/adr/0013-llm-kommentar-moderation.md[0013] | LLM-basierte Kommentar-Moderation | Accepted
+| link:{attachmentsdir}/adr/0014-shadow-banning.md[0014] | Shadow-Banning im Kommentarsystem | Accepted
+| link:{attachmentsdir}/adr/0015-flyway-datenbankmigrationen.md[0015] | Flyway für Datenbank-Migrationen | Accepted
+| link:{attachmentsdir}/adr/0016-backend-for-frontend.md[0016] | Backend for Frontend (BFF) | Accepted
+| link:{attachmentsdir}/adr/0017-api-gateway.md[0017] | API Gateway (Spring Cloud Gateway) | Accepted
 |===
 
 NOTE: ADRs werden als Markdown-Dateien in `docs/adr/` gepflegt. Dieses Kapitel dient als Index.

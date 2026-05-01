@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head><title>doc-STK</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="../template/bootstrap.min.css" />
+  <link rel="stylesheet" href="../template/general.css" />
+  <link type="text/css" rel="stylesheet" href="../template/doorstop.css" />
+  <script src="../template/tex-mml-chtml.js" id="MathJax-script" async></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+  </script>
+</head>
+<body>
+
+  <header class="navbar navbar-expand-lg navbar-dark bd-navbar sticky-top text-bg-secondary">
+  <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap" aria-label="Document attributes">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">Documents</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../traceability.html">Traceability</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Contents
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#toc">Table of Contents</a></li>
+                <ul>
+                <li><a class="dropdown-item" href="#STK001">1.0 Blog-Posts erstellen und veröffentlichen</a></li>
+                <li><a class="dropdown-item" href="#STK002">2.0 Multi-Tenancy</a></li>
+                <li><a class="dropdown-item" href="#STK003">3.0 Mehrsprachige Inhalte</a></li>
+                <li><a class="dropdown-item" href="#STK004">4.0 Audit-Fähigkeit</a></li>
+                <li><a class="dropdown-item" href="#STK005">5.0 Benutzerverwaltung und Rollen</a></li>
+                <li><a class="dropdown-item" href="#STK006">6.0 RSS/Atom Feeds</a></li>
+                <li><a class="dropdown-item" href="#STK007">7.0 Cloud-Native Deployment</a></li>
+                <li><a class="dropdown-item" href="#STK008">8.0 Observability</a></li>
+                <li><a class="dropdown-item" href="#STK009">9.0 Erweiterbarkeit um Podcast und Video</a></li>
+                <li><a class="dropdown-item" href="#STK010">10 Quellenverwaltung für Posts</a></li>
+                <li><a class="dropdown-item" href="#STK011">11 KI-Unterstützung für Autoren</a></li>
+                <li><a class="dropdown-item" href="#STK012">12 Sicherheit (OWASP Top 10)</a></li>
+                <li><a class="dropdown-item" href="#STK013">13 Zeitgesteuerte Veröffentlichung</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <!-- Insert logotype. -->
+            <img src="../template/logo-black-white.png" alt="Doorstop" height="128" class="d-inline-block align-text-top">
+          </div>
+        </div>
+        <div class="col-6 align-self-center">
+          <div class="bd-lead text-nowrap text-center">
+            <span class="text-monospace"><strong>doc-STK</strong></span>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">Ref</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">By</span>
+            <p><span class="text-monospace">-</span></p>
+            <span class="text-muted">Issue</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </nav>
+</header>
+<div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout">
+  <main class="bd-main order-1">
+    <div class="bd-intro ps-lg-4">
+      <H1><p>Test document for development of <em>Doorstop</em></p></H1>
+      <h1 id="STK001">1.0 Blog-Posts erstellen und veröffentlichen <small>STK001</small></h1>
+<p>Als Autor möchte ich Blog-Posts im Markdown- oder WYSIWYG-Format erstellen,
+bearbeiten und veröffentlichen können.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR001">SWR001 Post CRUD API</a>, <a href="SWR.html#SWR002">SWR002 Post veröffentlichen</a>, <a href="SWR.html#SWR018">SWR018 Automatisierte Kommentar-Moderation via LLM</a>, <a href="SWR.html#SWR019">SWR019 Shadow-Banning für Kommentare</a>, <a href="SWR.html#SWR020">SWR020 Tag CRUD API</a>, <a href="SWR.html#SWR021">SWR021 Translation CRUD API</a></p>
+<h1 id="STK002">2.0 Multi-Tenancy <small>STK002</small></h1>
+<p>Die Plattform muss mehrere Mandanten (Tenants) unterstützen.
+Jeder Tenant hat eigene Inhalte, Benutzer und Konfiguration.
+Daten müssen mandantenübergreifend isoliert sein.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a>, <a href="SWR.html#SWR017">SWR017 Domain-basierte Tenant-Auswahl</a></p>
+<h1 id="STK003">3.0 Mehrsprachige Inhalte <small>STK003</small></h1>
+<p>Als Autor möchte ich Posts in mehreren Sprachen anbieten können.
+Die Übersetzung kann manuell oder KI-gestützt erfolgen.
+KI-Übersetzungen müssen vom Autor geprüft und freigegeben werden.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR004">SWR004 Übersetzung per KI (Author-getriggert)</a>, <a href="SWR.html#SWR005">SWR005 Manuelle Übersetzung</a></p>
+<h1 id="STK004">4.0 Audit-Fähigkeit <small>STK004</small></h1>
+<p>Alle relevanten Aktionen (Erstellen, Bearbeiten, Veröffentlichen, Löschen)
+müssen nachvollziehbar protokolliert werden (Wer, Was, Wann).</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR006">SWR006 Audit-Trail für Posts</a></p>
+<h1 id="STK005">5.0 Benutzerverwaltung und Rollen <small>STK005</small></h1>
+<p>Das System muss verschiedene Benutzerrollen unterstützen:
+Administrator, Autor und Leser. Zugriffsrechte werden
+rollenbasiert vergeben.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR007">SWR007 Rollenbasierte Zugriffskontrolle</a>, <a href="SWR.html#SWR016">SWR016 Custom Identity Provider mit OIDC</a></p>
+<h1 id="STK006">6.0 RSS/Atom Feeds <small>STK006</small></h1>
+<p>Leser müssen Blog-Inhalte über standardisierte Feeds (RSS/Atom)
+abonnieren können. Feeds sollen nach Tags filterbar sein.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR008">SWR008 RSS/Atom Feed-Generierung</a></p>
+<h1 id="STK007">7.0 Cloud-Native Deployment <small>STK007</small></h1>
+<p>Die Plattform muss containerisiert auf Kubernetes betrieben werden können.
+Deployment erfolgt via GitOps (ArgoCD/Flux).</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR010">SWR010 Container-Image und Health-Checks</a></p>
+<h1 id="STK008">8.0 Observability <small>STK008</small></h1>
+<p>Das System muss überwachbar sein: Metriken (Prometheus), Logs (Loki),
+Traces (Tempo) und Dashboards (Grafana) müssen integriert werden.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR011">SWR011 Metriken und Tracing</a></p>
+<h1 id="STK009">9.0 Erweiterbarkeit um Podcast und Video <small>STK009</small></h1>
+<p>Die Architektur muss so gestaltet sein, dass später Audio-Podcast-
+und Video-Podcast-Services ergänzt werden können, ohne den
+bestehenden Blog-Service umzubauen.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR009">SWR009 Domain Events via Kafka</a></p>
+<h1 id="STK010">10 Quellenverwaltung für Posts <small>STK010</small></h1>
+<p>Als Autor möchte ich Quellen und Referenzen zu meinen Posts verwalten
+können. Referenzierte Webseiten sollen automatisch archiviert werden.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR012">SWR012 Quellen-Verwaltung</a>, <a href="SWR.html#SWR013">SWR013 Web-Snapshot von Quellen</a></p>
+<h1 id="STK011">11 KI-Unterstützung für Autoren <small>STK011</small></h1>
+<p>Das System soll KI-Features anbieten (Übersetzung, Schreibassistenz,
+Titelbild-Generierung). Alle KI-Features sind optional und werden
+vom Autor explizit ausgelöst. Ergebnisse müssen geprüft werden.
+Bei Ausfall des KI-Providers muss das System ohne KI funktionieren.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR004">SWR004 Übersetzung per KI (Author-getriggert)</a>, <a href="SWR.html#SWR014">SWR014 Graceful Degradation bei KI-Ausfall</a></p>
+<h1 id="STK012">12 Sicherheit (OWASP Top 10) <small>STK012</small></h1>
+<p>Das System muss gegen die OWASP Top 10 Schwachstellen abgesichert sein.
+Security-Reviews sind Bestandteil des Entwicklungsprozesses.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR015">SWR015 Input-Validierung und OWASP-Schutz</a></p>
+<h1 id="STK013">13 Zeitgesteuerte Veröffentlichung <small>STK013</small></h1>
+<p>Als Autor möchte ich Blog-Posts mit einem zukünftigen Veröffentlichungszeitpunkt
+planen können, damit diese automatisch zur geplanten Zeit publiziert werden.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR022">SWR022 Time-based Auto Publishing</a></p>
+    </div>
+  </main>
+</div>
+<script src="../template/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

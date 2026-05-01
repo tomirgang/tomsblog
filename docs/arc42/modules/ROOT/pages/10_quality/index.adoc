@@ -3,7 +3,7 @@
 
 == Qualitätsbaum
 
-plantuml::partial$../images/plantuml/quality-tree.puml[format=svg]
+plantuml::partial$plantuml/quality-tree.puml[format=svg]
 
 == Qualitätsszenarien
 

@@ -5,7 +5,7 @@
 
 Das Kontextdiagramm zeigt die Systemgrenzen und die wesentlichen externen Akteure. Die Blog-Funktionalität (STK-001) wird über eine REST API bereitgestellt, während Podcast- und Video-Inhalte (STK-009) über GraphQL angebunden werden.
 
-plantuml::partial$../images/plantuml/context-diagram.puml[format=svg]
+plantuml::partial$plantuml/context-diagram.puml[format=svg]
 
 == Technischer Kontext
 

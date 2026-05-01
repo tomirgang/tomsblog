@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head><title>doc-SWR</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="../template/bootstrap.min.css" />
+  <link rel="stylesheet" href="../template/general.css" />
+  <link type="text/css" rel="stylesheet" href="../template/doorstop.css" />
+  <script src="../template/tex-mml-chtml.js" id="MathJax-script" async></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+  </script>
+</head>
+<body>
+
+  <header class="navbar navbar-expand-lg navbar-dark bd-navbar sticky-top text-bg-secondary">
+  <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap" aria-label="Document attributes">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">Documents</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../traceability.html">Traceability</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Contents
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#toc">Table of Contents</a></li>
+                <ul>
+                <li><a class="dropdown-item" href="#SWR001">1.0 Post CRUD API</a></li>
+                <li><a class="dropdown-item" href="#SWR002">2.0 Post veröffentlichen</a></li>
+                <li><a class="dropdown-item" href="#SWR003">3.0 Tenant-Isolation auf Datenebene</a></li>
+                <li><a class="dropdown-item" href="#SWR004">4.0 Übersetzung per KI (Author-getriggert)</a></li>
+                <li><a class="dropdown-item" href="#SWR005">5.0 Manuelle Übersetzung</a></li>
+                <li><a class="dropdown-item" href="#SWR006">6.0 Audit-Trail für Posts</a></li>
+                <li><a class="dropdown-item" href="#SWR007">7.0 Rollenbasierte Zugriffskontrolle</a></li>
+                <li><a class="dropdown-item" href="#SWR008">8.0 RSS/Atom Feed-Generierung</a></li>
+                <li><a class="dropdown-item" href="#SWR009">9.0 Domain Events via Kafka</a></li>
+                <li><a class="dropdown-item" href="#SWR010">10 Container-Image und Health-Checks</a></li>
+                <li><a class="dropdown-item" href="#SWR011">11 Metriken und Tracing</a></li>
+                <li><a class="dropdown-item" href="#SWR012">12 Quellen-Verwaltung</a></li>
+                <li><a class="dropdown-item" href="#SWR013">13 Web-Snapshot von Quellen</a></li>
+                <li><a class="dropdown-item" href="#SWR014">14 Graceful Degradation bei KI-Ausfall</a></li>
+                <li><a class="dropdown-item" href="#SWR015">15 Input-Validierung und OWASP-Schutz</a></li>
+                <li><a class="dropdown-item" href="#SWR016">16 Custom Identity Provider mit OIDC</a></li>
+                <li><a class="dropdown-item" href="#SWR017">17 Domain-basierte Tenant-Auswahl</a></li>
+                <li><a class="dropdown-item" href="#SWR018">18 Automatisierte Kommentar-Moderation via LLM</a></li>
+                <li><a class="dropdown-item" href="#SWR019">19 Shadow-Banning für Kommentare</a></li>
+                <li><a class="dropdown-item" href="#SWR020">20 Tag CRUD API</a></li>
+                <li><a class="dropdown-item" href="#SWR021">21 Translation CRUD API</a></li>
+                <li><a class="dropdown-item" href="#SWR022">22 Time-based Auto Publishing</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <!-- Insert logotype. -->
+            <img src="../template/logo-black-white.png" alt="Doorstop" height="128" class="d-inline-block align-text-top">
+          </div>
+        </div>
+        <div class="col-6 align-self-center">
+          <div class="bd-lead text-nowrap text-center">
+            <span class="text-monospace"><strong>doc-SWR</strong></span>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">Ref</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">By</span>
+            <p><span class="text-monospace">-</span></p>
+            <span class="text-muted">Issue</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </nav>
+</header>
+<div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout">
+  <main class="bd-main order-1">
+    <div class="bd-intro ps-lg-4">
+      <H1><p>Test document for development of <em>Doorstop</em></p></H1>
+      <h1 id="SWR001">1.0 Post CRUD API <small>SWR001</small></h1>
+<p>Das System muss eine REST API bereitstellen mit Endpunkten fuer:
+POST /api/posts (erstellen), GET /api/posts/{id} (lesen),
+PUT /api/posts/{id} (aktualisieren), DELETE /api/posts/{id} (löschen).
+Alle Endpunkte müssen die TenantId des authentifizierten Benutzers berücksichtigen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a>, <a href="TST.html#TST001">TST001 Post erstellen generiert ID und Slug</a>, <a href="SWA.html#SWA002">SWA002 Shared Kernel als Framework-freie Library</a>, <a href="TST.html#TST002">TST002 Post erstellen registriert PostCreatedEvent</a>, <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a>, <a href="TST.html#TST005">TST005 Post-Inhalt aktualisieren</a>, <a href="TST.html#TST006">TST006 Post mit leerem Titel wird abgelehnt</a>, <a href="SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a>, <a href="TST.html#TST007">TST007 Persistenz und Tenant-Isolation (Integration)</a>, <a href="TST.html#TST008">TST008 Posts nach Tenant auflisten (Integration)</a>, <a href="SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></p>
+<h1 id="SWR002">2.0 Post veröffentlichen <small>SWR002</small></h1>
+<p>Ein Post kann über POST /api/posts/{id}/publish veröffentlicht werden.
+Dabei wird der Status auf PUBLISHED gesetzt und ein PostPublishedEvent erzeugt.
+Ein bereits veröffentlichter Post kann nicht erneut veröffentlicht werden.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<p><em>Child links:</em> <a href="TST.html#TST003">TST003 Post veröffentlichen ändert Status und Event</a>, <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a>, <a href="TST.html#TST004">TST004 Bereits veröffentlichter Post wirft Exception</a></p>
+<h1 id="SWR003">3.0 Tenant-Isolation auf Datenebene <small>SWR003</small></h1>
+<p>Jede Domain-Entity muss eine TenantId tragen.
+Datenbankabfragen müssen immer nach TenantId filtern.
+Ein Benutzer darf niemals Daten eines anderen Tenants sehen oder ändern.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK002">STK002 Multi-Tenancy</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA002">SWA002 Shared Kernel als Framework-freie Library</a>, <a href="SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a>, <a href="TST.html#TST007">TST007 Persistenz und Tenant-Isolation (Integration)</a>, <a href="TST.html#TST008">TST008 Posts nach Tenant auflisten (Integration)</a>, <a href="SWA.html#SWA011">SWA011 Domain-basierte Tenant-Resolution am Ingress</a></p>
+<h1 id="SWR004">4.0 Übersetzung per KI (Author-getriggert) <small>SWR004</small></h1>
+<p>Der Autor kann über POST /api/posts/{id}/translate eine KI-Übersetzung
+ausloesen. Das Ergebnis wird als Entwurf gespeichert und dem Autor
+zur Prüfung angezeigt. Erst nach expliziter Freigabe wird die
+Übersetzung übernommen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK003">STK003 Mehrsprachige Inhalte</a>, <a href="STK.html#STK011">STK011 KI-Unterstützung für Autoren</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA006">SWA006 AI Service als separater Adapter</a>, <a href="SWA.html#SWA008">SWA008 Translation als separates Aggregate mit eigenem Lifecycle</a></p>
+<h1 id="SWR005">5.0 Manuelle Übersetzung <small>SWR005</small></h1>
+<p>Der Autor kann über PUT /api/posts/{id}/translation eine manuelle
+Übersetzung direkt eingeben und speichern.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK003">STK003 Mehrsprachige Inhalte</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA008">SWA008 Translation als separates Aggregate mit eigenem Lifecycle</a></p>
+<h1 id="SWR006">6.0 Audit-Trail für Posts <small>SWR006</small></h1>
+<p>Jede Post-Entity muss createdAt, updatedAt, createdBy und updatedBy
+führen. Diese Felder werden automatisch beim Persistieren gesetzt.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK004">STK004 Audit-Fähigkeit</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></p>
+<h1 id="SWR007">7.0 Rollenbasierte Zugriffskontrolle <small>SWR007</small></h1>
+<p>Das System muss drei Rollen unterstützen: ADMIN, AUTHOR, READER.
+Nur AUTHOR und ADMIN duerfen Posts erstellen/bearbeiten.
+Nur ADMIN darf Tenants und Benutzer verwalten.
+READER hat nur Lesezugriff auf veröffentlichte Posts.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA010">SWA010 Custom Auth Service als eigener Microservice</a></p>
+<h1 id="SWR008">8.0 RSS/Atom Feed-Generierung <small>SWR008</small></h1>
+<p>Das System muss bei Veröffentlichung eines Posts automatisch den
+RSS/Atom Feed aktualisieren. Feeds müssen nach Tags filterbar sein.
+Der Feed-Service konsumiert PostPublishedEvents via Kafka.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK006">STK006 RSS/Atom Feeds</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA005">SWA005 Kafka als Event-Broker</a></p>
+<h1 id="SWR009">9.0 Domain Events via Kafka <small>SWR009</small></h1>
+<p>Domain Events (PostCreated, PostUpdated, PostPublished) müssen
+über Kafka publiziert werden. Jedes Event traegt EventMetadata
+mit ID, Timestamp, TenantId und CorrelationId.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a>, <a href="TST.html#TST002">TST002 Post erstellen registriert PostCreatedEvent</a>, <a href="SWA.html#SWA003">SWA003 Event-Contracts als geteilte Library</a>, <a href="SWA.html#SWA005">SWA005 Kafka als Event-Broker</a>, <a href="SWA.html#SWA009">SWA009 gRPC für synchrone Service-Kommunikation</a></p>
+<h1 id="SWR010">10 Container-Image und Health-Checks <small>SWR010</small></h1>
+<p>Jeder Service muss als OCI-Container-Image gebaut werden.
+Jeder Service muss /actuator/health (liveness) und
+/actuator/health/readiness (readiness) Endpunkte bereitstellen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK007">STK007 Cloud-Native Deployment</a></p>
+<h1 id="SWR011">11 Metriken und Tracing <small>SWR011</small></h1>
+<p>Jeder Service muss Metriken im Prometheus-Format unter /actuator/prometheus
+exponieren. Distributed Tracing via OpenTelemetry muss integriert sein.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK008">STK008 Observability</a></p>
+<h1 id="SWR012">12 Quellen-Verwaltung <small>SWR012</small></h1>
+<p>Ein Post kann eine Liste von Quellen (URL + Titel) enthalten.
+Das System muss eine API zum Hinzufügen, Entfernen und Auflisten
+von Quellen bereitstellen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK010">STK010 Quellenverwaltung für Posts</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></p>
+<h1 id="SWR013">13 Web-Snapshot von Quellen <small>SWR013</small></h1>
+<p>Beim Hinzufügen einer Quelle soll das System automatisch einen
+Snapshot (HTML/PDF) der referenzierten Webseite erstellen und
+in S3-kompatiblem Storage ablegen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK010">STK010 Quellenverwaltung für Posts</a></p>
+<h1 id="SWR014">14 Graceful Degradation bei KI-Ausfall <small>SWR014</small></h1>
+<p>Bei Nichterreichbarkeit des KI-Providers (OpenRouter) muss das System
+eine aussagekräftige Fehlermeldung anzeigen. Alle nicht-KI-Funktionen
+müssen weiterhin uneingeschraenkt verfügbar sein.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK011">STK011 KI-Unterstützung für Autoren</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA006">SWA006 AI Service als separater Adapter</a></p>
+<h1 id="SWR015">15 Input-Validierung und OWASP-Schutz <small>SWR015</small></h1>
+<p>Alle API-Eingaben müssen serverseitig validiert werden (Bean Validation).
+XSS-Schutz bei der Ausgabe von User-Content. CSRF-Schutz fuer
+zustandsbehaftete Endpunkte. SQL-Injection-Schutz durch Prepared Statements.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK012">STK012 Sicherheit (OWASP Top 10)</a></p>
+<p><em>Child links:</em> <a href="TST.html#TST006">TST006 Post mit leerem Titel wird abgelehnt</a></p>
+<h1 id="SWR016">16 Custom Identity Provider mit OIDC <small>SWR016</small></h1>
+<p>Das System muss einen eigenen Identity Provider Service bereitstellen.
+Dieser Service muss OpenID Connect (OIDC) Login unterstützen, sodass
+Benutzer sich über externe OIDC Provider (z.B. Google, GitHub) anmelden
+können. Der Service verwaltet Benutzerkonten, Rollen und Sessions.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA010">SWA010 Custom Auth Service als eigener Microservice</a></p>
+<h1 id="SWR017">17 Domain-basierte Tenant-Auswahl <small>SWR017</small></h1>
+<p>Die Tenant-Zuordnung eines Requests muss über die verwendete Domain
+oder Subdomain erfolgen. Ein Tenant kann mehrere Domains und Subdomains
+konfigurieren (z.B. eigene Domain, Subdomain der Plattform). Das System
+muss die TenantId aus dem Host-Header des eingehenden Requests auflösen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK002">STK002 Multi-Tenancy</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA011">SWA011 Domain-basierte Tenant-Resolution am Ingress</a></p>
+<h1 id="SWR018">18 Automatisierte Kommentar-Moderation via LLM <small>SWR018</small></h1>
+<p>Neue Kommentare müssen automatisiert durch ein LLM überprüft werden.
+Die Überprüfung nutzt das OpenRouter-Backend und bewertet Kommentare
+auf Spam, Beleidigungen und Off-Topic-Inhalte. Kommentare werden
+automatisch als approved, rejected oder review_pending klassifiziert.
+Bei LLM-Ausfall greift Graceful Degradation (Kommentar wird als
+review_pending markiert).</p>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA012">SWA012 LLM-basierte Kommentar-Moderation als Adapter</a></p>
+<h1 id="SWR019">19 Shadow-Banning für Kommentare <small>SWR019</small></h1>
+<p>Das Kommentarsystem muss Shadow-Banning unterstützen. Ein
+shadow-gebannter Benutzer sieht seine eigenen Kommentare weiterhin
+normal, andere Benutzer sehen diese Kommentare jedoch nicht.
+Administratoren und Autoren können Shadow-Bans vergeben und aufheben.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<h1 id="SWR020">20 Tag CRUD API <small>SWR020</small></h1>
+<p>Das System muss eine REST API für Tag-Verwaltung bereitstellen:
+POST /api/tags (Tag erstellen), GET /api/tags (alle Tags des Tenants),
+GET /api/tags/{id} (einzelnen Tag lesen),
+PUT /api/tags/{id} (Tag umbenennen), DELETE /api/tags/{id} (Tag löschen).
+Tag-Namen müssen pro Tenant eindeutig sein.
+Alle Endpunkte sind Tenant-scoped über den X-Tenant-Id Header.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></p>
+<h1 id="SWR021">21 Translation CRUD API <small>SWR021</small></h1>
+<p>Das System muss eine REST API für die Verwaltung von Übersetzungen bereitstellen:
+POST /api/posts/{postId}/translations (Übersetzung erstellen),
+GET /api/posts/{postId}/translations (alle Übersetzungen eines Posts),
+GET /api/posts/{postId}/translations/{id} (einzelne Übersetzung lesen),
+PUT /api/posts/{postId}/translations/{id} (Übersetzung aktualisieren),
+POST /api/posts/{postId}/translations/{id}/approve (Übersetzung freigeben),
+POST /api/posts/{postId}/translations/{id}/reject (Übersetzung ablehnen),
+DELETE /api/posts/{postId}/translations/{id} (Übersetzung löschen).
+Alle Endpunkte sind Tenant-scoped über den X-Tenant-Id Header.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></p>
+<h1 id="SWR022">22 Time-based Auto Publishing <small>SWR022</small></h1>
+<p>Das System muss zeitgesteuerte Veröffentlichung (Scheduled Publishing) unterstützen:
+<ul>
+<li>Ein Post kann mit einem zukünftigen Veröffentlichungszeitpunkt (publishAt) versehen werden.</li>
+<li>Ein Scheduler prüft periodisch, ob Posts zur Veröffentlichung anstehen.</li>
+<li>Zum geplanten Zeitpunkt wird der Post automatisch in den Status PUBLISHED überführt.</li>
+<li>Ein PostPublishedEvent wird dabei ausgelöst (wie bei manueller Veröffentlichung).</li>
+<li>Der Autor kann den geplanten Zeitpunkt bis zur Veröffentlichung ändern oder stornieren.</li>
+<li>Die REST API wird um das Feld publishAt erweitert (optional bei POST/PUT /api/posts/{id}).</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK013">STK013 Zeitgesteuerte Veröffentlichung</a></p>
+    </div>
+  </main>
+</div>
+<script src="../template/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

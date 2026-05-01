@@ -62,11 +62,23 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install Doorstop
+        run: pip install -r requirements.txt
+
       - name: Install Antora and extensions
         run: npm install && npm install -g @antora/cli @antora/site-generator
 
-      - name: Generate documentation
+      - name: Generate Antora documentation
         run: antora antora-playbook.yml
+
+      - name: Generate requirements report
+        run: doorstop publish all build/site/requirements/
 
       - name: Upload documentation
         uses: actions/upload-artifact@v4

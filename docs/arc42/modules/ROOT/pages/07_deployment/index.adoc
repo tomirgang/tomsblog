@@ -5,7 +5,7 @@
 
 Das Deployment-Diagramm zeigt die Zielumgebung auf Kubernetes (STK-007). Jeder Service wird als Container-Image mit Health-Checks bereitgestellt (SWR-010) und über Prometheus/Grafana beobachtet (SWR-011, STK-008).
 
-plantuml::partial$../images/plantuml/deployment.puml[format=svg]
+plantuml::partial$plantuml/deployment.puml[format=svg]
 
 == Lokale Entwicklung
 

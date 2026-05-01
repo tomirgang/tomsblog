@@ -39,7 +39,7 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 - Events: publish domain events for cross-service communication (Post created/updated/published)
 - Requirements: Doorstop for multi-level tracing (Stakeholder → Software Req → Design → Implementation → Test)
 - Requirement IDs in test names (`@DisplayName("SWR-042: ...")`) and Javadoc (`@req SWR-042`)
-- Diagrams in arc42: PlantUML as separate `.puml` files in `docs/arc42/modules/ROOT/images/plantuml/`, referenced from AsciiDoc via `plantuml::partial$...`
+- Diagrams in arc42: PlantUML as separate `.puml` files in `docs/arc42/modules/ROOT/partials/plantuml/`, referenced from AsciiDoc via `plantuml::partial$plantuml/...`
 - Diagrams in design docs: Mermaid diagrams inline in AsciiDoc via `[mermaid]` blocks
 - Only use plain ASCII chars in PlantUML (no umlauts, use ae/oe/ue instead)
 - All other files (AsciiDoc, Markdown, YAML, Java Javadoc) use proper German umlauts (ä, ö, ü, ß)

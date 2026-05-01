@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head><title>doc-SWA</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="../template/bootstrap.min.css" />
+  <link rel="stylesheet" href="../template/general.css" />
+  <link type="text/css" rel="stylesheet" href="../template/doorstop.css" />
+  <script src="../template/tex-mml-chtml.js" id="MathJax-script" async></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+  </script>
+</head>
+<body>
+
+  <header class="navbar navbar-expand-lg navbar-dark bd-navbar sticky-top text-bg-secondary">
+  <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap" aria-label="Document attributes">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">Documents</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../traceability.html">Traceability</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Contents
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#toc">Table of Contents</a></li>
+                <ul>
+                <li><a class="dropdown-item" href="#SWA001">1.0 Hexagonale Architektur pro Service</a></li>
+                <li><a class="dropdown-item" href="#SWA002">2.0 Shared Kernel als Framework-freie Library</a></li>
+                <li><a class="dropdown-item" href="#SWA003">3.0 Event-Contracts als geteilte Library</a></li>
+                <li><a class="dropdown-item" href="#SWA004">4.0 Blog Content Service als Spring Boot Applikation</a></li>
+                <li><a class="dropdown-item" href="#SWA005">5.0 Kafka als Event-Broker</a></li>
+                <li><a class="dropdown-item" href="#SWA006">6.0 AI Service als separater Adapter</a></li>
+                <li><a class="dropdown-item" href="#SWA007">7.0 Domain-Modell mit Aggregates, Entities und Value Objects</a></li>
+                <li><a class="dropdown-item" href="#SWA008">8.0 Translation als separates Aggregate mit eigenem Lifecycle</a></li>
+                <li><a class="dropdown-item" href="#SWA009">9.0 gRPC für synchrone Service-Kommunikation</a></li>
+                <li><a class="dropdown-item" href="#SWA010">10 Custom Auth Service als eigener Microservice</a></li>
+                <li><a class="dropdown-item" href="#SWA011">11 Domain-basierte Tenant-Resolution am Ingress</a></li>
+                <li><a class="dropdown-item" href="#SWA012">12 LLM-basierte Kommentar-Moderation als Adapter</a></li>
+                <li><a class="dropdown-item" href="#SWA013">13 Flyway für versionierte Datenbank-Migrationen</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <!-- Insert logotype. -->
+            <img src="../template/logo-black-white.png" alt="Doorstop" height="128" class="d-inline-block align-text-top">
+          </div>
+        </div>
+        <div class="col-6 align-self-center">
+          <div class="bd-lead text-nowrap text-center">
+            <span class="text-monospace"><strong>doc-SWA</strong></span>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">Ref</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">By</span>
+            <p><span class="text-monospace">-</span></p>
+            <span class="text-muted">Issue</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </nav>
+</header>
+<div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout">
+  <main class="bd-main order-1">
+    <div class="bd-intro ps-lg-4">
+      <H1><p>Test document for development of <em>Doorstop</em></p></H1>
+      <h1 id="SWA001">1.0 Hexagonale Architektur pro Service <small>SWA001</small></h1>
+<p>Jeder Microservice folgt der hexagonalen Architektur mit den Schichten:
+domain/ (reine Fachlogik, keine Framework-Abhängigkeiten),
+application/ (Ports, Use Cases),
+adapter/inbound (REST Controller, Event Listener),
+adapter/outbound (JPA Repositories, Kafka Producer, HTTP Clients).</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR001">SWR001 Post CRUD API</a>, <a href="SWR.html#SWR009">SWR009 Domain Events via Kafka</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP001">IMP001 Post Aggregate Root</a>, <a href="IMP.html#IMP002">IMP002 PostService (Application Layer)</a>, <a href="IMP.html#IMP003">IMP003 PostController (REST Inbound Adapter)</a>, <a href="IMP.html#IMP004">IMP004 JpaPostRepository (Persistence Outbound Adapter)</a>, <a href="IMP.html#IMP013">IMP013 TagService und TagUseCase</a>, <a href="IMP.html#IMP014">IMP014 TagController (REST Inbound Adapter)</a>, <a href="IMP.html#IMP015">IMP015 JpaTagRepository (Outbound Adapter)</a>, <a href="IMP.html#IMP016">IMP016 TranslationService und TranslationUseCase</a>, <a href="IMP.html#IMP017">IMP017 TranslationController (REST Inbound Adapter)</a>, <a href="IMP.html#IMP018">IMP018 JpaTranslationRepository (Outbound Adapter)</a></p>
+<h1 id="SWA002">2.0 Shared Kernel als Framework-freie Library <small>SWA002</small></h1>
+<p>Gemeinsame Domain Primitives (EntityId, TenantId, AuthorId, AggregateRoot, DomainEvent,
+Auditable) werden in libs/shared-kernel bereitgestellt.
+Diese Library darf keine Spring- oder Framework-Abhängigkeiten haben.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR001">SWR001 Post CRUD API</a>, <a href="SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP006">IMP006 Shared Kernel Domain Primitives</a>, <a href="IMP.html#IMP012">IMP012 AuthorId im Shared Kernel</a></p>
+<h1 id="SWA003">3.0 Event-Contracts als geteilte Library <small>SWA003</small></h1>
+<p>Alle Cross-Service Events (PostCreatedEvent, PostUpdatedEvent,
+PostPublishedEvent) und die gemeinsame EventMetadata werden in
+libs/event-contracts definiert. Consumer und Producer verwenden
+dieselben Event-Klassen.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR009">SWR009 Domain Events via Kafka</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP005">IMP005 LoggingEventPublisher (Interim Event Adapter)</a></p>
+<h1 id="SWA004">4.0 Blog Content Service als Spring Boot Applikation <small>SWA004</small></h1>
+<p>Der Blog Content Service wird als Spring Boot 3.x Applikation
+mit Spring Web (REST), Spring Data JPA (PostgreSQL) und
+Thymeleaf (SSR UI) implementiert.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR001">SWR001 Post CRUD API</a>, <a href="SWR.html#SWR002">SWR002 Post veröffentlichen</a>, <a href="SWR.html#SWR006">SWR006 Audit-Trail für Posts</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP001">IMP001 Post Aggregate Root</a>, <a href="IMP.html#IMP002">IMP002 PostService (Application Layer)</a>, <a href="IMP.html#IMP003">IMP003 PostController (REST Inbound Adapter)</a>, <a href="IMP.html#IMP004">IMP004 JpaPostRepository (Persistence Outbound Adapter)</a>, <a href="IMP.html#IMP014">IMP014 TagController (REST Inbound Adapter)</a>, <a href="IMP.html#IMP015">IMP015 JpaTagRepository (Outbound Adapter)</a>, <a href="IMP.html#IMP017">IMP017 TranslationController (REST Inbound Adapter)</a>, <a href="IMP.html#IMP018">IMP018 JpaTranslationRepository (Outbound Adapter)</a>, <a href="IMP.html#IMP019">IMP019 Flyway Migrationen für Blog Content Service</a></p>
+<h1 id="SWA005">5.0 Kafka als Event-Broker <small>SWA005</small></h1>
+<p>Apache Kafka (KRaft Mode) dient als zentraler Event-Broker.
+Topics werden pro Event-Typ angelegt.
+Consumer Groups ermöglichen unabhängige Verarbeitung.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR008">SWR008 RSS/Atom Feed-Generierung</a>, <a href="SWR.html#SWR009">SWR009 Domain Events via Kafka</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP005">IMP005 LoggingEventPublisher (Interim Event Adapter)</a></p>
+<h1 id="SWA006">6.0 AI Service als separater Adapter <small>SWA006</small></h1>
+<p>Die KI-Integration (OpenRouter) wird als Outbound-Adapter im
+Blog Content Service implementiert. Bei Ausfall liefert der
+Adapter einen definierten Fehler; die restliche Funktionalität
+bleibt unberührt (Circuit Breaker Pattern).</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR004">SWR004 Übersetzung per KI (Author-getriggert)</a>, <a href="SWR.html#SWR014">SWR014 Graceful Degradation bei KI-Ausfall</a></p>
+<h1 id="SWA007">7.0 Domain-Modell mit Aggregates, Entities und Value Objects <small>SWA007</small></h1>
+<p>Das Domain-Modell des Blog Content Service besteht aus folgenden Bausteinen:
+<ul>
+<li>Post (Aggregate Root): PostId, TenantId, AuthorId (Referenz), title, slug, content, status, locale, tags (Set<TagId>), sources (List<Source>), attachments (List<Attachment>)</li>
+<li>Tag (Entity): TagId, TenantId, name, slug</li>
+<li>Translation (Aggregate Root): TranslationId, PostId, TenantId, locale, title, content, status, source</li>
+<li>Source (Value Object): url, title</li>
+<li>Attachment (Value Object): AttachmentId, filename, contentType, size, show, storageKey</li>
+<li>AuthorId liegt im shared-kernel als reine Referenz (keine Author-Entity im blog-content)</li>
+Alle Aggregates und Entities tragen eine TenantId fuer Multi-Tenant-Isolation.</li>
+Attachments mit show=true werden im Blog-Rendering angezeigt, mit show=false fuer eingebettete Inhalte.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="SWR.html#SWR001">SWR001 Post CRUD API</a>, <a href="SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a>, <a href="SWR.html#SWR012">SWR012 Quellen-Verwaltung</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP001">IMP001 Post Aggregate Root</a>, <a href="IMP.html#IMP008">IMP008 Tag Entity mit Identity</a>, <a href="IMP.html#IMP010">IMP010 Source Value Object</a>, <a href="IMP.html#IMP011">IMP011 Attachment Value Object mit show-Flag</a>, <a href="IMP.html#IMP013">IMP013 TagService und TagUseCase</a></p>
+<h1 id="SWA008">8.0 Translation als separates Aggregate mit eigenem Lifecycle <small>SWA008</small></h1>
+<p>Uebersetzungen werden als eigenes Aggregate modelliert (nicht als Child im Post).
+Der Lifecycle ist: DRAFT -&gt; REVIEW_PENDING -&gt; APPROVED oder REJECTED.
+AI-generierte Uebersetzungen starten in REVIEW_PENDING (Autor muss pruefen).
+Manuelle Uebersetzungen starten in DRAFT.
+Bei Aenderung einer approbierten Uebersetzung wechselt der Status auf REVIEW_PENDING.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR004">SWR004 Übersetzung per KI (Author-getriggert)</a>, <a href="SWR.html#SWR005">SWR005 Manuelle Übersetzung</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP009">IMP009 Translation Aggregate</a>, <a href="IMP.html#IMP016">IMP016 TranslationService und TranslationUseCase</a></p>
+<h1 id="SWA009">9.0 gRPC für synchrone Service-Kommunikation <small>SWA009</small></h1>
+<p>Für synchrone Kommunikation zwischen Microservices wird gRPC verwendet.
+Kafka bleibt für asynchrone, event-basierte Kommunikation zuständig.
+gRPC bietet typsichere Contracts via Protobuf, effizientes Binary-Protokoll
+und native Streaming-Unterstützung. Service-Interfaces werden als
+.proto-Dateien in einer geteilten Library definiert.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR009">SWR009 Domain Events via Kafka</a></p>
+<h1 id="SWA010">10 Custom Auth Service als eigener Microservice <small>SWA010</small></h1>
+<p>Die Authentifizierung und Autorisierung wird als eigener Microservice
+implementiert (kein Keycloak). Der Auth Service unterstützt OIDC als
+Relying Party und stellt JWTs für die interne Service-Kommunikation aus.
+Andere Services validieren Tokens lokal via Public Key.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR007">SWR007 Rollenbasierte Zugriffskontrolle</a>, <a href="SWR.html#SWR016">SWR016 Custom Identity Provider mit OIDC</a></p>
+<h1 id="SWA011">11 Domain-basierte Tenant-Resolution am Ingress <small>SWA011</small></h1>
+<p>Die Tenant-Auflösung erfolgt am Ingress-Level über den Host-Header.
+Ein Tenant-Resolution-Service mappt Domains auf TenantIds.
+Ein Tenant kann mehrere Domains besitzen (Custom-Domain + Plattform-Subdomain).
+Die aufgelöste TenantId wird als Header (X-Tenant-Id) an nachgelagerte
+Services propagiert.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a>, <a href="SWR.html#SWR017">SWR017 Domain-basierte Tenant-Auswahl</a></p>
+<h1 id="SWA012">12 LLM-basierte Kommentar-Moderation als Adapter <small>SWA012</small></h1>
+<p>Die automatisierte Kommentar-Überprüfung wird als Outbound-Adapter im
+Kommentar-Service implementiert. Der Adapter nutzt das OpenRouter-Backend
+(analog zum AI-Adapter im Blog Content Service, SWA-006).
+Das Moderation-Interface ist als Port definiert, sodass der LLM-Adapter
+austauschbar bleibt (z.B. durch regelbasierte Moderation als Fallback).</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR018">SWR018 Automatisierte Kommentar-Moderation via LLM</a></p>
+<h1 id="SWA013">13 Flyway für versionierte Datenbank-Migrationen <small>SWA013</small></h1>
+<p>Alle Datenbank-Schema-Änderungen werden über Flyway-Migrationen verwaltet.
+Migrationsdateien liegen unter src/main/resources/db/migration/ mit dem
+Benennungsschema V{nummer}__{beschreibung}.sql.
+Hibernate ddl-auto ist auf validate gesetzt (nur Validierung, keine Änderung).
+Flyway wird beim Service-Start automatisch ausgeführt.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR001">SWR001 Post CRUD API</a>, <a href="SWR.html#SWR020">SWR020 Tag CRUD API</a>, <a href="SWR.html#SWR021">SWR021 Translation CRUD API</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP015">IMP015 JpaTagRepository (Outbound Adapter)</a>, <a href="IMP.html#IMP018">IMP018 JpaTranslationRepository (Outbound Adapter)</a>, <a href="IMP.html#IMP019">IMP019 Flyway Migrationen für Blog Content Service</a></p>
+    </div>
+  </main>
+</div>
+<script src="../template/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
