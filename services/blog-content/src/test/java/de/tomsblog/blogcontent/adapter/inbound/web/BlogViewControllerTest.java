@@ -40,11 +40,11 @@ class BlogViewControllerTest {
     }
 
     @Test
-    @DisplayName("SWR-026: GET /posts returns post list view with published posts")
+    @DisplayName("SWR-026: GET /posts returns post list view with all posts")
     void listPosts_returnsListView() throws Exception {
         Post post = Post.create(TenantId.of(tenantId), authorId, "Published Post", "Content", PostLocale.german());
         post.publish();
-        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of(post));
+        when(postUseCase.listPosts(any(TenantId.class))).thenReturn(List.of(post));
 
         mockMvc.perform(get("/posts").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
@@ -53,9 +53,9 @@ class BlogViewControllerTest {
     }
 
     @Test
-    @DisplayName("SWR-026: GET /posts returns empty list when no published posts")
+    @DisplayName("SWR-026: GET /posts returns empty list when no posts")
     void listPosts_returnsEmptyList() throws Exception {
-        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of());
+        when(postUseCase.listPosts(any(TenantId.class))).thenReturn(List.of());
 
         mockMvc.perform(get("/posts").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
@@ -216,5 +216,17 @@ class BlogViewControllerTest {
                 .andExpect(model().attribute("postId", postId));
 
         verifyNoInteractions(postUseCase);
+    }
+
+    @Test
+    @DisplayName("SWR-002: POST /posts/{id}/publish publishes post and redirects")
+    void publishPost_redirects() throws Exception {
+        UUID postId = UUID.randomUUID();
+
+        mockMvc.perform(post("/posts/{id}/publish", postId).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts"));
+
+        verify(postUseCase).publishPost(any(PostId.class), any(TenantId.class));
     }
 }

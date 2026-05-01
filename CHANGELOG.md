@@ -8,11 +8,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- Veröffentlichen-Button in Post-Liste (POST /posts/{id}/publish) für Draft-Posts
+- DefaultTenantFilter: Property-basierter Filter (blog.default-tenant-id, blog.default-author-id) injiziert Default-Header in allen Profilen (ersetzt LocalDevHeaderFilter)
+- Post-Liste zeigt alle Posts (inkl. Drafts) mit Status-Anzeige und Publish-Aktion
 - Thymeleaf-Formular zum Erstellen (GET /posts/new, POST /posts) und Bearbeiten (GET /posts/{id}/edit, POST /posts/{id}) von Posts
 - PostFormData: Form-Backing-Bean mit Bean Validation für serverseitige Validierung
-- Post-Liste: Links zum Erstellen und Bearbeiten von Posts
 - SWR-027: Anforderung für Thymeleaf-Formular zum Erstellen/Bearbeiten von Posts
 - IMP-023: Implementierungsverweis für Thymeleaf-Formular
+
+### Changed
+
+- Post-Liste (/posts) zeigt nun alle Posts des Tenants (nicht nur veröffentlichte) mit Status-Badge
+- LocalDevHeaderFilter umbenannt zu DefaultTenantFilter und von @Profile("local") zu @ConfigurationProperties umgestellt
+
+### Fixed
+
+- Kafka-Listener-Konfiguration: 0.0.0.0 durch Kurzform ersetzt (apache/kafka:3.9.0 Kompatibilität)
+- Kafka UI Port von 8080 auf 9080 geändert (Konflikt mit Spring Boot)
 - Öffentliche Blog-Ansicht mit Post-Liste (GET /posts) und Einzelansicht (GET /posts/{slug})
 - PostUseCase: listPublishedPosts() und getPublishedPostBySlug() für öffentliche Leseansicht
 - PostRepository: findPublishedByTenantId() und findBySlugAndTenantId() für Status-Filter und Slug-Suche

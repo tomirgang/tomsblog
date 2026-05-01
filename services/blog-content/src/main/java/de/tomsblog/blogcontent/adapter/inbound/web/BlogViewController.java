@@ -44,7 +44,7 @@ public class BlogViewController {
     /** @req SWR-026 */
     @GetMapping("/posts")
     public String listPosts(@RequestHeader("X-Tenant-Id") UUID tenantId, Model model) {
-        List<Post> posts = postUseCase.listPublishedPosts(new TenantId(tenantId));
+        List<Post> posts = postUseCase.listPosts(new TenantId(tenantId));
         model.addAttribute("posts", posts);
         return "posts/list";
     }
@@ -126,6 +126,13 @@ public class BlogViewController {
                 form.getSocialMediaTitle(),
                 form.getSocialMediaSummary());
         postUseCase.updatePost(command);
+        return "redirect:/posts";
+    }
+
+    /** @req SWR-002 */
+    @PostMapping("/posts/{id}/publish")
+    public String publishPost(@PathVariable UUID id, @RequestHeader("X-Tenant-Id") UUID tenantId) {
+        postUseCase.publishPost(new PostId(id), new TenantId(tenantId));
         return "redirect:/posts";
     }
 }

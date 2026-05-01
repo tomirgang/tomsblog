@@ -16,6 +16,12 @@
     <description>Blog posts, tags, multilingual content management</description>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <!-- Internal -->
         <dependency>
             <groupId>de.tomsblog</groupId>

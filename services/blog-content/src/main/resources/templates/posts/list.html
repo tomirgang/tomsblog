@@ -16,11 +16,17 @@
         <article th:each="post : ${posts}">
             <header>
                 <h2>
-                    <a th:href="@{/posts/{slug}(slug=${post.slug.value})}"
+                    <a th:if="${post.status.name() == 'PUBLISHED'}"
+                       th:href="@{/posts/{slug}(slug=${post.slug.value})}"
                        th:text="${post.title}">Post Title</a>
+                    <span th:if="${post.status.name() != 'PUBLISHED'}"
+                          th:text="${post.title}">Post Title</span>
                 </h2>
                 <small>
-                    <time th:datetime="${post.publishedAt}"
+                    <mark th:if="${post.status.name() == 'DRAFT'}">Entwurf</mark>
+                    <mark th:if="${post.status.name() == 'ARCHIVED'}">Archiviert</mark>
+                    <time th:if="${post.publishedAt != null}"
+                          th:datetime="${post.publishedAt}"
                           th:text="${#temporals.format(post.publishedAt, 'dd.MM.yyyy')}">
                         01.01.2026
                     </time>
@@ -30,9 +36,14 @@
                 Post preview text...
             </p>
             <footer>
-                <a th:href="@{/posts/{slug}(slug=${post.slug.value})}">Weiterlesen</a>
-                <span> | </span>
+                <a th:if="${post.status.name() == 'PUBLISHED'}"
+                   th:href="@{/posts/{slug}(slug=${post.slug.value})}">Weiterlesen</a>
                 <a th:href="@{/posts/{id}/edit(id=${post.id.value})}">Bearbeiten</a>
+                <form th:if="${post.status.name() == 'DRAFT'}"
+                      th:action="@{/posts/{id}/publish(id=${post.id.value})}"
+                      method="post" style="display:inline">
+                    <button type="submit" class="secondary outline">Veröffentlichen</button>
+                </form>
             </footer>
         </article>
     </section>

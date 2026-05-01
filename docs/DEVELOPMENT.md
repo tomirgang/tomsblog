@@ -217,7 +217,7 @@ docker compose -f infra/docker/docker-compose.yml down -v
 | PostgreSQL | 5432 | User: `tomsblog`, Passwort: `tomsblog`, DB: `tomsblog` |
 | Redis      | 6379 | kein Passwort                                          |
 | Kafka      | 9092 | kein Auth                                              |
-| Kafka UI   | 8080 | http://localhost:8080                                  |
+| Kafka UI   | 9080 | http://localhost:9080                                  |
 
 ## Maven-Befehle
 
@@ -236,6 +236,26 @@ docker compose -f infra/docker/docker-compose.yml down -v
 | `local`     | Lokale Entwicklung (Docker Compose Dependencies) |
 | `test`      | Testcontainers (automatisch in Tests)            |
 | _(default)_ | Produktion (Umgebungsvariablen fuer Secrets)     |
+
+### Automatische Header-Injection (DefaultTenantFilter)
+
+Der `DefaultTenantFilter` injiziert automatisch Default-Werte fuer `X-Tenant-Id`
+und `X-Author-Id`, wenn diese HTTP-Header fehlen. Dies ermoeglicht das Testen der
+Thymeleaf-UI im Browser ohne manuelle Header-Konfiguration und macht den MVP
+produktiv nutzbar (Single-Tenant-Betrieb).
+
+Die Werte sind per Property konfigurierbar (`application.yml` oder Umgebungsvariablen):
+
+```yaml
+blog:
+  default-tenant-id: "00000000-0000-0000-0000-000000000001"
+  default-author-id: "00000000-0000-0000-0000-000000000001"
+```
+
+Umgebungsvariablen: `BLOG_DEFAULT_TENANT_ID`, `BLOG_DEFAULT_AUTHOR_ID`
+
+In einer spaeteren Phase wird dieser Filter durch domain-basierte Tenant-Resolution
+(ADR-0012) und Authentifizierung (Phase 4) ersetzt.
 
 ## Requirement Management (Doorstop)
 

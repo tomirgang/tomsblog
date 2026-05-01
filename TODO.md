@@ -32,6 +32,7 @@
 - [x] Thymeleaf: Layout-Grundgerüst (responsiv, einfaches CSS-Framework)
 - [x] Thymeleaf: Öffentliche Blog-Ansicht (Post-Liste, Einzelansicht)
 - [x] Thymeleaf: Einfaches Formular zum Erstellen/Bearbeiten von Posts
+- [ ] Einfacher Admin-Login (Spring Security, formbasiert) zum Schutz der Schreiboperationen
 
 > **MVP nach Phase 2:** Blog-Posts lesen, erstellen und bearbeiten lokal im Browser.
 
@@ -43,7 +44,6 @@
 - [ ] Helm Chart / Kustomize für blog-content Service
 - [ ] Ingress-Controller + TLS (Let's Encrypt)
 - [ ] Container-Image bauen und deployen (CI/CD Pipeline)
-- [ ] Einfacher Admin-Login (Spring Security, formbasiert) zum Schutz der Schreiboperationen
 
 > **MVP nach Phase 3:** Blog ist öffentlich lesbar, Schreibzugriff nur mit Admin-Login.
 

@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-BlogContentApplication<blog-content>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "de.tomsblog.blogcontent.BlogContentApplication",
+            "projectName": "blog-content",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

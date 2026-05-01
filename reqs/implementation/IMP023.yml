@@ -12,6 +12,8 @@ references:
   type: file
 - path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/web/PostFormData.java
   type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/web/DefaultTenantFilter.java
+  type: file
 - path: services/blog-content/src/main/resources/templates/posts/form.html
   type: file
 - path: services/blog-content/src/main/resources/templates/posts/list.html

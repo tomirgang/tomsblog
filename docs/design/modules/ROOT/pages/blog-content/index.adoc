@@ -527,6 +527,14 @@ graph TD
 * **posts/show.html**: Einzelansicht eines Posts mit vollem Inhalt, Quellen und Tags (SWR-026)
 * **posts/form.html**: Wiederverwendbares Formular für Erstellen und Bearbeiten eines Posts (SWR-027)
 
+==== Default-Tenant-Filter (MVP-Betrieb)
+
+Der `DefaultTenantFilter` injiziert automatisch Default-Werte für `X-Tenant-Id` und `X-Author-Id`, wenn diese HTTP-Header in der Anfrage fehlen.
+Die Werte sind über Spring-Properties konfigurierbar (`blog.default-tenant-id`, `blog.default-author-id`).
+
+Dies ermöglicht den produktiven MVP-Betrieb als Single-Tenant-Blog, ohne dass ein API-Gateway oder eine Authentifizierung vorgeschaltet sein muss.
+In Phase 4 wird dieser Filter durch domain-basierte Tenant-Resolution (ADR-0012) und Authentifizierung ersetzt.
+
 ==== CSS-Framework: PicoCSS
 
 PicoCSS (v2.x) wurde als classless CSS-Framework gewählt (ADR-0005). Es bietet:
