@@ -57,6 +57,8 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 
 After every code change, always run `./mvnw verify --batch-mode --no-transfer-progress` and check for warnings (compiler warnings, deprecations, test warnings). All warnings must be resolved before considering the task complete.
 
+All changes must be documented in `CHANGELOG.md` under the `[Unreleased]` section following the [Keep a Changelog](https://keepachangelog.com/) format (Added, Changed, Deprecated, Removed, Fixed, Security).
+
 ## Requirements (Doorstop)
 
 ```bash
