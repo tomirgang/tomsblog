@@ -19,7 +19,6 @@
 |===
 | Schuld | Beschreibung | Geplant
 
-| `ddl-auto: update` | Im lokalen Profil wird Schema automatisch generiert; für Produktion brauchen wir Flyway/Liquibase | Phase 2
 | Kein Schema Registry | Kafka Events aktuell als JSON ohne Schema-Validierung | Phase 4
 | Kein Rate-Limiting | REST APIs haben noch kein Rate-Limiting | Phase 9
 |===

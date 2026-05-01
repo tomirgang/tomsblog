@@ -47,6 +47,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - PlantUML diagrams: moved puml files to partials/ directory for correct Antora partial$ resolution
 - ADR links: fixed broken attachmentsdir paths, symlinked ADRs into Antora attachments
 - ADR index updated with missing ADRs (0009, 0015, 0016, 0017)
+- Doorstop HTML pages: injected navigation bar with back link to main documentation
 - CI Node.js 20 deprecation warnings by opting into Node.js 24 for actions
 - Spotless/Palantir Java Format crash on JDK 25
 - Compiler warnings (null safety, unused imports)

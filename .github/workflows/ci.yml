@@ -78,7 +78,9 @@ jobs:
         run: antora antora-playbook.yml
 
       - name: Generate requirements report
-        run: doorstop publish all build/site/requirements/
+        run: |
+          doorstop publish all build/site/requirements/
+          ./docs/scripts/inject-requirements-nav.sh build/site/requirements
 
       - name: Upload documentation
         uses: actions/upload-artifact@v4
