@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import de.tomsblog.blogcontent.application.port.inbound.AddSourceCommand;
 import de.tomsblog.blogcontent.application.port.inbound.CreatePostCommand;
+import de.tomsblog.blogcontent.application.port.inbound.RemoveSourceCommand;
 import de.tomsblog.blogcontent.application.port.inbound.UpdatePostCommand;
 import de.tomsblog.blogcontent.application.port.outbound.EventPublisher;
 import de.tomsblog.blogcontent.application.port.outbound.PostRepository;
@@ -149,5 +151,76 @@ class PostServiceTest {
         postService.deletePost(postId, tenantId);
 
         verify(postRepository).deleteByIdAndTenantId(postId, tenantId);
+    }
+
+    @Test
+    @DisplayName("SWR-012: addSource adds source to post and saves")
+    void addSource_addsAndSaves() {
+        Post post = Post.create(tenantId, authorId, "Post", "Content", PostLocale.german());
+        post.clearDomainEvents();
+        when(postRepository.findByIdAndTenantId(post.getId(), tenantId)).thenReturn(Optional.of(post));
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        AddSourceCommand command =
+                new AddSourceCommand(post.getId(), tenantId, "https://example.com", "Example");
+
+        Post result = postService.addSource(command);
+
+        assertThat(result.getSources()).hasSize(1);
+        assertThat(result.getSources().get(0).url()).isEqualTo("https://example.com");
+        assertThat(result.getSources().get(0).title()).isEqualTo("Example");
+        verify(postRepository).save(post);
+    }
+
+    @Test
+    @DisplayName("SWR-012: addSource throws when post not found")
+    void addSource_throwsWhenPostNotFound() {
+        PostId postId = PostId.generate();
+        when(postRepository.findByIdAndTenantId(postId, tenantId)).thenReturn(Optional.empty());
+
+        AddSourceCommand command = new AddSourceCommand(postId, tenantId, "https://example.com", "Example");
+
+        assertThatThrownBy(() -> postService.addSource(command)).isInstanceOf(PostNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("SWR-012: removeSource removes source from post and saves")
+    void removeSource_removesAndSaves() {
+        Post post = Post.create(tenantId, authorId, "Post", "Content", PostLocale.german());
+        post.addSource(new Source("https://example.com", "Example"));
+        post.clearDomainEvents();
+        when(postRepository.findByIdAndTenantId(post.getId(), tenantId)).thenReturn(Optional.of(post));
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        RemoveSourceCommand command =
+                new RemoveSourceCommand(post.getId(), tenantId, "https://example.com", "Example");
+
+        Post result = postService.removeSource(command);
+
+        assertThat(result.getSources()).isEmpty();
+        verify(postRepository).save(post);
+    }
+
+    @Test
+    @DisplayName("SWR-012: listSources returns sources of the post")
+    void listSources_returnsSources() {
+        Post post = Post.create(tenantId, authorId, "Post", "Content", PostLocale.german());
+        post.addSource(new Source("https://example.com", "Example"));
+        post.addSource(new Source("https://docs.spring.io", "Spring Docs"));
+        post.clearDomainEvents();
+        when(postRepository.findByIdAndTenantId(post.getId(), tenantId)).thenReturn(Optional.of(post));
+
+        List<Source> sources = postService.listSources(post.getId(), tenantId);
+
+        assertThat(sources).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("SWR-012: listSources throws when post not found")
+    void listSources_throwsWhenPostNotFound() {
+        PostId postId = PostId.generate();
+        when(postRepository.findByIdAndTenantId(postId, tenantId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> postService.listSources(postId, tenantId)).isInstanceOf(PostNotFoundException.class);
     }
 }

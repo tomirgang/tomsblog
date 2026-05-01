@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- REST-API für Quellenverwaltung (SWR-012): POST/GET/DELETE /api/posts/{postId}/sources
+- SourceController, AddSourceCommand, RemoveSourceCommand, AddSourceRequest, RemoveSourceRequest, SourceResponse
+- PostUseCase um addSource(), removeSource(), listSources() erweitert
+- PostService implementiert Quellenverwaltung mit Persistence
+- Unit-Tests für SourceController (10 Tests) und PostService-Quellenverwaltung (5 Tests)
+- Software Detail Design Dokumentation um SourceController-Endpunkte erweitert
 - Jazzer Fuzz Tests für alle externen REST-Endpoints (PostController, TagController, TranslationController)
 - Software-Requirement SWR-023: Fuzz-Testing externer Interfaces
 - Jazzer-JUnit 0.24.0 als Fuzz-Testing-Framework

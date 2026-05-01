@@ -303,6 +303,19 @@ Der `TranslationController` setzt die Übersetzungs-API (SWR-021) als Sub-Ressou
 | DELETE | /api/posts/{postId}/translations/{id} | Übersetzung löschen
 |===
 
+==== SourceController
+
+Der `SourceController` setzt die Quellenverwaltungs-API (SWR-012) als Sub-Ressource von Posts um:
+
+[cols="1,1,2"]
+|===
+| HTTP-Methode | Pfad | Beschreibung
+
+| POST | /api/posts/{postId}/sources | Quelle hinzufügen
+| GET  | /api/posts/{postId}/sources | Alle Quellen eines Posts auflisten
+| DELETE | /api/posts/{postId}/sources | Quelle entfernen (URL+Title im Body)
+|===
+
 Die Tenant-ID wird über einen HTTP-Header (`X-Tenant-Id`) übergeben, um die Tenant-Isolation (SWR-003) auf API-Ebene sicherzustellen.
 
 Fehler werden über den `GlobalExceptionHandler` als Problem Details nach RFC 9457 zurückgegeben. Input-Validierung erfolgt gemäß SWR-015 zum Schutz vor ungültigen Eingaben.
@@ -455,7 +468,7 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWR-005 | Manuelle Übersetzung | TranslationService.createManualTranslation()
 | SWR-006 | Audit-Trail | JPA Audit-Felder, Domain Events
 | SWR-009 | Domain Events | EventPublisher, Post/Translation Events
-| SWR-012 | Quellenverwaltung | Source Value Object, Post.addSource()
+| SWR-012 | Quellenverwaltung | SourceController, Source Value Object, Post.addSource(), PostService.addSource/removeSource/listSources
 | SWR-013 | Web-Snapshot von Quellen | Snapshot-Adapter (S3 Storage, Phase 2)
 | SWR-015 | Input-Validierung | GlobalExceptionHandler, Jakarta Validation
 | SWR-020 | Tag CRUD API | TagController, TagUseCase, TagService

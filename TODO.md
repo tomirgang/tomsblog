@@ -24,9 +24,9 @@
 - [x] Spring Boot Projekt mit hexagonaler Struktur aufsetzen
 - [x] Domain-Modell entwerfen (Post, Author, Tenant, Tag, Attachment)
 - [x] Ports & Adapters implementieren (Inbound: REST API, Outbound: PostgreSQL)
-- [ ] CRUD-Operationen für Blog-Posts
-- [ ] Mehrsprachigkeit im Domain-Modell abbilden
-- [ ] Quellenverwaltung für Posts
+- [x] CRUD-Operationen für Blog-Posts
+- [x] Mehrsprachigkeit im Domain-Modell abbilden
+- [x] Quellenverwaltung für Posts
 - [ ] Unit- und Integrationstests (Testcontainers für PostgreSQL)
 - [ ] API-Dokumentation (OpenAPI/Swagger)
 - [ ] Thymeleaf: Layout-Grundgerüst (responsiv, einfaches CSS-Framework)

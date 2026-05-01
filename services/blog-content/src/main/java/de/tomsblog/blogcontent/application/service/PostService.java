@@ -1,13 +1,16 @@
 package de.tomsblog.blogcontent.application.service;
 
+import de.tomsblog.blogcontent.application.port.inbound.AddSourceCommand;
 import de.tomsblog.blogcontent.application.port.inbound.CreatePostCommand;
 import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
+import de.tomsblog.blogcontent.application.port.inbound.RemoveSourceCommand;
 import de.tomsblog.blogcontent.application.port.inbound.UpdatePostCommand;
 import de.tomsblog.blogcontent.application.port.outbound.EventPublisher;
 import de.tomsblog.blogcontent.application.port.outbound.PostRepository;
 import de.tomsblog.blogcontent.domain.model.Post;
 import de.tomsblog.blogcontent.domain.model.PostId;
 import de.tomsblog.blogcontent.domain.model.PostLocale;
+import de.tomsblog.blogcontent.domain.model.Source;
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
 
@@ -69,6 +72,31 @@ public class PostService implements PostUseCase {
     @Override
     public List<Post> listPosts(TenantId tenantId) {
         return postRepository.findAllByTenantId(tenantId);
+    }
+
+    /** @req SWR-012 */
+    @Override
+    public Post addSource(AddSourceCommand command) {
+        Post post = findOrThrow(command.postId(), command.tenantId());
+        Source source = new Source(command.url(), command.title());
+        post.addSource(source);
+        return postRepository.save(post);
+    }
+
+    /** @req SWR-012 */
+    @Override
+    public Post removeSource(RemoveSourceCommand command) {
+        Post post = findOrThrow(command.postId(), command.tenantId());
+        Source source = new Source(command.url(), command.title());
+        post.removeSource(source);
+        return postRepository.save(post);
+    }
+
+    /** @req SWR-012 */
+    @Override
+    public List<Source> listSources(PostId postId, TenantId tenantId) {
+        Post post = findOrThrow(postId, tenantId);
+        return post.getSources();
     }
 
     private Post findOrThrow(PostId postId, TenantId tenantId) {
