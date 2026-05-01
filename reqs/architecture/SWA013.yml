@@ -4,12 +4,12 @@ header: |
   Flyway für versionierte Datenbank-Migrationen
 level: 13.0
 links:
-- SWR001: null
-- SWR020: null
-- SWR021: null
+- SWR001: cMy_Lz6FRlFzeqYCwiHsMZkTkd5oJUYXgxqSP_NhD5M=
+- SWR020: SibPqJBoXfgo_vYoSxJjcs0qlNyUn16RvPOqR6tCCyY=
+- SWR021: wVD_AAGvLgcp3XWJKgAi2LidtO5pA3_NbyZSGdJToZ8=
 normative: true
 ref: ''
-reviewed: null
+reviewed: GFuFfame3ehC77cHz8ST7TYXk1qk8grPJRiohglIMKA=
 text: |
   Alle Datenbank-Schema-Änderungen werden über Flyway-Migrationen verwaltet.
   Migrationsdateien liegen unter src/main/resources/db/migration/ mit dem

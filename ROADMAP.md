@@ -7,7 +7,8 @@
 │                        MEILENSTEIN 1                                    │
 │              Vollständiger Text-Blog (Thymeleaf)                        │
 │                                                                         │
-│  Setup → Domain+UI → Deploy → Auth → Kafka → KI → Feeds → Attach → Obs │
+│  Setup → Domain+UI → Deploy → Auth → Messaging → KI                     |
+|  → Feeds → Attach → Obs                                                 │
 └─────────────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
@@ -64,7 +65,7 @@
 | 2     | Blog Content Service + Thymeleaf-Grundgerüst (Post CRUD, Layout)     | Blog-Posts lesen, erstellen, bearbeiten lokal im Browser        |
 | 3     | Infrastruktur & erstes Deployment (K8s, PostgreSQL, GitOps, Ingress) | Blog ist öffentlich erreichbar                                  |
 | 4     | Benutzerverwaltung & Multi-Tenancy (Auth, Rollen, Admin-UI)          | Mehrbenutzerfähiger Blog mit Login und Tenant-Trennung          |
-| 5     | Messaging & Event-Driven (Kafka, Event-Produktion)                   | Asynchrone Verarbeitung aktiv, Events fließen zwischen Services |
+| 5     | Messaging & Event-Driven (Kafka + RabbitMQ)                          | Asynchrone Verarbeitung aktiv, Events fließen zwischen Services |
 | 6     | KI-Integration (Übersetzung, Schreibassistenz, WYSIWYG-Editor)       | WYSIWYG-Editor + KI-Übersetzung mit Review-Schritt              |
 | 7     | Feed-Service (RSS/Atom, Tag-Navigation)                              | RSS-Feeds und navigierbare Tag-Seiten                           |
 | 8     | Web-Snapshots & Attachments (Upload, Archivierung, S3-Storage)       | Vollständiges Content-Management mit Anhängen                   |

@@ -11,6 +11,7 @@
 | R-02 | Java 25 ist sehr neu, manche Libraries haben noch Kompatibilitätsprobleme | Maven/Tooling-Warnungen akzeptieren, Fallback auf Java 21 möglich | Niedrig
 | R-03 | Kafka-Betrieb auf kleinem Cluster ist aufwändig | Strimzi Operator, initial single-node Kafka (KRaft) | Mittel
 | R-04 | OpenRouter-Abhängigkeit für KI-Features | Graceful Degradation: KI-Features optional, Fallback auf manuell | Niedrig
+| R-05 | Zwei Messaging-Systeme erhöhen Betriebskomplexität | Klare Verantwortungstrennung (Events vs. Jobs), Kubernetes-Operatoren für beide, einheitliches Monitoring | Niedrig
 |===
 
 == Technische Schulden
@@ -21,4 +22,5 @@
 
 | Kein Schema Registry | Kafka Events aktuell als JSON ohne Schema-Validierung | Phase 4
 | Kein Rate-Limiting | REST APIs haben noch kein Rate-Limiting | Phase 9
+| Kein DLQ-Monitoring | RabbitMQ Dead-Letter-Queues ohne Alerting | Phase 5
 |===

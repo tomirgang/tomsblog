@@ -10,6 +10,9 @@ normative: true
 ref: ''
 reviewed: ZbGbkFW6WUmajcmn3Uoku77ImU0A-plzW7Cln_1inAw=
 text: |
-  Apache Kafka (KRaft Mode) dient als zentraler Event-Broker.
-  Topics werden pro Event-Typ angelegt.
-  Consumer Groups ermöglichen unabhängige Verarbeitung.
+  Apache Kafka (KRaft Mode) dient als Event-Broker für Domain Events
+  (Event Sourcing, Audit-Trail, Replay). Topics werden pro Event-Typ
+  angelegt. Consumer Groups ermöglichen unabhängige Verarbeitung.
+  Kafka ist zuständig für: Event-Streaming, Log Aggregation, Stream
+  Processing, Datenpipelines und Replay-Szenarien. Für Task-Queues
+  und Job-Verteilung wird stattdessen RabbitMQ verwendet (SWA-014).

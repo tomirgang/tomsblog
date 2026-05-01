@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- ADR-0018: Dual-Broker-Strategie (Kafka für Event-Streaming, RabbitMQ für Task-Queues)
+- RabbitMQ in Docker Compose für lokale Entwicklung (Port 5672, Management UI 15672)
+- Architektur-Requirement SWA-014: RabbitMQ als Task-Queue-Broker
+- RabbitMQ-Konfiguration in application-local.yml
+
+### Changed
+
+- ADR-0006 auf Status "Superseded by ADR-0018" gesetzt
+- SWA-005 aktualisiert: Kafka-Verantwortung auf Event-Streaming eingegrenzt
+- Arc42-Dokumentation um RabbitMQ-Abschnitte erweitert (Constraints, Lösungsstrategie, Querschnittliche Konzepte, Risiken)
+- ROADMAP Phase 5 um RabbitMQ-Tasks erweitert
+- Tech-Stack-Beschreibung in AGENTS.md, README.md und libs/README.md aktualisiert
+
 - Hexagonal architecture for blog-content service with ports and adapters
 - Domain model: Post, Translation, Tag, Attachment, Source, PostLocale
 - Application layer: PostUseCase, TagUseCase, TranslationUseCase with service implementations

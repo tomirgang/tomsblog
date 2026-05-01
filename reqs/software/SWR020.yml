@@ -4,10 +4,10 @@ header: |
   Tag CRUD API
 level: 20.0
 links:
-- STK001: null
+- STK001: 7nIt6jQu61g0LN6dl90kyg6r_lOlDzLfbV88NMUGVZQ=
 normative: true
 ref: ''
-reviewed: null
+reviewed: FdXwj3dgXvz4OxeNcIE47iBDAcvAk4eoIA39JhS4JwE=
 text: |
   Das System muss eine REST API für Tag-Verwaltung bereitstellen:
   POST /api/tags (Tag erstellen), GET /api/tags (alle Tags des Tenants),

@@ -7,7 +7,7 @@
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
     "ghcr.io/devcontainers/features/git:1": {}
   },
-  "forwardPorts": [8080, 8180, 5432, 6379, 9092],
+  "forwardPorts": [8080, 8180, 5432, 5672, 6379, 9092, 15672],
   "portsAttributes": {
     "5432": { "label": "PostgreSQL" },
     "6379": { "label": "Redis" },

@@ -4,10 +4,10 @@ header: |
   Time-based Auto Publishing
 level: 22.0
 links:
-- STK013: null
+- STK013: aHCl7b4oCTffP6DEzmArsb_ktWaq8UL2prnoOV5knKc=
 normative: true
 ref: ''
-reviewed: null
+reviewed: REuQMMBiSLJJjzm1SyP-FuweAcirOM0Orjzqltc32JY=
 text: |
   Das System muss zeitgesteuerte Veröffentlichung (Scheduled Publishing) unterstützen:
   - Ein Post kann mit einem zukünftigen Veröffentlichungszeitpunkt (publishAt) versehen werden.

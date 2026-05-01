@@ -20,7 +20,7 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 | ------------- | ---------------------------------------------------------------------------- |
 | Backend       | Spring Boot (Java), Maven                                                    |
 | Database      | PostgreSQL (CloudNativePG), Redis                                            |
-| Messaging     | Apache Kafka                                                                 |
+| Messaging     | Apache Kafka (Event-Streaming), RabbitMQ (Task-Queues)                       |
 | UI (Phase 1)  | Thymeleaf (SSR)                                                              |
 | UI (later)    | Angular + Nx + Native Federation (REST), React + Module Federation (GraphQL) |
 | Infra         | Kubernetes (Hetzner), ArgoCD/Flux, Helm/Kustomize                            |
@@ -36,7 +36,8 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 - Hexagonal structure per service: `domain/`, `application/` (ports), `adapter/` (inbound + outbound)
 - Tests: Unit tests + Integration tests with Testcontainers
 - API documentation: OpenAPI/Swagger for REST, GraphQL schema for GraphQL services
-- Events: publish domain events for cross-service communication (Post created/updated/published)
+- Events: publish domain events via Kafka for cross-service communication (Post created/updated/published)
+- Task-Queues: distribute jobs via RabbitMQ (translations, TTS, snapshots, notifications)
 - Requirements: Doorstop for multi-level tracing (Stakeholder → Software Req → Design → Implementation → Test)
 - Requirement IDs in test names (`@DisplayName("SWR-042: ...")`) and Javadoc (`@req SWR-042`)
 - Diagrams in arc42: PlantUML as separate `.puml` files in `docs/arc42/modules/ROOT/partials/plantuml/`, referenced from AsciiDoc via `plantuml::partial$plantuml/...`

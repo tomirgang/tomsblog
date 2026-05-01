@@ -11,7 +11,8 @@
 | Maven | Build-System (Multi-Module, Parent POM mit Spring Boot Starter)
 | Spring Boot 3.4.x | Framework für alle Microservices
 | PostgreSQL | Relationale Datenbank (CloudNativePG im Cluster)
-| Apache Kafka | Event-Broker (KRaft-Mode, Strimzi auf K8s)
+| Apache Kafka | Event-Broker für Domain Events (KRaft-Mode, Strimzi auf K8s)
+| RabbitMQ | Task-Queue-Broker für Job-Verteilung (Quorum Queues, RabbitMQ Cluster Operator)
 | Kubernetes | Deployment-Plattform (Hetzner, 3-Node-Cluster)
 | Docker | Container-Runtime und lokale Entwicklungsumgebung
 |===

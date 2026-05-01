@@ -62,5 +62,24 @@ services:
       kafka:
         condition: service_healthy
 
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: tomsblog-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: tomsblog
+      RABBITMQ_DEFAULT_PASS: tomsblog
+      RABBITMQ_DEFAULT_VHOST: tomsblog
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   postgres_data:
+  rabbitmq_data:

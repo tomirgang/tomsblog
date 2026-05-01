@@ -25,9 +25,19 @@ Domain Events bilden die Grundlage für die serviceübergreifende Kommunikation 
 * Event-Contracts als geteilte Library (`libs/event-contracts`) (SWA-003)
 * Jedes Event trägt `EventMetadata` (ID, Timestamp, TenantId, CorrelationId)
 
+== Task-Queues (RabbitMQ)
+
+Für Job-Verteilung und asynchrone Arbeitsaufträge wird RabbitMQ eingesetzt. Die Trennung von Event-Streaming (Kafka) und Task-Queues (RabbitMQ) folgt ADR-0018.
+
+* Übersetzungsaufträge, TTS-Generierung, Snapshot-Erstellung, Benachrichtigungen
+* Work-Queue-Pattern: konkurrierende Consumer verarbeiten Jobs fair
+* Dead-Letter-Exchanges für fehlgeschlagene Nachrichten
+* Quorum Queues für Durability und Hochverfügbarkeit
+* Request/Reply-Pattern für synchrone Interaktion über Messages
+
 == Synchrone Service-Kommunikation
 
-Für synchrone Aufrufe zwischen Microservices wird gRPC eingesetzt (SWA-009). Kafka bleibt für asynchrone, event-basierte Kommunikation zuständig. Die Aufteilung erlaubt lose Kopplung bei Events und gleichzeitig typsichere, performante Abfragen zwischen Services.
+Für synchrone Aufrufe zwischen Microservices wird gRPC eingesetzt (SWA-009). Die asynchrone Kommunikation teilt sich in Event-Streaming (Kafka) und Task-Queues (RabbitMQ) auf (ADR-0018). Die Aufteilung erlaubt lose Kopplung bei Events, zuverlässige Job-Verteilung bei Tasks und typsichere, performante Abfragen zwischen Services.
 
 * Service-Interfaces werden als `.proto`-Dateien in einer geteilten Library definiert
 * Protobuf sorgt für typsichere Contracts und effizientes Binary-Protokoll

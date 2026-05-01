@@ -32,12 +32,14 @@ docker compose -f infra/docker/docker-compose.yml down -v
 
 ## Services & Ports
 
-| Service    | Port | Zugangsdaten                             |
-| ---------- | ---- | ---------------------------------------- |
-| PostgreSQL | 5432 | `tomsblog` / `tomsblog` / DB: `tomsblog` |
-| Redis      | 6379 | kein Passwort                            |
-| Kafka      | 9092 | –                                        |
-| Kafka UI   | 8080 | –                                        |
+| Service       | Port  | Zugangsdaten                             |
+| ------------- | ----- | ---------------------------------------- |
+| PostgreSQL    | 5432  | `tomsblog` / `tomsblog` / DB: `tomsblog` |
+| Redis         | 6379  | kein Passwort                            |
+| Kafka         | 9092  | -                                        |
+| Kafka UI      | 8080  | -                                        |
+| RabbitMQ      | 5672  | `tomsblog` / `tomsblog` / VHost: `tomsblog` |
+| RabbitMQ Mgmt | 15672 | `tomsblog` / `tomsblog`                  |
 
 ## Spring-Profil
 

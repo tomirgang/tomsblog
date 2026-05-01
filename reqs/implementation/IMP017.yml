@@ -4,14 +4,14 @@ header: |
   TranslationController (REST Inbound Adapter)
 level: 17.0
 links:
-- SWA001: null
-- SWA004: null
+- SWA001: 1csuDNcNuE9XFg5pSlGNgRQ5xd8hKiNgNOfrjK2qJK4=
+- SWA004: muOMKmHdWM_WGbTtvgOYgqQFtkFTwFSd-6Tr7WKETiI=
 normative: true
 ref: ''
 references:
 - path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/rest/TranslationController.java
   type: file
-reviewed: null
+reviewed: uxe7ZMB5MkeV6faATqM1GPYY6WMHD2IFgXdSXlQirZs=
 text: |
   REST Controller für Translation CRUD-Operationen (SWR-021).
   Endpunkte unter /api/posts/{postId}/translations für CRUD sowie

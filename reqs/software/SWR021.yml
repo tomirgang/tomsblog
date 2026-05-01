@@ -4,10 +4,10 @@ header: |
   Translation CRUD API
 level: 21.0
 links:
-- STK001: null
+- STK001: 7nIt6jQu61g0LN6dl90kyg6r_lOlDzLfbV88NMUGVZQ=
 normative: true
 ref: ''
-reviewed: null
+reviewed: 2ZEZK236NihHuEbLZINIVtMeyGR663X1u8J-lL8zJ_Y=
 text: |
   Das System muss eine REST API für die Verwaltung von Übersetzungen bereitstellen:
   POST /api/posts/{postId}/translations (Übersetzung erstellen),

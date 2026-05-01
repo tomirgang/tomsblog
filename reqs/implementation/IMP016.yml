@@ -4,8 +4,8 @@ header: |
   TranslationService und TranslationUseCase
 level: 16.0
 links:
-- SWA001: null
-- SWA008: null
+- SWA001: 1csuDNcNuE9XFg5pSlGNgRQ5xd8hKiNgNOfrjK2qJK4=
+- SWA008: 5RDZTOMiJHMwZGI9iQ2RBeJkp4aLc_zLRcHWP1VHxt0=
 normative: true
 ref: ''
 references:
@@ -13,7 +13,7 @@ references:
   type: file
 - path: services/blog-content/src/main/java/de/tomsblog/blogcontent/application/port/inbound/TranslationUseCase.java
   type: file
-reviewed: null
+reviewed: rY5pVBjb3QtNuYjv1pNmrxNApWJQlO39SeyC0MnYrZs=
 text: |
   Implementiert den TranslationUseCase als Inbound Port und den TranslationService
   als Application Service. Unterstützt manuelle und AI-generierte Übersetzungen

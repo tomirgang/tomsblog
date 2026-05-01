@@ -4,8 +4,8 @@ header: |
   TagService und TagUseCase
 level: 13.0
 links:
-- SWA001: null
-- SWA007: null
+- SWA001: 1csuDNcNuE9XFg5pSlGNgRQ5xd8hKiNgNOfrjK2qJK4=
+- SWA007: EsGx3SkU5JbHb5d7Q9kJ-S73yN2I8vMVKvKNbNa4NmA=
 normative: true
 ref: ''
 references:
@@ -13,7 +13,7 @@ references:
   type: file
 - path: services/blog-content/src/main/java/de/tomsblog/blogcontent/application/port/inbound/TagUseCase.java
   type: file
-reviewed: null
+reviewed: DzptRAa09H5hfUndy4IWkmSrO1bsuXlFKzgYVD49Wko=
 text: |
   Implementiert den TagUseCase als Inbound Port und den TagService als
   Application Service. Der TagService orchestriert Tag-Erstellung (mit

@@ -4,9 +4,9 @@ header: |
   JpaTranslationRepository (Outbound Adapter)
 level: 18.0
 links:
-- SWA001: null
-- SWA004: null
-- SWA013: null
+- SWA001: 1csuDNcNuE9XFg5pSlGNgRQ5xd8hKiNgNOfrjK2qJK4=
+- SWA004: muOMKmHdWM_WGbTtvgOYgqQFtkFTwFSd-6Tr7WKETiI=
+- SWA013: kYJzH3OylmwXVfD5EJqt-5XY0P27CFw5dgHklka0wqk=
 normative: true
 ref: ''
 references:
@@ -14,7 +14,7 @@ references:
   type: file
 - path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/TranslationJpaEntity.java
   type: file
-reviewed: null
+reviewed: iNM-30EG8ZmoXsknbAo1bQuB6jyfsLiLBe13SXes1ws=
 text: |
   JPA Outbound Adapter für den TranslationRepository Port.
   Implementiert Persistenz über Spring Data JPA mit TranslationJpaEntity.

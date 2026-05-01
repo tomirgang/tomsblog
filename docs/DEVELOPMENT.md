@@ -5,7 +5,7 @@
 | Tool                    | Version | Zweck                                            |
 | ----------------------- | ------- | ------------------------------------------------ |
 | Java (JDK)              | 25+     | Backend-Entwicklung                              |
-| Docker & Docker Compose | v2+     | Lokale Infrastruktur (PostgreSQL, Redis, Kafka)  |
+| Docker & Docker Compose | v2+     | Lokale Infrastruktur (PostgreSQL, Redis, Kafka, RabbitMQ) |
 | Git                     | 2.x     | Versionierung                                    |
 | Python + pip            | 3.10+   | Doorstop (Requirement Management)                |
 | Node.js                 | 20+     | Antora (Doku-Generierung), spaeter Angular/React |
@@ -45,7 +45,7 @@ code .
 ```
 
 Der Devcontainer startet automatisch:
-- Infrastruktur (PostgreSQL, Redis, Kafka) via Docker Compose
+- Infrastruktur (PostgreSQL, Redis, Kafka, RabbitMQ) via Docker Compose
 - PlantUML-Server auf Port 8180
 - Python venv mit Doorstop
 - Maven Dependency Cache

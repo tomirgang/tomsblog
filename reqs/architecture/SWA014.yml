@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  RabbitMQ als Task-Queue-Broker
+level: 14.0
+links:
+- SWR009: 59OLwBwGYKtbAk17nqBxZD9grrpTVSSg-KCdO4vLAsM=
+normative: true
+ref: ''
+reviewed: WuyK2YyPyRCMUQeYcQGeR3NDl67u0sJyrBnUtBIaTxY=
+text: |
+  RabbitMQ dient als Broker für Task-Queues und Job-Verteilung.
+  Einsatzgebiete: Übersetzungsaufträge, TTS-Generierung, Snapshot-
+  Erstellung, Benachrichtigungen, Request/Reply-Patterns und klassische
+  Service-zu-Service-Kommunikation mit komplexem Routing.
+  Quorum Queues sichern Durability. Dead-Letter-Exchanges behandeln
+  fehlgeschlagene Nachrichten. Die Abgrenzung zu Kafka (SWA-005) folgt
+  ADR-0018: Kafka für Event-Streaming, RabbitMQ für Task-Queues.

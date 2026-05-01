@@ -64,10 +64,13 @@
 ### Phase 5: Messaging & Event-Driven Architecture
 
 - [ ] Kafka-Cluster-Konfiguration definieren
+- [ ] RabbitMQ-Cluster-Konfiguration definieren
 - [ ] Event-Schema-Design (Avro/Protobuf oder JSON Schema)
-- [ ] Events produzieren (Post erstellt, aktualisiert, veröffentlicht)
+- [ ] Events produzieren (Post erstellt, aktualisiert, veröffentlicht) via Kafka
+- [ ] RabbitMQ-Queues für Task-Verteilung (Übersetzung, TTS, Snapshots)
 - [ ] Consumer für nachgelagerte Prozesse (Feeds)
 - [ ] Infra: Kafka Deployment (Strimzi Operator)
+- [ ] Infra: RabbitMQ Deployment (RabbitMQ Cluster Operator)
 
 > **MVP nach Phase 5:** Asynchrone Verarbeitung aktiv, Events fließen zwischen Services.
 

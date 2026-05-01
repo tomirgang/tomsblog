@@ -4,14 +4,14 @@ header: |
   TagController (REST Inbound Adapter)
 level: 14.0
 links:
-- SWA001: null
-- SWA004: null
+- SWA001: 1csuDNcNuE9XFg5pSlGNgRQ5xd8hKiNgNOfrjK2qJK4=
+- SWA004: muOMKmHdWM_WGbTtvgOYgqQFtkFTwFSd-6Tr7WKETiI=
 normative: true
 ref: ''
 references:
 - path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/rest/TagController.java
   type: file
-reviewed: null
+reviewed: iLha_E0Am15I0gll9TKqtJ-yQ-oP9hfdIuIQitfCw8g=
 text: |
   REST Controller für Tag CRUD-Operationen (SWR-020).
   Endpunkte: POST /api/tags, GET /api/tags, GET /api/tags/{id},
