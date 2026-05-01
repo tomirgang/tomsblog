@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Thymeleaf Layout-Grundgeruest mit PicoCSS (responsive, Dark/Light Mode)
+- Thymeleaf Layout Dialect fuer Template-Vererbung (layout:decorate)
+- BlogViewController als Inbound Web Adapter (GET /)
+- Base Layout Template (header, nav, main, footer)
+- Wiederverwendbare Fragments (header.html, footer.html)
+- Custom CSS mit Sticky-Footer-Layout und Tenant-Branding-Hooks
+- SWR-025: Anforderung fuer Thymeleaf Layout-Grundgeruest
+- IMP-021: Implementierungsverweis fuer Thymeleaf Layout
+
+## [0.2.1] - 2026-05-01
+
 ### Fixed
 
 - GitHub Pages Deployment: Race Condition bei konkurrierenden Pushes auf docs-Branch behoben (force_orphan: true)

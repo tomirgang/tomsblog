@@ -1,0 +1,16 @@
+/* Custom styles for Toms Blog - Tenant branding hooks */
+
+:root {
+    --blog-primary: var(--pico-primary);
+}
+
+/* Sticky footer layout */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+body > main {
+    flex: 1;
+}

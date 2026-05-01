@@ -50,7 +50,7 @@
 ### Phase 4: Benutzerverwaltung & Multi-Tenancy
 
 - [ ] Identity-Provider evaluieren (Keycloak vs. eigener Service)
-- [ ] Auth-Ser= vice oder Keycloak-Integration
+- [ ] Auth-Service oder Keycloak-Integration
 - [ ] Multi-Tenant-Isolation (Schema-basiert vs. Row-Level-Security)
 - [ ] Rollen- und Berechtigungsmodell (Admin, Autor, Leser)
 - [ ] Audit-Logging für alle relevanten Aktionen

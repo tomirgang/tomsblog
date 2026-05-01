@@ -1,0 +1,20 @@
+active: true
+derived: false
+header: |
+  Thymeleaf Layout-Grundgerüst (responsiv)
+level: 25.0
+links:
+- STK001: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Der Blog Content Service stellt ein responsives Thymeleaf-Layout als Server-Side-Rendering-UI bereit:
+  - Ein zentrales Layout-Template mit Header, Navigation, Content-Bereich und Footer.
+  - Thymeleaf Layout Dialect für deklarative Template-Vererbung (layout:decorate).
+  - PicoCSS als classless CSS-Framework für responsives Design ohne Build-Tooling.
+  - Semantische HTML5-Struktur (header, nav, main, footer).
+  - Dark/Light Mode Support via prefers-color-scheme (durch PicoCSS).
+  - Wiederverwendbare Fragments für Header und Footer.
+  - Eigene CSS-Datei für minimale Anpassungen und Tenant-Branding-Hooks.
+  - Der Web-Controller bildet einen eigenen Inbound Adapter (adapter/inbound/web/).

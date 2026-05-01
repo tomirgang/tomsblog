@@ -336,6 +336,59 @@ Alle Controller verwenden die folgenden Swagger-Annotationen:
 
 Die Spezifikation ist unter `/api-docs` (JSON) und die interaktive Oberfläche unter `/swagger-ui.html` erreichbar.
 
+=== Inbound Adapter: Thymeleaf Web UI
+
+Der Thymeleaf Web UI Adapter (SWR-025) stellt die serverseitig gerenderte Benutzeroberfläche bereit.
+Er bildet einen separaten Inbound Adapter neben der REST API und nutzt dieselben Application Ports.
+
+==== Architektur
+
+[mermaid]
+----
+classDiagram
+    class BlogViewController {
+        -PostUseCase postUseCase
+        +index(model, tenantId) String
+    }
+
+    class PostUseCase {
+        <<interface>>
+    }
+
+    BlogViewController --> PostUseCase : uses
+----
+
+Der `BlogViewController` liegt im Package `adapter.inbound.web` und greift über die bestehenden Inbound Ports (`PostUseCase`, `TagUseCase`) auf die Fachlogik zu.
+Er gibt Thymeleaf-View-Namen zurück, die vom Spring MVC ViewResolver aufgelöst werden.
+
+==== Template-Struktur
+
+Die Templates folgen einer hierarchischen Struktur mit dem Thymeleaf Layout Dialect:
+
+[mermaid]
+----
+graph TD
+    A[layout/default.html] -->|layout:fragment=content| B[index.html]
+    A --> C[fragments/header.html]
+    A --> D[fragments/footer.html]
+----
+
+* **layout/default.html**: Basis-Layout mit HTML5-Grundgerüst, PicoCSS-Einbindung (CDN), semantischer Struktur (header, nav, main, footer)
+* **fragments/header.html**: Seitenkopf mit Blog-Titel und Navigationslinks
+* **fragments/footer.html**: Fußzeile mit Copyright und Links
+* **index.html**: Startseite, dekoriert das Default-Layout via `layout:decorate`
+
+==== CSS-Framework: PicoCSS
+
+PicoCSS (v2.x) wurde als classless CSS-Framework gewählt (ADR-0005). Es bietet:
+
+* Responsives Design ohne CSS-Klassen (semantic HTML genügt)
+* Dark/Light Mode via `prefers-color-scheme`
+* ~10 KB Größe, kein Frontend-Build-Tooling erforderlich
+* Einbindung via CDN (`unpkg.com/\@picocss/pico@2/css/pico.min.css`)
+
+Eine zusätzliche `custom.css` ermöglicht minimale Anpassungen und Tenant-Branding-Hooks.
+
 === Outbound Adapter: JPA Persistence
 
 ==== JpaPostRepository
@@ -497,4 +550,5 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWA-013 | Flyway Migrationen | db/migration/ SQL-Skripte, validate-Modus
 | SWR-024 | OpenAPI/Swagger API-Dokumentation | OpenApiConfiguration, Controller-Annotationen (@Operation, @ApiResponse, @Tag)
 | SWA-016 | springdoc-openapi für API-Dokumentation | springdoc-openapi-starter-webmvc-ui, OperationCustomizer
+| SWR-025 | Thymeleaf Layout-Grundgerüst | BlogViewController, layout/default.html, PicoCSS, custom.css
 |===

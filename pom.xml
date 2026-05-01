@@ -13,7 +13,7 @@
 
     <groupId>de.tomsblog</groupId>
     <artifactId>tomsblog-parent</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.1</version>
     <packaging>pom</packaging>
 
     <name>Toms Blog - Parent</name>
@@ -38,6 +38,7 @@
         <jacoco.version>0.8.14</jacoco.version>
         <jazzer.version>0.24.0</jazzer.version>
         <springdoc.version>2.8.8</springdoc.version>
+        <thymeleaf-layout-dialect.version>3.4.0</thymeleaf-layout-dialect.version>
 
         <!-- Coverage thresholds -->
         <jacoco.line.minimum>0.95</jacoco.line.minimum>
@@ -97,6 +98,13 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc.version}</version>
+            </dependency>
+
+            <!-- Thymeleaf Layout Dialect -->
+            <dependency>
+                <groupId>nz.net.ultraq.thymeleaf</groupId>
+                <artifactId>thymeleaf-layout-dialect</artifactId>
+                <version>${thymeleaf-layout-dialect.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

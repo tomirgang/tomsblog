@@ -1,0 +1,33 @@
+active: true
+derived: false
+header: |
+  Thymeleaf Layout-Grundgeruest im Blog Content Service
+level: 21.0
+links:
+- SWR025: null
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/web/BlogViewController.java
+  type: file
+- path: services/blog-content/src/main/resources/templates/layout/default.html
+  type: file
+- path: services/blog-content/src/main/resources/templates/fragments/header.html
+  type: file
+- path: services/blog-content/src/main/resources/templates/fragments/footer.html
+  type: file
+- path: services/blog-content/src/main/resources/templates/index.html
+  type: file
+- path: services/blog-content/src/main/resources/static/css/custom.css
+  type: file
+reviewed: null
+text: |
+  Implementierung des Thymeleaf Layout-Grundgeruests im Blog Content Service:
+  - BlogViewController: Spring @Controller als Inbound Web Adapter, liefert die
+    Index-Seite ueber GET / aus.
+  - layout/default.html: Basis-Layout mit PicoCSS (CDN), semantischem HTML5
+    (header, nav, main, footer) und layout:fragment fuer Content-Austausch.
+  - fragments/header.html: Wiederverwendbarer Seitenkopf mit Navigation.
+  - fragments/footer.html: Wiederverwendbare Fusszeile.
+  - index.html: Startseite mit layout:decorate Referenz auf das Default-Layout.
+  - custom.css: Minimale Anpassungen und Tenant-Branding-Hooks.
