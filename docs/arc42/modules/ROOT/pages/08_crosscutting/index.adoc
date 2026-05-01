@@ -25,6 +25,14 @@ Domain Events bilden die Grundlage für die serviceübergreifende Kommunikation 
 * Event-Contracts als geteilte Library (`libs/event-contracts`) (SWA-003)
 * Jedes Event trägt `EventMetadata` (ID, Timestamp, TenantId, CorrelationId)
 
+== Synchrone Service-Kommunikation
+
+Für synchrone Aufrufe zwischen Microservices wird gRPC eingesetzt (SWA-009). Kafka bleibt für asynchrone, event-basierte Kommunikation zuständig. Die Aufteilung erlaubt lose Kopplung bei Events und gleichzeitig typsichere, performante Abfragen zwischen Services.
+
+* Service-Interfaces werden als `.proto`-Dateien in einer geteilten Library definiert
+* Protobuf sorgt für typsichere Contracts und effizientes Binary-Protokoll
+* Streaming-Unterstützung für größere Datenmengen
+
 == Error Handling
 
 * Domain-Exceptions für fachliche Fehler

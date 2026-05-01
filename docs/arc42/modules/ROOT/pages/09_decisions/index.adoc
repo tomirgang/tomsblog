@@ -15,6 +15,7 @@ Alle Architekturentscheidungen sind als ADRs dokumentiert:
 | link:{attachmentsdir}/../../../adr/0006-event-driven-kafka.md[0006] | Event-Driven Architecture mit Kafka | Accepted
 | link:{attachmentsdir}/../../../adr/0007-doorstop-requirement-tracing.md[0007] | Doorstop für Requirement Tracing | Accepted
 | link:{attachmentsdir}/../../../adr/0008-shared-kernel-framework-frei.md[0008] | Shared Kernel als Framework-freie Library | Accepted
+| link:{attachmentsdir}/../../../adr/0010-grpc-service-kommunikation.md[0010] | gRPC für synchrone Service-Kommunikation | Accepted
 |===
 
 NOTE: ADRs werden als Markdown-Dateien in `docs/adr/` gepflegt. Dieses Kapitel dient als Index.

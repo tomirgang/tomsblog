@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  gRPC für synchrone Service-Kommunikation
+level: 9.0
+links:
+- SWR009: DWXp8IA0R0F4FksiJ3m6RMZbN0T4SNNcxyJoTnCphHM=
+normative: true
+ref: ''
+reviewed: ''
+text: |
+  Für synchrone Kommunikation zwischen Microservices wird gRPC verwendet.
+  Kafka bleibt für asynchrone, event-basierte Kommunikation zuständig.
+  gRPC bietet typsichere Contracts via Protobuf, effizientes Binary-Protokoll
+  und native Streaming-Unterstützung. Service-Interfaces werden als
+  .proto-Dateien in einer geteilten Library definiert.

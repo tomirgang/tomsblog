@@ -72,6 +72,7 @@ Requirement document hierarchy:
 
 - REST for the text-blog APIs (consumed by Thymeleaf and later Angular)
 - GraphQL for podcast/video services (consumed by React UIs)
+- gRPC for synchronous inter-service communication
 - Keycloak or custom auth (to be evaluated) for identity
 - S3-compatible storage (Garage on Netcup VM) for media and backups
 

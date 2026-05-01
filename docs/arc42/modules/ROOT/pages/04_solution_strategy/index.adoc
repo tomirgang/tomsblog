@@ -12,6 +12,7 @@ Die zentralen Architekturentscheidungen setzen die Stakeholder-Anforderungen an 
 | Hexagonale Architektur | Framework-unabhängige Domain, austauschbare Adapter | SWA-001
 | Microservices | Unabhängige Deployments, Technologie-Heterogenität (REST + GraphQL) | STK-009
 | Event-Driven (Kafka) | Lose Kopplung, Replay-Fähigkeit, Audit-Trail | SWA-005, SWR-009
+| gRPC (synchron) | Typsichere Service-Contracts, effizientes Binary-Protokoll | SWA-009
 | Multi-Tenant | Mandantenfähigkeit von Anfang an im Design | STK-002, SWR-003
 |===
 
@@ -28,6 +29,7 @@ Die zentralen Architekturentscheidungen setzen die Stakeholder-Anforderungen an 
 | API (Podcast/Video) | GraphQL | link:../09_decisions/index.adoc[ADR-0004]
 | UI-Strategie | Thymeleaf → Angular + React | link:../09_decisions/index.adoc[ADR-0005]
 | Messaging | Apache Kafka | link:../09_decisions/index.adoc[ADR-0006]
+| Sync. Service-Komm. | gRPC | --
 | Requirements | Doorstop | link:../09_decisions/index.adoc[ADR-0007]
 |===
 
