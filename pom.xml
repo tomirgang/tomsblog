@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.5</version>
+        <version>3.5.14</version>
         <relativePath/>
     </parent>
 
@@ -36,6 +36,7 @@
         <docker-java.version>3.5.1</docker-java.version>
         <spotless.version>3.4.0</spotless.version>
         <jacoco.version>0.8.14</jacoco.version>
+        <jazzer.version>0.24.0</jazzer.version>
 
         <!-- Coverage thresholds -->
         <jacoco.line.minimum>0.95</jacoco.line.minimum>
@@ -80,6 +81,14 @@
                 <groupId>com.github.docker-java</groupId>
                 <artifactId>docker-java-transport</artifactId>
                 <version>${docker-java.version}</version>
+            </dependency>
+
+            <!-- Fuzz Testing -->
+            <dependency>
+                <groupId>com.code-intelligence</groupId>
+                <artifactId>jazzer-junit</artifactId>
+                <version>${jazzer.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

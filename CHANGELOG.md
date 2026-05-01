@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- Jazzer Fuzz Tests für alle externen REST-Endpoints (PostController, TagController, TranslationController)
+- Software-Requirement SWR-023: Fuzz-Testing externer Interfaces
+- Jazzer-JUnit 0.24.0 als Fuzz-Testing-Framework
 - JaCoCo Code-Coverage-Plugin mit 95% Minimum-Schwellwert (Line + Branch Coverage)
 - GitHub Actions CI: Coverage-Report als Artifact und Job Summary
 - ADR-0019: Database per Service (PostgreSQL / MongoDB, dedizierte Instanz pro Service)

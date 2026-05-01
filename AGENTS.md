@@ -58,6 +58,22 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 
 After every code change, always run `./mvnw verify --batch-mode --no-transfer-progress` and check for warnings (compiler warnings, deprecations, test warnings). All warnings must be resolved before considering the task complete.
 
+### Warning Policy
+
+The build must produce **zero warnings**. After each code change:
+
+1. Run `./mvnw verify --batch-mode --no-transfer-progress`
+2. Check output for any lines matching `WARNING:`, `WARN:`, `[WARNING]`, or `OpenJDK 64-Bit Server VM warning:`
+3. If warnings exist, fix them before proceeding
+4. Common suppression mechanisms:
+   - JVM-level: `.mvn/jvm.config` (applies to Maven process)
+   - Test JVM: Surefire `<argLine>` (applies to forked test process)
+   - Mockito agent: `-javaagent:${org.mockito:mockito-core:jar}` (prevents self-attach warning)
+   - JDK unsafe access: `--sun-misc-unsafe-memory-access=allow`
+   - Native access: `--enable-native-access=ALL-UNNAMED`
+   - CDS sharing: `-Xshare:off` (when JaCoCo appends to bootstrap classpath)
+5. Fuzz tests (tagged `@Tag("fuzz")`) run in a separate Surefire execution with `<redirectTestOutputToFile>true</redirectTestOutputToFile>` to isolate Jazzer instrumentation noise
+
 ### Code Coverage
 
 - Minimum required: **95%** (line and branch coverage), enforced by JaCoCo during `verify`

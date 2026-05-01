@@ -168,4 +168,24 @@ class PostControllerTest {
         mockMvc.perform(post("/api/posts/{id}/publish", postId).header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isConflict());
     }
+
+    @Test
+    @DisplayName("POST /api/posts returns 400 on IllegalArgumentException")
+    void createPost_returns400OnIllegalArgument() throws Exception {
+        when(postUseCase.createPost(any())).thenThrow(new IllegalArgumentException("Invalid locale"));
+
+        String body = """
+                {
+                    "authorId": "%s",
+                    "title": "Test",
+                    "content": "Content"
+                }
+                """.formatted(authorId);
+
+        mockMvc.perform(post("/api/posts")
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest());
+    }
 }

@@ -75,10 +75,26 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.code-intelligence</groupId>
+            <artifactId>jazzer-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -87,8 +103,23 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>@{argLine} -Dnet.bytebuddy.experimental=true</argLine>
+                    <argLine>@{argLine} -Dnet.bytebuddy.experimental=true -XX:+EnableDynamicAgentLoading --enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow -Xshare:off -javaagent:${org.mockito:mockito-core:jar}</argLine>
+                    <excludedGroups>fuzz</excludedGroups>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>fuzz-tests</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <argLine>-Dnet.bytebuddy.experimental=true -XX:+EnableDynamicAgentLoading --enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow -Xshare:off -javaagent:${org.mockito:mockito-core:jar}</argLine>
+                            <groups>fuzz</groups>
+                            <excludedGroups combine.self="override"/>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

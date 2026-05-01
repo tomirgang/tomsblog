@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Fuzz Testing externer Interfaces
+level: 23.0
+links:
+- STK012: ckQcXaP3v0kHxqLaapMqDFKCPmEqjufWwk-C8ABem1g=
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Alle externen Interfaces (REST-Endpoints) müssen durch Fuzz Tests abgesichert werden:
+  - Jeder öffentliche REST-Endpoint muss einen zugehörigen Fuzz Test besitzen.
+  - Fuzz Tests senden zufällige/ungültige Eingaben an die Endpoints.
+  - Kein Fuzz-Input darf einen HTTP 5xx Statuscode auslösen (Server Error).
+  - Fuzz Tests verwenden Jazzer mit JUnit 5 Integration (@FuzzTest).
+  - Fuzz Tests werden als Teil des regulären Test-Lifecycles ausgeführt (Regression Mode).
+  - Gefundene Crash-Inputs werden als Corpus-Dateien versioniert.
