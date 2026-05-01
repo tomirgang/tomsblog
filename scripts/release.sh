@@ -3,6 +3,8 @@ set -euo pipefail
 
 # Release script for Toms Blog
 # Bumps version, updates CHANGELOG, builds, tags, and pushes.
+# Usage: ./scripts/release.sh [--rebuild]
+#   --rebuild  Re-run build/tests without version bump (use after fixing test failures)
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -18,6 +20,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
+REBUILD=false
+if [[ "${1:-}" == "--rebuild" ]]; then
+    REBUILD=true
+fi
+
 # Ensure clean working directory
 if [[ -n "$(git status --porcelain)" ]]; then
     die "Working directory is not clean. Commit or stash changes first."
@@ -29,6 +36,14 @@ if [[ "$BRANCH" != "main" && "$BRANCH" != "master" ]]; then
     warn "WARNING: You are on branch '$BRANCH', not main/master."
     read -rp "Continue anyway? [y/N] " confirm
     [[ "$confirm" =~ ^[Yy]$ ]] || exit 0
+fi
+
+if [[ "$REBUILD" == true ]]; then
+    # Rebuild mode: just run tests without version changes
+    info "Rebuild mode: running clean build and verification..."
+    ./mvnw clean verify --batch-mode --no-transfer-progress
+    info "Build and verification successful."
+    exit 0
 fi
 
 # Read current version from parent pom.xml
@@ -89,6 +104,11 @@ else
     die "Could not find '## [Unreleased]' section in CHANGELOG.md"
 fi
 
+# Clean build with full verification (includes tests + coverage checks)
+info "Running clean build and verification..."
+./mvnw clean verify --batch-mode --no-transfer-progress
+info "Build and verification successful."
+
 # Update Antora documentation versions (remove prerelease marker for release)
 info "Updating Antora documentation versions..."
 for antora_file in docs/arc42/antora.yml docs/design/antora.yml; do
@@ -102,11 +122,6 @@ ARC42_INDEX="docs/arc42/modules/ROOT/pages/index.adoc"
 if [[ -f "$ARC42_INDEX" ]]; then
     sed -i "s/| Version | .*/| Version | $NEW_VERSION/" "$ARC42_INDEX"
 fi
-
-# Clean build with full verification (includes tests + coverage checks)
-info "Running clean build and verification..."
-./mvnw clean verify --batch-mode --no-transfer-progress
-info "Build and verification successful."
 
 # Commit the release
 info "Committing release..."

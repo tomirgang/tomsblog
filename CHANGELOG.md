@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+
+- Release-Skript: Antora-Versionsupdates werden erst nach erfolgreichem Build/Test durchgeführt
+- Release-Skript: neuer --rebuild-Modus zum erneuten Testen ohne Versionsänderungen
+
 ## [0.3.2] - 2026-05-01
 
 ### Fixed
