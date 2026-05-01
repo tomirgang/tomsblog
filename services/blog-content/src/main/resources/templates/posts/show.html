@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title th:text="${post.title}">Post Title</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <article>
+            <header>
+                <h1 th:text="${post.title}">Post Title</h1>
+                <small>
+                    <time th:datetime="${post.publishedAt}"
+                          th:text="${#temporals.format(post.publishedAt, 'dd.MM.yyyy')}">
+                        01.01.2026
+                    </time>
+                </small>
+            </header>
+
+            <div th:utext="${post.content}">
+                Post content goes here...
+            </div>
+
+            <footer th:if="${!post.sources.isEmpty()}">
+                <h3>Quellen</h3>
+                <ul>
+                    <li th:each="source : ${post.sources}">
+                        <a th:href="${source.url()}" th:text="${source.title()}"
+                           rel="noopener noreferrer" target="_blank">Source Title</a>
+                    </li>
+                </ul>
+            </footer>
+        </article>
+
+        <nav>
+            <a th:href="@{/posts}">&larr; Zurück zur Übersicht</a>
+        </nav>
+    </section>
+</body>
+</html>

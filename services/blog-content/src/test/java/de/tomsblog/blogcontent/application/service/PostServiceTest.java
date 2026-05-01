@@ -235,4 +235,54 @@ class PostServiceTest {
 
         assertThatThrownBy(() -> postService.listSources(postId, tenantId)).isInstanceOf(PostNotFoundException.class);
     }
+
+    @Test
+    @DisplayName("SWR-026: listPublishedPosts delegates to repository")
+    void listPublishedPosts_delegatesToRepository() {
+        Post post1 = Post.create(tenantId, authorId, "Post 1", "Content 1", PostLocale.german());
+        post1.publish();
+        Post post2 = Post.create(tenantId, authorId, "Post 2", "Content 2", PostLocale.german());
+        post2.publish();
+        when(postRepository.findPublishedByTenantId(tenantId)).thenReturn(List.of(post1, post2));
+
+        List<Post> result = postService.listPublishedPosts(tenantId);
+
+        assertThat(result).hasSize(2);
+        verify(postRepository).findPublishedByTenantId(tenantId);
+    }
+
+    @Test
+    @DisplayName("SWR-026: getPublishedPostBySlug returns published post")
+    void getPublishedPostBySlug_returnsPublishedPost() {
+        Slug slug = new Slug("test-post");
+        Post post = Post.create(tenantId, authorId, "Test Post", "Content", PostLocale.german());
+        post.publish();
+        when(postRepository.findBySlugAndTenantId(slug, tenantId)).thenReturn(Optional.of(post));
+
+        Post result = postService.getPublishedPostBySlug(slug, tenantId);
+
+        assertThat(result.getTitle()).isEqualTo("Test Post");
+        assertThat(result.getStatus()).isEqualTo(PostStatus.PUBLISHED);
+    }
+
+    @Test
+    @DisplayName("SWR-026: getPublishedPostBySlug throws when not found")
+    void getPublishedPostBySlug_throwsWhenNotFound() {
+        Slug slug = new Slug("nonexistent");
+        when(postRepository.findBySlugAndTenantId(slug, tenantId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> postService.getPublishedPostBySlug(slug, tenantId))
+                .isInstanceOf(PostNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("SWR-026: getPublishedPostBySlug throws when post is draft")
+    void getPublishedPostBySlug_throwsWhenDraft() {
+        Slug slug = new Slug("draft-post");
+        Post post = Post.create(tenantId, authorId, "Draft Post", "Content", PostLocale.german());
+        when(postRepository.findBySlugAndTenantId(slug, tenantId)).thenReturn(Optional.of(post));
+
+        assertThatThrownBy(() -> postService.getPublishedPostBySlug(slug, tenantId))
+                .isInstanceOf(PostNotFoundException.class);
+    }
 }

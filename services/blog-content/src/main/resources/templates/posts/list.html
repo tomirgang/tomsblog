@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title>Posts</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1>Blog Posts</h1>
+
+        <p th:if="${#lists.isEmpty(posts)}">Noch keine Beiträge vorhanden.</p>
+
+        <article th:each="post : ${posts}">
+            <header>
+                <h2>
+                    <a th:href="@{/posts/{slug}(slug=${post.slug.value})}"
+                       th:text="${post.title}">Post Title</a>
+                </h2>
+                <small>
+                    <time th:datetime="${post.publishedAt}"
+                          th:text="${#temporals.format(post.publishedAt, 'dd.MM.yyyy')}">
+                        01.01.2026
+                    </time>
+                </small>
+            </header>
+            <p th:text="${post.content.length() > 200 ? post.content.substring(0, 200) + '...' : post.content}">
+                Post preview text...
+            </p>
+            <footer>
+                <a th:href="@{/posts/{slug}(slug=${post.slug.value})}">Weiterlesen</a>
+            </footer>
+        </article>
+    </section>
+</body>
+</html>

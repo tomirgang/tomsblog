@@ -1,0 +1,42 @@
+active: true
+derived: false
+header: |
+  Oeffentliche Blog-Ansicht (Post-Liste und Einzelansicht)
+level: 22.0
+links:
+- SWR026: null
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/web/BlogViewController.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/web/WebExceptionHandler.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/application/port/inbound/PostUseCase.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/application/port/outbound/PostRepository.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/application/service/PostService.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/JpaPostRepository.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/SpringDataPostRepository.java
+  type: file
+- path: services/blog-content/src/main/resources/templates/posts/list.html
+  type: file
+- path: services/blog-content/src/main/resources/templates/posts/show.html
+  type: file
+- path: services/blog-content/src/main/resources/templates/error/404.html
+  type: file
+reviewed: null
+text: |
+  Implementierung der oeffentlichen Blog-Ansicht im Blog Content Service:
+  - BlogViewController: GET /posts (Post-Liste), GET /posts/{slug} (Einzelansicht)
+  - PostUseCase: listPublishedPosts(), getPublishedPostBySlug() als neue Inbound-Port-Methoden
+  - PostRepository: findPublishedByTenantId(), findBySlugAndTenantId() als neue Outbound-Port-Methoden
+  - PostService: Implementierung der neuen Use-Case-Methoden mit Status-Pruefung
+  - JpaPostRepository/SpringDataPostRepository: JPA-Queries fuer Status-Filter und Slug-Suche
+  - posts/list.html: Post-Liste mit Titel, Datum, Vorschau, Link zur Einzelansicht
+  - posts/show.html: Einzelansicht mit Volltext, Quellen und Tags
+  - error/404.html: Fehlerseite fuer nicht gefundene/nicht veroeffentlichte Posts
+  - WebExceptionHandler: ControllerAdvice fuer 404-Fehler im Web-Layer

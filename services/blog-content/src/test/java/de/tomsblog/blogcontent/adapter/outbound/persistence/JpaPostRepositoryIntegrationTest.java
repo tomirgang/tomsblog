@@ -161,4 +161,48 @@ class JpaPostRepositoryIntegrationTest {
         assertThat(entityAfter.getCreatedBy()).isEqualTo("test-user");
         assertThat(entityAfter.getUpdatedBy()).isEqualTo("test-user");
     }
+
+    @Test
+    @DisplayName("SWR-026: findPublishedByTenantId returns only published posts sorted by publishedAt desc")
+    void findPublishedByTenantId_returnsOnlyPublished() {
+        Post draft = Post.create(tenantId, authorId, "Draft Post", "Content", PostLocale.german());
+        repository.save(draft);
+
+        Post published1 = Post.create(tenantId, authorId, "Published First", "Content 1", PostLocale.german());
+        published1.publish();
+        repository.save(published1);
+
+        Post published2 = Post.create(tenantId, authorId, "Published Second", "Content 2", PostLocale.german());
+        published2.publish();
+        repository.save(published2);
+
+        List<Post> result = repository.findPublishedByTenantId(tenantId);
+
+        assertThat(result).hasSize(2);
+        assertThat(result).allMatch(p -> p.getStatus() == PostStatus.PUBLISHED);
+    }
+
+    @Test
+    @DisplayName("SWR-026: findBySlugAndTenantId returns post matching slug")
+    void findBySlugAndTenantId_returnsPost() {
+        Post post = Post.create(tenantId, authorId, "My Slug Test", "Content", PostLocale.german());
+        repository.save(post);
+
+        Optional<Post> found = repository.findBySlugAndTenantId(new Slug("my-slug-test"), tenantId);
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getTitle()).isEqualTo("My Slug Test");
+    }
+
+    @Test
+    @DisplayName("SWR-026: findBySlugAndTenantId returns empty for wrong tenant")
+    void findBySlugAndTenantId_emptyForWrongTenant() {
+        Post post = Post.create(tenantId, authorId, "Tenant Slug", "Content", PostLocale.german());
+        repository.save(post);
+
+        TenantId otherTenant = TenantId.generate();
+        Optional<Post> found = repository.findBySlugAndTenantId(new Slug("tenant-slug"), otherTenant);
+
+        assertThat(found).isEmpty();
+    }
 }

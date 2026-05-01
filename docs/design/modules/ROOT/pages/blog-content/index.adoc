@@ -130,6 +130,8 @@ classDiagram
         +publishPost(postId, tenantId) void
         +getPost(postId, tenantId) Post
         +listPosts(tenantId) List~Post~
+        +listPublishedPosts(tenantId) List~Post~
+        +getPublishedPostBySlug(slug, tenantId) Post
         +deletePost(postId, tenantId) void
     }
 
@@ -159,6 +161,8 @@ classDiagram
         +save(post) Post
         +findByIdAndTenantId(postId, tenantId) Optional~Post~
         +findAllByTenantId(tenantId) List~Post~
+        +findPublishedByTenantId(tenantId) List~Post~
+        +findBySlugAndTenantId(slug, tenantId) Optional~Post~
         +deleteByIdAndTenantId(postId, tenantId) void
     }
 
@@ -349,17 +353,64 @@ classDiagram
     class BlogViewController {
         -PostUseCase postUseCase
         +index(model, tenantId) String
+        +listPosts(model, tenantId) String
+        +showPost(slug, model, tenantId) String
     }
 
     class PostUseCase {
         <<interface>>
+        +listPublishedPosts(tenantId) List~Post~
+        +getPublishedPostBySlug(slug, tenantId) Post
     }
 
     BlogViewController --> PostUseCase : uses
 ----
 
-Der `BlogViewController` liegt im Package `adapter.inbound.web` und greift über die bestehenden Inbound Ports (`PostUseCase`, `TagUseCase`) auf die Fachlogik zu.
+Der `BlogViewController` liegt im Package `adapter.inbound.web` und greift über die bestehenden Inbound Ports (`PostUseCase`) auf die Fachlogik zu.
 Er gibt Thymeleaf-View-Namen zurück, die vom Spring MVC ViewResolver aufgelöst werden.
+
+==== Öffentliche Blog-Ansicht (SWR-026)
+
+Die öffentliche Blog-Ansicht besteht aus zwei Seiten:
+
+* **Post-Liste** (`/posts`): Zeigt alle veröffentlichten Posts des Tenants in absteigender chronologischer Reihenfolge (neueste zuerst). Pro Eintrag werden Titel, Veröffentlichungsdatum und der erste Absatz als Vorschau angezeigt.
+* **Einzelansicht** (`/posts/{slug}`): Zeigt einen einzelnen veröffentlichten Post mit Titel, Veröffentlichungsdatum, Volltext, Quellen und Tags.
+
+Nicht veröffentlichte Posts (DRAFT, ARCHIVED) sind in der öffentlichen Ansicht nicht sichtbar.
+Die Slug-basierte URL sorgt für SEO-freundliche, leserliche Adressen.
+
+[mermaid]
+----
+sequenceDiagram
+    actor Reader
+    participant Controller as BlogViewController
+    participant Service as PostService
+    participant Repo as PostRepository
+
+    Reader->>Controller: GET /posts
+    Controller->>Service: listPublishedPosts(tenantId)
+    Service->>Repo: findPublishedByTenantId(tenantId)
+    Repo-->>Service: List<Post> (nur PUBLISHED, sortiert nach publishedAt DESC)
+    Service-->>Controller: List<Post>
+    Controller-->>Reader: posts/list.html (Model: posts)
+
+    Reader->>Controller: GET /posts/{slug}
+    Controller->>Service: getPublishedPostBySlug(slug, tenantId)
+    Service->>Repo: findBySlugAndTenantId(slug, tenantId)
+    Repo-->>Service: Optional<Post>
+    Service-->>Controller: Post (nur wenn PUBLISHED)
+    Controller-->>Reader: posts/show.html (Model: post)
+----
+
+Für die öffentliche Ansicht werden zwei neue Methoden am `PostRepository`-Port benötigt:
+
+* `findPublishedByTenantId(TenantId)` - Gibt alle veröffentlichten Posts zurück, sortiert nach `publishedAt` absteigend.
+* `findBySlugAndTenantId(Slug, TenantId)` - Sucht einen Post anhand seines Slugs.
+
+Am `PostUseCase`-Port werden entsprechend zwei neue Methoden definiert:
+
+* `listPublishedPosts(TenantId)` - Delegiert an das Repository und gibt nur PUBLISHED-Posts zurück.
+* `getPublishedPostBySlug(Slug, TenantId)` - Gibt den Post zurück, wenn er existiert und den Status PUBLISHED hat. Wirft `PostNotFoundException` falls nicht gefunden oder nicht veröffentlicht.
 
 ==== Template-Struktur
 
@@ -369,14 +420,18 @@ Die Templates folgen einer hierarchischen Struktur mit dem Thymeleaf Layout Dial
 ----
 graph TD
     A[layout/default.html] -->|layout:fragment=content| B[index.html]
+    A -->|layout:fragment=content| E[posts/list.html]
+    A -->|layout:fragment=content| F[posts/show.html]
     A --> C[fragments/header.html]
     A --> D[fragments/footer.html]
 ----
 
 * **layout/default.html**: Basis-Layout mit HTML5-Grundgerüst, PicoCSS-Einbindung (CDN), semantischer Struktur (header, nav, main, footer)
-* **fragments/header.html**: Seitenkopf mit Blog-Titel und Navigationslinks
+* **fragments/header.html**: Seitenkopf mit Blog-Titel und Navigationslinks (inkl. Link auf /posts)
 * **fragments/footer.html**: Fußzeile mit Copyright und Links
 * **index.html**: Startseite, dekoriert das Default-Layout via `layout:decorate`
+* **posts/list.html**: Post-Liste mit `th:each` über die Posts (SWR-026)
+* **posts/show.html**: Einzelansicht eines Posts mit vollem Inhalt, Quellen und Tags (SWR-026)
 
 ==== CSS-Framework: PicoCSS
 
@@ -551,4 +606,5 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWR-024 | OpenAPI/Swagger API-Dokumentation | OpenApiConfiguration, Controller-Annotationen (@Operation, @ApiResponse, @Tag)
 | SWA-016 | springdoc-openapi für API-Dokumentation | springdoc-openapi-starter-webmvc-ui, OperationCustomizer
 | SWR-025 | Thymeleaf Layout-Grundgerüst | BlogViewController, layout/default.html, PicoCSS, custom.css
+| SWR-026 | Öffentliche Blog-Ansicht (Post-Liste, Einzelansicht) | BlogViewController.listPosts/showPost, posts/list.html, posts/show.html, PostRepository.findPublishedByTenantId/findBySlugAndTenantId
 |===

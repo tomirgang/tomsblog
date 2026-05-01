@@ -11,5 +11,9 @@ public interface SpringDataPostRepository extends JpaRepository<PostJpaEntity, U
 
     List<PostJpaEntity> findAllByTenantId(UUID tenantId);
 
+    List<PostJpaEntity> findAllByTenantIdAndStatusOrderByPublishedAtDesc(UUID tenantId, PostStatusJpa status);
+
+    Optional<PostJpaEntity> findBySlugAndTenantId(String slug, UUID tenantId);
+
     void deleteByIdAndTenantId(UUID id, UUID tenantId);
 }

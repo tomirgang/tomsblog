@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- Öffentliche Blog-Ansicht mit Post-Liste (GET /posts) und Einzelansicht (GET /posts/{slug})
+- PostUseCase: listPublishedPosts() und getPublishedPostBySlug() für öffentliche Leseansicht
+- PostRepository: findPublishedByTenantId() und findBySlugAndTenantId() für Status-Filter und Slug-Suche
+- Thymeleaf Templates: posts/list.html, posts/show.html, error/404.html
+- WebExceptionHandler für 404-Fehlerseiten im Web-Layer
+- Navigation: Posts-Link im Header-Fragment
+- SWR-026: Anforderung für öffentliche Blog-Ansicht
+- IMP-022: Implementierungsverweis für öffentliche Blog-Ansicht
 - Thymeleaf Layout-Grundgeruest mit PicoCSS (responsive, Dark/Light Mode)
 - Thymeleaf Layout Dialect fuer Template-Vererbung (layout:decorate)
 - BlogViewController als Inbound Web Adapter (GET /)

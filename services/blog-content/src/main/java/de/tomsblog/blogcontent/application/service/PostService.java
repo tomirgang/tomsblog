@@ -10,6 +10,8 @@ import de.tomsblog.blogcontent.application.port.outbound.PostRepository;
 import de.tomsblog.blogcontent.domain.model.Post;
 import de.tomsblog.blogcontent.domain.model.PostId;
 import de.tomsblog.blogcontent.domain.model.PostLocale;
+import de.tomsblog.blogcontent.domain.model.PostStatus;
+import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.blogcontent.domain.model.Source;
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
  * @req SWR-001
  * @req SWR-002
  * @req SWR-009
+ * @req SWR-026
  */
 public class PostService implements PostUseCase {
 
@@ -72,6 +75,23 @@ public class PostService implements PostUseCase {
     @Override
     public List<Post> listPosts(TenantId tenantId) {
         return postRepository.findAllByTenantId(tenantId);
+    }
+
+    /** @req SWR-026 */
+    @Override
+    public List<Post> listPublishedPosts(TenantId tenantId) {
+        return postRepository.findPublishedByTenantId(tenantId);
+    }
+
+    /** @req SWR-026 */
+    @Override
+    public Post getPublishedPostBySlug(Slug slug, TenantId tenantId) {
+        Post post =
+                postRepository.findBySlugAndTenantId(slug, tenantId).orElseThrow(() -> new PostNotFoundException(slug));
+        if (post.getStatus() != PostStatus.PUBLISHED) {
+            throw new PostNotFoundException(slug);
+        }
+        return post;
     }
 
     /** @req SWR-012 */

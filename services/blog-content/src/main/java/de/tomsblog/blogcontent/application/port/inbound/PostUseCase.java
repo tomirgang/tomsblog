@@ -2,6 +2,7 @@ package de.tomsblog.blogcontent.application.port.inbound;
 
 import de.tomsblog.blogcontent.domain.model.Post;
 import de.tomsblog.blogcontent.domain.model.PostId;
+import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.blogcontent.domain.model.Source;
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
  * @req SWR-001
  * @req SWR-002
  * @req SWR-012
+ * @req SWR-026
  */
 public interface PostUseCase {
 
@@ -32,6 +34,12 @@ public interface PostUseCase {
 
     /** @req SWR-001 */
     List<Post> listPosts(TenantId tenantId);
+
+    /** @req SWR-026 */
+    List<Post> listPublishedPosts(TenantId tenantId);
+
+    /** @req SWR-026 */
+    Post getPublishedPostBySlug(Slug slug, TenantId tenantId);
 
     /**
      * @req SWR-012
