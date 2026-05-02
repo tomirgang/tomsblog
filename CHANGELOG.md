@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-05-02
+
 ### Added
 
 - Ingress + TLS: Kubernetes Ingress-Ressource für blog.tomirgang.de mit automatischem Let's Encrypt TLS
