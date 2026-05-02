@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - SWA-017: Kubernetes-Cluster-Provisionierung mit kube-hetzner (OpenTofu, Hetzner Cloud)
 - SWA-018: PostgreSQL-Betrieb mit CloudNativePG Operator
 - Applikationsspezifische K8s-Manifeste unter infra/k8s/ (PostgreSQL Cluster, PVC)
+- Flux GitOps-Setup: Bootstrap in kubernetes-playground Repo, tomsblog als GitRepository-Source
 - arc42 Verteilungssicht um Cluster-Provisionierung und CloudNativePG-Details erweitert
 - ADR-0021: Zero Trust mit Linkerd Service Mesh (mTLS, AuthorizationPolicies, User-Kontext-Propagierung)
 - STK-014: Stakeholder Requirement für sichere Service-zu-Service-Kommunikation

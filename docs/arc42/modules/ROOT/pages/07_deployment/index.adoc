@@ -38,7 +38,7 @@ Aktuelle Konfiguration (Phase 3 / MVP):
 |===
 | Parameter | Wert
 
-| Instanzen | 1 (Single Instance)
+| Instanzen | 2 (Primary + Replica, automatisches Failover)
 | Storage | 10 Gi (hcloud-volumes)
 | shared_buffers | 256 MB
 | effective_cache_size | 512 MB
@@ -47,6 +47,20 @@ Aktuelle Konfiguration (Phase 3 / MVP):
 | Namespace | postgres
 | Service-Endpunkt | postgres-cluster-rw.postgres.svc.cluster.local:5432
 |===
+
+== GitOps mit Flux
+
+Das Continuous Deployment erfolgt über Flux (ADR-0020). Flux ist im IaC-Repository (`kubernetes-playground`) bootstrapped und beobachtet zwei Git-Sources:
+
+[cols="1,2,1"]
+|===
+| Source | Repository | Pfad
+
+| flux-system | kubernetes-playground | flux/
+| tomsblog | tomsblog | infra/k8s/
+|===
+
+Änderungen an `infra/k8s/` im tomsblog-Repository werden automatisch innerhalb von 10 Minuten auf den Cluster synchronisiert. Flux prüft dabei den Health-Status des PostgreSQL-Clusters.
 
 == Lokale Entwicklung
 

@@ -40,7 +40,7 @@
 
 - [x] Hetzner Kubernetes Cluster aufsetzen (kube-hetzner / OpenTofu)
 - [x] CloudNativePG Operator für PostgreSQL
-- [ ] GitOps einrichten (Flux, siehe ADR-0020)
+- [x] GitOps einrichten (Flux, siehe ADR-0020)
 - [ ] Helm Chart / Kustomize für blog-content Service
 - [ ] Ingress-Controller + TLS (Let's Encrypt)
 - [ ] Container-Image bauen und deployen (CI/CD Pipeline)
