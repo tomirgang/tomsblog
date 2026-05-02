@@ -88,6 +88,12 @@ echo ""
 read -rp "Proceed with release $NEW_VERSION? [y/N] " confirm
 [[ "$confirm" =~ ^[Yy]$ ]] || exit 0
 
+# Clean build with full verification BEFORE any file modifications
+# This ensures failed builds don't leave the working directory dirty
+info "Running clean build and verification with current SNAPSHOT version..."
+./mvnw clean verify --batch-mode --no-transfer-progress
+info "Build and verification successful."
+
 # Update version in all pom.xml files
 info "Updating Maven version to $NEW_VERSION..."
 ./mvnw versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false --batch-mode --no-transfer-progress -q
@@ -103,11 +109,6 @@ if grep -q '## \[Unreleased\]' CHANGELOG.md; then
 else
     die "Could not find '## [Unreleased]' section in CHANGELOG.md"
 fi
-
-# Clean build with full verification (includes tests + coverage checks)
-info "Running clean build and verification..."
-./mvnw clean verify --batch-mode --no-transfer-progress
-info "Build and verification successful."
 
 # Update Antora documentation versions (remove prerelease marker for release)
 info "Updating Antora documentation versions..."

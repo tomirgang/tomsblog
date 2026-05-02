@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Release-Script: Build und Tests laufen jetzt vor Versions- und Changelog-Änderungen, damit bei Build-Fehlern das Working Directory sauber bleibt
+
 ## [0.4.2] - 2026-05-02
 
 ### Fixed
