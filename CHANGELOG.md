@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Linkerd Service Mesh Installation via Flux Helm Charts (linkerd-crds 1.8.0, linkerd-control-plane 1.16.11)
+- cert-manager Trust Anchor (self-signed CA, 10 Jahre) und Identity Issuer (48h, auto-rotiert) für Linkerd
+- Flux HelmRepository und HelmRelease CRs für GitOps-verwaltetes Linkerd Deployment
+- Mesh-Injection-Annotation am tomsblog Namespace (linkerd.io/inject: enabled)
+- SWA-022: Architektur-Requirement für Linkerd Deployment via Flux und cert-manager
+
 ## [0.4.0] - 2026-05-02
 
 ### Added

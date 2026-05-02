@@ -1,0 +1,31 @@
+active: true
+derived: false
+header: |
+  Linkerd Service Mesh Deployment via Flux und cert-manager
+level: 22.0
+links:
+- SWR029: Vysm2FDIdONyetFa7k1ZjvsuCpslt1NRw9mAcaUzfmg=
+normative: true
+ref: ''
+reviewed: H7e3d1G7Ejss-9pm4pr9dMvtzFNfcvIuhOLkX42pFBw=
+text: |
+  Linkerd wird als Service Mesh im Kubernetes-Cluster installiert und ueber
+  Flux GitOps verwaltet. Die Installation besteht aus zwei Helm Charts
+  (linkerd-crds und linkerd-control-plane), die als HelmRelease Custom
+  Resources im tomsblog-Repository definiert sind.
+
+  Certificate-Management:
+  - Ein self-signed ClusterIssuer erzeugt den Trust Anchor (Root CA, 10 Jahre).
+  - Ein CA Issuer basierend auf dem Trust Anchor signiert den Identity Issuer
+    (48h Gueltigkeit, automatische Rotation durch cert-manager).
+  - Der Linkerd Identity Controller verwendet das Identity Issuer Certificate
+    fuer die Ausstellung von Proxy-Zertifikaten.
+
+  Mesh-Injection:
+  - Namespaces erhalten die Annotation linkerd.io/inject: enabled.
+  - Pods werden beim naechsten Rollout automatisch mit dem Linkerd Sidecar-Proxy
+    versehen.
+
+  Ressourcen-Limits:
+  - Proxy: 64Mi Request, 128Mi Limit (angepasst an 3-Node-Cluster).
+  - Control Plane: Standardwerte mit angepassten Requests fuer kleinen Cluster.

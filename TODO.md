@@ -44,8 +44,8 @@
 - [x] Kustomize-Manifeste für blog-content Service
 - [x] Reflector für Cross-Namespace Secret-Synchronisation (ADR-0025)
 - [x] Ingress-Controller + TLS (Let's Encrypt)
-- [ ] Container-Image bauen und deployen (CI/CD Pipeline)
-- [ ] Linkerd Service Mesh installieren (Helm via Flux, siehe ADR-0021)
+- [x] Container-Image bauen und deployen (CI/CD Pipeline)
+- [x] Linkerd Service Mesh installieren (Helm via Flux, siehe ADR-0021)
 - [ ] mTLS für alle Service-zu-Service-Verbindungen aktivieren
 - [ ] Default-Deny AuthorizationPolicies konfigurieren
 - [ ] Trust Anchor und Issuer Certificates einrichten (cert-manager)
