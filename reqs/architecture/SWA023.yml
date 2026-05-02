@@ -1,0 +1,26 @@
+active: true
+derived: false
+header: |
+  Default-Deny AuthorizationPolicies fuer Linkerd Service Mesh
+level: 23.0
+links:
+- SWR029: Vysm2FDIdONyetFa7k1ZjvsuCpslt1NRw9mAcaUzfmg=
+normative: true
+ref: ''
+reviewed: Lgh514bxDgXgmNz897Pq5Jf5u-3lxw-aiqKiaLAcPQA=
+text: |
+  Linkerd AuthorizationPolicies werden im Default-Deny-Modus konfiguriert. Pro
+  Service wird ein Server-Objekt (policy.linkerd.io/v1beta3) fuer den
+  Applikations-Port erstellt. Ohne eine passende AuthorizationPolicy ist kein
+  eingehender Traffic erlaubt (Default-Deny).
+
+  Erlaubte Kommunikationspfade fuer blog-content:
+  - Traefik Ingress Controller (identifiziert ueber MeshTLSAuthentication mit
+    der ServiceAccount-Identitaet traefik.traefik) darf HTTP-Traffic an den
+    blog-content Service senden.
+  - Kubelet Health-Probes (identifiziert ueber NetworkAuthentication) duerfen
+    die Liveness- und Readiness-Endpunkte erreichen.
+
+  Alle anderen eingehenden Verbindungen werden vom Linkerd-Proxy abgelehnt.
+  Neue Services muessen explizit durch eine AuthorizationPolicy freigeschaltet
+  werden, bevor sie blog-content erreichen koennen.

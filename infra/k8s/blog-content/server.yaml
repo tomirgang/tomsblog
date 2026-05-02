@@ -1,0 +1,13 @@
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  name: blog-content-http
+  namespace: tomsblog
+  labels:
+    app: blog-content
+spec:
+  podSelector:
+    matchLabels:
+      app: blog-content
+  port: http
+  proxyProtocol: HTTP/1

@@ -12,3 +12,6 @@ resources:
   - network-policy-acme-solver.yaml
   - network-policy-intra.yaml
   - network-policy-egress.yaml
+  - server.yaml
+  - authz-policy-traefik.yaml
+  - authz-policy-probes.yaml
