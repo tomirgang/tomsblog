@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Actuator Health-Endpoints (`/actuator/health/**`) von Spring Security ausgenommen, damit Kubernetes Readiness-Probe nicht mit 401 fehlschlägt
+
 ## [0.4.1] - 2026-05-02
 
 ### Fixed
