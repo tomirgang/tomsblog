@@ -8,11 +8,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- ADR-0025: Secrets Management Strategie (Reflector jetzt, ESO in Meilenstein 2)
+- ADR-0026: Migration auf Helm Charts in Phase 5 (Kafka, RabbitMQ, MongoDB Operatoren)
+- STK-016: Stakeholder Requirement für sichere Verwaltung von Secrets im Cluster
+- SWA-019: Cross-Namespace Secret-Synchronisation mit Reflector
+- Reflector Installation via Flux HelmRelease im IaC-Repository
+- Automatische Secret-Spiegelung von postgres-cluster-app nach tomsblog Namespace
 - ADR-0024: Kustomize für Kubernetes-Manifeste (Entscheidung gegen Helm)
 - NetworkPolicies für Namespace `tomsblog` (Default-Deny-Ingress, Ingress von Traefik, Intra-Namespace, Egress zu PostgreSQL/DNS/Internet)
 - Kustomize-Manifeste für blog-content Service (Deployment, Service, Secret, Namespace)
 - Spring-Profil `application-k8s.yml` für Kubernetes-Deployment
 - CloudNativePG initdb-Konfiguration (Datenbank `blog_content`, Owner `blog_content`)
+
+### Changed
+
+- Deployment nutzt reflektiertes Secret `postgres-cluster-app` statt Placeholder `blog-content-db`
+- ADR-0024 um Referenz auf geplante Helm-Migration (ADR-0026) ergänzt
+- TODO.md: Phase 5 um Helm-basierte Operator-Deployments erweitert
+- TODO.md: Meilenstein 2 um External Secrets Operator ergänzt
 
 ## [0.3.4] - 2026-05-02
 

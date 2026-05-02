@@ -25,16 +25,16 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               value: "k8s"
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://postgres-cluster-rw.postgres.svc.cluster.local:5432/blog_content"
+              value: "jdbc:postgresql://postgres-cluster-rw.postgres.svc.cluster.local:5432/app"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: blog-content-db
+                  name: postgres-cluster-app
                   key: username
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: blog-content-db
+                  name: postgres-cluster-app
                   key: password
             - name: BLOG_ADMIN_PASSWORD
               valueFrom:

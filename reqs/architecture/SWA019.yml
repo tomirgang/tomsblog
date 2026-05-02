@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Cross-Namespace Secret-Synchronisation mit Reflector
+level: 19.0
+links:
+- STK016: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Cross-Namespace Secret-Synchronisation wird ueber Reflector (emberstack)
+  realisiert. Operator-generierte Secrets (z.B. CloudNativePG postgres-cluster-app)
+  werden per Annotation automatisch in die Ziel-Namespaces der konsumierenden
+  Services gespiegelt. Die Synchronisation erfolgt bei jeder Aenderung am
+  Quell-Secret (einschliesslich Credential-Rotation). Reflector wird als
+  Flux HelmRelease im IaC-Repository installiert und laeuft im flux-system
+  Namespace mit minimalen Ressourcen (64Mi-128Mi RAM).

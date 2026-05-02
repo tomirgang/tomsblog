@@ -70,3 +70,4 @@ Wir verwenden **Kustomize** für die Verwaltung der Kubernetes-Manifeste.
 
 - ADR-0020 (Flux für GitOps)
 - ADR-0022 (Kubernetes-Plattform)
+- ADR-0026 (Helm Charts ab Phase 5: Operator-managed Services wie Kafka, RabbitMQ, MongoDB werden als Flux HelmReleases deployt)

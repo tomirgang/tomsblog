@@ -42,6 +42,7 @@
 - [x] CloudNativePG Operator für PostgreSQL
 - [x] GitOps einrichten (Flux, siehe ADR-0020)
 - [x] Kustomize-Manifeste für blog-content Service
+- [x] Reflector für Cross-Namespace Secret-Synchronisation (ADR-0025)
 - [ ] Ingress-Controller + TLS (Let's Encrypt)
 - [ ] Container-Image bauen und deployen (CI/CD Pipeline)
 - [ ] Linkerd Service Mesh installieren (Helm via Flux, siehe ADR-0021)
@@ -73,8 +74,10 @@
 - [ ] Events produzieren (Post erstellt, aktualisiert, veröffentlicht) via Kafka
 - [ ] RabbitMQ-Queues für Task-Verteilung (Übersetzung, TTS, Snapshots)
 - [ ] Consumer für nachgelagerte Prozesse (Feeds)
-- [ ] Infra: Kafka Deployment (Strimzi Operator)
-- [ ] Infra: RabbitMQ Deployment (RabbitMQ Cluster Operator)
+- [ ] Infra: Kafka Deployment (Strimzi Operator via Helm, siehe ADR-0026)
+- [ ] Infra: RabbitMQ Deployment (RabbitMQ Cluster Operator via Helm, siehe ADR-0026)
+- [ ] Infra: MongoDB Deployment (Community Operator via Helm, siehe ADR-0026)
+- [ ] Migration auf Helm Charts für Operator-managed Services (ADR-0026)
 
 > **MVP nach Phase 5:** Asynchrone Verarbeitung aktiv, Events fließen zwischen Services.
 
@@ -131,6 +134,7 @@
 
 ## Meilenstein 2: Kommentare & Interaktion
 
+- [ ] External Secrets Operator (ESO) für externe Secret-Stores (ADR-0025)
 - [ ] Kommentar-Domain-Modell & Service
 - [ ] Moderation (Spam-Filter, Freigabe-Workflow)
 - [ ] Thymeleaf-Integration (Kommentarformular, Anzeige)

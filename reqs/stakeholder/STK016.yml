@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Sichere Verwaltung von Secrets im Cluster
+level: 16.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Als Betreiber moechte ich, dass sensible Zugangsdaten (Datenbank-Credentials,
+  API-Keys, OAuth-Secrets) automatisiert und sicher zwischen Kubernetes-Namespaces
+  synchronisiert werden, damit keine manuellen Kopiervorgaenge notwendig sind und
+  Credential-Rotationen automatisch an alle betroffenen Services propagiert werden.
