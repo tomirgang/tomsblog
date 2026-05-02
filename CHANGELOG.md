@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed
+
+- TLS-Zertifikat-Ausstellung: NetworkPolicies korrigiert (Traefik-Namespace statt kube-system)
+- TLS-Zertifikat-Ausstellung: Ingress auf websecure-Entrypoint beschränkt, damit HTTP-01 ACME-Challenges nicht durch Redirect-Middleware blockiert werden
+- NetworkPolicy für cert-manager ACME HTTP-01 Solver-Pod hinzugefügt (Port 8089)
+
 ### Added
 
 - Linkerd Service Mesh Installation via Flux Helm Charts (linkerd-crds 1.8.0, linkerd-control-plane 1.16.11)

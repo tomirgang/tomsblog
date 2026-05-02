@@ -9,5 +9,6 @@ resources:
   - secret.yaml
   - network-policy-deny.yaml
   - network-policy-ingress.yaml
+  - network-policy-acme-solver.yaml
   - network-policy-intra.yaml
   - network-policy-egress.yaml
