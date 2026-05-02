@@ -5,6 +5,7 @@ resources:
   - traefik-namespace-patch.yaml
   - trust-anchor-issuer.yaml
   - trust-anchor-certificate.yaml
+  - trust-roots-configmap.yaml
   - identity-issuer.yaml
   - helm-repository.yaml
   - helm-release-crds.yaml

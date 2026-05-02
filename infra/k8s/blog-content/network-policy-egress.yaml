@@ -26,6 +26,11 @@ spec:
       ports:
         - protocol: TCP
           port: 5432
+    # Linkerd control plane (identity, destination, policy)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: linkerd
     # Intra-namespace communication
     - to:
         - podSelector: {}
