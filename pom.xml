@@ -13,7 +13,7 @@
 
     <groupId>de.tomsblog</groupId>
     <artifactId>tomsblog-parent</artifactId>
-    <version>0.5.1</version>
+    <version>0.5.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Toms Blog - Parent</name>
