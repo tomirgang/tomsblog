@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  HTML- und Markdown-Unterstützung für Blog-Inhalte
+level: 19.0
+links: []
+normative: true
+ref: ''
+reviewed: _N0RnU4hzIOsnQCmRexyvHhGk-vlbp69UPJkonSPR7I=
+text: |
+  Als Autor möchte ich Blog-Posts wahlweise in HTML oder Markdown verfassen können,
+  wobei Markdown gerendert dargestellt wird, inklusive Mermaid-Diagrammen und
+  Code-Blöcken mit Syntax-Highlighting, damit ich technische Inhalte ansprechend
+  präsentieren kann.

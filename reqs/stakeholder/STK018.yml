@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Versionsnummer im Footer
+level: 18.0
+links: []
+normative: true
+ref: ''
+reviewed: kPtiJv0Hkev0INt6CajPvmuxxXMUx4bWzVBnGe4pSzk=
+text: |
+  Als Betreiber möchte ich, dass die aktuelle Versionsnummer der Anwendung im
+  Footer jeder Seite angezeigt wird, damit ich auf einen Blick erkennen kann,
+  welche Version im Einsatz ist.

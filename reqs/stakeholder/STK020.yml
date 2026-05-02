@@ -1,0 +1,12 @@
+active: true
+derived: false
+header: |
+  Gerenderte Vorschau in der Post-Liste
+level: 20.0
+links: []
+normative: true
+ref: ''
+reviewed: ZWHxKvvIwiFyJ3TwNaf26ov6at-2dCi8tjRT0izwt90=
+text: |
+  Als Leser möchte ich in der Post-Liste eine gerenderte Vorschau (kein Plaintext)
+  sehen, damit die Vorschau visuell dem tatsächlichen Post-Inhalt entspricht.

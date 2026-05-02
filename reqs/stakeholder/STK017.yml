@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Landing Page zeigt neueste Posts
+level: 17.0
+links: []
+normative: true
+ref: ''
+reviewed: OBpEJf2FUhWL16mzHeUf6gtvDF2P_13y2vxMLKgymeU=
+text: |
+  Als Leser möchte ich auf der Landing Page die neuesten 3 Blog-Posts sehen,
+  damit ich sofort einen Überblick über aktuelle Inhalte erhalte, ohne navigieren
+  zu müssen.

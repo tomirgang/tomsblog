@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Vorschau umfasst den ersten Abschnitt
+level: 21.0
+links: []
+normative: true
+ref: ''
+reviewed: KsfuyZsgYOylFzL49wdXMMwru9H55ZujUx2Z5BGOOlQ=
+text: |
+  Als Leser möchte ich, dass die Vorschau in der Post-Liste den ersten Abschnitt
+  des Posts umfasst, damit ich einen inhaltlich sinnvollen Einstieg in den Beitrag
+  erhalte.

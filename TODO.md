@@ -54,8 +54,14 @@
 
 ### Phase 4: Benutzerverwaltung & Multi-Tenancy
 
-- [ ] Identity-Provider evaluieren (Keycloak vs. eigener Service)
-- [ ] Auth-Service oder Keycloak-Integration
+- [ ] Landing Page: nur die neuesten 3 Posts anzeigen (STK017)
+- [ ] Footer: Versionsnummer der Anwendung anzeigen (STK018)
+- [ ] Blog Content: HTML und Markdown unterstützen, Markdown gerendert darstellen inkl. Mermaid-Diagramme und Syntax-Highlighting (STK019)
+- [ ] Vorschau in Post-Liste: gerendert darstellen statt Plaintext (STK020)
+- [ ] Vorschau in Post-Liste: ersten Abschnitt anzeigen (STK021)
+- [x] Identity-Provider evaluieren (ADR-0027: Authentik + internes User Management)
+- [ ] OIDC Login integrieren (Spring Security OAuth2 Client, Authentik unter auth.do9ita.de)
+- [ ] Leichtgewichtiger User-Management-Service (OIDC Relying Party, Rollen, Tenant-Zuordnung)
 - [ ] Multi-Tenant-Isolation (Schema-basiert vs. Row-Level-Security)
 - [ ] Rollen- und Berechtigungsmodell (Admin, Autor, Leser)
 - [ ] Audit-Logging für alle relevanten Aktionen
