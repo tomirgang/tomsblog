@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.4.5] - 2026-05-02
+
 ### Added
 
 - Default-Deny AuthorizationPolicies für Linkerd: Server-Ressource, MeshTLSAuthentication für Traefik, NetworkAuthentication für Kubelet-Probes (SWA023)
