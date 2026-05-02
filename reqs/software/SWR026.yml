@@ -10,8 +10,8 @@ ref: ''
 reviewed: 4KCcUrO6Lq3H-cE4D1AGqBVRw1F9txc_FMEUPtRvxz0=
 text: |
   Der Blog Content Service muss eine öffentliche Thymeleaf-basierte Blog-Ansicht bereitstellen:
-  - Eine Post-Liste unter /posts zeigt alle veröffentlichten Posts des Tenants in absteigender chronologischer Reihenfolge (neueste zuerst).
-  - Die Post-Liste zeigt pro Eintrag: Titel, Veröffentlichungsdatum, Kurzvorschau (erster Absatz oder Zusammenfassung) und einen Link zur Einzelansicht.
+  - Die Landing Page (/) und /posts zeigen beide dieselbe Post-Liste mit allen veröffentlichten Posts des Tenants in absteigender chronologischer Reihenfolge (neueste zuerst).
+  - Die Post-Liste zeigt pro Eintrag: Titel, Veröffentlichungsdatum, Klartext-Kurzvorschau (max. 200 Zeichen, HTML-Tags entfernt) und einen Link zur Einzelansicht.
   - Die Einzelansicht unter /posts/{slug} zeigt einen veröffentlichten Post mit: Titel, Veröffentlichungsdatum, Volltext, Quellen und Tags.
   - Nicht veröffentlichte Posts (DRAFT, ARCHIVED) sind in der öffentlichen Ansicht nicht sichtbar.
   - Die Slug-basierte URL ist SEO-freundlich und leserlich.

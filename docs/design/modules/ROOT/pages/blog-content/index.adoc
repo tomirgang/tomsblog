@@ -352,13 +352,16 @@ Er bildet einen separaten Inbound Adapter neben der REST API und nutzt dieselben
 classDiagram
     class BlogViewController {
         -PostUseCase postUseCase
-        +index(model, tenantId) String
-        +listPosts(model, tenantId) String
+        -Pattern HTML_TAG_PATTERN
+        -int EXCERPT_LENGTH
+        +index(model, tenantId, principal) String
+        +listPosts(model, tenantId, principal) String
         +showPost(slug, model, tenantId) String
         +newPostForm(model) String
         +createPost(form, result, tenantId, authorId, model) String
         +editPostForm(id, tenantId, model) String
         +updatePost(id, form, result, tenantId, model) String
+        -buildExcerpts(posts) Map~UUID String~
     }
 
     class PostFormData {
@@ -392,11 +395,13 @@ Die `PostFormData`-Klasse dient als Form-Backing-Bean für die Thymeleaf-Formula
 
 Die öffentliche Blog-Ansicht besteht aus zwei Seiten:
 
-* **Post-Liste** (`/posts`): Zeigt alle veröffentlichten Posts des Tenants in absteigender chronologischer Reihenfolge (neueste zuerst). Pro Eintrag werden Titel, Veröffentlichungsdatum und der erste Absatz als Vorschau angezeigt.
+* **Post-Liste** (`/` und `/posts`): Zeigt alle veröffentlichten Posts des Tenants in absteigender chronologischer Reihenfolge (neueste zuerst). Pro Eintrag werden Titel, Veröffentlichungsdatum und eine Klartext-Vorschau (max. 200 Zeichen, HTML-Tags entfernt) angezeigt. Die Landing Page (`/`) und `/posts` nutzen dieselbe View.
 * **Einzelansicht** (`/posts/{slug}`): Zeigt einen einzelnen veröffentlichten Post mit Titel, Veröffentlichungsdatum, Volltext, Quellen und Tags.
 
 Nicht veröffentlichte Posts (DRAFT, ARCHIVED) sind in der öffentlichen Ansicht nicht sichtbar.
 Die Slug-basierte URL sorgt für SEO-freundliche, leserliche Adressen.
+
+Die `buildExcerpts()`-Methode im Controller entfernt HTML-Tags via Regex und kürzt den Text auf 200 Zeichen, um eine saubere Vorschau ohne Markup darzustellen.
 
 [mermaid]
 ----
@@ -406,12 +411,13 @@ sequenceDiagram
     participant Service as PostService
     participant Repo as PostRepository
 
-    Reader->>Controller: GET /posts
+    Reader->>Controller: GET / oder GET /posts
     Controller->>Service: listPublishedPosts(tenantId)
     Service->>Repo: findPublishedByTenantId(tenantId)
     Repo-->>Service: List<Post> (nur PUBLISHED, sortiert nach publishedAt DESC)
     Service-->>Controller: List<Post>
-    Controller-->>Reader: posts/list.html (Model: posts)
+    Note over Controller: buildExcerpts() entfernt HTML-Tags, kürzt auf 200 Zeichen
+    Controller-->>Reader: posts/list.html (Model: posts, excerpts)
 
     Reader->>Controller: GET /posts/{slug}
     Controller->>Service: getPublishedPostBySlug(slug, tenantId)
@@ -511,8 +517,7 @@ Die Templates folgen einer hierarchischen Struktur mit dem Thymeleaf Layout Dial
 [mermaid]
 ----
 graph TD
-    A[layout/default.html] -->|layout:fragment=content| B[index.html]
-    A -->|layout:fragment=content| E[posts/list.html]
+    A[layout/default.html] -->|layout:fragment=content| E[posts/list.html]
     A -->|layout:fragment=content| F[posts/show.html]
     A -->|layout:fragment=content| G[posts/form.html]
     A --> C[fragments/header.html]
@@ -522,8 +527,7 @@ graph TD
 * **layout/default.html**: Basis-Layout mit HTML5-Grundgerüst, PicoCSS-Einbindung (CDN), semantischer Struktur (header, nav, main, footer)
 * **fragments/header.html**: Seitenkopf mit Blog-Titel und Navigationslinks (inkl. Link auf /posts)
 * **fragments/footer.html**: Fußzeile mit Copyright und Links
-* **index.html**: Startseite, dekoriert das Default-Layout via `layout:decorate`
-* **posts/list.html**: Post-Liste mit `th:each` über die Posts (SWR-026), Links zum Erstellen und Bearbeiten (SWR-027)
+* **posts/list.html**: Post-Liste (dient auch als Landing Page), mit `th:each` über die Posts (SWR-026), Klartext-Vorschau aus `excerpts`-Map, Links zum Erstellen und Bearbeiten (SWR-027)
 * **posts/show.html**: Einzelansicht eines Posts mit vollem Inhalt, Quellen und Tags (SWR-026)
 * **posts/form.html**: Wiederverwendbares Formular für Erstellen und Bearbeiten eines Posts (SWR-027)
 
@@ -726,14 +730,14 @@ Die Zugriffsregeln teilen die Endpunkte in öffentliche (lesende) und geschützt
 |===
 | Bereich | Endpunkte | Zugriff
 
-| Öffentlich (Web) | GET /posts, GET /posts/{slug} | Anonym (nur PUBLISHED-Posts sichtbar)
+| Öffentlich (Web) | GET /, GET /posts, GET /posts/{slug} | Anonym (nur PUBLISHED-Posts sichtbar)
 | Geschützt (Web) | GET /posts/new, GET /posts/{id}/edit, POST /posts, POST /posts/{id} | Formular-Login (ADMIN)
 | Geschützt (API) | GET/POST/PUT/DELETE /api/posts/**, /api/tags/**, /api/posts/{id}/translations/**, /api/posts/{id}/sources/** | HTTP Basic (ADMIN)
 | Öffentlich (Infra) | Swagger UI (/swagger-ui.html, /api-docs), Actuator Health | Anonym
 | Login | GET/POST /login, POST /logout | Anonym
 |===
 
-Die öffentliche Post-Liste (`/posts`) verwendet `listPublishedPosts()` und zeigt nur veröffentlichte Posts.
+Die öffentliche Post-Liste (`/` und `/posts`) verwendet `listPublishedPosts()` und zeigt nur veröffentlichte Posts.
 Nach Login verwendet dieselbe Route `listPosts()` und zeigt alle Posts mit Status-Badge (DRAFT, PUBLISHED, ARCHIVED).
 
 === Architektur

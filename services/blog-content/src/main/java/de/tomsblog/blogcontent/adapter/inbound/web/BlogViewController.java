@@ -10,8 +10,11 @@ import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
 import jakarta.validation.Valid;
 import java.security.Principal;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,6 +34,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @Controller
 public class BlogViewController {
 
+    private static final Pattern HTML_TAG_PATTERN = Pattern.compile("<[^>]*>");
+    private static final int EXCERPT_LENGTH = 200;
+
     private final PostUseCase postUseCase;
 
     public BlogViewController(PostUseCase postUseCase) {
@@ -38,8 +44,18 @@ public class BlogViewController {
     }
 
     @GetMapping("/")
-    public String index() {
-        return "index";
+    public String index(@RequestHeader("X-Tenant-Id") UUID tenantId, Model model, Principal principal) {
+        TenantId tenant = new TenantId(tenantId);
+        List<Post> posts;
+        if (principal != null) {
+            posts = postUseCase.listPosts(tenant);
+        } else {
+            posts = postUseCase.listPublishedPosts(tenant);
+        }
+        model.addAttribute("posts", posts);
+        model.addAttribute("excerpts", buildExcerpts(posts));
+        model.addAttribute("authenticated", principal != null);
+        return "posts/list";
     }
 
     /** @req SWR-026 @req SWR-028 */
@@ -53,6 +69,7 @@ public class BlogViewController {
             posts = postUseCase.listPublishedPosts(tenant);
         }
         model.addAttribute("posts", posts);
+        model.addAttribute("excerpts", buildExcerpts(posts));
         model.addAttribute("authenticated", principal != null);
         return "posts/list";
     }
@@ -142,5 +159,15 @@ public class BlogViewController {
     public String publishPost(@PathVariable UUID id, @RequestHeader("X-Tenant-Id") UUID tenantId) {
         postUseCase.publishPost(new PostId(id), new TenantId(tenantId));
         return "redirect:/posts";
+    }
+
+    private Map<UUID, String> buildExcerpts(List<Post> posts) {
+        Map<UUID, String> excerpts = new LinkedHashMap<>();
+        for (Post post : posts) {
+            String plain = HTML_TAG_PATTERN.matcher(post.getContent()).replaceAll("");
+            String excerpt = plain.length() > EXCERPT_LENGTH ? plain.substring(0, EXCERPT_LENGTH) + "..." : plain;
+            excerpts.put(post.getId().value(), excerpt);
+        }
+        return excerpts;
     }
 }

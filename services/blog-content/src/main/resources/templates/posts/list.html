@@ -33,7 +33,7 @@
                     </time>
                 </small>
             </header>
-            <p th:text="${post.content.length() > 200 ? post.content.substring(0, 200) + '...' : post.content}">
+            <p th:text="${excerpts[post.id.value]}">
                 Post preview text...
             </p>
             <footer>

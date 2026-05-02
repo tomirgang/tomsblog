@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+
+- Landing Page (`/`) zeigt nun die Post-Liste statt einer statischen Willkommensseite
+- Post-Vorschau in der Liste zeigt reinen Text (HTML-Tags werden entfernt) statt rohem HTML
+
 ## [0.5.0] - 2026-05-02
 
 ### Added

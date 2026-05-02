@@ -38,9 +38,66 @@ class BlogViewControllerTest {
     private final AuthorId authorId = AuthorId.generate();
 
     @Test
-    @DisplayName("SWR-025: GET / returns index view")
-    void index_returnsIndexView() throws Exception {
-        mockMvc.perform(get("/")).andExpect(status().isOk()).andExpect(view().name("index"));
+    @DisplayName("SWR-025: GET / returns post list view")
+    void index_returnsPostListView() throws Exception {
+        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of());
+
+        mockMvc.perform(get("/").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/list"))
+                .andExpect(model().attributeExists("posts"))
+                .andExpect(model().attributeExists("excerpts"));
+    }
+
+    @Test
+    @DisplayName("SWR-025: GET / strips HTML tags from excerpts")
+    void index_stripsHtmlFromExcerpts() throws Exception {
+        Post post = Post.create(
+                TenantId.of(tenantId), authorId, "HTML Post", "<h1>Title</h1><p>Hello world</p>", PostLocale.german());
+        post.publish();
+        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of(post));
+
+        mockMvc.perform(get("/").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute(
+                                "excerpts",
+                                org.hamcrest.Matchers.hasEntry(
+                                        org.hamcrest.Matchers.equalTo(
+                                                post.getId().value()),
+                                        org.hamcrest.Matchers.equalTo("TitleHello world"))));
+    }
+
+    @Test
+    @DisplayName("SWR-025: GET / truncates long excerpts to 200 chars")
+    void index_truncatesLongExcerpts() throws Exception {
+        String longContent = "<p>" + "a".repeat(250) + "</p>";
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Long Post", longContent, PostLocale.german());
+        post.publish();
+        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of(post));
+
+        mockMvc.perform(get("/").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute(
+                                "excerpts",
+                                org.hamcrest.Matchers.hasEntry(
+                                        org.hamcrest.Matchers.equalTo(
+                                                post.getId().value()),
+                                        org.hamcrest.Matchers.equalTo("a".repeat(200) + "..."))));
+    }
+
+    @Test
+    @DisplayName("SWR-025: GET / with auth returns all posts")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void index_authenticated_returnsAllPosts() throws Exception {
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Draft", "Content", PostLocale.german());
+        when(postUseCase.listPosts(any(TenantId.class))).thenReturn(List.of(post));
+
+        mockMvc.perform(get("/").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/list"));
+
+        verify(postUseCase).listPosts(any(TenantId.class));
+        verify(postUseCase, never()).listPublishedPosts(any(TenantId.class));
     }
 
     @Test
