@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  KI-Features nur für autorisierte Benutzer
+level: 15.0
+links: []
+normative: true
+ref: ''
+reviewed: OYz08noCCqHdtEJyIidWAECyxf3TytgkwJXlcggFS2w=
+text: |
+  Als Betreiber möchte ich, dass KI-gestützte Features (Übersetzung, Schreibassistenz,
+  Bildgenerierung) ausschließlich im Kontext eines authentifizierten und autorisierten
+  Benutzers (Rolle AUTHOR oder ADMIN) ausgelöst werden können, damit ein Missbrauch
+  der kostenpflichtigen KI-Dienste verhindert wird.

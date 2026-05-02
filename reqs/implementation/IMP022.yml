@@ -4,7 +4,7 @@ header: |
   Oeffentliche Blog-Ansicht (Post-Liste und Einzelansicht)
 level: 22.0
 links:
-- SWR026: null
+- SWR026: 1l2wxXJ9vWAR4C9wh8IS7N5qIH11Tug7ye273pUi0wM=
 normative: true
 ref: ''
 references:
@@ -28,7 +28,7 @@ references:
   type: file
 - path: services/blog-content/src/main/resources/templates/error/404.html
   type: file
-reviewed: null
+reviewed: 4I2dQX_ewHw0vuB_vt7_Gu64cOas6djVnWbVmsllPvs=
 text: |
   Implementierung der oeffentlichen Blog-Ansicht im Blog Content Service:
   - BlogViewController: GET /posts (Post-Liste), GET /posts/{slug} (Einzelansicht)

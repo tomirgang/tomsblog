@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- ADR-0021: Zero Trust mit Linkerd Service Mesh (mTLS, AuthorizationPolicies, User-Kontext-Propagierung)
+- STK-014: Stakeholder Requirement für sichere Service-zu-Service-Kommunikation
+- STK-015: Stakeholder Requirement für KI-Features nur für autorisierte Benutzer
+- SWR-029: Software Requirement für Linkerd mTLS und Default-Deny-Policies
+- SWR-030: Software Requirement für User-Kontext-Propagierung
+- TODO Phase 3 um Linkerd/Zero-Trust-Aufgaben erweitert
+- TODO Phase 6 um User-Kontext-Prüfung und AuthorizationPolicy für AI-Service ergänzt
 - ADR-0020: Flux als GitOps-Tool ausgewählt (statt ArgoCD oder Flux offen)
 
 ## [0.3.3] - 2026-05-01

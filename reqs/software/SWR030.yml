@@ -1,0 +1,19 @@
+active: true
+derived: false
+header: |
+  User-Kontext-Propagierung für geschützte Features
+level: 30.0
+links:
+- STK015: OYz08noCCqHdtEJyIidWAECyxf3TytgkwJXlcggFS2w=
+- SWR029: Vysm2FDIdONyetFa7k1ZjvsuCpslt1NRw9mAcaUzfmg=
+normative: true
+ref: ''
+reviewed: 8OdfKo7HtjSYemS8vJz_XyT-qe62rMJpx0sOCX2cy7I=
+text: |
+  Das System muss einen User-Kontext durch die Service-Kette propagieren:
+  - Das API-Gateway validiert JWT-Token und extrahiert User-Claims (User-ID, Rollen, Tenant).
+  - Aufrufende Services propagieren den User-Kontext als HTTP-Header (X-User-Id, X-User-Roles, X-Tenant-Id).
+  - Aufgerufene Services prüfen sowohl die Linkerd-Service-Identität als auch die User-Claims.
+  - KI-Features (Übersetzung, Schreibassistenz, Bildgenerierung) lehnen Anfragen ohne gültigen User-Kontext mit HTTP 403 ab.
+  - Nur Benutzer mit der Rolle AUTHOR oder ADMIN dürfen KI-Features auslösen.
+  - Der propagierte User-Kontext wird für Audit-Logging und Rate-Limiting verwendet.

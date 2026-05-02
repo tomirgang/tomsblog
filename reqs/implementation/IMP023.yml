@@ -4,7 +4,7 @@ header: |
   Thymeleaf-Formular zum Erstellen und Bearbeiten von Posts
 level: 23.0
 links:
-- SWR027: null
+- SWR027: c-3x5fz__QresH0AlIUcPnDAL-fFE6i5pYUuIDagpvk=
 normative: true
 ref: ''
 references:
@@ -18,7 +18,7 @@ references:
   type: file
 - path: services/blog-content/src/main/resources/templates/posts/list.html
   type: file
-reviewed: null
+reviewed: CD14yo7g_CO3n_kQJSI96TWB7GUTVIDj3dnb7K-bOqE=
 text: |
   Implementierung des Thymeleaf-Formulars zum Erstellen und Bearbeiten von Blog-Posts (SWR-027).
   Der BlogViewController wurde um vier Handler-Methoden erweitert: newPostForm (GET /posts/new),

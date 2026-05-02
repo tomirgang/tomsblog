@@ -44,8 +44,12 @@
 - [ ] Helm Chart / Kustomize für blog-content Service
 - [ ] Ingress-Controller + TLS (Let's Encrypt)
 - [ ] Container-Image bauen und deployen (CI/CD Pipeline)
+- [ ] Linkerd Service Mesh installieren (Helm via Flux, siehe ADR-0021)
+- [ ] mTLS für alle Service-zu-Service-Verbindungen aktivieren
+- [ ] Default-Deny AuthorizationPolicies konfigurieren
+- [ ] Trust Anchor und Issuer Certificates einrichten (cert-manager)
 
-> **MVP nach Phase 3:** Blog ist öffentlich lesbar, Schreibzugriff nur mit Admin-Login.
+> **MVP nach Phase 3:** Blog ist öffentlich lesbar, Schreibzugriff nur mit Admin-Login. Alle internen Verbindungen mTLS-gesichert.
 
 ### Phase 4: Benutzerverwaltung & Multi-Tenancy
 
@@ -80,6 +84,8 @@
 - [ ] KI-gestützte Übersetzung (Author-getriggert via UI, Ergebnis muss geprüft werden)
 - [ ] Schreibassistenz-API
 - [ ] Titelbild-Generierung (optional, Author-getriggert)
+- [ ] User-Kontext-Propagierung: KI-Endpoints nur mit Rolle AUTHOR/ADMIN (SWR-030)
+- [ ] AuthorizationPolicy: nur blog-content darf ai-service aufrufen
 - [ ] Thymeleaf: WYSIWYG-Editor für Autoren (ersetzt einfaches Formular)
 - [ ] Thymeleaf: Übersetzungs-UI (Review/Approve-Workflow)
 

@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Sichere Service-zu-Service-Kommunikation (Zero Trust)
+level: 14.0
+links: []
+normative: true
+ref: ''
+reviewed: pM1Zw2hfMLgkWQI3aqFPjTX8RHtBfJuIWLJooAYxerk=
+text: |
+  Als Betreiber möchte ich, dass alle Microservices untereinander ausschließlich
+  verschlüsselt und authentifiziert kommunizieren (mTLS), damit kein unautorisierter
+  Service auf interne APIs zugreifen kann (Zero-Trust-Prinzip).

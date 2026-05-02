@@ -4,10 +4,10 @@ header: |
   Thymeleaf-Formular zum Erstellen und Bearbeiten von Posts
 level: 27.0
 links:
-- STK001: null
+- STK001: 7nIt6jQu61g0LN6dl90kyg6r_lOlDzLfbV88NMUGVZQ=
 normative: true
 ref: ''
-reviewed: null
+reviewed: kxeg8LRz6gk8z9k2-JVhVfMOVyXLsffMJ0NdWoPxvL8=
 text: |
   Der Blog Content Service muss ein Thymeleaf-basiertes Formular bereitstellen, mit dem Posts erstellt und bearbeitet werden können:
   - Ein Formular unter /posts/new ermöglicht das Erstellen eines neuen Posts mit Feldern für Titel, Inhalt, Sprache (Locale), Social-Media-Titel (optional) und Social-Media-Zusammenfassung (optional).

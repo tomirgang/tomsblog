@@ -4,10 +4,10 @@ header: |
   Öffentliche Blog-Ansicht (Post-Liste und Einzelansicht)
 level: 26.0
 links:
-- STK001: null
+- STK001: 7nIt6jQu61g0LN6dl90kyg6r_lOlDzLfbV88NMUGVZQ=
 normative: true
 ref: ''
-reviewed: null
+reviewed: 4KCcUrO6Lq3H-cE4D1AGqBVRw1F9txc_FMEUPtRvxz0=
 text: |
   Der Blog Content Service muss eine öffentliche Thymeleaf-basierte Blog-Ansicht bereitstellen:
   - Eine Post-Liste unter /posts zeigt alle veröffentlichten Posts des Tenants in absteigender chronologischer Reihenfolge (neueste zuerst).

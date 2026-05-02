@@ -4,11 +4,11 @@ header: |
   Einfacher Admin-Login zum Schutz der Schreiboperationen
 level: 28.0
 links:
-- STK005: null
-- SWR007: null
+- STK005: I1sPnM45hXfURlnHMbKcea0yVOnpySyOjjAifjUZNZQ=
+- SWR007: f4n3hc0g0KFHVMux65Is-gJ8nxQ_k6oMy8y_IeY9LtM=
 normative: true
 ref: ''
-reviewed: null
+reviewed: xyPuSIT8TH9IanJFlK9NN4eGcAhAG-zwbNnkJnQHOaU=
 text: |
   Der Blog Content Service muss einen einfachen formbasierten Admin-Login bereitstellen, der alle Schreiboperationen schützt:
   - Spring Security sichert alle schreibenden Endpunkte (POST, PUT, DELETE auf /api/** sowie POST /posts, GET /posts/new, GET /posts/{id}/edit).

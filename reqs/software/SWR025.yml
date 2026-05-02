@@ -4,10 +4,10 @@ header: |
   Thymeleaf Layout-Grundgerüst (responsiv)
 level: 25.0
 links:
-- STK001: null
+- STK001: 7nIt6jQu61g0LN6dl90kyg6r_lOlDzLfbV88NMUGVZQ=
 normative: true
 ref: ''
-reviewed: null
+reviewed: nhAykPLeJagSDBDq6yv9_9HodiYYtgRvn5jEU7zAnI4=
 text: |
   Der Blog Content Service stellt ein responsives Thymeleaf-Layout als Server-Side-Rendering-UI bereit:
   - Ein zentrales Layout-Template mit Header, Navigation, Content-Bereich und Footer.

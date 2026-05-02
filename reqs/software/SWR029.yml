@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Service Mesh mit automatischem mTLS (Linkerd)
+level: 29.0
+links:
+- STK014: pM1Zw2hfMLgkWQI3aqFPjTX8RHtBfJuIWLJooAYxerk=
+normative: true
+ref: ''
+reviewed: -oF-mBw4aQeMvkkCgmxLtpuMnre-I6VC82wXWixoNoc=
+text: |
+  Das System muss ein Service Mesh (Linkerd) verwenden, das folgende Anforderungen erfüllt:
+  - Alle Service-zu-Service-Verbindungen im Kubernetes-Cluster werden automatisch mit mTLS verschlüsselt.
+  - Jeder Service erhält eine kryptografische Identität basierend auf seinem Kubernetes ServiceAccount.
+  - AuthorizationPolicies definieren erlaubte Kommunikationspfade (Default-Deny).
+  - Nur explizit konfigurierte Service-zu-Service-Verbindungen sind zulässig.
+  - Certificates werden automatisch rotiert (kein manuelles Key-Management).
+  - Die Installation erfolgt über Helm Charts und wird via Flux (GitOps) verwaltet.
