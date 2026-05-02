@@ -12,6 +12,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 - Default-Deny AuthorizationPolicies für Linkerd: Server-Ressource, MeshTLSAuthentication für Traefik, NetworkAuthentication für Kubelet-Probes (SWA023)
 
+### Fixed
+
+- CI: Race Condition bei parallelem docs-Deploy (main + tag) durch Beschränkung auf main-Branch behoben
+- CI: Redundanten `release: [published]` Trigger entfernt (tag push reicht)
+- CI: `release-assets` Job war nicht lauffähig (abhängig von `docs` Job der bei Release-Events übersprungen wurde)
+
+### Changed
+
+- CI: Concurrency-Group hinzugefügt um superseded Runs abzubrechen
+- CI: `spotless:check` und `verify` in einen Maven-Aufruf zusammengefasst
+- CI: Container-Image wird auch bei Tag-Push gebaut (mit Semver-Tags)
+- CI: `release-assets` Job ist jetzt self-contained (generiert Docs und Requirements selbst)
+
 ## [0.4.4] - 2026-05-02
 
 ### Added

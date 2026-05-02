@@ -6,8 +6,10 @@ on:
     tags: ['v*']
   pull_request:
     branches: [main]
-  release:
-    types: [published]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -30,11 +32,8 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build and test
-        run: ./mvnw verify --batch-mode --no-transfer-progress
-
-      - name: Check formatting
-        run: ./mvnw spotless:check --batch-mode --no-transfer-progress
+      - name: Build, test, and check formatting
+        run: ./mvnw spotless:check verify --batch-mode --no-transfer-progress
 
       - name: Generate coverage summary
         if: always()
@@ -89,7 +88,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: write
 
@@ -141,6 +140,7 @@ jobs:
 
   requirements:
     runs-on: ubuntu-latest
+    if: "!startsWith(github.ref, 'refs/tags/')"
 
     steps:
       - uses: actions/checkout@v4
@@ -170,7 +170,7 @@ jobs:
   container:
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v4
@@ -202,7 +202,9 @@ jobs:
           images: ghcr.io/${{ github.repository }}/blog-content
           tags: |
             type=sha
-            type=raw,value=latest
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push container image
         uses: docker/build-push-action@v6
@@ -216,13 +218,16 @@ jobs:
 
   release-assets:
     runs-on: ubuntu-latest
-    needs: [build, docs, requirements]
-    if: github.event_name == 'release'
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Set up JDK 25
         uses: actions/setup-java@v4
@@ -234,21 +239,35 @@ jobs:
       - name: Build JAR (skip tests, already passed)
         run: ./mvnw package -pl services/blog-content -am --batch-mode --no-transfer-progress -DskipTests
 
-      - name: Download documentation artifact
-        uses: actions/download-artifact@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          name: documentation
-          path: artifacts/documentation
+          node-version: '20'
 
-      - name: Download requirements report artifact
-        uses: actions/download-artifact@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          name: requirements-report
-          path: artifacts/requirements-report
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install Doorstop
+        run: pip install -r requirements.txt
+
+      - name: Install Antora and extensions
+        run: npm install && npm install -g @antora/cli @antora/site-generator
+
+      - name: Generate Antora documentation
+        run: antora antora-playbook.yml
+
+      - name: Generate requirements report
+        run: |
+          doorstop publish all build/site/requirements/
+          ./docs/scripts/inject-requirements-nav.sh build/site/requirements
 
       - name: Package artifacts
         run: |
-          cd artifacts/documentation && zip -r ../../documentation.zip . && cd ../..
+          cd build/site && zip -r ../../documentation.zip . && cd ../..
+          doorstop publish all artifacts/requirements-report/
           cd artifacts/requirements-report && zip -r ../../requirements-report.zip . && cd ../..
 
       - name: Upload assets to release
