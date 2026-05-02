@@ -1,0 +1,19 @@
+active: true
+derived: false
+header: |
+  Kubernetes-Cluster-Provisionierung mit kube-hetzner
+level: 17.0
+links:
+- SWR010: RkKQEXHFLRqRORbxSNSaFfEZnztwmUMANQIc-J2LatE=
+normative: true
+ref: ''
+reviewed: 4gbOAiezuvIiB_Lij738q5yI3Tyz-CWqDFB4byx21ic=
+text: |
+  Das Kubernetes-Cluster wird mit dem kube-hetzner Terraform-Modul und OpenTofu
+  auf Hetzner Cloud provisioniert. Konfiguration: 1 Control-Plane-Node (CX23),
+  2 Worker-Nodes (CX23), Load Balancer (LB11), Standort Nuernberg (nbg1).
+  WireGuard-Verschluesselung ist zwischen allen Nodes aktiviert.
+  Hetzner CSI (hcloud-volumes) und CCM sind integriert.
+  Automatische Upgrades sind deaktiviert; Updates erfolgen manuell.
+  Die Cluster-Provisionierung liegt in einem separaten IaC-Repository,
+  getrennt von den applikationsspezifischen Kubernetes-Ressourcen.

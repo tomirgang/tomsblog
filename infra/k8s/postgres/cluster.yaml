@@ -1,0 +1,24 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres-cluster
+  namespace: postgres
+spec:
+  instances: 2
+
+  postgresql:
+    parameters:
+      shared_buffers: "256MB"
+      effective_cache_size: "512MB"
+
+  storage:
+    size: 10Gi
+    storageClass: hcloud-volumes
+
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"

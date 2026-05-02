@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  PostgreSQL-Betrieb mit CloudNativePG Operator
+level: 18.0
+links:
+- SWR010: RkKQEXHFLRqRORbxSNSaFfEZnztwmUMANQIc-J2LatE=
+normative: true
+ref: ''
+reviewed: gTuS0hQYLORTAUwCzCyIolFPGqnTwuc1VicvMCv_614=
+text: |
+  PostgreSQL wird ueber den CloudNativePG Operator als Kubernetes Custom Resource
+  verwaltet. Der Operator wird als Plattform-Voraussetzung im IaC-Repository
+  installiert. Die konkreten Cluster-Definitionen (Instanz-Anzahl, Sizing,
+  Storage) liegen applikationsspezifisch im tomsblog-Repository unter
+  infra/k8s/postgres/. Initiale Konfiguration: 1 Instanz, 10 Gi Storage
+  (hcloud-volumes), 256 MB shared_buffers, 512 Mi bis 1 Gi RAM.
+  Spaeter wird auf HA (2+ Instanzen) und S3-Backup erweitert.

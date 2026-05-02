@@ -39,7 +39,7 @@
 ### Phase 3: Infrastruktur & erstes Deployment
 
 - [x] Hetzner Kubernetes Cluster aufsetzen (kube-hetzner / OpenTofu)
-- [ ] CloudNativePG Operator für PostgreSQL
+- [x] CloudNativePG Operator für PostgreSQL
 - [ ] GitOps einrichten (Flux, siehe ADR-0020)
 - [ ] Helm Chart / Kustomize für blog-content Service
 - [ ] Ingress-Controller + TLS (Let's Encrypt)
@@ -198,6 +198,7 @@
 
 ## Querschnitt (laufend)
 
+- [x] PostgreSQL HA: Auf mindestens 2 Instanzen erhöhen (nach Phase 3 MVP)
 - [ ] Backup-Strategie für PostgreSQL
 - [ ] Backup-Storage auf Netcup VM (Garage/S3)
 - [ ] Disaster-Recovery-Plan dokumentieren

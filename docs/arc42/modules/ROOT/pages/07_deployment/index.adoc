@@ -7,6 +7,47 @@ Das Deployment-Diagramm zeigt die Zielumgebung auf Kubernetes (STK-007). Jeder S
 
 plantuml::partial$plantuml/deployment.puml[format=svg]
 
+== Cluster-Provisionierung
+
+Das Kubernetes-Cluster wird mit dem Terraform-Modul https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner[kube-hetzner] und OpenTofu auf Hetzner Cloud provisioniert (SWA-017, ADR-0022).
+
+[cols="1,2"]
+|===
+| Parameter | Wert
+
+| Distribution | k3s (via kube-hetzner)
+| Control Plane | 1x CX23, Nürnberg (nbg1)
+| Worker Nodes | 2x CX23, Nürnberg (nbg1)
+| Load Balancer | LB11, Nürnberg
+| Netzwerk-Verschlüsselung | WireGuard
+| Storage | Hetzner CSI (hcloud-volumes)
+| Ingress | Traefik (k3s-Standard)
+| Basis-Domain | cluster.tomirgang.de
+| Kosten | ca. 21,55 EUR/Monat
+|===
+
+Die Plattform-Provisionierung (Cluster, Nodes, Basis-Operatoren) liegt in einem separaten IaC-Repository. Applikationsspezifische Kubernetes-Ressourcen (DB-Instanzen, Service-Deployments) werden aus dem Anwendungs-Repository via Flux synchronisiert (ADR-0020).
+
+== Datenbank-Betrieb (CloudNativePG)
+
+PostgreSQL wird über den CloudNativePG Operator als Kubernetes Custom Resource verwaltet (SWA-018, ADR-0023). Der Operator wird als Plattform-Voraussetzung im IaC-Repository installiert, die konkreten Cluster-Definitionen liegen unter `infra/k8s/postgres/`.
+
+Aktuelle Konfiguration (Phase 3 / MVP):
+
+[cols="1,2"]
+|===
+| Parameter | Wert
+
+| Instanzen | 1 (Single Instance)
+| Storage | 10 Gi (hcloud-volumes)
+| shared_buffers | 256 MB
+| effective_cache_size | 512 MB
+| Memory | 512 Mi Request / 1 Gi Limit
+| CPU | 250m Request / 1000m Limit
+| Namespace | postgres
+| Service-Endpunkt | postgres-cluster-rw.postgres.svc.cluster.local:5432
+|===
+
 == Lokale Entwicklung
 
 Für die lokale Entwicklung werden externe Abhängigkeiten via Docker Compose bereitgestellt:

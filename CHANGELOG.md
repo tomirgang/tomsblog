@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- ADR-0022: Kubernetes-Plattform mit kube-hetzner und OpenTofu
+- ADR-0023: CloudNativePG Operator für PostgreSQL auf Kubernetes
+- SWA-017: Kubernetes-Cluster-Provisionierung mit kube-hetzner (OpenTofu, Hetzner Cloud)
+- SWA-018: PostgreSQL-Betrieb mit CloudNativePG Operator
+- Applikationsspezifische K8s-Manifeste unter infra/k8s/ (PostgreSQL Cluster, PVC)
+- arc42 Verteilungssicht um Cluster-Provisionierung und CloudNativePG-Details erweitert
 - ADR-0021: Zero Trust mit Linkerd Service Mesh (mTLS, AuthorizationPolicies, User-Kontext-Propagierung)
 - STK-014: Stakeholder Requirement für sichere Service-zu-Service-Kommunikation
 - STK-015: Stakeholder Requirement für KI-Features nur für autorisierte Benutzer
