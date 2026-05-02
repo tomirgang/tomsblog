@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-05-02
+
 ### Fixed
 
 - TLS-Zertifikat-Ausstellung: NetworkPolicies korrigiert (Traefik-Namespace statt kube-system)
