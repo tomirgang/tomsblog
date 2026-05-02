@@ -1,6 +1,5 @@
 name: tomsblog-arc42
 version: true
-prerelease: -dev
 title: 'Toms Blog: Architekturdokumentation'
 start_page: ROOT:index.adoc
 nav:
