@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- Ingress + TLS: Kubernetes Ingress-Ressource für blog.tomirgang.de mit automatischem Let's Encrypt TLS
+- cert-manager ClusterIssuer (Staging + Production) für ACME HTTP-01 Challenges
+- Traefik Middleware für HTTP→HTTPS Redirect
+- SWR-032: HTTPS-Verschlüsselung für externe Zugriffe
+- SWA-021: TLS-Terminierung am Ingress mit cert-manager und Let's Encrypt
+- arc42 Verteilungssicht: Abschnitt zu TLS und Ingress ergänzt
 - SOPS + age Verschlüsselung für Secrets im Git-Repository (.sops.yaml, Flux Decryption)
 - SWA-020: SOPS+age Architektur-Requirement
 - SWR-031: Software-Requirement für verschlüsselte Secrets und automatische Synchronisation

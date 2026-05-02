@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  HTTPS-Verschlüsselung für externe Zugriffe
+level: 32.0
+links:
+- STK012: ckQcXaP3v0kHxqLaapMqDFKCPmEqjufWwk-C8ABem1g=
+normative: true
+ref: ''
+reviewed: ZKTiBOEHOa2RK_30aBa7g4YQvIbvbYtIgkyvs4kA_J4=
+text: |
+  Alle externen Zugriffe auf die Plattform müssen über HTTPS (TLS 1.2+)
+  verschlüsselt erfolgen. HTTP-Anfragen auf Port 80 werden automatisch
+  auf HTTPS (Port 443) umgeleitet. TLS-Zertifikate werden automatisch
+  über Let's Encrypt (ACME-Protokoll) bereitgestellt und vor Ablauf
+  erneuert. Die TLS-Terminierung erfolgt am Ingress-Controller.

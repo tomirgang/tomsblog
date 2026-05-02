@@ -1,0 +1,28 @@
+active: true
+derived: false
+header: |
+  TLS-Terminierung am Ingress mit cert-manager und Let's Encrypt
+level: 21.0
+links:
+- SWR032: XbnPOFWifvpveZfHu8l0sgQDRXazjOt9q6PO9q9dnIY=
+normative: true
+ref: ''
+reviewed: 9J7hNNvOclwzJdvXSAJy8kRUlZeQSTYdSzqJuJl0VwQ=
+text: |
+  Die TLS-Terminierung für externen Traffic erfolgt am Traefik Ingress-Controller
+  (k3s-Standard). Zertifikate werden automatisch über cert-manager mit einem
+  Let's Encrypt ClusterIssuer (HTTP-01 Challenge) bereitgestellt.
+
+  Architektur:
+  - cert-manager wird als Cluster-Operator im IaC-Repository installiert
+    (analog zu CloudNativePG und Reflector).
+  - Ein ClusterIssuer (letsencrypt-prod) konfiguriert den ACME HTTP-01 Solver
+    mit Traefik als Ingress-Class.
+  - Kubernetes Ingress-Ressourcen referenzieren den ClusterIssuer via Annotation
+    und erhalten automatisch TLS-Zertifikate.
+  - HTTP-zu-HTTPS-Redirect wird am Ingress konfiguriert.
+
+  Voraussetzungen:
+  - cert-manager CRDs und Controller im Cluster (IaC-Repository)
+  - DNS A-Record zeigt auf den Hetzner Load Balancer
+  - Port 80 am LB offen für ACME HTTP-01 Challenge-Validierung

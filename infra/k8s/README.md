@@ -12,7 +12,8 @@ im separaten IaC-Repository (`kubernetes-playground/K8nCluster`) mit OpenTofu pr
 
 | Pfad             | Beschreibung                                                                 |
 | ---------------- | ---------------------------------------------------------------------------- |
-| `blog-content/`  | Kustomize-Manifeste für den Blog Content Service (Deployment, Service, Secret) |
+| `blog-content/`  | Kustomize-Manifeste für den Blog Content Service (Deployment, Service, Ingress, Secret) |
+| `cert-manager/`  | ClusterIssuer-Definitionen für Let's Encrypt (Staging + Production)           |
 | `postgres/`      | CloudNativePG Cluster-Definition und Namespace für die Blog-Datenbank        |
 | `pvc.yaml`       | PersistentVolumeClaim für allgemeinen Blog-Storage (Hetzner Volumes)          |
 
@@ -102,6 +103,42 @@ kubectl apply -k .
 | Verantwortung                                            | Repository                       |
 | -------------------------------------------------------- | -------------------------------- |
 | Cluster-Provisionierung (Nodes, Netzwerk, CSI/CCM)       | `kubernetes-playground/K8nCluster` |
-| Operator-Installation (CloudNativePG, Reflector, etc.)   | `kubernetes-playground/flux/`    |
+| Operator-Installation (CloudNativePG, Reflector, cert-manager) | `kubernetes-playground/flux/`    |
 | Applikationsspezifische Ressourcen (DB-Instanzen, PVCs)  | `tomsblog/infra/k8s/`            |
 | Kustomize-Manifeste für Blog-Services                    | `tomsblog/infra/k8s/`            |
+| cert-manager ClusterIssuer + Ingress-Ressourcen          | `tomsblog/infra/k8s/`            |
+
+## TLS und Ingress
+
+Der Blog ist unter `https://blog.tomirgang.de` erreichbar. TLS-Zertifikate werden
+automatisch über cert-manager und Let's Encrypt (ACME HTTP-01) bereitgestellt.
+
+### Voraussetzungen (IaC-Repository)
+
+- cert-manager Operator installiert (CRDs + Controller)
+- DNS A-Record: `blog.tomirgang.de` → Hetzner LB IP
+- Port 80 am Load Balancer offen (für ACME Challenge-Validierung)
+
+### Ressourcen in diesem Repo
+
+| Datei | Zweck |
+| ----- | ----- |
+| `cert-manager/clusterissuer-letsencrypt-prod.yaml` | Let's Encrypt Production Issuer |
+| `cert-manager/clusterissuer-letsencrypt-staging.yaml` | Let's Encrypt Staging Issuer (zum Testen) |
+| `blog-content/ingress.yaml` | Ingress-Regel für blog.tomirgang.de mit TLS |
+| `blog-content/middleware-redirect-https.yaml` | HTTP→HTTPS Redirect (Traefik Middleware) |
+
+### Erstmaliges Testen mit Staging
+
+Vor der Nutzung des Production-Issuers empfiehlt sich ein Test mit Staging
+(höhere Rate Limits, kein vertrauenswürdiges Zertifikat):
+
+```bash
+# In ingress.yaml die Annotation ändern:
+# cert-manager.io/cluster-issuer: letsencrypt-staging
+kubectl apply -k .
+kubectl get certificate -n tomsblog
+kubectl describe certificate blog-content-tls -n tomsblog
+```
+
+Nach erfolgreichem Test die Annotation auf `letsencrypt-prod` zurücksetzen.

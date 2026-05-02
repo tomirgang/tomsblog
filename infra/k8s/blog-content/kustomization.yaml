@@ -4,6 +4,8 @@ resources:
   - namespace.yaml
   - deployment.yaml
   - service.yaml
+  - ingress.yaml
+  - middleware-redirect-https.yaml
   - secret.yaml
   - network-policy-deny.yaml
   - network-policy-ingress.yaml

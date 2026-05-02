@@ -28,6 +28,29 @@ Das Kubernetes-Cluster wird mit dem Terraform-Modul https://github.com/kube-hetz
 
 Die Plattform-Provisionierung (Cluster, Nodes, Basis-Operatoren) liegt in einem separaten IaC-Repository. Applikationsspezifische Kubernetes-Ressourcen (DB-Instanzen, Service-Deployments) werden aus dem Anwendungs-Repository via Flux synchronisiert (ADR-0020).
 
+== TLS-Terminierung und Ingress
+
+Externer Traffic wird über den Traefik Ingress-Controller (k3s-Standard) mit automatischer TLS-Terminierung bedient (SWA-021). Zertifikate werden über cert-manager und Let's Encrypt (ACME HTTP-01) bereitgestellt.
+
+[cols="1,2"]
+|===
+| Parameter | Wert
+
+| Ingress-Controller | Traefik (k3s-Standard, kube-system)
+| Zertifikats-Management | cert-manager (ClusterIssuer)
+| ACME Provider | Let's Encrypt (Production)
+| Challenge-Typ | HTTP-01
+| Domain | blog.tomirgang.de
+| TLS Secret | blog-content-tls (automatisch verwaltet)
+| HTTP-Redirect | Permanent Redirect (301) auf HTTPS
+|===
+
+Voraussetzungen (IaC-Repository):
+
+* cert-manager Operator installiert (CRDs + Controller)
+* DNS A-Record: `blog.tomirgang.de` zeigt auf Hetzner LB IP
+* Port 80 am Load Balancer offen (ACME Challenge-Validierung)
+
 == Datenbank-Betrieb (CloudNativePG)
 
 PostgreSQL wird über den CloudNativePG Operator als Kubernetes Custom Resource verwaltet (SWA-018, ADR-0023). Der Operator wird als Plattform-Voraussetzung im IaC-Repository installiert, die konkreten Cluster-Definitionen liegen unter `infra/k8s/postgres/`.
