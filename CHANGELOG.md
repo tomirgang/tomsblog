@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-05-02
+
 ### Added
 
 - mTLS für alle Service-zu-Service-Verbindungen: Traefik-Namespace mit Linkerd Mesh-Injection annotiert (`linkerd.io/inject: enabled`)
