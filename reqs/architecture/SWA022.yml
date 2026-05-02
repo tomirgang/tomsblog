@@ -25,6 +25,9 @@ text: |
   - Namespaces erhalten die Annotation linkerd.io/inject: enabled.
   - Pods werden beim naechsten Rollout automatisch mit dem Linkerd Sidecar-Proxy
     versehen.
+  - Der tomsblog-Namespace ist mit der Injection-Annotation konfiguriert.
+  - Der traefik-Namespace wird ebenfalls mit linkerd.io/inject: enabled annotiert,
+    damit Ingress-Traffic zum blog-content Service per mTLS gesichert ist.
 
   Ressourcen-Limits:
   - Proxy: 64Mi Request, 128Mi Limit (angepasst an 3-Node-Cluster).

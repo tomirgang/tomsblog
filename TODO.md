@@ -46,9 +46,9 @@
 - [x] Ingress-Controller + TLS (Let's Encrypt)
 - [x] Container-Image bauen und deployen (CI/CD Pipeline)
 - [x] Linkerd Service Mesh installieren (Helm via Flux, siehe ADR-0021)
-- [ ] mTLS für alle Service-zu-Service-Verbindungen aktivieren
+- [x] mTLS für alle Service-zu-Service-Verbindungen aktivieren
 - [ ] Default-Deny AuthorizationPolicies konfigurieren
-- [ ] Trust Anchor und Issuer Certificates einrichten (cert-manager)
+- [x] Trust Anchor und Issuer Certificates einrichten (cert-manager)
 
 > **MVP nach Phase 3:** Blog ist öffentlich lesbar, Schreibzugriff nur mit Admin-Login. Alle internen Verbindungen mTLS-gesichert.
 

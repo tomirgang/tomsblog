@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- mTLS für alle Service-zu-Service-Verbindungen: Traefik-Namespace mit Linkerd Mesh-Injection annotiert (`linkerd.io/inject: enabled`)
+- Trust Anchor und Identity Issuer Certificates als erledigt markiert (waren bereits konfiguriert)
+
 ## [0.4.3] - 2026-05-02
 
 ### Fixed
