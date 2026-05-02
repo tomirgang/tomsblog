@@ -4,3 +4,4 @@ resources:
   - postgres/namespace.yaml
   - postgres/cluster.yaml
   - pvc.yaml
+  - blog-content

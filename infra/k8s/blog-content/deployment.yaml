@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog-content
+  namespace: tomsblog
+  labels:
+    app: blog-content
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blog-content
+  template:
+    metadata:
+      labels:
+        app: blog-content
+    spec:
+      containers:
+        - name: blog-content
+          image: ghcr.io/tomirgang/tomsblog/blog-content:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "k8s"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres-cluster-rw.postgres.svc.cluster.local:5432/blog_content"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: blog-content-db
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: blog-content-db
+                  key: password
+            - name: BLOG_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: blog-content-secrets
+                  key: admin-password
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "384Mi"
+              cpu: "200m"
+            limits:
+              memory: "768Mi"
+              cpu: "1000m"

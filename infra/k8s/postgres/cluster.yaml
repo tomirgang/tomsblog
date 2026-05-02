@@ -6,6 +6,11 @@ metadata:
 spec:
   instances: 2
 
+  bootstrap:
+    initdb:
+      database: blog_content
+      owner: blog_content
+
   postgresql:
     parameters:
       shared_buffers: "256MB"

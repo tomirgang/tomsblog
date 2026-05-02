@@ -12,20 +12,19 @@ im separaten IaC-Repository (`kubernetes-playground/K8nCluster`) mit OpenTofu pr
 
 | Pfad | Beschreibung |
 |------|-------------|
+| `blog-content/` | Kustomize-Manifeste für den Blog Content Service (Deployment, Service, Secret) |
 | `postgres/` | CloudNativePG Cluster-Definition und Namespace für die Blog-Datenbank |
 | `pvc.yaml` | PersistentVolumeClaim für allgemeinen Blog-Storage (Hetzner Volumes) |
 
-## Deployment (manuell, bis Flux eingerichtet)
+## Deployment
+
+Flux synchronisiert dieses Verzeichnis automatisch (Kustomization `tomsblog-infra`, Intervall 10 Min).
+
+Manuelle Anwendung:
 
 ```bash
 kubectl config use-context tomsblog
-
-# PostgreSQL-Namespace und Cluster
-kubectl apply -f postgres/namespace.yaml
-kubectl apply -f postgres/cluster.yaml
-
-# Allgemeiner Storage
-kubectl apply -f pvc.yaml
+kubectl apply -k .
 ```
 
 ## Abgrenzung zum IaC-Repository
@@ -35,4 +34,4 @@ kubectl apply -f pvc.yaml
 | Cluster-Provisionierung (Nodes, Netzwerk, CSI/CCM) | `kubernetes-playground/K8nCluster` |
 | Operator-Installation (CloudNativePG, Strimzi, etc.) | `kubernetes-playground/K8nCluster` |
 | Applikationsspezifische Ressourcen (DB-Instanzen, PVCs, Services) | `tomsblog/infra/k8s/` |
-| Helm Charts / Kustomize für Blog-Services | `tomsblog/infra/k8s/` (geplant) |
+| Kustomize-Manifeste für Blog-Services | `tomsblog/infra/k8s/` |

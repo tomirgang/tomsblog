@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- ADR-0024: Kustomize für Kubernetes-Manifeste (Entscheidung gegen Helm)
+- NetworkPolicies für Namespace `tomsblog` (Default-Deny-Ingress, Ingress von Traefik, Intra-Namespace, Egress zu PostgreSQL/DNS/Internet)
+- Kustomize-Manifeste für blog-content Service (Deployment, Service, Secret, Namespace)
+- Spring-Profil `application-k8s.yml` für Kubernetes-Deployment
+- CloudNativePG initdb-Konfiguration (Datenbank `blog_content`, Owner `blog_content`)
+
+## [0.3.4] - 2026-05-02
+
+### Added
+
 - ADR-0022: Kubernetes-Plattform mit kube-hetzner und OpenTofu
 - ADR-0023: CloudNativePG Operator für PostgreSQL auf Kubernetes
 - SWA-017: Kubernetes-Cluster-Provisionierung mit kube-hetzner (OpenTofu, Hetzner Cloud)
