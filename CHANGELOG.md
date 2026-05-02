@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-05-02
+
 ### Changed
 
 - Landing Page (`/`) zeigt nun die Post-Liste statt einer statischen Willkommensseite
