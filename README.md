@@ -22,12 +22,12 @@ Das System folgt einer **hexagonalen Architektur** (Ports & Adapters) und ist al
 | Dokument-DB    | MongoDB (per Service, wo passend)                            |
 | Caching        | Redis                                                |
 | Observability  | Prometheus, Grafana, Loki, Tempo                     |
-| GitOps         | ArgoCD oder Flux                                     |
+| GitOps         | Flux (ADR-0020)                                      |
 | Backup-Storage | Netcup VM mit Garage (S3-kompatibel)                 |
 
 ### Deployment & GitOps
 
-Das Deployment erfolgt vollständig über GitOps-Prinzipien. Infrastruktur- und Anwendungskonfiguration werden deklarativ in Git verwaltet und automatisch über ArgoCD oder Flux synchronisiert.
+Das Deployment erfolgt vollständig über GitOps-Prinzipien. Infrastruktur- und Anwendungskonfiguration werden deklarativ in Git verwaltet und automatisch über Flux synchronisiert.
 
 ## Features
 

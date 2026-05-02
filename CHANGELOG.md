@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- ADR-0020: Flux als GitOps-Tool ausgewählt (statt ArgoCD oder Flux offen)
+
 ## [0.3.3] - 2026-05-01
 
 ### Changed

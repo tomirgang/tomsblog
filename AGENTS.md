@@ -23,7 +23,7 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 | Messaging     | Apache Kafka (Event-Streaming), RabbitMQ (Task-Queues)                       |
 | UI (Phase 1)  | Thymeleaf (SSR)                                                              |
 | UI (later)    | Angular + Nx + Native Federation (REST), React + Module Federation (GraphQL) |
-| Infra         | Kubernetes (Hetzner), ArgoCD/Flux, Helm/Kustomize                            |
+| Infra         | Kubernetes (Hetzner), Flux, Helm/Kustomize                                   |
 | Observability | Prometheus, Grafana, Loki, Tempo                                             |
 | AI            | OpenRouter                                                                   |
 | Requirements  | Doorstop (YAML in Git, ASPICE-oriented traceability)                         |

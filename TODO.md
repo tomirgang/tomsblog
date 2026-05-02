@@ -32,15 +32,15 @@
 - [x] Thymeleaf: Layout-Grundgerüst (responsiv, einfaches CSS-Framework)
 - [x] Thymeleaf: Öffentliche Blog-Ansicht (Post-Liste, Einzelansicht)
 - [x] Thymeleaf: Einfaches Formular zum Erstellen/Bearbeiten von Posts
-- [ ] Einfacher Admin-Login (Spring Security, formbasiert) zum Schutz der Schreiboperationen
+- [x] Einfacher Admin-Login (Spring Security, formbasiert) zum Schutz der Schreiboperationen
 
 > **MVP nach Phase 2:** Blog-Posts lesen, erstellen und bearbeiten lokal im Browser.
 
 ### Phase 3: Infrastruktur & erstes Deployment
 
-- [ ] Hetzner Kubernetes Cluster aufsetzen (kube-hetzner / Terraform)
+- [x] Hetzner Kubernetes Cluster aufsetzen (kube-hetzner / OpenTofu)
 - [ ] CloudNativePG Operator für PostgreSQL
-- [ ] GitOps einrichten (ArgoCD oder Flux)
+- [ ] GitOps einrichten (Flux, siehe ADR-0020)
 - [ ] Helm Chart / Kustomize für blog-content Service
 - [ ] Ingress-Controller + TLS (Let's Encrypt)
 - [ ] Container-Image bauen und deployen (CI/CD Pipeline)
