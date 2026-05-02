@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Linkerd Trust-Roots ConfigMap als GitOps-Manifest (`trust-roots-configmap.yaml`)
+
+### Fixed
+
+- Linkerd Server CRD API-Version korrigiert (`v1beta3` → `v1beta1`)
+- Linkerd CRDs: Gateway API HTTPRoute CRD-Konflikt behoben (temporäres `enableHttpRoutes: false`, dann Neuinstallation)
+- Egress-NetworkPolicy: Zugriff auf Linkerd-Namespace ergänzt (Sidecar-Proxy benötigt Verbindung zu Identity und Destination)
+- Blog-Content Deployment auf 1 Replica reduziert (Session-Affinität ohne gemeinsamen Session-Store nicht gewährleistet)
+
 ## [0.4.6] - 2026-05-02
 
 ## [0.4.5] - 2026-05-02
