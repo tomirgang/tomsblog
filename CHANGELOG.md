@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- SOPS + age Verschlüsselung für Secrets im Git-Repository (.sops.yaml, Flux Decryption)
+- SWA-020: SOPS+age Architektur-Requirement
+- SWR-031: Software-Requirement für verschlüsselte Secrets und automatische Synchronisation
+- infra/k8s/README.md: Secrets-Management-Dokumentation (Architektur, Workflow, Schlüsselverwaltung)
 - ADR-0025: Secrets Management Strategie (Reflector jetzt, ESO in Meilenstein 2)
 - ADR-0026: Migration auf Helm Charts in Phase 5 (Kafka, RabbitMQ, MongoDB Operatoren)
 - STK-016: Stakeholder Requirement für sichere Verwaltung von Secrets im Cluster

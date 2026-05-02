@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Secrets verschlüsselt im Repository und automatisch synchronisiert
+level: 31.0
+links:
+- STK016: bHjBgVbHga44ljUM-_zfhx4B2YFx3T1GgroBhKG31cM=
+normative: true
+ref: ''
+reviewed: cBailBmGdF18aPUf1vm10Hf4Z2vTb2q3FHVo7rLGTgU=
+text: |
+  Sensible Zugangsdaten (Passwörter, API-Keys, Tokens) dürfen nicht im Klartext
+  im Git-Repository gespeichert werden. Sie müssen vor dem Commit verschlüsselt
+  werden und beim Deployment automatisch entschlüsselt werden. Operator-generierte
+  Secrets (z.B. Datenbank-Credentials) müssen automatisch in die Namespaces der
+  konsumierenden Services synchronisiert werden, ohne manuelle Kopiervorgänge.

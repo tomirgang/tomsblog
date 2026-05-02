@@ -6,53 +6,70 @@ Accepted
 
 ## Kontext
 
-Microservices im Kubernetes-Cluster benoetigen Zugriff auf Datenbank-Credentials und andere Secrets, die von Operatoren (z.B. CloudNativePG) in separaten Namespaces verwaltet werden. Es wird eine Loesung benoetigt, die:
+Microservices im Kubernetes-Cluster benötigen Zugriff auf Datenbank-Credentials und andere Secrets, die von Operatoren (z.B. CloudNativePG) in separaten Namespaces verwaltet werden. Gleichzeitig müssen applikationsspezifische Secrets (Admin-Passwörter, API-Keys) sicher im Git-Repository gespeichert werden können, ohne sie im Klartext zu committen. Es wird eine Lösung benötigt, die:
 
-- Cross-Namespace Secret-Synchronisation ermoeglicht
-- Automatische Updates bei Credential-Rotation unterstuetzt
-- Im spaeten Projektverlauf externe Secret-Stores (z.B. HashiCorp Vault) anbinden kann
-- Einfach zu betreiben ist fuer die aktuelle Projektphase (Meilenstein 1)
+- Cross-Namespace Secret-Synchronisation ermöglicht
+- Automatische Updates bei Credential-Rotation unterstützt
+- Secrets verschlüsselt im Git-Repository speichern kann (GitOps-kompatibel)
+- Im späten Projektverlauf externe Secret-Stores (z.B. HashiCorp Vault) anbinden kann
+- Einfach zu betreiben ist für die aktuelle Projektphase (Meilenstein 1)
 
 ## Entscheidung
 
-Wir verfolgen eine zweistufige Secrets-Management-Strategie:
+Wir verfolgen eine dreistufige Secrets-Management-Strategie:
 
-### Phase 1 (Meilenstein 1): Reflector
+### Secrets at Rest im Git-Repository: SOPS + age
 
-- **Reflector** (emberstack/kubernetes-reflector) fuer Cross-Namespace Secret-Synchronisation
+- **SOPS** (Mozilla) verschlüsselt Secret-Manifeste im Git-Repository
+- **age** als Verschlüsselungsbackend (einfacher als PGP, kein Key-Server nötig)
+- Nur `data`/`stringData`-Felder werden verschlüsselt, Metadaten bleiben lesbar
+- `.sops.yaml` definiert Creation Rules (Pfad-Pattern → age Public Key)
+- Flux kustomize-controller entschlüsselt automatisch beim Apply (Decryption Provider)
+- age Private Key liegt als `sops-age` Secret im `flux-system` Namespace
+
+### Cross-Namespace Synchronisation: Reflector (Meilenstein 1)
+
+- **Reflector** (emberstack/kubernetes-reflector) für Cross-Namespace Secret-Synchronisation
 - Secrets, die von Operatoren erstellt werden (z.B. CNPG `postgres-cluster-app`), werden per Annotation automatisch in Ziel-Namespaces gespiegelt
 - Kein externer Secret-Store erforderlich
 - Installation via Flux HelmRelease im IaC-Repository
 
-### Phase 2 (Meilenstein 2): External Secrets Operator (ESO)
+### Externe Secret-Stores: External Secrets Operator (Meilenstein 2)
 
-- **External Secrets Operator** fuer die Anbindung externer Secret-Stores
-- Unterstuetzte Backends: HashiCorp Vault, AWS Secrets Manager, Azure Key Vault
-- Ermoeglicht zentrale Secret-Verwaltung ausserhalb des Clusters
-- Reflector bleibt fuer Operator-generierte Secrets (CNPG) weiterhin im Einsatz
-- ESO wird ergaenzend fuer applikationsspezifische Secrets genutzt (API-Keys, OAuth-Secrets)
+- **External Secrets Operator** für die Anbindung externer Secret-Stores
+- Unterstützte Backends: HashiCorp Vault, AWS Secrets Manager, Azure Key Vault
+- Ermöglicht zentrale Secret-Verwaltung außerhalb des Clusters
+- Reflector bleibt für Operator-generierte Secrets (CNPG) weiterhin im Einsatz
+- ESO wird ergänzend für applikationsspezifische Secrets genutzt (API-Keys, OAuth-Secrets)
 
 ## Konsequenzen
 
 ### Positiv
 
-- Meilenstein 1 hat minimale Infrastruktur-Komplexitaet
+- Secrets sind sicher im öffentlichen Git-Repository speicherbar
+- Vollständig GitOps-konform: verschlüsselte Secrets werden wie normaler Code commited
+- Meilenstein 1 hat minimale Infrastruktur-Komplexität
 - Klarer Migrationspfad zu externem Secret-Management
 - Reflector ist leichtgewichtig (~64MB RAM) und erprobt
 - Automatische Synchronisation bei Secret-Rotation durch CNPG
+- age ist einfacher als PGP (ein Schlüsselpaar, kein Web of Trust)
 
 ### Negativ
 
-- Reflector bietet keine Verschluesselung at-rest oder Audit-Logs
+- age Private Key muss sicher außerhalb des Repos aufbewahrt werden (Passwort-Manager)
+- Bei Cluster-Neuaufbau muss `sops-age` Secret manuell erstellt werden (Bootstrap-Problem)
+- Reflector bietet keine Verschlüsselung at-rest oder Audit-Logs
 - Manuelle Annotation am Quell-Secret erforderlich (einmalig)
-- Zwei Tools in Phase 2 (Reflector + ESO) erhoehen die Betriebskomplexitaet leicht
+- Zwei Tools in Meilenstein 2 (Reflector + ESO) erhöhen die Betriebskomplexität leicht
 
 ### Neutral
 
 - Secrets werden als Kubernetes Secrets gespeichert (Standard-Verhalten)
-- etcd-Encryption-at-rest wird separat ueber Cluster-Konfiguration sichergestellt
+- etcd-Encryption-at-rest wird separat über Cluster-Konfiguration sichergestellt
+- SOPS unterstützt Key-Rotation (neuer age Key, alte Secrets re-encrypen)
 
 ## Betroffene Requirements
 
-- SWA-017: Kubernetes Cluster Provisionierung
-- SWA-018: PostgreSQL mit CloudNativePG
+- SWA-019: Cross-Namespace Secret-Synchronisation mit Reflector
+- SWA-020: SOPS+age Verschlüsselung für Secrets im Git-Repository
+- STK-016: Sichere Verwaltung von Secrets im Cluster

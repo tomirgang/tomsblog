@@ -6,7 +6,7 @@ level: 16.0
 links: []
 normative: true
 ref: ''
-reviewed: null
+reviewed: bHjBgVbHga44ljUM-_zfhx4B2YFx3T1GgroBhKG31cM=
 text: |
   Als Betreiber moechte ich, dass sensible Zugangsdaten (Datenbank-Credentials,
   API-Keys, OAuth-Secrets) automatisiert und sicher zwischen Kubernetes-Namespaces

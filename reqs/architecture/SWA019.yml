@@ -4,10 +4,10 @@ header: |
   Cross-Namespace Secret-Synchronisation mit Reflector
 level: 19.0
 links:
-- STK016: null
+- SWR031: V3EYvgH-Ky8BiZRkJHyl3JIcRPcpZAVD3Gnts_nijZA=
 normative: true
 ref: ''
-reviewed: null
+reviewed: L8HxfdqLi8gnyZju3gQOCInmV7W6UY2a3ptxvYDnels=
 text: |
   Cross-Namespace Secret-Synchronisation wird ueber Reflector (emberstack)
   realisiert. Operator-generierte Secrets (z.B. CloudNativePG postgres-cluster-app)

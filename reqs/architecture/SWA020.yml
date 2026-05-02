@@ -1,0 +1,19 @@
+active: true
+derived: false
+header: |
+  SOPS+age Verschlüsselung für Secrets im Git-Repository
+level: 20.0
+links:
+- SWR031: V3EYvgH-Ky8BiZRkJHyl3JIcRPcpZAVD3Gnts_nijZA=
+normative: true
+ref: ''
+reviewed: u7Q0quaEofjE9Tch3TtQh8wv83CLrmINVPOiOZ8PUYI=
+text: |
+  Applikationsspezifische Secrets (Admin-Passwörter, API-Keys) werden mit
+  SOPS (Mozilla) und age-Verschlüsselung im Git-Repository gespeichert.
+  Nur die data/stringData-Felder der Kubernetes Secret-Manifeste werden
+  verschlüsselt, Metadaten bleiben lesbar für Code-Reviews. Die Datei
+  .sops.yaml definiert Creation Rules mit Pfad-Pattern und age Public Key.
+  Der Flux kustomize-controller entschlüsselt die Secrets automatisch beim
+  Apply über den Decryption Provider (sops) mit dem age Private Key aus
+  dem sops-age Secret im flux-system Namespace.

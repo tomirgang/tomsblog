@@ -114,3 +114,9 @@ Requirement document hierarchy:
 
 - Never use – as separator in texts.
 - All tables in Markdown files shall be formatted readable in the source.
+
+## Agent Workflow Rules
+
+- **Kein eigenständiges Committen**: Der Agent darf niemals selbstständig `git commit`, `git push` oder ähnliche Befehle ausführen. Alle Änderungen müssen zuerst durch den Benutzer reviewt und dann manuell commited werden.
+- Der Agent darf Dateien erstellen und bearbeiten, aber die finale Entscheidung über den Commit liegt immer beim Benutzer.
+- Bei Unsicherheit über den Umfang einer Änderung: lieber nachfragen als eigenständig handeln.
