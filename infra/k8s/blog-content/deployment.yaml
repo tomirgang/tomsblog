@@ -67,7 +67,7 @@ spec:
             httpGet:
               path: /actuator/health
               port: http
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             periodSeconds: 10
           readinessProbe:
             httpGet:
@@ -84,3 +84,9 @@ spec:
             limits:
               memory: "768Mi"
               cpu: "1000m"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
