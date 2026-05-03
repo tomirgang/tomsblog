@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: blog-content
-          image: ghcr.io/tomirgang/tomsblog/blog-content:sha-b015522 # {"$imagepolicy": "flux-system:blog-content"}
+          image: ghcr.io/tomirgang/tomsblog/blog-content:sha-f5ffbc7 # {"$imagepolicy": "flux-system:blog-content"}
           ports:
             - containerPort: 8080
               name: http
