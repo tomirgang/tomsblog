@@ -1,0 +1,100 @@
+package de.tomsblog.usermanagement.domain.model;
+
+import de.tomsblog.shared.tenant.TenantId;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+/**
+ * Value object representing tenant-specific settings including login mode and auto-approval rules.
+ *
+ * @req SWR-044
+ * @req SWR-045
+ */
+public class TenantSettings {
+
+    private final TenantId tenantId;
+    private LoginMode loginMode;
+    private boolean autoApproveOidc;
+    private final Set<String> autoApproveEmailDomains;
+
+    private TenantSettings(
+            TenantId tenantId, LoginMode loginMode, boolean autoApproveOidc, Set<String> autoApproveEmailDomains) {
+        this.tenantId = Objects.requireNonNull(tenantId, "tenantId must not be null");
+        this.loginMode = Objects.requireNonNull(loginMode, "loginMode must not be null");
+        this.autoApproveOidc = autoApproveOidc;
+        this.autoApproveEmailDomains = new HashSet<>(autoApproveEmailDomains);
+    }
+
+    public static TenantSettings create(TenantId tenantId) {
+        return new TenantSettings(tenantId, LoginMode.BOTH, false, Set.of());
+    }
+
+    public static TenantSettings reconstitute(
+            TenantId tenantId, LoginMode loginMode, boolean autoApproveOidc, Set<String> autoApproveEmailDomains) {
+        return new TenantSettings(tenantId, loginMode, autoApproveOidc, autoApproveEmailDomains);
+    }
+
+    public void updateLoginMode(LoginMode loginMode) {
+        this.loginMode = Objects.requireNonNull(loginMode, "loginMode must not be null");
+    }
+
+    public void updateAutoApproveOidc(boolean autoApproveOidc) {
+        this.autoApproveOidc = autoApproveOidc;
+    }
+
+    public void addAutoApproveEmailDomain(String domain) {
+        Objects.requireNonNull(domain, "domain must not be null");
+        autoApproveEmailDomains.add(domain.toLowerCase());
+    }
+
+    public void removeAutoApproveEmailDomain(String domain) {
+        Objects.requireNonNull(domain, "domain must not be null");
+        autoApproveEmailDomains.remove(domain.toLowerCase());
+    }
+
+    public void setAutoApproveEmailDomains(Set<String> domains) {
+        Objects.requireNonNull(domains, "domains must not be null");
+        autoApproveEmailDomains.clear();
+        domains.forEach(d -> autoApproveEmailDomains.add(d.toLowerCase()));
+    }
+
+    /**
+     * Checks whether a user with the given auth source and email should be auto-approved.
+     */
+    public boolean shouldAutoApprove(AuthSource authSource, String email) {
+        if (authSource == AuthSource.OIDC && autoApproveOidc) {
+            return true;
+        }
+        if (email != null && !autoApproveEmailDomains.isEmpty()) {
+            String domain = extractDomain(email);
+            return domain != null && autoApproveEmailDomains.contains(domain.toLowerCase());
+        }
+        return false;
+    }
+
+    private static String extractDomain(String email) {
+        int atIndex = email.indexOf('@');
+        if (atIndex < 0 || atIndex == email.length() - 1) {
+            return null;
+        }
+        return email.substring(atIndex + 1);
+    }
+
+    public TenantId getTenantId() {
+        return tenantId;
+    }
+
+    public LoginMode getLoginMode() {
+        return loginMode;
+    }
+
+    public boolean isAutoApproveOidc() {
+        return autoApproveOidc;
+    }
+
+    public Set<String> getAutoApproveEmailDomains() {
+        return Collections.unmodifiableSet(autoApproveEmailDomains);
+    }
+}

@@ -1,5 +1,6 @@
 package de.tomsblog.usermanagement.adapter.inbound.rest;
 
+import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.inbound.SyncInternalUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncOidcUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.UserProfileUseCase;
@@ -34,7 +35,8 @@ public class UserController {
                 request.oidcSubject(),
                 request.email(),
                 request.displayName(),
-                request.oidcGroups() != null ? request.oidcGroups() : List.of());
+                request.oidcGroups() != null ? request.oidcGroups() : List.of(),
+                TenantId.of(request.tenantId()));
         var profile = userProfileUseCase.syncFromOidc(command);
         return ResponseEntity.ok(UserProfileResponse.from(profile));
     }
@@ -42,7 +44,11 @@ public class UserController {
     @PostMapping("/sync/internal")
     public ResponseEntity<UserProfileResponse> syncFromInternal(@Valid @RequestBody SyncInternalUserRequest request) {
         var command = new SyncInternalUserCommand(
-                request.username(), request.passwordHash(), request.email(), request.displayName());
+                request.username(),
+                request.passwordHash(),
+                request.email(),
+                request.displayName(),
+                TenantId.of(request.tenantId()));
         var profile = userProfileUseCase.syncFromInternal(command);
         return ResponseEntity.ok(UserProfileResponse.from(profile));
     }

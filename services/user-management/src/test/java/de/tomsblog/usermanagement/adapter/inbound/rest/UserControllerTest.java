@@ -15,6 +15,7 @@ import de.tomsblog.usermanagement.application.port.inbound.UserProfileUseCase;
 import de.tomsblog.usermanagement.application.service.UserProfileNotFoundException;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(UserController.class)
 class UserControllerTest {
+
+    private static final UUID TENANT_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     @Autowired
     private MockMvc mockMvc;
@@ -41,7 +44,7 @@ class UserControllerTest {
         var profile = UserProfile.createFromOidc("sub-1", "user@example.com", "User");
         when(userProfileUseCase.syncFromOidc(any(SyncOidcUserCommand.class))).thenReturn(profile);
 
-        var request = new SyncOidcUserRequest("sub-1", "user@example.com", "User", List.of());
+        var request = new SyncOidcUserRequest("sub-1", "user@example.com", "User", List.of(), TENANT_ID);
 
         mockMvc.perform(post("/api/users/sync/oidc")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -56,7 +59,7 @@ class UserControllerTest {
     @Test
     @DisplayName("SWR-043: POST /api/users/sync/oidc rejects blank oidcSubject")
     void syncFromOidcRejectsBlankSubject() throws Exception {
-        var request = new SyncOidcUserRequest("", "user@example.com", "User", List.of());
+        var request = new SyncOidcUserRequest("", "user@example.com", "User", List.of(), TENANT_ID);
 
         mockMvc.perform(post("/api/users/sync/oidc")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -71,7 +74,7 @@ class UserControllerTest {
         when(userProfileUseCase.syncFromInternal(any(SyncInternalUserCommand.class)))
                 .thenReturn(profile);
 
-        var request = new SyncInternalUserRequest("admin", "hash", "admin@example.com", "Admin");
+        var request = new SyncInternalUserRequest("admin", "hash", "admin@example.com", "Admin", TENANT_ID);
 
         mockMvc.perform(post("/api/users/sync/internal")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -133,9 +136,11 @@ class UserControllerTest {
         var profile = UserProfile.createFromOidc("sub-1", "user@example.com", "User");
         when(userProfileUseCase.syncFromOidc(any(SyncOidcUserCommand.class))).thenReturn(profile);
 
-        mockMvc.perform(post("/api/users/sync/oidc")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"oidcSubject\":\"sub-1\",\"email\":\"user@example.com\",\"displayName\":\"User\"}"))
+        mockMvc.perform(
+                        post("/api/users/sync/oidc")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"oidcSubject\":\"sub-1\",\"email\":\"user@example.com\",\"displayName\":\"User\",\"tenantId\":\"00000000-0000-0000-0000-000000000001\"}"))
                 .andExpect(status().isOk());
     }
 }

@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,15 +23,18 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
  *
  * @req SWR-016
  * @req SWR-043
+ * @req SWR-045
  */
 public class SyncingOidcUserService extends OidcUserService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SyncingOidcUserService.class);
 
     private final UserManagementClient userManagementClient;
+    private final UUID defaultTenantId;
 
-    public SyncingOidcUserService(UserManagementClient userManagementClient) {
+    public SyncingOidcUserService(UserManagementClient userManagementClient, UUID defaultTenantId) {
         this.userManagementClient = userManagementClient;
+        this.defaultTenantId = defaultTenantId;
     }
 
     @Override
@@ -49,7 +53,8 @@ public class SyncingOidcUserService extends OidcUserService {
                 oidcUser.getClaimAsStringList("groups") != null ? oidcUser.getClaimAsStringList("groups") : List.of();
 
         try {
-            UserProfileDto profile = userManagementClient.syncOidcUser(subject, email, displayName, groups);
+            UserProfileDto profile =
+                    userManagementClient.syncOidcUser(subject, email, displayName, groups, defaultTenantId);
             Set<GrantedAuthority> authorities = mapAuthorities(profile, oidcUser.getAuthorities());
             return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
         } catch (Exception e) {

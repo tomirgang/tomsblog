@@ -67,10 +67,10 @@
 - [ ] Featured Posts: Posts für einen Zeitraum hervorheben und auf der Landing Page prominent darstellen (STK027)
 - [x] OIDC Login integrieren (Spring Security OAuth2 Client, Authentik unter auth.do9ita.de)
 - [x] Leichtgewichtiger User-Management-Service (OIDC Relying Party, Rollen, Tenant-Zuordnung)
-- [ ] Konfigurierbare Login-Methode pro Tenant: intern, OIDC oder beides (STK031)
+- [x] Konfigurierbare Login-Methode pro Tenant: intern, OIDC oder beides (STK031)
 - [x] Break-Glass SuperAdmin-Login unter /admin/login (immer formbasiert, nur SUPERADMIN)
-- [ ] Auto-Approval: optional für OIDC-Benutzer und/oder E-Mail-Domain-Whitelist (STK032)
-- [ ] Multi-Tenant-Isolation (Schema-basiert vs. Row-Level-Security)
+- [x] Auto-Approval: optional für OIDC-Benutzer und/oder E-Mail-Domain-Whitelist (STK032)
+- [x] Multi-Tenant-Isolation (Schema-basiert vs. Row-Level-Security) (ADR-0028: Shared Schema + App Filtering)
 - [x] Rollen- und Berechtigungsmodell (SuperAdmin, Admin, Autor, Reviewer, Leser; anonyme Besucher = Leser)
 - [x] SuperAdmin-Account: Credentials über Infrastruktur (Umgebungsvariable/Secret), automatisch beim Start angelegt
 - [x] Benutzer-Freigabe: Neue User müssen durch Tenant-Admin approved werden (STK028)
@@ -181,6 +181,7 @@
 - [ ] Für neue Abonnenten wir ein Reader Acount angelegt, optional mit Passwort.
 - [ ] Registrierte Benutzer können ihre Abonnements verwalten
 - [ ] DSGVO Auskunft für Benutzer
+- [ ] PostgreSQL Row-Level Security
 
 ---
 

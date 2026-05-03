@@ -17,23 +17,44 @@
             <p>Sie wurden erfolgreich abgemeldet.</p>
         </article>
 
-        <h2>Mit Authentik anmelden</h2>
-        <a th:href="@{/oauth2/authorization/authentik}" role="button">Mit Authentik anmelden</a>
+        <!-- OIDC login: shown for OIDC and BOTH modes -->
+        <div th:if="${loginMode == 'OIDC' or loginMode == 'BOTH'}">
+            <h2>Mit Authentik anmelden</h2>
+            <a th:href="@{/oauth2/authorization/authentik}" role="button">Mit Authentik anmelden</a>
+        </div>
 
-        <hr>
+        <!-- Separator: only shown when both modes are active -->
+        <hr th:if="${loginMode == 'BOTH'}">
 
-        <details>
-            <summary>Mit Benutzername und Passwort anmelden</summary>
-            <form th:action="@{/login}" method="post">
-                <label for="username">Benutzername</label>
-                <input type="text" id="username" name="username" autocomplete="username" required>
+        <!-- Internal login: shown for INTERNAL and BOTH modes -->
+        <div th:if="${loginMode == 'INTERNAL' or loginMode == 'BOTH'}">
+            <div th:if="${loginMode == 'BOTH'}">
+                <details>
+                    <summary>Mit Benutzername und Passwort anmelden</summary>
+                    <form th:action="@{/login}" method="post">
+                        <label for="username">Benutzername</label>
+                        <input type="text" id="username" name="username" autocomplete="username" required>
 
-                <label for="password">Passwort</label>
-                <input type="password" id="password" name="password" autocomplete="current-password" required>
+                        <label for="password">Passwort</label>
+                        <input type="password" id="password" name="password" autocomplete="current-password" required>
 
-                <button type="submit">Anmelden</button>
-            </form>
-        </details>
+                        <button type="submit">Anmelden</button>
+                    </form>
+                </details>
+            </div>
+            <div th:if="${loginMode == 'INTERNAL'}">
+                <h2>Anmelden</h2>
+                <form th:action="@{/login}" method="post">
+                    <label for="username">Benutzername</label>
+                    <input type="text" id="username" name="username" autocomplete="username" required>
+
+                    <label for="password">Passwort</label>
+                    <input type="password" id="password" name="password" autocomplete="current-password" required>
+
+                    <button type="submit">Anmelden</button>
+                </form>
+            </div>
+        </div>
     </section>
 </body>
 </html>

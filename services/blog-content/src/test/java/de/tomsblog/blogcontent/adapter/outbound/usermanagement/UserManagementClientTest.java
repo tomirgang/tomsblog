@@ -25,6 +25,8 @@ import org.springframework.web.client.RestTemplate;
  */
 class UserManagementClientTest {
 
+    private static final UUID TENANT_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+
     private UserManagementClient client;
     private MockRestServiceServer mockServer;
 
@@ -64,7 +66,8 @@ class UserManagementClientTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andRespond(withSuccess(responseJson, MediaType.APPLICATION_JSON));
 
-        UserProfileDto result = client.syncOidcUser("sub-123", "user@test.com", "Test User", List.of("group1"));
+        UserProfileDto result =
+                client.syncOidcUser("sub-123", "user@test.com", "Test User", List.of("group1"), TENANT_ID);
 
         assertThat(result).isNotNull();
         assertThat(result.id()).isEqualTo(id);
@@ -112,7 +115,7 @@ class UserManagementClientTest {
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withServerError());
 
-        assertThatThrownBy(() -> client.syncOidcUser("sub-err", "err@test.com", "Error", List.of()))
+        assertThatThrownBy(() -> client.syncOidcUser("sub-err", "err@test.com", "Error", List.of(), TENANT_ID))
                 .isInstanceOf(RestClientException.class);
         mockServer.verify();
     }

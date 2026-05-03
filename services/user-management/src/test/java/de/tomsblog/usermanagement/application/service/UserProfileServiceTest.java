@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.inbound.SyncInternalUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncOidcUserCommand;
+import de.tomsblog.usermanagement.application.port.outbound.TenantSettingsRepository;
 import de.tomsblog.usermanagement.application.port.outbound.UserProfileRepository;
 import de.tomsblog.usermanagement.domain.model.ApprovalStatus;
 import de.tomsblog.usermanagement.domain.model.Role;
@@ -27,11 +28,16 @@ class UserProfileServiceTest {
     @Mock
     private UserProfileRepository repository;
 
+    @Mock
+    private TenantSettingsRepository tenantSettingsRepository;
+
     private UserProfileService service;
+
+    private static final TenantId TENANT_ID = TenantId.generate();
 
     @BeforeEach
     void setUp() {
-        service = new UserProfileService(repository);
+        service = new UserProfileService(repository, tenantSettingsRepository);
     }
 
     @Nested
@@ -43,8 +49,9 @@ class UserProfileServiceTest {
         void createsNewProfileForUnknownSubject() {
             when(repository.findByOidcSubject("sub-1")).thenReturn(Optional.empty());
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+            when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.empty());
 
-            var command = new SyncOidcUserCommand("sub-1", "user@example.com", "User", List.of());
+            var command = new SyncOidcUserCommand("sub-1", "user@example.com", "User", List.of(), TENANT_ID);
             var result = service.syncFromOidc(command);
 
             assertThat(result.getOidcSubject()).isEqualTo("sub-1");
@@ -59,12 +66,45 @@ class UserProfileServiceTest {
             when(repository.findByOidcSubject("sub-1")).thenReturn(Optional.of(existing));
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            var command = new SyncOidcUserCommand("sub-1", "new@example.com", "New Name", List.of());
+            var command = new SyncOidcUserCommand("sub-1", "new@example.com", "New Name", List.of(), TENANT_ID);
             var result = service.syncFromOidc(command);
 
             assertThat(result.getEmail()).isEqualTo("new@example.com");
             assertThat(result.getDisplayName()).isEqualTo("New Name");
             verify(repository).save(existing);
+        }
+
+        @Test
+        @DisplayName("SWR-045: auto-approves new OIDC profile when autoApproveOidc enabled")
+        void autoApprovesOidcProfile() {
+            when(repository.findByOidcSubject("sub-2")).thenReturn(Optional.empty());
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+            var settings = de.tomsblog.usermanagement.domain.model.TenantSettings.reconstitute(
+                    TENANT_ID, de.tomsblog.usermanagement.domain.model.LoginMode.BOTH, true, java.util.Set.of());
+            when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+
+            var command = new SyncOidcUserCommand("sub-2", "user@any.com", "User", List.of(), TENANT_ID);
+            var result = service.syncFromOidc(command);
+
+            assertThat(result.getApprovalStatus()).isEqualTo(ApprovalStatus.APPROVED);
+        }
+
+        @Test
+        @DisplayName("SWR-045: auto-approves new OIDC profile when email domain matches")
+        void autoApprovesEmailDomainMatch() {
+            when(repository.findByOidcSubject("sub-3")).thenReturn(Optional.empty());
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+            var settings = de.tomsblog.usermanagement.domain.model.TenantSettings.reconstitute(
+                    TENANT_ID,
+                    de.tomsblog.usermanagement.domain.model.LoginMode.BOTH,
+                    false,
+                    java.util.Set.of("company.com"));
+            when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+
+            var command = new SyncOidcUserCommand("sub-3", "user@company.com", "User", List.of(), TENANT_ID);
+            var result = service.syncFromOidc(command);
+
+            assertThat(result.getApprovalStatus()).isEqualTo(ApprovalStatus.APPROVED);
         }
     }
 
@@ -77,8 +117,9 @@ class UserProfileServiceTest {
         void createsNewProfileForUnknownUsername() {
             when(repository.findByUsername("admin")).thenReturn(Optional.empty());
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+            when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.empty());
 
-            var command = new SyncInternalUserCommand("admin", "hash", "admin@example.com", "Admin");
+            var command = new SyncInternalUserCommand("admin", "hash", "admin@example.com", "Admin", TENANT_ID);
             var result = service.syncFromInternal(command);
 
             assertThat(result.getUsername()).isEqualTo("admin");
@@ -92,7 +133,7 @@ class UserProfileServiceTest {
             when(repository.findByUsername("admin")).thenReturn(Optional.of(existing));
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            var command = new SyncInternalUserCommand("admin", "new-hash", "new@example.com", "New");
+            var command = new SyncInternalUserCommand("admin", "new-hash", "new@example.com", "New", TENANT_ID);
             var result = service.syncFromInternal(command);
 
             assertThat(result.getEmail()).isEqualTo("new@example.com");

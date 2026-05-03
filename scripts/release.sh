@@ -30,6 +30,10 @@ if [[ -n "$(git status --porcelain)" ]]; then
     die "Working directory is not clean. Commit or stash changes first."
 fi
 
+git fetch origin
+git fetch github
+git pull github main || die "Failed to pull from github. Resolve any conflicts and try again."
+
 # Ensure we're on main branch
 BRANCH="$(git branch --show-current)"
 if [[ "$BRANCH" != "main" && "$BRANCH" != "master" ]]; then
@@ -161,7 +165,7 @@ fi
 
 git add -A
 git commit -m "chore: set development version $NEXT_SNAPSHOT"
-git push origin "$BRANCH"
+git push -f origin "$BRANCH"
 git push github "$BRANCH"
 
 echo ""

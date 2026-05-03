@@ -37,9 +37,11 @@ class SyncingOidcUserServiceTest {
 
     private SyncingOidcUserService service;
 
+    private static final UUID DEFAULT_TENANT_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+
     @BeforeEach
     void setUp() {
-        service = new SyncingOidcUserService(userManagementClient);
+        service = new SyncingOidcUserService(userManagementClient, DEFAULT_TENANT_ID);
     }
 
     @Test
@@ -56,7 +58,8 @@ class SyncingOidcUserServiceTest {
                 List.of("ADMIN", "AUTHOR"),
                 List.of());
 
-        when(userManagementClient.syncOidcUser(eq("oidc-sub-123"), eq("user@test.com"), eq("Test User"), anyList()))
+        when(userManagementClient.syncOidcUser(
+                        eq("oidc-sub-123"), eq("user@test.com"), eq("Test User"), anyList(), eq(DEFAULT_TENANT_ID)))
                 .thenReturn(profile);
 
         OidcUser oidcUser = createOidcUser("oidc-sub-123", "user@test.com", "Test User", null);
@@ -72,7 +75,7 @@ class SyncingOidcUserServiceTest {
     @Test
     @DisplayName("SWR-016: enrichWithRoles falls back to default authorities when sync fails")
     void enrichWithRoles_fallbackOnSyncFailure() {
-        when(userManagementClient.syncOidcUser(anyString(), anyString(), anyString(), anyList()))
+        when(userManagementClient.syncOidcUser(anyString(), anyString(), anyString(), anyList(), any(UUID.class)))
                 .thenThrow(new RuntimeException("Connection refused"));
 
         OidcUser oidcUser = createOidcUser("oidc-sub-456", "fail@test.com", "Fail User", null);
@@ -97,7 +100,11 @@ class SyncingOidcUserServiceTest {
                 List.of());
 
         when(userManagementClient.syncOidcUser(
-                        eq("oidc-sub-789"), eq("groups@test.com"), eq("Groups User"), eq(List.of("editors", "admins"))))
+                        eq("oidc-sub-789"),
+                        eq("groups@test.com"),
+                        eq("Groups User"),
+                        eq(List.of("editors", "admins")),
+                        eq(DEFAULT_TENANT_ID)))
                 .thenReturn(profile);
 
         OidcUser oidcUser =
@@ -106,7 +113,12 @@ class SyncingOidcUserServiceTest {
 
         assertThat(result).isNotNull();
         verify(userManagementClient)
-                .syncOidcUser("oidc-sub-789", "groups@test.com", "Groups User", List.of("editors", "admins"));
+                .syncOidcUser(
+                        "oidc-sub-789",
+                        "groups@test.com",
+                        "Groups User",
+                        List.of("editors", "admins"),
+                        DEFAULT_TENANT_ID);
     }
 
     @Test
@@ -123,14 +135,15 @@ class SyncingOidcUserServiceTest {
                 List.of(),
                 List.of());
 
-        when(userManagementClient.syncOidcUser(anyString(), anyString(), eq("noname_user"), anyList()))
+        when(userManagementClient.syncOidcUser(anyString(), anyString(), eq("noname_user"), anyList(), any(UUID.class)))
                 .thenReturn(profile);
 
         OidcUser oidcUser = createOidcUserWithPreferredUsername("oidc-sub-no-name", "noname@test.com", "noname_user");
         OidcUser result = service.enrichWithRoles(oidcUser);
 
         assertThat(result).isNotNull();
-        verify(userManagementClient).syncOidcUser("oidc-sub-no-name", "noname@test.com", "noname_user", List.of());
+        verify(userManagementClient)
+                .syncOidcUser("oidc-sub-no-name", "noname@test.com", "noname_user", List.of(), DEFAULT_TENANT_ID);
     }
 
     @Test
@@ -147,7 +160,7 @@ class SyncingOidcUserServiceTest {
                 null,
                 List.of());
 
-        when(userManagementClient.syncOidcUser(anyString(), anyString(), anyString(), anyList()))
+        when(userManagementClient.syncOidcUser(anyString(), anyString(), anyString(), anyList(), any(UUID.class)))
                 .thenReturn(profile);
 
         OidcUser oidcUser = createOidcUser("oidc-sub-null", "null@test.com", "Null Roles", null);
@@ -170,7 +183,7 @@ class SyncingOidcUserServiceTest {
                 List.of("AUTHOR"),
                 List.of());
 
-        when(userManagementClient.syncOidcUser(anyString(), anyString(), anyString(), anyList()))
+        when(userManagementClient.syncOidcUser(anyString(), anyString(), anyString(), anyList(), any(UUID.class)))
                 .thenReturn(profile);
 
         OidcUser oidcUser = createOidcUser("oidc-sub-merge", "merge@test.com", "Merge User", null);

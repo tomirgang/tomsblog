@@ -4,9 +4,12 @@ import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.inbound.SyncInternalUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncOidcUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.UserProfileUseCase;
+import de.tomsblog.usermanagement.application.port.outbound.TenantSettingsRepository;
 import de.tomsblog.usermanagement.application.port.outbound.UserProfileRepository;
+import de.tomsblog.usermanagement.domain.model.AuthSource;
 import de.tomsblog.usermanagement.domain.model.Role;
 import de.tomsblog.usermanagement.domain.model.TenantMembership;
+import de.tomsblog.usermanagement.domain.model.TenantSettings;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
 
 /**
@@ -14,13 +17,16 @@ import de.tomsblog.usermanagement.domain.model.UserProfile;
  *
  * @req SWR-043
  * @req SWR-007
+ * @req SWR-045
  */
 public class UserProfileService implements UserProfileUseCase {
 
     private final UserProfileRepository repository;
+    private final TenantSettingsRepository tenantSettingsRepository;
 
-    public UserProfileService(UserProfileRepository repository) {
+    public UserProfileService(UserProfileRepository repository, TenantSettingsRepository tenantSettingsRepository) {
         this.repository = repository;
+        this.tenantSettingsRepository = tenantSettingsRepository;
     }
 
     @Override
@@ -34,6 +40,7 @@ public class UserProfileService implements UserProfileUseCase {
         }
 
         var profile = UserProfile.createFromOidc(command.oidcSubject(), command.email(), command.displayName());
+        applyAutoApproval(profile, command.tenantId(), AuthSource.OIDC, command.email());
         return repository.save(profile);
     }
 
@@ -50,7 +57,16 @@ public class UserProfileService implements UserProfileUseCase {
 
         var profile = UserProfile.createInternal(
                 command.username(), command.passwordHash(), command.email(), command.displayName());
+        applyAutoApproval(profile, command.tenantId(), AuthSource.INTERNAL, command.email());
         return repository.save(profile);
+    }
+
+    private void applyAutoApproval(UserProfile profile, TenantId tenantId, AuthSource authSource, String email) {
+        var settings =
+                tenantSettingsRepository.findByTenantId(tenantId).orElseGet(() -> TenantSettings.create(tenantId));
+        if (settings.shouldAutoApprove(authSource, email)) {
+            profile.approve();
+        }
     }
 
     @Override

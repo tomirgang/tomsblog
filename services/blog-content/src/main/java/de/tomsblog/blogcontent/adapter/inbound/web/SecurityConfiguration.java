@@ -128,7 +128,9 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SyncingOidcUserService syncingOidcUserService(UserManagementClient userManagementClient) {
-        return new SyncingOidcUserService(userManagementClient);
+    public SyncingOidcUserService syncingOidcUserService(
+            UserManagementClient userManagementClient, DefaultTenantFilter defaultTenantFilter) {
+        return new SyncingOidcUserService(
+                userManagementClient, java.util.UUID.fromString(defaultTenantFilter.getDefaultTenantId()));
     }
 }

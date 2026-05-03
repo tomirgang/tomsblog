@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Flux Image Automation Manifeste: ImageRepository, ImagePolicy und ImageUpdateAutomation für automatische Deployment-Updates
+- GitRepository und Kustomization Ressourcen für Flux GitOps Reconciliation
+- Konfigurierbare Login-Methode pro Tenant: INTERNAL, OIDC oder BOTH (STK031, SWR-044)
+- Auto-Approval: optionale automatische Freigabe für OIDC-Benutzer und/oder E-Mail-Domain-Whitelist (STK032, SWR-045)
+- TenantSettings Domain-Modell mit LoginMode, autoApproveOidc und autoApproveEmailDomains
+- TenantSettingsUseCase und TenantSettingsService (Application Layer)
+- REST-API für Tenant-Einstellungen unter /api/tenants/{tenantId}/settings
+- Flyway-Migration V2: tenant_settings und tenant_auto_approve_domains Tabellen
+- ADR-0028: Multi-Tenant-Isolation auf Datenebene (Shared Schema + Application-Level Filtering)
+- Login-Seite zeigt dynamisch nur die konfigurierten Login-Methoden an (OIDC-Button, Formular oder beides)
+- Auto-Approval-Logik bei OIDC-Sync und internem Login im UserProfileService
+
+### Changed
+
+- SyncOidcUserCommand und SyncInternalUserCommand erfordern jetzt TenantId
+- UserManagementClient.syncOidcUser() akzeptiert zusätzlich tenantId-Parameter
+- SyncingOidcUserService propagiert TenantId an den User-Management-Service
+- LoginController fragt LoginMode vom User-Management-Service ab
+
 ## [0.7.0] - 2026-05-03
 
 ### Added

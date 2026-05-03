@@ -1,0 +1,25 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tomsblog
+  namespace: flux-system
+spec:
+  interval: 10m
+  sourceRef:
+    kind: GitRepository
+    name: tomsblog
+  path: ./infra/k8s
+  prune: true
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: blog-content
+      namespace: tomsblog
+    - apiVersion: postgresql.cnpg.io/v1
+      kind: Cluster
+      name: postgres-cluster
+      namespace: postgres
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
