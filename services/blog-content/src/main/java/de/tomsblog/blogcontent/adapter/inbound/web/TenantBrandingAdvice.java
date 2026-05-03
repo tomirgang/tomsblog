@@ -25,6 +25,7 @@ public class TenantBrandingAdvice {
 
     private static final Logger LOG = LoggerFactory.getLogger(TenantBrandingAdvice.class);
     private static final String DEFAULT_TENANT_NAME = "Toms Blog";
+    private static final String SETTINGS_ATTR = "TenantBrandingAdvice.settings";
 
     private final UserManagementClient userManagementClient;
 
@@ -34,30 +35,20 @@ public class TenantBrandingAdvice {
 
     @ModelAttribute("tenantName")
     public String tenantName(HttpServletRequest request, HttpSession session) {
-        UUID tenantId = resolveActiveTenantId(request, session);
-        try {
-            TenantSettingsDto settings = userManagementClient.getTenantSettings(tenantId);
-            if (settings != null
-                    && settings.displayName() != null
-                    && !settings.displayName().isBlank()) {
-                return settings.displayName();
-            }
-        } catch (Exception e) {
-            LOG.debug("Failed to load tenant branding for '{}'. Using default.", tenantId, e);
+        TenantSettingsDto settings = resolveSettings(request, session);
+        if (settings != null
+                && settings.displayName() != null
+                && !settings.displayName().isBlank()) {
+            return settings.displayName();
         }
         return DEFAULT_TENANT_NAME;
     }
 
     @ModelAttribute("tenantTagline")
     public String tenantTagline(HttpServletRequest request, HttpSession session) {
-        UUID tenantId = resolveActiveTenantId(request, session);
-        try {
-            TenantSettingsDto settings = userManagementClient.getTenantSettings(tenantId);
-            if (settings != null) {
-                return settings.tagline();
-            }
-        } catch (Exception e) {
-            LOG.debug("Failed to load tenant tagline for '{}'.", tenantId, e);
+        TenantSettingsDto settings = resolveSettings(request, session);
+        if (settings != null) {
+            return settings.tagline();
         }
         return null;
     }
@@ -83,6 +74,27 @@ public class TenantBrandingAdvice {
     public boolean isSuperAdmin(Authentication authentication) {
         return authentication != null
                 && authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPERADMIN"));
+    }
+
+    private TenantSettingsDto resolveSettings(HttpServletRequest request, HttpSession session) {
+        Object cached = request.getAttribute(SETTINGS_ATTR);
+        if (cached instanceof TenantSettingsDto dto) {
+            return dto;
+        }
+        if (cached != null) {
+            // Sentinel value indicating a previous failed lookup
+            return null;
+        }
+        UUID tenantId = resolveActiveTenantId(request, session);
+        try {
+            TenantSettingsDto settings = userManagementClient.getTenantSettings(tenantId);
+            request.setAttribute(SETTINGS_ATTR, settings != null ? settings : Boolean.FALSE);
+            return settings;
+        } catch (Exception e) {
+            LOG.debug("Failed to load tenant settings for '{}'. Using defaults.", tenantId, e);
+            request.setAttribute(SETTINGS_ATTR, Boolean.FALSE);
+            return null;
+        }
     }
 
     private UUID resolveActiveTenantId(HttpServletRequest request, HttpSession session) {

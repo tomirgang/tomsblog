@@ -27,6 +27,8 @@ spec:
             - containerPort: 8080
               name: http
           env:
+            - name: JDK_JAVA_OPTIONS
+              value: "-XX:MaxRAMPercentage=65.0 -XX:+UseG1GC"
             - name: SPRING_PROFILES_ACTIVE
               value: "k8s"
             - name: SPRING_DATASOURCE_URL
@@ -46,6 +48,10 @@ spec:
                 secretKeyRef:
                   name: blog-content-secrets
                   key: admin-password
+            - name: USER_MANAGEMENT_GRPC_HOST
+              value: "user-management.tomsblog.svc.cluster.local"
+            - name: USER_MANAGEMENT_GRPC_PORT
+              value: "9090"
           livenessProbe:
             httpGet:
               path: /actuator/health
@@ -58,6 +64,8 @@ spec:
               port: http
             initialDelaySeconds: 15
             periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
           resources:
             requests:
               memory: "384Mi"
