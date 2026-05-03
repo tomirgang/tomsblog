@@ -1,0 +1,61 @@
+= Cluster-Setup
+:sectnums:
+
+== Überblick
+
+Das Kubernetes-Cluster bildet die Laufzeitumgebung für alle Toms-Blog-Services (INF-001). Es wird auf Hetzner Cloud mit dem Terraform-Modul https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner[kube-hetzner] und OpenTofu provisioniert (ADR-0022).
+
+Die Cluster-Provisionierung liegt in einem separaten IaC-Repository (`kubernetes-playground/K8nCluster`), getrennt von den applikationsspezifischen Ressourcen in diesem Repository.
+
+=== Cluster-Parameter
+
+[cols="1,2"]
+|===
+| Parameter | Wert
+
+| Distribution | k3s (via kube-hetzner)
+| Control Plane | 1x CX33 (4 vCPU, 8 GB), Nürnberg (nbg1)
+| Worker Nodes | 2x CX23 (2 vCPU, 4 GB), Nürnberg (nbg1)
+| Load Balancer | LB11, Nürnberg
+| Netzwerk-Verschlüsselung | WireGuard
+| Storage | Hetzner CSI (hcloud-volumes)
+| Ingress | Traefik (k3s-Standard)
+| Basis-Domain | cluster.tomirgang.de
+| Kosten | ca. 30 EUR/Monat (1x CX33 + 2x CX23 + LB11 + Volumes + IPs)
+|===
+
+=== Namespace-Aufteilung
+
+Das folgende Diagramm zeigt die Namespace-Struktur und die Verantwortlichkeiten:
+
+[mermaid]
+----
+graph LR
+    subgraph "IaC-Repository verwaltet"
+        NS_FLUX[flux-system]
+        NS_CM[cert-manager]
+        NS_LINKERD[linkerd]
+        NS_KUBE[kube-system<br/>Traefik, Metrics]
+    end
+    subgraph "App-Repository verwaltet"
+        NS_APP[tomsblog]
+        NS_PG[postgres]
+    end
+----
+
+[cols="1,1,2"]
+|===
+| Namespace | Verwaltet durch | Inhalt
+
+| `kube-system` | k3s / IaC | Traefik, CoreDNS, Metrics Server
+| `flux-system` | IaC | Flux Controller (Source, Kustomize, Helm)
+| `cert-manager` | IaC (CRDs) + App (Issuer) | cert-manager Operator, ClusterIssuer
+| `linkerd` | IaC | Linkerd Control Plane
+| `postgres` | App (infra/k8s/postgres/) | CloudNativePG Cluster
+| `tomsblog` | App (infra/k8s/blog-content/) | Application Workloads
+|===
+
+== Weiterführend
+
+* xref:provisioning.adoc[Provisionierung (IaC)] -- OpenTofu-Workflow und IaC-Repository
+* xref:networking.adoc[Netzwerk & DNS] -- WireGuard, Load Balancer, DNS-Konfiguration

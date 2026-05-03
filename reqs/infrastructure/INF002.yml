@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  GitOps-Deployment mit Flux
+level: 2.0
+links:
+- STK007: Nwd-mVuiQVakHJYWDxXDmwxpAWV_SwK47nZ0Yjoypvc=
+normative: true
+ref: ''
+reviewed: GMTNyiJOW4maiSAlCQ6ylcN8M5o99H_MpVbg8mQg5Z8=
+text: |
+  Alle Kubernetes-Ressourcen muessen deklarativ in Git verwaltet und durch
+  Flux automatisch auf den Cluster synchronisiert werden. Manuelle kubectl-Änderungen
+  sind im Produktivbetrieb nicht erlaubt. Flux beobachtet das App-Repository
+  (Pfad infra/k8s/) und das IaC-Repository mit einem Poll-Intervall von 10 Minuten.

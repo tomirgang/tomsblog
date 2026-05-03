@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  TLS-Terminierung mit cert-manager und Let's Encrypt
+level: 3.0
+links:
+- STK007: Nwd-mVuiQVakHJYWDxXDmwxpAWV_SwK47nZ0Yjoypvc=
+normative: true
+ref: ''
+reviewed: oH_2rAivieWDTBXF07-5M8QhzmOWvDgH8OfVoPmi4gM=
+text: |
+  Alle externen Endpunkte muessen ueber HTTPS mit gueltigem TLS-Zertifikat
+  erreichbar sein. Zertifikate werden automatisch ueber cert-manager und
+  Let's Encrypt (ACME HTTP-01) bereitgestellt und vor Ablauf erneuert.
+  HTTP-Anfragen werden permanent auf HTTPS umgeleitet (301).

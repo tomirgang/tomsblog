@@ -1,0 +1,69 @@
+= Provisionierung (IaC)
+:sectnums:
+
+== IaC-Repository
+
+Die Cluster-Provisionierung erfolgt im Repository `kubernetes-playground/K8nCluster` mit OpenTofu (INF-001, SWA-017). Dieses Repository enthält:
+
+* OpenTofu-Konfiguration für Hetzner Cloud Ressourcen
+* kube-hetzner Modul-Konfiguration (Nodes, Netzwerk, Load Balancer)
+* Basis-Operatoren (CloudNativePG, cert-manager CRDs, Linkerd)
+* Flux-Bootstrap-Konfiguration
+
+=== Provisionierungs-Workflow
+
+Der folgende Ablauf beschreibt die initiale Cluster-Erstellung und Updates:
+
+[mermaid]
+----
+sequenceDiagram
+    participant Dev as Entwickler
+    participant TF as OpenTofu
+    participant HC as Hetzner Cloud API
+    participant K8s as K8s Cluster
+
+    Dev->>TF: tofu apply
+    TF->>HC: Erstelle Nodes, LB, Netzwerk
+    HC-->>TF: Ressourcen erstellt
+    TF->>K8s: k3s Bootstrap (via SSH)
+    K8s-->>TF: Cluster bereit
+    TF->>K8s: Helm Releases (Operatoren)
+    TF->>K8s: Flux Bootstrap
+    Note over K8s: Flux übernimmt App-Deployment
+----
+
+=== Trennung der Verantwortlichkeiten
+
+[cols="1,2,1"]
+|===
+| Schicht | Verantwortung | Repository
+
+| Plattform | Nodes, Netzwerk, LB, Basis-Operatoren | IaC-Repo
+| Applikation | DB-Instanzen, Services, Ingress, Policies | App-Repo (infra/k8s/)
+|===
+
+Diese Trennung stellt sicher, dass Plattform-Änderungen (z.B. Node-Upgrade) unabhängig von Applikations-Deployments durchgeführt werden können.
+
+== Node-Konfiguration
+
+Alle Nodes verwenden Ubuntu 22.04 mit automatischen Security-Updates. k3s wird in der aktuellen stabilen Version installiert.
+
+[cols="1,1,1,1"]
+|===
+| Rolle | Typ | vCPU | RAM
+
+| Control Plane | CX33 | 4 | 8 GB
+| Worker 1 | CX23 | 2 | 4 GB
+| Worker 2 | CX23 | 2 | 4 GB
+|===
+
+== Basis-Operatoren (via IaC)
+
+Die folgenden Operatoren werden im IaC-Repository via Helm installiert:
+
+* **CloudNativePG** -- PostgreSQL-Operator (CRDs + Controller)
+* **cert-manager** -- Zertifikats-Management (CRDs + Controller)
+* **Linkerd** -- Service Mesh (CRDs + Control Plane)
+* **Reflector** -- Cross-Namespace Secret-Synchronisation
+
+Die applikationsspezifischen Custom Resources (z.B. PostgreSQL-Cluster-Definition, ClusterIssuer) liegen im App-Repository unter `infra/k8s/`.

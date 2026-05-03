@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  HTTPS-Redirect für alle Requests
+level: 23.0
+links: []
+normative: true
+ref: ''
+reviewed: fFCjKlGZ1l81r--IKn_akUzQIq3tgouA10uDW5zZVLQ=
+text: |
+  Alle HTTP-Requests müssen automatisch auf HTTPS umgeleitet werden
+  (301 Permanent Redirect), mit Ausnahme von ACME HTTP-01 Challenge-Requests
+  (Let's Encrypt Zertifikatsvalidierung), die über Port 80 erreichbar
+  bleiben müssen.

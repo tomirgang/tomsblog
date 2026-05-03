@@ -1,0 +1,45 @@
+= GitOps & Deployment
+:sectnums:
+
+== Überblick
+
+Das Continuous Deployment erfolgt vollständig über Flux (INF-002, ADR-0020). Es gibt kein manuelles `kubectl apply` im Produktivbetrieb. Alle Änderungen am Cluster-Zustand werden über Git-Commits in einem der beiden Repositories ausgelöst.
+
+=== Zwei-Repository-Modell
+
+[mermaid]
+----
+graph LR
+    subgraph "IaC-Repository"
+        FLUX_CFG[flux/]
+        HELM[helm-releases/]
+    end
+    subgraph "App-Repository (tomsblog)"
+        K8S[infra/k8s/]
+    end
+    subgraph "Flux im Cluster"
+        SC[Source Controller]
+        KC[Kustomize Controller]
+    end
+
+    SC -->|poll| FLUX_CFG
+    SC -->|poll| K8S
+    KC -->|reconcile| HELM
+    KC -->|reconcile| K8S
+----
+
+[cols="1,2,1"]
+|===
+| Source | Repository | Pfad
+
+| flux-system | kubernetes-playground | flux/
+| tomsblog | tomsblog | infra/k8s/
+|===
+
+Flux prüft beide Repositories alle 10 Minuten auf Änderungen und reconciled den Cluster-Zustand automatisch.
+
+== Weiterführend
+
+* xref:flux.adoc[Flux-Konfiguration] -- GitRepository, Kustomization, Health-Checks
+* xref:image-automation.adoc[Image-Automation] -- Versionierte Tags, automatische Manifest-Updates
+* xref:secrets.adoc[Secrets-Management] -- SOPS + age Verschlüsselung

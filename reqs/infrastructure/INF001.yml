@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Kubernetes-Cluster auf Hetzner Cloud
+level: 1.0
+links:
+- STK007: Nwd-mVuiQVakHJYWDxXDmwxpAWV_SwK47nZ0Yjoypvc=
+normative: true
+ref: ''
+reviewed: G01eDVwT-3KqlC0PNoTTVpyOqepyyekQlsVB-QFXitA=
+text: |
+  Die Plattform muss auf einem Kubernetes-Cluster (k3s) bei Hetzner Cloud
+  betrieben werden. Das Cluster wird mit dem kube-hetzner Terraform-Modul
+  und OpenTofu provisioniert. Konfiguration: 1 Control Plane (CX33, 4 vCPU, 8 GB)
+  + 2 Worker Nodes (CX23, 2 vCPU, 4 GB), WireGuard-Verschlüsselung, Hetzner CSI für Storage.

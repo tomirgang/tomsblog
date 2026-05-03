@@ -1,0 +1,23 @@
+= Datenhaltung
+:sectnums:
+
+== Überblick
+
+Die Plattform folgt dem Database-per-Service-Pattern (ADR-0019). Aktuell wird PostgreSQL als einzige Datenbank eingesetzt, verwaltet durch den CloudNativePG Operator (INF-005).
+
+=== Strategie
+
+[cols="1,2"]
+|===
+| Prinzip | Umsetzung
+
+| Database per Service | Jeder Service bekommt eigene DB-Instanz
+| Operator-managed | CloudNativePG verwaltet Lifecycle, Failover, Backup
+| GitOps | Cluster-Definition als YAML in `infra/k8s/postgres/`
+| Verschlüsselung | mTLS zwischen App und DB (Linkerd)
+|===
+
+== Weiterführend
+
+* xref:cloudnativepg.adoc[CloudNativePG] -- Cluster-Definition, Failover, Credentials
+* xref:backup.adoc[Backup & Recovery] -- Backup-Strategie, RPO/RTO

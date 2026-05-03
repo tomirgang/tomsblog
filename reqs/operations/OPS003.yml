@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Alerting bei kritischen Zustaenden
+level: 3.0
+links:
+- INF010: knAuGsbJ8Si_LZ_H3mfVotahEApMG_q87j5bsfzdwYk=
+normative: true
+ref: ''
+reviewed: QJHl_CHnRBzUerUebpGN6t04GBC5mvVMRH0qNqb22pM=
+text: |
+  Bei kritischen Zustaenden muss automatisch ein Alert ausgeloest werden.
+  Kritische Zustaende umfassen: Service nicht erreichbar, Fehlerrate > 5%,
+  Disk-Usage > 80%, PostgreSQL-Failover, Flux-Reconciliation fehlgeschlagen,
+  Zertifikat laeuft in < 7 Tagen ab. Benachrichtigung per E-Mail oder
+  Messaging-Integration.

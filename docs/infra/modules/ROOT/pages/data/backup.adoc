@@ -1,0 +1,61 @@
+= Backup & Recovery
+:sectnums:
+
+== Status
+
+NOTE: Die Backup-Strategie ist noch nicht implementiert (INF-009). Dieses Kapitel beschreibt den geplanten Zielzustand.
+
+== Geplante Strategie
+
+=== Recovery-Ziele
+
+[cols="1,2"]
+|===
+| Parameter | Zielwert
+
+| RPO (Recovery Point Objective) | < 1 Stunde (WAL-Streaming)
+| RTO (Recovery Time Objective) | < 15 Minuten (Restore aus Backup)
+|===
+
+=== Backup-Architektur (geplant)
+
+[mermaid]
+----
+graph LR
+    PG[PostgreSQL Primary] -->|WAL Streaming| S3[S3-Storage<br/>Garage auf Netcup]
+    PG -->|Base Backup<br/>täglich| S3
+    S3 -->|Restore| PG_NEW[Neuer PostgreSQL Cluster]
+----
+
+=== CloudNativePG Backup-Konfiguration (geplant)
+
+[source,yaml]
+----
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres-cluster
+spec:
+  # ... bestehende Konfiguration ...
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://tomsblog-backups/postgres/
+      endpointURL: https://garage.netcup.example.com
+      s3Credentials:
+        accessKeyId:
+          name: backup-s3-credentials
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: backup-s3-credentials
+          key: SECRET_ACCESS_KEY
+      wal:
+        compression: gzip
+    retentionPolicy: "30d"
+----
+
+== Offene Punkte
+
+* S3-kompatibles Storage auf Netcup VM (Garage) einrichten
+* Backup-Credentials als Secret anlegen
+* Regelmäßige Restore-Tests automatisieren
+* Alerting bei fehlgeschlagenen Backups

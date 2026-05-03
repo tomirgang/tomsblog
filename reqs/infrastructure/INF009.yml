@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Backup-Strategie fuer PostgreSQL
+level: 9.0
+links:
+- STK007: Nwd-mVuiQVakHJYWDxXDmwxpAWV_SwK47nZ0Yjoypvc=
+normative: true
+ref: ''
+reviewed: hhRn26Lm6WdYIFDvr_EQhYGgewpDHx0gqxn4mqldeuk=
+text: |
+  Die PostgreSQL-Datenbank muss regelmaessig gesichert werden. Zielwerte:
+  RPO (Recovery Point Objective) < 1 Stunde durch WAL-Streaming,
+  RTO (Recovery Time Objective) < 15 Minuten durch Restore aus Backup.
+  Backups werden auf S3-kompatiblem Storage (Garage auf Netcup VM) gespeichert.
+  Retention: 30 Tage. Regelmäßige Restore-Tests muessen durchgefuehrt werden.

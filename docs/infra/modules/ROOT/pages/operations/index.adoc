@@ -1,0 +1,28 @@
+= Operations
+:sectnums:
+
+== Überblick
+
+Dieses Kapitel beschreibt operationelle Verfahren für den Betrieb der Toms-Blog-Plattform. Es dient als Runbook für häufige Aufgaben und Incident-Response.
+
+=== Zugangs-Voraussetzungen
+
+* `kubectl` konfiguriert mit Cluster-Zugang (`cluster.tomirgang.de:6443`)
+* `flux` CLI installiert
+* `sops` + age Key für Secret-Entschlüsselung
+* Zugang zum IaC-Repository für Plattform-Änderungen
+
+=== Cluster-Zugang prüfen
+
+[source,bash]
+----
+kubectl cluster-info
+kubectl get nodes
+flux get all
+----
+
+== Weiterführend
+
+* xref:rollback.adoc[Rollback-Verfahren] -- Deployment zurückrollen
+* xref:disaster-recovery.adoc[Disaster Recovery] -- Cluster-Neuaufbau
+* xref:monitoring.adoc[Monitoring & Alerting] -- Observability-Stack

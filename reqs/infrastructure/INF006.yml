@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Service Mesh mit Linkerd (mTLS)
+level: 6.0
+links:
+- STK007: Nwd-mVuiQVakHJYWDxXDmwxpAWV_SwK47nZ0Yjoypvc=
+normative: true
+ref: ''
+reviewed: tiEdSI2quY8-vR4hCfKdI5DwtyAfkTefu7JPuoNQAi4=
+text: |
+  Alle Pod-zu-Pod-Verbindungen innerhalb des Clusters muessen durch Linkerd
+  mTLS verschluesselt werden. Jeder Pod in meshed Namespaces erhaelt
+  automatisch einen Sidecar-Proxy. Die Zertifikats-Hierarchie umfasst
+  Trust Anchor (10 Jahre), Identity Issuer (1 Jahr, cert-manager-rotiert)
+  und Workload Certificates (24h, automatisch).

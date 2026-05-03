@@ -1,0 +1,61 @@
+= Image-Automation
+:sectnums:
+
+== Problem: `latest`-Tag
+
+Aktuell verwendet das Deployment den Image-Tag `latest` (INF-008). Dies führt dazu, dass Flux keinen Drift erkennt, wenn ein neues Image gepusht wird, da sich der Manifest-Inhalt nicht ändert.
+
+== Zielzustand: Versionierte Tags
+
+Die CI-Pipeline soll jedes Image mit einem eindeutigen, versionierten Tag versehen. Flux erkennt dann die Manifest-Änderung und löst ein Rollout aus.
+
+=== Tag-Schema
+
+[cols="1,2,1"]
+|===
+| Variante | Format | Beispiel
+
+| Commit-SHA (empfohlen) | `sha-<7-stelliger-hash>` | `sha-abc1234`
+| Semver + Build | `<version>-<sha>` | `0.5.1-abc1234`
+|===
+
+=== CI-Workflow (GitHub Actions)
+
+Der CI-Workflow baut das Image, taggt es und aktualisiert das Deployment-Manifest:
+
+[mermaid]
+----
+sequenceDiagram
+    participant Dev as Entwickler
+    participant GH as GitHub Actions
+    participant GHCR as Container Registry
+    participant REPO as Git Repository
+    participant FLUX as Flux
+
+    Dev->>GH: Push auf main
+    GH->>GH: Build & Test
+    GH->>GHCR: docker push :sha-abc1234
+    GH->>REPO: Update deployment.yaml (neuer Tag)
+    GH->>REPO: git push (automated commit)
+    FLUX->>REPO: Poll erkennt neuen Commit
+    FLUX->>FLUX: Reconcile (neuer Image-Tag)
+    Note over FLUX: Rolling Update
+----
+
+=== Deployment-Manifest (Ziel)
+
+[source,yaml]
+----
+containers:
+  - name: blog-content
+    image: ghcr.io/tomirgang/tomsblog/blog-content:sha-abc1234  # <-- versioniert
+----
+
+== Alternative: Flux Image Automation Controller
+
+Für die Zukunft kann der Flux Image Automation Controller eingesetzt werden, der die Container Registry direkt überwacht und Tags automatisch im Git-Repository aktualisiert. Dies erfordert zusätzliche Controller im Cluster:
+
+* Image Reflector Controller
+* Image Automation Controller
+
+Für Phase 4 wird zunächst der einfachere CI-basierte Ansatz umgesetzt.

@@ -1,0 +1,54 @@
+= AuthorizationPolicies
+:sectnums:
+
+== Default-Deny-Strategie
+
+Alle Namespaces verwenden eine Default-Deny-Strategie (INF-007). Nur explizit erlaubte Kommunikationspfade sind zugelassen.
+
+=== Server-Definition
+
+Jeder Service definiert einen Linkerd `Server`, der den Port und das Protokoll beschreibt:
+
+[source,yaml]
+----
+apiVersion: policy.linkerd.io/v1beta1
+kind: Server
+metadata:
+  name: blog-content-http
+  namespace: tomsblog
+spec:
+  podSelector:
+    matchLabels:
+      app: blog-content
+  port: http
+  proxyProtocol: HTTP/1
+----
+
+=== AuthorizationPolicies
+
+Für jeden Server werden dann AuthorizationPolicies definiert, die den Zugriff erlauben:
+
+[mermaid]
+----
+graph LR
+    TRAEFIK[Traefik<br/>kube-system] -->|erlaubt| BC[blog-content<br/>tomsblog]
+    KUBELET[Kubelet<br/>Health Probes] -->|erlaubt| BC
+    BC -->|erlaubt| PG[postgres-cluster<br/>postgres]
+----
+
+=== Aktuelle Policies
+
+[cols="1,2,2"]
+|===
+| Policy | Quelle | Ziel
+
+| authz-policy-traefik | ServiceAccount: traefik (kube-system) | blog-content:http
+| authz-policy-probes | Unauthenticated (Kubelet) | blog-content:http (nur /actuator/health)
+|===
+
+== Dateien im Repository
+
+Die AuthorizationPolicies liegen unter `infra/k8s/blog-content/`:
+
+* `authz-policy-traefik.yaml` -- Erlaubt Traefik-Ingress
+* `authz-policy-probes.yaml` -- Erlaubt Kubelet Health-Probes

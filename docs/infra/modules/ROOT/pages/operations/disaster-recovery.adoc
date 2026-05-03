@@ -1,0 +1,58 @@
+= Disaster Recovery
+:sectnums:
+
+== Status
+
+NOTE: Ein vollständiger Disaster-Recovery-Plan ist noch in Arbeit (INF-009). Dieses Kapitel beschreibt den aktuellen Stand und den geplanten Ablauf.
+
+== Szenarien
+
+[cols="1,2,2"]
+|===
+| Szenario | Auswirkung | Wiederherstellung
+
+| Einzelner Pod fällt aus | Kurze Unterbrechung | Kubernetes Restart (automatisch)
+| Worker Node fällt aus | Service auf anderen Node rescheduled | Automatisch (wenn Replicas > 1)
+| PostgreSQL Primary fällt aus | Kurze DB-Unterbrechung | CloudNativePG Failover (automatisch)
+| Gesamter Cluster verloren | Totalausfall | Cluster neu provisionieren, Flux reconciled
+| Datenbank-Corruption | Datenverlust | Restore aus Backup (noch nicht implementiert)
+|===
+
+== Cluster-Neuaufbau
+
+Falls der gesamte Cluster verloren geht:
+
+[source,bash]
+----
+# 1. Cluster neu provisionieren (IaC-Repository)
+cd kubernetes-playground/K8nCluster
+tofu apply
+
+# 2. Flux bootstrap
+flux bootstrap github \
+  --owner=tomirgang \
+  --repository=kubernetes-playground \
+  --path=flux/ \
+  --personal
+
+# 3. SOPS age Key im Cluster hinterlegen
+kubectl create secret generic sops-age \
+  --namespace=flux-system \
+  --from-file=age.agekey=/path/to/age.key
+
+# 4. Flux reconciled automatisch alle Ressourcen
+flux reconcile kustomization flux-system
+----
+
+Flux stellt dann automatisch wieder her:
+
+* Alle Kubernetes-Manifeste aus beiden Repositories
+* Secrets (via SOPS-Entschlüsselung)
+* PostgreSQL-Cluster (Struktur, aber NICHT die Daten)
+
+== Offene Punkte für vollständige DR
+
+* Datenbank-Backup-Restore aus S3 (INF-009)
+* Dokumentierte RTO/RPO-Ziele
+* Regelmäßige DR-Tests (quartalsweise)
+* Runbook für DNS-Umstellung bei Provider-Wechsel

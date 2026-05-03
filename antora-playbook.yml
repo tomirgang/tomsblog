@@ -12,6 +12,9 @@ content:
       branches: [main, HEAD]
       tags: ['v*']
       start_path: docs/design
+    - url: .
+      branches: [main, HEAD]
+      start_path: docs/infra
 
 ui:
   bundle:

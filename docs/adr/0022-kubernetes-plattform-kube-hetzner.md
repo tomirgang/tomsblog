@@ -42,14 +42,14 @@ Wir verwenden **kube-hetzner** (Terraform-Modul) mit **OpenTofu** zur Provisioni
 
 | Komponente | Konfiguration |
 |-----------|---------------|
-| Control Plane | 1x CX23, Nürnberg (nbg1) |
-| Worker Nodes | 2x CX23, Nürnberg (nbg1) |
+| Control Plane | 1x CX33 (4 vCPU, 8 GB), Nürnberg (nbg1) |
+| Worker Nodes | 2x CX23 (2 vCPU, 4 GB), Nürnberg (nbg1) |
 | Load Balancer | LB11, Nürnberg |
 | CNI-Verschlüsselung | WireGuard |
 | Storage | Hetzner CSI (hcloud-volumes) |
 | Automatische Upgrades | Deaktiviert (manuelle Kontrolle) |
 | Basis-Domain | cluster.tomirgang.de |
-| Kosten | ca. 21,55 EUR/Monat |
+| Kosten | ca. 30 EUR/Monat |
 
 ### Repository-Trennung
 
@@ -60,7 +60,7 @@ Wir verwenden **kube-hetzner** (Terraform-Modul) mit **OpenTofu** zur Provisioni
 
 ### Begründung
 
-- **Budget-optimal**: ca. 21,55 EUR/Monat für ein vollständiges 3-Node-Cluster
+- **Budget-optimal**: ca. 30 EUR/Monat für ein vollständiges 3-Node-Cluster (inkl. LB, Volumes, IPs)
 - **Reproduzierbar**: OpenTofu State ermöglicht konsistente Infrastruktur
 - **WireGuard**: Netzwerkverschlüsselung zwischen Nodes als Ergänzung zu Linkerd mTLS (ADR-0021)
 - **Hetzner-nativ**: CSI und CCM direkt integriert, keine manuellen Volume-/LB-Konfigurationen
@@ -80,6 +80,16 @@ Wir verwenden **kube-hetzner** (Terraform-Modul) mit **OpenTofu** zur Provisioni
 - k3s statt vollwertigem K8s: einige Randfälle bei Helm Charts möglich
 - Abhängigkeit vom kube-hetzner Community-Modul
 - Terraform-State muss separat gesichert werden
+
+### Historische Änderungen
+
+**2026-05-03: Control Plane CX23 → CX33**
+
+Der k3s-Server-Prozess (API-Server, Scheduler, etcd) belegt allein ca. 1,3 Gi RAM.
+Zusammen mit containerd und den System-Pods (CoreDNS, metrics-server, kured,
+system-upgrade-controller) war der 4-GB-Node (CX23) mit 98% Memory-Auslastung
+an der Grenze. Das Upgrade auf CX33 (8 GB) schafft ausreichend Headroom für
+stabile Operationen ohne OOM-Risiko.
 
 ## References
 

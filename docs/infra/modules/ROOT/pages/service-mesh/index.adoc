@@ -1,0 +1,47 @@
+= Service Mesh
+:sectnums:
+
+== Überblick
+
+Linkerd dient als Service Mesh für die gesamte Intra-Cluster-Kommunikation (INF-006, ADR-0021). Es bietet:
+
+* **mTLS**: Automatische Verschlüsselung aller Pod-zu-Pod-Verbindungen
+* **AuthorizationPolicies**: Feingranulare Zugriffskontrolle auf Service-Ebene
+* **Observability**: Transparente Metriken (Latenz, Fehlerrate, Durchsatz)
+
+=== Architektur
+
+Die Linkerd Control Plane läuft im Namespace `linkerd`. Jeder Pod im meshed Namespace erhält automatisch einen Sidecar-Proxy:
+
+[mermaid]
+----
+graph TB
+    subgraph "Namespace: linkerd"
+        DEST[Destination Controller]
+        ID[Identity Controller]
+        PROXY_INJ[Proxy Injector]
+    end
+    subgraph "Namespace: tomsblog"
+        subgraph "Pod: blog-content"
+            APP[App Container]
+            PROXY_A[linkerd-proxy]
+        end
+    end
+    subgraph "Namespace: postgres"
+        subgraph "Pod: postgres-cluster"
+            PG[PostgreSQL]
+            PROXY_B[linkerd-proxy]
+        end
+    end
+
+    PROXY_A -->|mTLS| PROXY_B
+    PROXY_A -->|Identity| ID
+    PROXY_A -->|Service Discovery| DEST
+    PROXY_INJ -.->|inject| PROXY_A
+    PROXY_INJ -.->|inject| PROXY_B
+----
+
+== Weiterführend
+
+* xref:mtls.adoc[mTLS] -- Zertifikats-Hierarchie und Trust Anchor
+* xref:authorization.adoc[AuthorizationPolicies] -- Zugriffskontrolle

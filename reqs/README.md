@@ -6,10 +6,12 @@ ASPICE-orientiertes Requirement Tracing mit Doorstop.
 
 ```
 STK (Stakeholder Requirements)
- └── SWR (Software Requirements)
-      ├── SWA (Architecture/Design)
-      │    └── IMP (Implementation)
-      └── TST (Test Specifications)
+ ├── SWR (Software Requirements)
+ │    ├── SWA (Architecture/Design)
+ │    │    └── IMP (Implementation)
+ │    └── TST (Test Specifications)
+ └── INF (Infrastructure Requirements)
+      └── OPS (Operations Requirements)
 ```
 
 ## Verzeichnisse
@@ -19,6 +21,8 @@ STK (Stakeholder Requirements)
 | `stakeholder/`    | STK    | Stakeholder-Anforderungen                   |
 | `software/`       | SWR    | Software-Anforderungen (abgeleitet aus STK) |
 | `architecture/`   | SWA    | Architektur-/Design-Entscheidungen          |
+| `infrastructure/` | INF    | Infrastruktur-Anforderungen (abgeleitet aus STK) |
+| `operations/`     | OPS    | Operations-Anforderungen (abgeleitet aus INF) |
 | `implementation/` | IMP    | Implementierungs-Nachweise                  |
 | `tests/`          | TST    | Testspezifikationen (verifizieren SWR)      |
 

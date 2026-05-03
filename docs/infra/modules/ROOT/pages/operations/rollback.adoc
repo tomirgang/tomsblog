@@ -1,0 +1,78 @@
+= Rollback-Verfahren
+:sectnums:
+
+== Deployment-Rollback
+
+=== Via Git Revert (empfohlen, GitOps-konform)
+
+Der sicherste Weg ist ein Git Revert des problematischen Commits. Flux erkennt den neuen Commit und reconciled:
+
+[source,bash]
+----
+git revert <problematischer-commit>
+git push
+# Flux reconciled automatisch innerhalb von 10 Minuten
+----
+
+Manuelles Triggern für sofortige Wirkung:
+
+[source,bash]
+----
+flux reconcile source git tomsblog
+flux reconcile kustomization tomsblog
+----
+
+=== Via kubectl (Notfall)
+
+In dringenden Fällen kann direkt im Cluster zurückgerollt werden:
+
+[source,bash]
+----
+# Letzte Revision anzeigen
+kubectl rollout history deployment/blog-content -n tomsblog
+
+# Auf vorherige Revision zurückrollen
+kubectl rollout undo deployment/blog-content -n tomsblog
+
+# Auf spezifische Revision
+kubectl rollout undo deployment/blog-content -n tomsblog --to-revision=3
+----
+
+WARNING: Direkte kubectl-Änderungen werden beim nächsten Flux-Reconcile überschrieben. Daher muss parallel ein Git Revert erfolgen.
+
+=== Rollback-Workflow
+
+[mermaid]
+----
+flowchart TD
+    A[Problem erkannt] --> B{Kritisch?}
+    B -->|Ja| C[kubectl rollout undo]
+    B -->|Nein| D[git revert]
+    C --> E[Sofort stabilisiert]
+    E --> D
+    D --> F[Push auf main]
+    F --> G[Flux reconciled]
+    G --> H[Zustand konsistent]
+----
+
+== Pod-Neustart (ohne Rollback)
+
+Falls nur ein Neustart nötig ist (z.B. nach Config-Änderung):
+
+[source,bash]
+----
+kubectl rollout restart deployment/blog-content -n tomsblog
+----
+
+== PostgreSQL-Failover
+
+Bei Datenbankproblemen kann ein manuelles Switchover ausgelöst werden:
+
+[source,bash]
+----
+# Status prüfen
+kubectl get cluster postgres-cluster -n postgres
+
+# Manuelles Switchover (Replica wird Primary)
+kubectl cnpg promote postgres-cluster -n postgres
+----

@@ -16,14 +16,14 @@ Das Kubernetes-Cluster wird mit dem Terraform-Modul https://github.com/kube-hetz
 | Parameter | Wert
 
 | Distribution | k3s (via kube-hetzner)
-| Control Plane | 1x CX23, Nürnberg (nbg1)
-| Worker Nodes | 2x CX23, Nürnberg (nbg1)
+| Control Plane | 1x CX33 (4 vCPU, 8 GB), Nürnberg (nbg1)
+| Worker Nodes | 2x CX23 (2 vCPU, 4 GB), Nürnberg (nbg1)
 | Load Balancer | LB11, Nürnberg
 | Netzwerk-Verschlüsselung | WireGuard
 | Storage | Hetzner CSI (hcloud-volumes)
 | Ingress | Traefik (k3s-Standard)
 | Basis-Domain | cluster.tomirgang.de
-| Kosten | ca. 21,55 EUR/Monat
+| Kosten | ca. 30 EUR/Monat (1x CX33 + 2x CX23 + LB11 + Volumes + IPs)
 |===
 
 Die Plattform-Provisionierung (Cluster, Nodes, Basis-Operatoren) liegt in einem separaten IaC-Repository. Applikationsspezifische Kubernetes-Ressourcen (DB-Instanzen, Service-Deployments) werden aus dem Anwendungs-Repository via Flux synchronisiert (ADR-0020).

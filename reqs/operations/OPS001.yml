@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Rollback-Verfahren dokumentiert und getestet
+level: 1.0
+links:
+- INF002: QHeSwvGWGktYt1DOE4JW6c7N9xlFgt6NWOTTtwnXBwg=
+normative: true
+ref: ''
+reviewed: WrWNCMRfwWMws9q0WfiU6ZoB9u2yHaA0qUOkcJtz_ww=
+text: |
+  Es muss ein dokumentiertes Rollback-Verfahren fuer Deployments existieren.
+  Primaerer Weg: Git Revert mit anschliessender Flux-Reconciliation.
+  Sekundaerer Weg (Notfall): kubectl rollout undo. Beide Verfahren muessen
+  getestet und im Runbook beschrieben sein.

@@ -1,0 +1,47 @@
+= Netzwerk & DNS
+:sectnums:
+
+== Netzwerk-Topologie
+
+Das Cluster-Netzwerk nutzt WireGuard für die Node-zu-Node-Verschlüsselung (bereitgestellt durch kube-hetzner). Der externe Zugang erfolgt über einen Hetzner Load Balancer (LB11).
+
+[mermaid]
+----
+graph TB
+    DNS[DNS: blog.tomirgang.de] --> LB[Hetzner LB11<br/>Port 80, 443]
+    LB --> N1[Control Plane<br/>CX23]
+    LB --> N2[Worker 1<br/>CX23]
+    LB --> N3[Worker 2<br/>CX23]
+    N1 ---|WireGuard| N2
+    N2 ---|WireGuard| N3
+    N1 ---|WireGuard| N3
+----
+
+== DNS-Konfiguration
+
+Die DNS-Einträge werden manuell beim Domain-Provider konfiguriert:
+
+[cols="1,1,2"]
+|===
+| Record | Typ | Ziel
+
+| blog.tomirgang.de | A | Hetzner LB IP (öffentlich)
+| cluster.tomirgang.de | A | Control Plane IP (nur für kubectl-Zugang)
+|===
+
+== Load Balancer
+
+Der Hetzner LB11 terminiert keine TLS-Verbindungen (TLS-Passthrough). Die TLS-Terminierung erfolgt durch Traefik im Cluster.
+
+[cols="1,1,1"]
+|===
+| LB-Port | Ziel-Port | Protokoll
+
+| 80 | 80 | TCP (HTTP, für ACME + Redirect)
+| 443 | 443 | TCP (HTTPS, TLS-Passthrough)
+| 6443 | 6443 | TCP (Kubernetes API, nur Control Plane)
+|===
+
+== Intra-Cluster-Kommunikation
+
+Innerhalb des Clusters wird die gesamte Pod-zu-Pod-Kommunikation durch Linkerd mTLS verschlüsselt (INF-006). Details dazu in xref:../service-mesh/mtls.adoc[mTLS].

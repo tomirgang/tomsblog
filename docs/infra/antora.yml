@@ -1,0 +1,7 @@
+name: tomsblog-infra
+version: true
+prerelease: -dev
+title: "Toms Blog: Infrastruktur-Dokumentation"
+start_page: ROOT:index.adoc
+nav:
+  - modules/ROOT/nav.adoc

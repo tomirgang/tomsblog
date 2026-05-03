@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Versionierte Image-Tags und automatische Manifest-Updates
+level: 8.0
+links:
+- STK007: Nwd-mVuiQVakHJYWDxXDmwxpAWV_SwK47nZ0Yjoypvc=
+normative: true
+ref: ''
+reviewed: VugMpqulxxV9R6ll_RDuLNbDuGLChmGA39towvNLR04=
+text: |
+  Container-Images muessen mit eindeutigen, versionierten Tags (Commit-SHA
+  oder Semver) versehen werden. Die CI-Pipeline aktualisiert nach erfolgreichem
+  Build automatisch den Image-Tag im Deployment-Manifest und committet die
+  Aenderung. Flux erkennt den neuen Commit und loest ein Rolling Update aus.
+  Der Tag latest darf nicht fuer Produktiv-Deployments verwendet werden.

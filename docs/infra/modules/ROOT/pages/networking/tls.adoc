@@ -1,0 +1,64 @@
+= TLS & Zertifikate
+:sectnums:
+
+== cert-manager
+
+Zertifikate werden automatisch über cert-manager und Let's Encrypt bereitgestellt (INF-003, SWA-021).
+
+=== ClusterIssuer
+
+Der ClusterIssuer für die Produktivumgebung (`infra/k8s/cert-manager/`):
+
+[source,yaml]
+----
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: admin@tomirgang.de
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+      - http01:
+          ingress:
+            class: traefik
+----
+
+=== Zertifikats-Lebenszyklus
+
+[mermaid]
+----
+sequenceDiagram
+    participant ING as Ingress (Annotation)
+    participant CM as cert-manager
+    participant LE as Let's Encrypt
+    participant SEC as K8s Secret
+
+    ING->>CM: cert-manager.io/cluster-issuer: letsencrypt-prod
+    CM->>CM: Certificate-Ressource erstellen
+    CM->>LE: ACME Order (HTTP-01 Challenge)
+    LE->>CM: Challenge-Token
+    CM->>ING: Temporärer Ingress für /.well-known/acme-challenge/
+    LE->>ING: HTTP-01 Validierung
+    LE-->>CM: Zertifikat ausgestellt
+    CM->>SEC: TLS Secret aktualisieren (blog-content-tls)
+    Note over CM: Automatische Erneuerung vor Ablauf (30 Tage)
+----
+
+=== Aktuelle Zertifikate
+
+[cols="1,2,1"]
+|===
+| Secret | Domain | Namespace
+
+| blog-content-tls | blog.tomirgang.de | tomsblog
+|===
+
+== Voraussetzungen
+
+* cert-manager CRDs und Controller installiert (IaC-Repository)
+* DNS A-Record zeigt auf Hetzner LB IP
+* Port 80 am Load Balancer offen (ACME HTTP-01 Challenge-Validierung)

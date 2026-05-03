@@ -1,0 +1,65 @@
+= CloudNativePG
+:sectnums:
+
+== Cluster-Definition
+
+PostgreSQL wird über den CloudNativePG Operator als Kubernetes Custom Resource verwaltet (INF-005, SWA-018, ADR-0023). Die Cluster-Definition liegt unter `infra/k8s/postgres/`.
+
+=== Aktuelle Konfiguration
+
+[cols="1,2"]
+|===
+| Parameter | Wert
+
+| Instanzen | 2 (Primary + 1 Replica, automatisches Failover)
+| Storage | 10 Gi (hcloud-volumes)
+| shared_buffers | 256 MB
+| effective_cache_size | 512 MB
+| Memory | 512 Mi Request / 1 Gi Limit
+| CPU | 250m Request / 1000m Limit
+| Namespace | postgres
+| Service-Endpunkt | postgres-cluster-rw.postgres.svc.cluster.local:5432
+|===
+
+== Failover
+
+Bei Ausfall der Primary-Instanz übernimmt die Replica automatisch. Der Operator:
+
+1. Erkennt den Ausfall (Health-Check fehlgeschlagen)
+2. Promoted die Replica zur neuen Primary
+3. Aktualisiert den `-rw`-Service-Endpunkt
+4. Startet eine neue Replica (wenn Node verfügbar)
+
+[mermaid]
+----
+sequenceDiagram
+    participant OP as CloudNativePG Operator
+    participant P as Primary Pod
+    participant R as Replica Pod
+    participant SVC as Service (postgres-cluster-rw)
+
+    Note over P: Pod Failure
+    OP->>OP: Health-Check schlägt fehl
+    OP->>R: Promote to Primary
+    OP->>SVC: Update Endpoint → Replica
+    Note over R: Neue Primary
+    OP->>OP: Erstelle neue Replica
+----
+
+== Credentials
+
+Die Datenbank-Credentials werden vom Operator automatisch als Kubernetes Secret erstellt:
+
+[cols="1,2"]
+|===
+| Secret | Inhalt
+
+| postgres-cluster-app | username, password (für Application User)
+| postgres-cluster-superuser | username, password (für Admin-Zugang)
+|===
+
+Der blog-content Service referenziert das `postgres-cluster-app` Secret in seiner Deployment-Konfiguration.
+
+== Verbindung zum App-Repository
+
+Die Cluster-Definition referenziert die Secrets aus dem App-Repository. Der Reflector-Operator synchronisiert das App-Secret in den `tomsblog`-Namespace, damit der blog-content Service darauf zugreifen kann.

@@ -1,0 +1,94 @@
+= Flux-Konfiguration
+:sectnums:
+
+== GitRepository-Quellen
+
+Flux beobachtet zwei Git-Repositories als Quellen für den Cluster-Zustand (INF-002):
+
+=== App-Repository (tomsblog)
+
+[source,yaml]
+----
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: tomsblog
+  namespace: flux-system
+spec:
+  interval: 10m
+  url: https://github.com/tomirgang/tomsblog
+  ref:
+    branch: main
+----
+
+=== Kustomization für App-Ressourcen
+
+[source,yaml]
+----
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tomsblog
+  namespace: flux-system
+spec:
+  interval: 10m
+  sourceRef:
+    kind: GitRepository
+    name: tomsblog
+  path: ./infra/k8s
+  prune: true
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: blog-content
+      namespace: tomsblog
+    - apiVersion: postgresql.cnpg.io/v1
+      kind: Cluster
+      name: postgres-cluster
+      namespace: postgres
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+----
+
+== Reconciliation-Ablauf
+
+Der folgende Ablauf beschreibt, was passiert, wenn ein neuer Commit auf `main` gepusht wird:
+
+[mermaid]
+----
+sequenceDiagram
+    participant Dev as Entwickler
+    participant GH as GitHub (main)
+    participant SC as Source Controller
+    participant KC as Kustomize Controller
+    participant K8s as Cluster
+
+    Dev->>GH: git push (infra/k8s/ Änderung)
+    SC->>GH: Poll (alle 10min)
+    SC-->>KC: Neuer Commit erkannt
+    KC->>KC: kustomize build ./infra/k8s
+    KC->>KC: SOPS decrypt (Secrets)
+    KC->>K8s: kubectl apply
+    KC->>K8s: Health-Check (Deployment ready?)
+    alt Healthy
+        KC-->>KC: Reconciliation erfolgreich
+    else Unhealthy
+        KC-->>KC: Retry / Alert
+    end
+----
+
+== Health-Checks
+
+Flux prüft nach jedem Reconciliation-Lauf den Health-Status der kritischen Ressourcen. Falls ein Deployment nicht ready wird, bleibt die Kustomization im Status `False` und kann über `flux get kustomizations` inspiziert werden.
+
+== Manuelles Triggern
+
+In dringenden Fällen kann die Reconciliation manuell ausgelöst werden:
+
+[source,bash]
+----
+flux reconcile source git tomsblog
+flux reconcile kustomization tomsblog
+----

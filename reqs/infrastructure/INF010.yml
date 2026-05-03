@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Monitoring-Infrastruktur
+level: 10.0
+links:
+- STK007: Nwd-mVuiQVakHJYWDxXDmwxpAWV_SwK47nZ0Yjoypvc=
+normative: true
+ref: ''
+reviewed: JbItUp3WW3lo8ctG_mLK7BCo0s8TDzjDia9T_bI-VCY=
+text: |
+  Die Plattform muss ueber einen vollstaendigen Observability-Stack verfuegen:
+  Prometheus (Metriken), Grafana (Dashboards), Loki (Log-Aggregation) und
+  Tempo (Distributed Tracing). Alerting muss bei kritischen Zustaenden
+  (Service down, hohe Fehlerrate, Disk voll) automatisch ausgeloest werden.

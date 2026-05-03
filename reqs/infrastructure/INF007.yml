@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Network Policies (Default Deny)
+level: 7.0
+links:
+- STK007: Nwd-mVuiQVakHJYWDxXDmwxpAWV_SwK47nZ0Yjoypvc=
+normative: true
+ref: ''
+reviewed: 5RP7RymfIl7YBkVsuTBr4D7xa_w25tsL7sJ-48FwOL0=
+text: |
+  Alle Namespaces muessen eine Default-Deny NetworkPolicy verwenden.
+  Nur explizit erlaubte Verbindungen sind zugelassen. Erlaubte Pfade
+  werden ueber dedizierte Ingress- und Egress-NetworkPolicies definiert.
+  Zusaetzlich werden Linkerd AuthorizationPolicies fuer Service-Level-Zugriffskontrolle
+  eingesetzt.

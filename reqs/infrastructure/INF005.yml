@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  PostgreSQL HA via CloudNativePG
+level: 5.0
+links:
+- STK007: Nwd-mVuiQVakHJYWDxXDmwxpAWV_SwK47nZ0Yjoypvc=
+normative: true
+ref: ''
+reviewed: N9xbzSaPeGg2yfXNxmrJb7v3XJ-CMVqW8RIZUrfshFI=
+text: |
+  PostgreSQL muss ueber den CloudNativePG Operator als Kubernetes Custom
+  Resource betrieben werden. Die Konfiguration umfasst mindestens 2 Instanzen
+  (Primary + Replica) mit automatischem Failover. Der Operator verwaltet
+  den gesamten Lifecycle (Provisioning, Failover, Scaling, Credential-Rotation).

@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+
+- Control-Plane-Node von CX23 (2 vCPU, 4 GB) auf CX33 (4 vCPU, 8 GB) aufgerüstet (k3s-Server benötigt allein 1,3 Gi RAM)
+- Cluster-Kosten aktualisiert: ca. 30 EUR/Monat (CX33 + 2x CX23 + LB11 + Volumes + IPs)
+- Dokumentation angepasst: ADR-0022, arc42 Verteilungssicht, Infra-Doku, SWA-017, INF-001
+
+### Added
+
+- Infrastruktur-Dokumentation als eigene Antora-Komponente (`docs/infra/`): Cluster-Setup, GitOps, Service Mesh, Networking, Datenhaltung, Operations
+- Doorstop-Requirement-Typen `INF` (Infrastructure Requirements) und `OPS` (Operations Requirements) mit eigener Hierarchie unter STK
+- Initiale Infrastruktur-Requirements INF-001 bis INF-010 (Cluster, Flux, TLS, Secrets, PostgreSQL HA, Linkerd, Network Policies, Image-Automation, Backup, Monitoring)
+- Initiale Operations-Requirements OPS-001 bis OPS-003 (Rollback, Disaster Recovery, Alerting)
+- Navigations-Link "Infrastruktur" im Antora-Header
+- Stakeholder-Requirement STK-022 (Volltextsuche über Tenant-Inhalte)
+
 ## [0.5.1] - 2026-05-02
 
 ### Changed

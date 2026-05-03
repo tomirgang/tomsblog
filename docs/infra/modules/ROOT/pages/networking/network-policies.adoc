@@ -1,0 +1,83 @@
+= Network Policies
+:sectnums:
+
+== Default-Deny-Strategie
+
+Alle Namespaces verwenden eine Default-Deny NetworkPolicy (INF-007). Nur explizit erlaubte Verbindungen sind möglich.
+
+=== Default-Deny
+
+[source,yaml]
+----
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  namespace: tomsblog
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+----
+
+== Erlaubte Verbindungen
+
+Das folgende Diagramm zeigt die erlaubten Netzwerkpfade:
+
+[mermaid]
+----
+graph TB
+    subgraph "kube-system"
+        TRAEFIK[Traefik]
+        DNS[CoreDNS]
+    end
+    subgraph "tomsblog"
+        BC[blog-content]
+    end
+    subgraph "postgres"
+        PG[postgres-cluster]
+    end
+    subgraph "linkerd"
+        LI[Linkerd Control Plane]
+    end
+    subgraph "cert-manager"
+        CM[cert-manager]
+    end
+
+    TRAEFIK -->|Ingress| BC
+    BC -->|Egress| PG
+    BC -->|Egress| DNS
+    BC -->|Egress| LI
+    CM -->|ACME Solver| TRAEFIK
+----
+
+=== Ingress-Policies
+
+[cols="1,2,2"]
+|===
+| Policy | Erlaubt von | Erlaubt zu
+
+| network-policy-ingress | Traefik (kube-system) | blog-content :8080
+| network-policy-acme-solver | cert-manager Solver Pods | Traefik :80
+| network-policy-intra | Pods im selben Namespace | Alle Ports (intern)
+|===
+
+=== Egress-Policies
+
+[cols="1,2,2"]
+|===
+| Policy | Erlaubt von | Erlaubt zu
+
+| network-policy-egress | blog-content | postgres (5432), CoreDNS (53), Linkerd
+|===
+
+== Dateien im Repository
+
+Alle Network Policies liegen unter `infra/k8s/blog-content/`:
+
+* `network-policy-deny.yaml` -- Default Deny (Ingress + Egress)
+* `network-policy-ingress.yaml` -- Erlaubt Traefik-Zugriff
+* `network-policy-acme-solver.yaml` -- Erlaubt ACME-Challenge
+* `network-policy-intra.yaml` -- Erlaubt Namespace-interne Kommunikation
+* `network-policy-egress.yaml` -- Erlaubt ausgehende Verbindungen

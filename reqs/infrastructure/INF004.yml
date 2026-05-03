@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Secrets-Management mit SOPS und age
+level: 4.0
+links:
+- STK016: bHjBgVbHga44ljUM-_zfhx4B2YFx3T1GgroBhKG31cM=
+normative: true
+ref: ''
+reviewed: Z8CoalLjW28PXVUA282zDtgL8MhgpVTTy8ahw-PYI9k=
+text: |
+  Secrets (Passwörter, API-Keys, OAuth-Credentials) muessen mit SOPS und
+  age verschluesselt im Git-Repository gespeichert werden. Nur die
+  data/stringData-Felder der Secret-Manifeste werden verschluesselt.
+  Flux entschluesselt sie automatisch beim Deployment. Der private
+  age-Schluessel liegt ausschliesslich als Secret im Cluster.

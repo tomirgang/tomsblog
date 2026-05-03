@@ -1,0 +1,74 @@
+= Traefik Ingress Controller
+:sectnums:
+
+== Konfiguration
+
+Traefik wird als k3s-Standard-Ingress-Controller im Namespace `kube-system` betrieben. Die Konfiguration erfolgt über Kubernetes-Ingress-Ressourcen und Traefik-spezifische CRDs (INF-003).
+
+=== Entrypoints
+
+[cols="1,1,2"]
+|===
+| Entrypoint | Port | Verwendung
+
+| web | 80 | HTTP (nur für ACME Challenge + Redirect)
+| websecure | 443 | HTTPS (Hauptverkehr)
+|===
+
+=== Ingress-Ressource
+
+Die Ingress-Definition für den Blog Content Service (`infra/k8s/blog-content/ingress.yaml`):
+
+[source,yaml]
+----
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: blog-content
+  namespace: tomsblog
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.middlewares: tomsblog-redirect-https@kubernetescrd
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - blog.tomirgang.de
+      secretName: blog-content-tls
+  rules:
+    - host: blog.tomirgang.de
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: blog-content
+                port:
+                  name: http
+----
+
+=== Middlewares
+
+Die HTTPS-Redirect-Middleware leitet alle HTTP-Anfragen permanent auf HTTPS um:
+
+[source,yaml]
+----
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-https
+  namespace: tomsblog
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+----
+
+== Routing-Strategie
+
+Aktuell gibt es eine einzige Host-basierte Route (`blog.tomirgang.de → blog-content`). Mit zusätzlichen Services werden entweder:
+
+* Weitere Subdomains eingerichtet (z.B. `api.tomirgang.de`, `auth.do9ita.de`)
+* Pfad-basiertes Routing innerhalb einer Domain verwendet (z.B. `/api/v1/...`)

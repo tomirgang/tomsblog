@@ -1,0 +1,52 @@
+= mTLS
+:sectnums:
+
+== Zertifikats-Hierarchie
+
+Linkerd verwendet eine zweistufige PKI für mTLS (INF-006):
+
+[mermaid]
+----
+graph TB
+    TA[Trust Anchor<br/>Selbstsigniertes Root-CA<br/>Gültigkeit: 10 Jahre] --> II[Identity Issuer<br/>Intermediate CA<br/>Gültigkeit: 1 Jahr]
+    II --> WL1[Workload Certificate<br/>Pod: blog-content<br/>Gültigkeit: 24h]
+    II --> WL2[Workload Certificate<br/>Pod: postgres-cluster<br/>Gültigkeit: 24h]
+----
+
+[cols="1,2,1"]
+|===
+| Zertifikat | Zweck | Rotation
+
+| Trust Anchor | Root-CA, verifiziert alle Identitäten | Manuell (alle 10 Jahre)
+| Identity Issuer | Signiert Workload-Zertifikate | cert-manager (jährlich)
+| Workload Certs | mTLS zwischen Pods | Automatisch (alle 24h)
+|===
+
+== Trust Anchor
+
+Der Trust Anchor ist ein selbstsigniertes Root-Zertifikat, das bei der Cluster-Erstellung einmalig generiert wird. Es wird als ConfigMap im Cluster bereitgestellt:
+
+[source,bash]
+----
+# Trust Anchor generieren (einmalig)
+step certificate create root.linkerd.cluster.local ca.crt ca.key \
+  --profile root-ca --no-password --insecure --not-after=87600h
+----
+
+== Identity Issuer (cert-manager)
+
+Der Identity Issuer wird über cert-manager automatisch rotiert. Eine Certificate-Ressource im Namespace `linkerd` stellt sicher, dass das Intermediate-Zertifikat immer gültig ist.
+
+== Automatisches Meshing
+
+Alle Pods in annotierten Namespaces erhalten automatisch einen Linkerd-Proxy-Sidecar:
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tomsblog
+  annotations:
+    linkerd.io/inject: enabled
+----

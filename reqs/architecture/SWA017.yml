@@ -10,8 +10,8 @@ ref: ''
 reviewed: 4gbOAiezuvIiB_Lij738q5yI3Tyz-CWqDFB4byx21ic=
 text: |
   Das Kubernetes-Cluster wird mit dem kube-hetzner Terraform-Modul und OpenTofu
-  auf Hetzner Cloud provisioniert. Konfiguration: 1 Control-Plane-Node (CX23),
-  2 Worker-Nodes (CX23), Load Balancer (LB11), Standort Nuernberg (nbg1).
+  auf Hetzner Cloud provisioniert. Konfiguration: 1 Control-Plane-Node (CX33, 4 vCPU, 8 GB),
+  2 Worker-Nodes (CX23, 2 vCPU, 4 GB), Load Balancer (LB11), Standort Nuernberg (nbg1).
   WireGuard-Verschluesselung ist zwischen allen Nodes aktiviert.
   Hetzner CSI (hcloud-volumes) und CCM sind integriert.
   Automatische Upgrades sind deaktiviert; Updates erfolgen manuell.

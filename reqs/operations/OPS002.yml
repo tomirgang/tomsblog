@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Disaster-Recovery-Plan
+level: 2.0
+links:
+- INF001: ddY3L1xQJXRrBSwqs9MwjUXovWhkJTFZLvBNS6947ZY=
+- INF009: k_sBQ94HCeBLYTudxw81KYZT-PENeFaIPlyMtsAf5s0=
+normative: true
+ref: ''
+reviewed: X3y_DHrm-ot5KmhYzU3GepGwyOxyl7bIFNN3Md75Uhw=
+text: |
+  Es muss ein Disaster-Recovery-Plan existieren, der den vollstaendigen
+  Neuaufbau des Clusters und die Wiederherstellung der Daten beschreibt.
+  Der Plan muss regelmaessig (mindestens quartalsweise) getestet werden.
+  Dokumentierte Szenarien: Einzelner Pod, Worker Node, PostgreSQL Primary,
+  gesamter Cluster, Datenbank-Corruption.

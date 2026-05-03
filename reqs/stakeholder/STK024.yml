@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Default-Domain-Redirect auf blog.tomirgang.de
+level: 24.0
+links: []
+normative: true
+ref: ''
+reviewed: Wvj_xMD8lHWDpcBlFJMr5zKUp4GaynacGQnlxwYQNtY=
+text: |
+  Requests an unbekannte Domains (also Domains, die keinem explizit
+  konfigurierten Routing zugeordnet sind) müssen automatisch auf
+  blog.tomirgang.de umgeleitet werden (301 Permanent Redirect).

@@ -1,0 +1,105 @@
+= Toms Blog: Infrastruktur-Dokumentation
+:toc: left
+:toclevels: 3
+:sectnums:
+
+== Über dieses Dokument
+
+Dieses Dokument beschreibt die Infrastruktur der *Toms Blog*-Plattform im Detail.
+Es ergänzt die xref:tomsblog-arc42::07_deployment/index.adoc[arc42-Verteilungssicht] um detaillierte Informationen zu Cluster-Setup, GitOps-Workflows, Netzwerk-Topologie und operationellen Verfahren.
+
+Während die arc42-Dokumentation die Infrastruktur aus Architektursicht beschreibt, konzentriert sich dieses Dokument auf konkrete Konfigurationen, Betriebsverfahren und Runbooks.
+
+=== Zielgruppe
+
+* Entwickler, die die Infrastruktur verstehen oder ändern wollen
+* Ops-Personal, das den Cluster betreibt und Incidents bearbeitet
+* Reviewer, die Infrastrukturentscheidungen nachvollziehen wollen
+
+=== Konventionen
+
+* Diagramme werden als Mermaid-Diagramme inline in AsciiDoc erstellt
+* Anforderungsreferenzen verweisen auf Doorstop-IDs (INF-xxx, OPS-xxx, STK-xxx)
+* Jeder Bereich hat ein eigenes Kapitel
+* Konfigurationsbeispiele verwenden die tatsächlichen Werte aus dem Repository
+
+=== Infrastruktur-Überblick
+
+Die Plattform läuft auf einem Kubernetes-Cluster bei Hetzner Cloud (INF-001). Das folgende Diagramm zeigt den Gesamtaufbau:
+
+[mermaid]
+----
+graph TB
+    subgraph Internet
+        USER[Browser/Client]
+    end
+
+    subgraph "Hetzner Cloud"
+        LB[Load Balancer LB11]
+        subgraph "K8s Cluster (k3s, 3 Nodes)"
+            TRAEFIK[Traefik Ingress]
+            LINKERD[Linkerd Service Mesh]
+            subgraph "Namespace: tomsblog"
+                BC[blog-content Pod]
+            end
+            subgraph "Namespace: postgres"
+                PG[PostgreSQL Cluster<br/>CloudNativePG]
+            end
+            subgraph "Namespace: flux-system"
+                FLUX[Flux Controllers]
+            end
+            subgraph "Namespace: cert-manager"
+                CM[cert-manager]
+            end
+            subgraph "Namespace: linkerd"
+                LI[Linkerd Control Plane]
+            end
+        end
+    end
+
+    subgraph "GitHub"
+        REPO_APP[tomsblog Repo]
+        REPO_IAC[IaC Repo]
+        GHCR[Container Registry]
+    end
+
+    USER --> LB
+    LB --> TRAEFIK
+    TRAEFIK --> BC
+    BC --> PG
+    LINKERD -.mTLS.-> BC
+    LINKERD -.mTLS.-> PG
+    FLUX --> REPO_APP
+    FLUX --> REPO_IAC
+    BC -.image.-> GHCR
+    CM -.certs.-> TRAEFIK
+----
+
+=== Requirement-Abdeckung
+
+Die Infrastruktur-Anforderungen sind in Doorstop unter dem Prefix `INF` (Infrastructure Requirements) und `OPS` (Operations Requirements) dokumentiert. Sie sind von den Stakeholder-Anforderungen STK-007 (Cloud-Native Deployment) und STK-016 (Secrets-Management) abgeleitet.
+
+[cols="1,3,1"]
+|===
+| Req-ID | Beschreibung | Kapitel
+
+| INF-001 | Kubernetes-Cluster auf Hetzner Cloud | xref:cluster-setup/index.adoc[Cluster-Setup]
+| INF-002 | GitOps-Deployment mit Flux | xref:gitops/index.adoc[GitOps]
+| INF-003 | TLS-Terminierung mit cert-manager | xref:networking/tls.adoc[TLS]
+| INF-004 | Secrets-Management mit SOPS + age | xref:gitops/secrets.adoc[Secrets]
+| INF-005 | PostgreSQL HA via CloudNativePG | xref:data/cloudnativepg.adoc[CloudNativePG]
+| INF-006 | Service Mesh mit Linkerd (mTLS) | xref:service-mesh/index.adoc[Service Mesh]
+| INF-007 | Network Policies (Default Deny) | xref:networking/network-policies.adoc[Network Policies]
+| INF-008 | Versionierte Image-Tags | xref:gitops/image-automation.adoc[Image-Automation]
+| INF-009 | Backup-Strategie | xref:data/backup.adoc[Backup]
+| INF-010 | Monitoring-Infrastruktur | xref:operations/monitoring.adoc[Monitoring]
+|===
+
+== Kapitel
+
+* xref:cluster-setup/index.adoc[Cluster-Setup] -- Provisionierung, Nodes, Netzwerk
+* xref:gitops/index.adoc[GitOps & Deployment] -- Flux, Image-Automation, Secrets
+* xref:service-mesh/index.adoc[Service Mesh] -- Linkerd, mTLS, Authorization
+* xref:networking/index.adoc[Networking & Ingress] -- Traefik, TLS, Network Policies
+* xref:data/index.adoc[Datenhaltung] -- CloudNativePG, Backup
+* xref:operations/index.adoc[Operations] -- Rollback, Disaster Recovery, Monitoring

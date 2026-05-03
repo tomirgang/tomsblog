@@ -1,0 +1,72 @@
+= Monitoring & Alerting
+:sectnums:
+
+== Status
+
+NOTE: Der Observability-Stack ist für Phase 9 geplant (INF-010). Dieses Kapitel beschreibt den geplanten Zielzustand.
+
+== Geplanter Stack
+
+[cols="1,2"]
+|===
+| Komponente | Zweck
+
+| Prometheus | Metriken-Sammlung (Cluster, Apps, Linkerd)
+| Grafana | Dashboards und Visualisierung
+| Loki | Log-Aggregation (zentrale Logsuche)
+| Tempo | Distributed Tracing (Request-Verfolgung)
+| Alertmanager | Alerting (PagerDuty, E-Mail, Slack)
+|===
+
+=== Geplante Architektur
+
+[mermaid]
+----
+graph TB
+    subgraph "Anwendung"
+        BC[blog-content<br/>Actuator Metrics]
+    end
+    subgraph "Service Mesh"
+        LP[Linkerd Proxy<br/>Golden Metrics]
+    end
+    subgraph "Observability Stack"
+        PROM[Prometheus]
+        GRAF[Grafana]
+        LOKI[Loki]
+        TEMPO[Tempo]
+        AM[Alertmanager]
+    end
+
+    BC -->|/actuator/prometheus| PROM
+    LP -->|mTLS Metrics| PROM
+    PROM --> GRAF
+    PROM --> AM
+    BC -->|stdout/stderr| LOKI
+    LOKI --> GRAF
+    BC -->|Trace Headers| TEMPO
+    TEMPO --> GRAF
+----
+
+== Aktuelle Observability
+
+Bis Phase 9 stehen folgende Mittel zur Verfügung:
+
+* **Health-Checks**: Kubernetes Liveness/Readiness Probes (`/actuator/health`)
+* **Flux Status**: `flux get all` zeigt den Reconciliation-Status
+* **kubectl**: Manuelle Inspektion von Pods, Events, Logs
+* **Linkerd Dashboard**: `linkerd viz dashboard` (falls Viz-Extension installiert)
+
+=== Manuelle Log-Inspektion
+
+[source,bash]
+----
+# Logs des blog-content Pods
+kubectl logs -n tomsblog deployment/blog-content -f
+
+# Events im Namespace
+kubectl get events -n tomsblog --sort-by='.lastTimestamp'
+
+# Flux-Fehler
+flux get kustomizations
+flux logs --level=error
+----
