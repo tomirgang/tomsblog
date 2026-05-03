@@ -14,6 +14,7 @@ auf einem generischen Kubernetes Cluster.
 | Ingress-Controller | Traefik / Nginx| HTTP(S)-Routing                    |
 | cert-manager       | 1.x            | TLS-Zertifikate (Let's Encrypt)    |
 | OIDC Provider      | OIDC 1.0       | Authentifizierung (z.B. Authentik) |
+| S3-Storage (Garage) | 1.x           | Backup-Ziel (externe Netcup VM)    |
 
 ## Architekturübersicht
 
@@ -355,6 +356,48 @@ Beide Services stellen Spring Boot Actuator Endpunkte bereit:
 | `/actuator/health`          | Liveness-Probe    |
 | `/actuator/health/readiness`| Readiness-Probe   |
 
+## Backup-Storage (Garage / S3)
+
+Für Backups steht ein S3-kompatibler Objektspeicher (Garage) auf einer separaten
+Netcup VM bereit. Die Garage-Instanz ist unabhängig vom Kubernetes-Cluster und
+dient als externes Backup-Ziel.
+
+### Verbindungsdaten
+
+| Parameter        | Wert                                        |
+| ---------------- | ------------------------------------------- |
+| Endpoint         | `https://garage.<BASE_DOMAIN>`              |
+| Region           | `garage`                                    |
+| Bucket           | `k8s-backup`                                |
+| Force Path Style | `true`                                      |
+| Access Key       | (aus Garage Key-Management)                 |
+| Secret Key       | (aus Garage Key-Management)                 |
+
+### Kubernetes Secret für Backup-Credentials
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: backup-s3-credentials
+  namespace: tomsblog
+type: Opaque
+stringData:
+  access-key: "<Access Key aus Garage>"
+  secret-key: "<Secret Key aus Garage>"
+  endpoint: "https://garage.<BASE_DOMAIN>"
+  bucket: "k8s-backup"
+```
+
+### Verwendung
+
+Die S3-Credentials können von Backup-Lösungen (z.B. CloudNativePG Barman,
+Velero, K8up) verwendet werden, um PostgreSQL-Backups und
+Cluster-Snapshots extern zu sichern.
+
+Detaillierte Einrichtungsschritte für die Garage-Instanz selbst sind in der
+separaten Infrastruktur-Dokumentation beschrieben.
+
 ## Datenbank-Migrationen
 
 Beide Services verwenden Flyway für automatische Datenbank-Migrationen.
@@ -428,3 +471,4 @@ Folgende Secrets sollten regelmäßig rotiert werden:
 | `SERVICE_API_KEY`     | blog-content, user-management| Beide Services gleichzeitig aktualisieren  |
 | `OIDC_CLIENT_SECRET`  | blog-content                 | Im OIDC Provider gleichzeitig ändern       |
 | DB-Passwörter         | Alle Services                | Restart erforderlich                       |
+| S3 Access/Secret Key  | Backup-Jobs                  | In Backup-Secret und Garage aktualisieren  |

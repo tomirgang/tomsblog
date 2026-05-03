@@ -79,12 +79,13 @@
 - [x] Thymeleaf: Login-/Registrierungsseiten
 - [x] Thymeleaf: Multi-Tenant-Navigation (Tenant-Branding, Umschaltung)
 - [x] Thymeleaf: Admin-Oberfläche (Benutzer, Tenants, Einstellungen)
+- [ ] Thymeleaf: Drop-down für vorherigen und nächsten Post
 - [x] Infra: Authentik-Anbindung konfigurieren (OIDC Application unter auth.do9ita.de)
 - [x] OIDC Konfiguration über Infrastruktur Config oder Admin UI (STK033)
 - [x] Administrationsdokumentation für generisches Kubernetes in docs/ADMINS.md (STK034)
-- [ ] Infra: S3-kompatibles Storage (Garage auf Netcup VM)
+- [x] Infra: S3-kompatibles Storage (Garage auf Netcup VM)
 - [ ] Backup-Strategie für PostgreSQL
-- [ ] Backup-Storage auf Netcup VM (Garage/S3)
+- [x] Backup-Storage auf Netcup VM (Garage/S3)
 - [ ] Disaster-Recovery-Plan dokumentieren
 - [ ] Standard Impressum and Privacy Policy
 - [ ] Optional Tenant spezifisches Impressum and Privacy Policy
@@ -247,7 +248,7 @@
 
 - [x] PostgreSQL HA: Auf mindestens 2 Instanzen erhöhen (nach Phase 3 MVP)
 - [ ] Backup-Strategie für PostgreSQL
-- [ ] Backup-Storage auf Netcup VM (Garage/S3)
+- [x] Backup-Storage auf Netcup VM (Garage/S3)
 - [ ] Disaster-Recovery-Plan dokumentieren
 - [ ] Security-Reviews (OWASP)
 - [ ] Dokumentation pflegen (arc42, ADRs)

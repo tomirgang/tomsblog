@@ -33,4 +33,5 @@ feed --> kafka
 ai --> kafka
 ai --> openrouter
 blog --> s3 : Attachments
+db --> s3 : Backups
 @enduml

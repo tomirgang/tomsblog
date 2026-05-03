@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Infra: S3-kompatibler Objektspeicher (Garage) auf Netcup VM bereitgestellt (Backup-Storage für Kubernetes)
+
 ## [0.8.0] - 2026-05-03
 
 ### Added
