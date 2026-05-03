@@ -1,0 +1,23 @@
+active: true
+derived: false
+header: |
+  Featured-Zeitraum im Domain-Modell
+level: 41.0
+links:
+- STK027: TPXwekAE3nTp81lJ6NnuUYyLX84GZ8m4v2kGqKsYAvg=
+normative: true
+ref: ''
+reviewed: i7wJjJBpcWGyghxyY1zP4U7CQfXhIrRXNRCdoLvzjU4=
+text: |
+  Das Domain-Modell Post wird um optionale Featured-Felder erweitert:
+  - featuredFrom (LocalDate, nullable): Beginn des Featured-Zeitraums.
+  - featuredUntil (LocalDate, nullable): Ende des Featured-Zeitraums (inklusiv).
+  - Beide Felder müssen gemeinsam gesetzt oder gemeinsam null sein.
+  - featuredUntil muss gleich oder nach featuredFrom liegen.
+  - Ein Post gilt als „aktuell featured", wenn das aktuelle Datum im
+    Intervall [featuredFrom, featuredUntil] liegt.
+  - Flyway-Migration fügt die Spalten featured_from und featured_until
+    zur posts-Tabelle hinzu.
+  - CreatePostCommand und UpdatePostCommand werden um die Featured-Felder
+    erweitert.
+  - Die REST-API (PostResponse) enthält die Featured-Felder.

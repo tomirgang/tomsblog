@@ -1,0 +1,23 @@
+active: true
+derived: false
+header: |
+  Featured-Post-Abfrage im Persistence Adapter
+level: 28.0
+links:
+- SWR041: mPnw_gkWrlslGNo6-JXQPuZeBXyzZ10x0s3AflXpTwI=
+- SWR042: nqe4bEhx6iZwdnefPO-3O1lphFJJpZIm-I9aIjR-yCU=
+normative: true
+ref: ''
+reviewed: LEOx5OoB1neet7tIqFwqP4PRYm8NhDmC3jQe1B9jacs=
+text: |
+  Der JPA Persistence Adapter wird um eine Abfrage für aktuell gefeatured
+  Posts erweitert:
+  - Das PostRepository-Interface (Outbound Port) erhält die Methode
+    findFeaturedByTenantId(TenantId, LocalDate): List<Post>.
+  - Die JPA-Implementierung verwendet eine JPQL-Query mit Filterung auf
+    Status PUBLISHED, featuredFrom <= aktuelles Datum und
+    featuredUntil >= aktuelles Datum.
+  - Sortierung nach featuredFrom absteigend.
+  - Der Thymeleaf-Controller (LandingPageController oder PostViewController)
+    ruft die neue Repository-Methode auf und übergibt das Ergebnis als
+    Modell-Attribut an das Template.

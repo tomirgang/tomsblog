@@ -1,0 +1,25 @@
+active: true
+derived: false
+header: |
+  Featured Posts auf der Landing Page anzeigen
+level: 42.0
+links:
+- STK017: OBpEJf2FUhWL16mzHeUf6gtvDF2P_13y2vxMLKgymeU=
+- STK027: TPXwekAE3nTp81lJ6NnuUYyLX84GZ8m4v2kGqKsYAvg=
+normative: true
+ref: ''
+reviewed: VRS3dwJfaZJI3RINlw1XB785vig1wG-5XLmfz7mIN6o=
+text: |
+  Die Landing Page (Route „/") zeigt zusätzlich zu den neuesten Posts
+  einen eigenen Bereich für aktuell gefeatured Posts:
+  - Featured Posts werden in einem visuell abgesetzten Bereich oberhalb
+    der neuesten Posts dargestellt.
+  - Ein Post gilt als featured, wenn das aktuelle Datum im Intervall
+    [featuredFrom, featuredUntil] liegt und der Post den Status PUBLISHED hat.
+  - Featured Posts werden nach featuredFrom absteigend sortiert (neueste zuerst).
+  - Ein Post, der sowohl featured als auch unter den neuesten 3 Posts ist,
+    erscheint in beiden Bereichen.
+  - Das PostRepository erhält eine Methode zum Abfragen aktuell gefeatured
+    Posts eines Tenants.
+  - Der Thymeleaf-Controller übergibt die Featured Posts als eigenes
+    Modell-Attribut an das Landing-Page-Template.

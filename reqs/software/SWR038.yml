@@ -4,10 +4,10 @@ header: |
   Volltextsuche für veröffentlichte Blog Posts
 level: 38.0
 links:
-- STK022: null
+- STK022: UaB5_jZY1yi_lJkuFlIyNXsMwUmw6GjcBAPBgfiLNBU=
 normative: true
 ref: ''
-reviewed: null
+reviewed: GI0Whui4ggs2MsAWFggOtYXPduh0Dc1cqbS59Qghg1o=
 text: |
   Der Blog Content Service muss eine Volltextsuche über veröffentlichte
   Blog-Posts eines Tenants bereitstellen:

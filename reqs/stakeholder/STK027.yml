@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Featured Posts auf der Landing Page
+level: 27.0
+links: []
+normative: true
+ref: ''
+reviewed: TPXwekAE3nTp81lJ6NnuUYyLX84GZ8m4v2kGqKsYAvg=
+text: |
+  Als Betreiber möchte ich Posts für einen definierten Zeitraum als
+  „Featured" kennzeichnen können, damit diese auf der Landing Page
+  hervorgehoben dargestellt werden. Featured Posts erscheinen zusätzlich
+  zu den neuesten Posts in einem eigenen, visuell abgesetzten Bereich.
+  Der Feature-Zeitraum wird durch ein Start- und Enddatum definiert.
+  Nach Ablauf des Zeitraums verliert der Post automatisch seinen
+  Featured-Status, ohne dass eine manuelle Aktion erforderlich ist.

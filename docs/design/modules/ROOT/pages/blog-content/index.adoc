@@ -34,9 +34,13 @@ classDiagram
         -List~DomainEvent~ domainEvents
         -PostId seriesPreviousPostId
         -PostId seriesNextPostId
+        -LocalDate featuredFrom
+        -LocalDate featuredUntil
         +publish() void
         +updateContent(title, content) void
         +updateSeriesNavigation(prev, next) void
+        +updateFeatured(from, until) void
+        +isFeatured(today) boolean
         +addSource(source) void
         +addAttachment(attachment) void
         +registerEvent(event) void
@@ -108,6 +112,8 @@ Es erfüllt die Anforderungen SWR-001 (CRUD-Operationen) und SWR-002 (Veröffent
 Jeder Post ist einem Tenant zugeordnet (SWR-003) und registriert bei Zustandsänderungen Domain Events (SWR-009), die für die serviceübergreifende Kommunikation genutzt werden.
 
 Für die Serien-Navigation (SWR-040) enthält jeder Post zwei optionale Referenzen (`seriesPreviousPostId`, `seriesNextPostId`) auf andere Posts derselben Serie. Diese werden über `updateSeriesNavigation()` gesetzt und ermöglichen eine thematische Verkettung unabhängig von der chronologischen Reihenfolge.
+
+Für Featured Posts (SWR-041) enthält jeder Post zwei optionale Datumsfelder `featuredFrom` und `featuredUntil` (jeweils `LocalDate`, nullable). Beide Felder müssen gemeinsam gesetzt oder gemeinsam `null` sein, und `featuredUntil` darf nicht vor `featuredFrom` liegen. Die Methode `isFeatured(LocalDate today)` prüft, ob der Post am gegebenen Tag als featured gilt (Datum im Intervall `[featuredFrom, featuredUntil]`). Die Methode `updateFeatured(LocalDate from, LocalDate until)` setzt oder entfernt den Featured-Zeitraum.
 
 === Translation Aggregate
 
@@ -463,7 +469,7 @@ Der `VersionModelAdvice` (SWR-034, SWA-025) stellt die Anwendungsversion als glo
 
 Die öffentliche Blog-Ansicht besteht aus drei logischen Seiten:
 
-* **Landing Page** (`/`, SWR-033): Zeigt die drei neuesten veröffentlichten Posts des Tenants. Die Begrenzung erfolgt über `listRecentPublishedPosts(tenantId, 3)` direkt auf Datenbankebene (SWA-026). Ein Link führt zur vollständigen Post-Liste.
+* **Landing Page** (`/`, SWR-033, SWR-042): Zeigt die drei neuesten veröffentlichten Posts des Tenants. Die Begrenzung erfolgt über `listRecentPublishedPosts(tenantId, 3)` direkt auf Datenbankebene (SWA-026). Ein Link führt zur vollständigen Post-Liste. Zusätzlich werden aktuell gefeatured Posts in einem eigenen, visuell abgesetzten Bereich oberhalb der neuesten Posts angezeigt (SWR-042). Die Abfrage erfolgt über `listFeaturedPosts(tenantId, today)` (SWA-028). Ein Post kann in beiden Bereichen erscheinen, wenn er sowohl featured als auch unter den neuesten drei ist.
 * **Post-Liste** (`/posts`): Zeigt alle veröffentlichten Posts des Tenants in absteigender chronologischer Reihenfolge.
 * **Einzelansicht** (`/posts/{slug}`, SWR-035): Zeigt einen einzelnen veröffentlichten Post. Markdown-Inhalte werden vor der Anzeige serverseitig zu HTML gerendert. Code-Blöcke erhalten clientseitiges Syntax-Highlighting (highlight.js), Mermaid-Codeblöcke werden als Diagramme dargestellt (mermaid.js).
 
@@ -491,12 +497,16 @@ sequenceDiagram
     participant MD as MarkdownRenderer
 
     Reader->>Controller: GET /
+    Controller->>Service: listFeaturedPosts(tenantId, today)
+    Service->>Repo: findFeaturedByTenantId(tenantId, today)
+    Repo-->>Service: List<Post> (featured, sortiert nach featuredFrom DESC)
+    Service-->>Controller: List<Post> featuredPosts
     Controller->>Service: listRecentPublishedPosts(tenantId, 3)
     Service->>Repo: findRecentPublishedByTenantId(tenantId, 3)
     Repo-->>Service: List<Post> (max. 3, sortiert nach publishedAt DESC)
     Service-->>Controller: List<Post>
     Note over Controller: buildExcerpts(): renderContent() + extractFirstParagraph()
-    Controller-->>Reader: posts/list.html (Model: posts, excerpts, landingPage=true)
+    Controller-->>Reader: posts/list.html (Model: posts, featuredPosts, excerpts, landingPage=true)
 
     Reader->>Controller: GET /posts/{slug}
     Controller->>Service: getPublishedPostBySlug(slug, tenantId)
@@ -714,6 +724,8 @@ erDiagram
         varchar social_media_summary
         uuid series_previous_post_id FK
         uuid series_next_post_id FK
+        date featured_from
+        date featured_until
         timestamp created_at
         timestamp updated_at
     }
@@ -771,6 +783,7 @@ Die Migrationen liegen unter `src/main/resources/db/migration/` und werden beim 
 | V4 | content_type-Spalte (VARCHAR(20), NOT NULL, Default 'HTML') zu posts (SWA-027)
 | V5 | GIN-Index für Volltextsuche über title und content mit tsvector (SWR-038)
 | V6 | Optionale Serien-Navigationsfelder series_previous_post_id und series_next_post_id (SWR-040)
+| V7 | Optionale Featured-Felder featured_from und featured_until (SWR-041)
 |===
 
 == Ablauf: Post erstellen und veröffentlichen
@@ -859,6 +872,9 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWR-038 | Volltextsuche für Blog Posts | BlogViewController.listPosts(q), PostUseCase.searchPublishedPosts(), PostRepository.searchPublished(), V5 GIN-Index, posts/list.html Suchformular
 | SWR-039 | Chronologische Previous/Next-Navigation | BlogViewController.showPost(), PostUseCase.findPreviousPublishedPost/findNextPublishedPost(), PostRepository.findPreviousPublished/findNextPublished(), posts/show.html
 | SWR-040 | Serien-Navigation | Post.seriesPreviousPostId/seriesNextPostId, BlogViewController.addSeriesNavigation(), PostUseCase.getPostIfPublished(), V6 Migration, posts/show.html, posts/form.html
+| SWR-041 | Featured-Zeitraum im Domain-Modell | Post.featuredFrom/featuredUntil, Post.updateFeatured(), Post.isFeatured(), CreatePostCommand, UpdatePostCommand, PostResponse, V7 Migration
+| SWR-042 | Featured Posts auf der Landing Page | BlogViewController.index(), PostUseCase.listFeaturedPosts(), PostRepository.findFeaturedByTenantId(), posts/list.html
+| SWA-028 | Featured-Post-Abfrage im Persistence Adapter | PostRepository.findFeaturedByTenantId(), JPA Query mit Datumsfilterung
 |===
 
 == Sicherheit: Admin-Login (SWR-028)

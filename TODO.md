@@ -64,6 +64,7 @@
 - [x] Chronologische Previous/Next-Navigation auf Post-Detailseiten (STK025)
 - [x] Serien-Navigation für thematisch zusammenhängende Posts (STK026)
 - [x] Identity-Provider evaluieren (ADR-0027: Authentik + internes User Management)
+- [ ] Featured Posts: Posts für einen Zeitraum hervorheben und auf der Landing Page prominent darstellen (STK027)
 - [ ] OIDC Login integrieren (Spring Security OAuth2 Client, Authentik unter auth.do9ita.de)
 - [ ] Leichtgewichtiger User-Management-Service (OIDC Relying Party, Rollen, Tenant-Zuordnung)
 - [ ] Multi-Tenant-Isolation (Schema-basiert vs. Row-Level-Security)
