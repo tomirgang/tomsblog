@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-03
+
 ### Added
 
 - OIDC Login mit Authentik (Spring Security OAuth2 Client, Authorization Code Flow)
