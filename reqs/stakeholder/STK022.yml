@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Volltextsuche über Tenant-Inhalte
+level: 22.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Als Leser möchte ich eine Volltextsuche über alle Inhalte meines Tenants
+  durchführen können, damit ich schnell relevante Blog-Posts und andere Inhalte
+  finde, ohne manuell durch alle Beiträge navigieren zu müssen.
