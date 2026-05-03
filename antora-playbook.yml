@@ -21,6 +21,11 @@ ui:
     - path: partials/header-content.hbs
       contents: ./docs/supplemental-ui/partials/header-content.hbs
 
+antora:
+  extensions:
+    - require: '@antora/lunr-extension'
+      languages: [de, en]
+
 asciidoc:
   extensions:
     - asciidoctor-plantuml
