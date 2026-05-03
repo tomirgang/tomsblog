@@ -1,9 +1,44 @@
 {
   "recommendations": [
+    // Documentation
     "asciidoctor.asciidoctor-vscode",
     "yzhang.markdown-all-in-one",
+    "shd101wyy.markdown-preview-enhanced",
     "jebbs.plantuml",
-    "bierner.markdown-mermaid",
-    "tomoyukim.vscode-mermaid-editor"
+    "vstirbu.vscode-mermaid-preview",
+    "redhat.vscode-xml",
+    "mechatroner.rainbow-csv",
+
+    // Java & Spring Boot
+    "redhat.java",
+    "vscjava.vscode-java-pack",
+    "vscjava.vscode-java-debug",
+    "vscjava.vscode-java-test",
+    "vscjava.vscode-java-dependency",
+    "vscjava.vscode-maven",
+    "vmware.vscode-spring-boot",
+    "vmware.vscode-boot-dev-pack",
+    "vscjava.vscode-spring-boot-dashboard",
+    "vscjava.vscode-spring-initializr",
+    "developersoapbox.vscode-springboot-developer-pack",
+    "developersoapbox.vscode-springboot-snippets",
+    "sohibe.java-generate-setters-getters",
+
+    // Python (Doorstop)
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.debugpy",
+    "ms-python.vscode-python-envs",
+
+    // Infrastructure & Containers
+    "ms-azuretools.vscode-containers",
+    "ms-vscode-remote.remote-containers",
+
+    // Shell & Git
+    "mads-hartmann.bash-ide-vscode",
+    "eamodio.gitlens",
+
+    // DX
+    "usernamehw.errorlens"
   ]
 }
