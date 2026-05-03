@@ -11,6 +11,7 @@ import de.tomsblog.usermanagement.domain.model.Role;
 import de.tomsblog.usermanagement.domain.model.TenantMembership;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
+import java.util.List;
 
 /**
  * Application service implementing user profile use cases.
@@ -121,6 +122,11 @@ public class UserProfileService implements UserProfileUseCase {
         var profile = findProfile(identifier);
         profile.removeTenantMembership(tenantId);
         repository.save(profile);
+    }
+
+    @Override
+    public List<UserProfile> listByTenantId(TenantId tenantId) {
+        return repository.findByTenantId(tenantId);
     }
 
     private UserProfile findProfile(String identifier) {

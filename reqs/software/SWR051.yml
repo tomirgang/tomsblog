@@ -1,0 +1,19 @@
+active: true
+derived: false
+header: |
+  Admin-UI Benutzerliste und -verwaltung
+level: 51.0
+links:
+- STK005: null
+- STK028: null
+- STK041: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Unter /admin/users wird eine Thymeleaf-Seite bereitgestellt, die alle
+  Benutzer des aktuellen Tenants auflistet (Name, E-Mail, Rolle,
+  Approval-Status). Verfügbare Aktionen: Approve, Reject, Rolle ändern.
+  Zugriff nur für Benutzer mit Rolle ADMIN oder SUPERADMIN. Daten
+  werden über gRPC vom User-Management-Service geladen. Der User-
+  Management-Service stellt dafür einen ListUsersByTenant-RPC bereit.

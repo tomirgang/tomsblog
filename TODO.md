@@ -77,8 +77,8 @@
 - [x] Optionales OIDC-Gruppen-Mapping auf plattforminterne Rollen
 - [ ] Audit-Logging für alle relevanten Aktionen
 - [x] Thymeleaf: Login-/Registrierungsseiten
-- [ ] Thymeleaf: Multi-Tenant-Navigation (Tenant-Branding, Umschaltung)
-- [ ] Thymeleaf: Admin-Oberfläche (Benutzer, Tenants, Einstellungen)
+- [x] Thymeleaf: Multi-Tenant-Navigation (Tenant-Branding, Umschaltung)
+- [x] Thymeleaf: Admin-Oberfläche (Benutzer, Tenants, Einstellungen)
 - [x] Infra: Authentik-Anbindung konfigurieren (OIDC Application unter auth.do9ita.de)
 - [x] OIDC Konfiguration über Infrastruktur Config oder Admin UI (STK033)
 - [x] Administrationsdokumentation für generisches Kubernetes in docs/ADMINS.md (STK034)
@@ -88,7 +88,7 @@
 - [ ] Disaster-Recovery-Plan dokumentieren
 - [ ] Standard Impressum and Privacy Policy
 - [ ] Optional Tenant spezifisches Impressum and Privacy Policy
-- [ ] Security-Reviews (OWASP)
+- [x] Security-Reviews (OWASP)
 
 > **MVP nach Phase 4:** Mehrbenutzerfähiger Blog mit Login, Tenant-Trennung und Admin-UI.
 

@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Stakeholder Requirements STK040/STK041/STK042: Tenant-Branding, Admin-Benutzerverwaltung UI, Admin-Einstellungen UI
+- Software Requirements SWR050-053: Tenant-Branding-Header, Admin-Benutzerliste, Admin-Einstellungen, SuperAdmin-Tenant-Umschaltung
+- Tenant-Branding: dynamischer Tenant-Name und Tagline im Header (SWR-050)
+- Admin-Oberfläche: Benutzerliste mit Approve/Reject/Rollenzuweisung (SWR-051)
+- Admin-Oberfläche: Tenant-Einstellungen (Login-Modus, Auto-Approval, Branding) (SWR-052)
+- SuperAdmin-Tenant-Umschaltung: Dropdown im Header zum Wechsel des aktiven Tenants (SWR-053)
+- gRPC-Erweiterungen: `ListUsersByTenant`, `ApproveUser`, `RejectUser`, `ChangeUserRole`, `UpdateTenantSettings`, `ListTenants`
+- Thymeleaf-Templates: `admin/users.html`, `admin/settings.html`
+- `TenantBrandingAdvice`: ControllerAdvice für globale Tenant-Branding-Attribute
+- `AdminController`: Controller für Admin-UI-Seiten
+- Flyway-Migration V3: `display_name` und `tagline` Spalten in `tenant_settings`
+
+### Changed
+
+- `TenantSettings` Domain-Modell: erweitert um `displayName` und `tagline`
+- `DefaultTenantFilter`: berücksichtigt Session-basierte Tenant-Überschreibung (SuperAdmin)
+- `SecurityConfiguration`: Admin-Endpunkte erfordern ADMIN/SUPERADMIN, Tenant-Umschaltung erfordert SUPERADMIN
+- Header-Fragment: dynamischer Tenant-Name, optionaler Tagline, Admin-Link, Tenant-Dropdown
+
 ## [0.7.3] - 2026-05-03
 
 ### Added

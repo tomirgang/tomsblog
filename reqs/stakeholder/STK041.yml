@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Admin-Oberfläche für Benutzerverwaltung
+level: 41.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Als Tenant-Administrator möchte ich eine Web-Oberfläche zur Verwaltung
+  der Benutzer meines Tenants (Auflisten, Freigeben, Ablehnen, Rollen
+  zuweisen), damit ich keine API-Aufrufe manuell ausführen muss.

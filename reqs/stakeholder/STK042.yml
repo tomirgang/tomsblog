@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Admin-Oberfläche für Tenant-Einstellungen
+level: 42.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Als Administrator möchte ich eine Web-Oberfläche zur Konfiguration
+  der Tenant-Einstellungen (Login-Methode, Auto-Approval, Branding),
+  damit die Verwaltung ohne technische Kenntnisse möglich ist.

@@ -8,6 +8,7 @@ import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.outbound.TenantSettingsRepository;
 import de.tomsblog.usermanagement.domain.model.LoginMode;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +41,8 @@ class TenantSettingsServiceTest {
         @Test
         @DisplayName("SWR-044: returns existing settings when found")
         void returnsExistingSettings() {
-            var settings = TenantSettings.reconstitute(TENANT_ID, LoginMode.OIDC, true, Set.of("test.com"));
+            var settings =
+                    TenantSettings.reconstitute(TENANT_ID, LoginMode.OIDC, true, Set.of("test.com"), "Toms Blog", null);
             when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
 
             var result = service.getSettings(TENANT_ID);
@@ -122,6 +124,70 @@ class TenantSettingsServiceTest {
             assertThat(result.isAutoApproveOidc()).isTrue();
             assertThat(result.getAutoApproveEmailDomains()).containsExactly("example.org");
             verify(repository, times(2)).save(any(TenantSettings.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("updateSettings")
+    class UpdateSettings {
+
+        @Test
+        @DisplayName("SWR-052: updates all settings including branding")
+        void updatesAllSettings() {
+            var settings = TenantSettings.create(TENANT_ID);
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            var result =
+                    service.updateSettings(TENANT_ID, LoginMode.OIDC, true, Set.of("test.com"), "My Blog", "A tagline");
+
+            assertThat(result.getLoginMode()).isEqualTo(LoginMode.OIDC);
+            assertThat(result.isAutoApproveOidc()).isTrue();
+            assertThat(result.getAutoApproveEmailDomains()).containsExactly("test.com");
+            assertThat(result.getDisplayName()).isEqualTo("My Blog");
+            assertThat(result.getTagline()).isEqualTo("A tagline");
+            verify(repository).save(settings);
+        }
+
+        @Test
+        @DisplayName("SWR-052: creates default then updates when not found")
+        void createsDefaultThenUpdates() {
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.empty());
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            var result = service.updateSettings(TENANT_ID, LoginMode.INTERNAL, false, Set.of(), "New Blog", null);
+
+            assertThat(result.getLoginMode()).isEqualTo(LoginMode.INTERNAL);
+            assertThat(result.getDisplayName()).isEqualTo("New Blog");
+            assertThat(result.getTagline()).isNull();
+            verify(repository, times(2)).save(any(TenantSettings.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("listAllTenants")
+    class ListAllTenants {
+
+        @Test
+        @DisplayName("SWR-053: lists all tenant settings")
+        void listsAllTenants() {
+            var s1 = TenantSettings.create(TENANT_ID);
+            var s2 = TenantSettings.create(TenantId.generate());
+            when(repository.findAll()).thenReturn(List.of(s1, s2));
+
+            var result = service.listAllTenants();
+
+            assertThat(result).hasSize(2);
+        }
+
+        @Test
+        @DisplayName("SWR-053: returns empty list when no tenants")
+        void returnsEmptyList() {
+            when(repository.findAll()).thenReturn(List.of());
+
+            var result = service.listAllTenants();
+
+            assertThat(result).isEmpty();
         }
     }
 }

@@ -18,12 +18,30 @@ service UserManagementService {
 
   // Find a user profile by OIDC subject.
   rpc FindByOidcSubject (FindByOidcSubjectRequest) returns (UserProfileResponse);
+
+  // List all users belonging to a specific tenant (SWR-051).
+  rpc ListUsersByTenant (ListUsersByTenantRequest) returns (ListUsersResponse);
+
+  // Approve a user (SWR-051).
+  rpc ApproveUser (ApproveUserRequest) returns (UserProfileResponse);
+
+  // Reject a user (SWR-051).
+  rpc RejectUser (RejectUserRequest) returns (UserProfileResponse);
+
+  // Change a user's role in a tenant (SWR-051).
+  rpc ChangeUserRole (ChangeUserRoleRequest) returns (UserProfileResponse);
 }
 
 // Service for tenant settings queries.
 service TenantSettingsService {
   // Get tenant settings (login mode, auto-approval configuration).
   rpc GetTenantSettings (GetTenantSettingsRequest) returns (TenantSettingsResponse);
+
+  // Update tenant settings (SWR-052).
+  rpc UpdateTenantSettings (UpdateTenantSettingsRequest) returns (TenantSettingsResponse);
+
+  // List all tenants (SWR-053).
+  rpc ListTenants (ListTenantsRequest) returns (ListTenantsResponse);
 }
 
 message SyncOidcUserRequest {
@@ -68,4 +86,49 @@ message TenantSettingsResponse {
   string login_mode = 2;
   bool auto_approve_oidc = 3;
   repeated string auto_approve_email_domains = 4;
+  string display_name = 5;
+  string tagline = 6;
+}
+
+message ListUsersByTenantRequest {
+  string tenant_id = 1;
+}
+
+message ListUsersResponse {
+  repeated UserProfileResponse users = 1;
+}
+
+message ApproveUserRequest {
+  string identifier = 1;
+}
+
+message RejectUserRequest {
+  string identifier = 1;
+}
+
+message ChangeUserRoleRequest {
+  string identifier = 1;
+  string tenant_id = 2;
+  string role = 3;
+}
+
+message UpdateTenantSettingsRequest {
+  string tenant_id = 1;
+  string login_mode = 2;
+  bool auto_approve_oidc = 3;
+  repeated string auto_approve_email_domains = 4;
+  string display_name = 5;
+  string tagline = 6;
+}
+
+message ListTenantsRequest {
+}
+
+message TenantInfoResponse {
+  string tenant_id = 1;
+  string display_name = 2;
+}
+
+message ListTenantsResponse {
+  repeated TenantInfoResponse tenants = 1;
 }

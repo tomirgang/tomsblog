@@ -7,10 +7,12 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Value object representing tenant-specific settings including login mode and auto-approval rules.
+ * Value object representing tenant-specific settings including login mode, auto-approval rules,
+ * and branding.
  *
  * @req SWR-044
  * @req SWR-045
+ * @req SWR-050
  */
 public class TenantSettings {
 
@@ -18,22 +20,36 @@ public class TenantSettings {
     private LoginMode loginMode;
     private boolean autoApproveOidc;
     private final Set<String> autoApproveEmailDomains;
+    private String displayName;
+    private String tagline;
 
     private TenantSettings(
-            TenantId tenantId, LoginMode loginMode, boolean autoApproveOidc, Set<String> autoApproveEmailDomains) {
+            TenantId tenantId,
+            LoginMode loginMode,
+            boolean autoApproveOidc,
+            Set<String> autoApproveEmailDomains,
+            String displayName,
+            String tagline) {
         this.tenantId = Objects.requireNonNull(tenantId, "tenantId must not be null");
         this.loginMode = Objects.requireNonNull(loginMode, "loginMode must not be null");
         this.autoApproveOidc = autoApproveOidc;
         this.autoApproveEmailDomains = new HashSet<>(autoApproveEmailDomains);
+        this.displayName = displayName;
+        this.tagline = tagline;
     }
 
     public static TenantSettings create(TenantId tenantId) {
-        return new TenantSettings(tenantId, LoginMode.BOTH, false, Set.of());
+        return new TenantSettings(tenantId, LoginMode.BOTH, false, Set.of(), "Toms Blog", null);
     }
 
     public static TenantSettings reconstitute(
-            TenantId tenantId, LoginMode loginMode, boolean autoApproveOidc, Set<String> autoApproveEmailDomains) {
-        return new TenantSettings(tenantId, loginMode, autoApproveOidc, autoApproveEmailDomains);
+            TenantId tenantId,
+            LoginMode loginMode,
+            boolean autoApproveOidc,
+            Set<String> autoApproveEmailDomains,
+            String displayName,
+            String tagline) {
+        return new TenantSettings(tenantId, loginMode, autoApproveOidc, autoApproveEmailDomains, displayName, tagline);
     }
 
     public void updateLoginMode(LoginMode loginMode) {
@@ -96,5 +112,21 @@ public class TenantSettings {
 
     public Set<String> getAutoApproveEmailDomains() {
         return Collections.unmodifiableSet(autoApproveEmailDomains);
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void updateDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getTagline() {
+        return tagline;
+    }
+
+    public void updateTagline(String tagline) {
+        this.tagline = tagline;
     }
 }

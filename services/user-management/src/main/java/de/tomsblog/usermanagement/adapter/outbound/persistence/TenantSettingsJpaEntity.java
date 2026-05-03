@@ -40,6 +40,12 @@ public class TenantSettingsJpaEntity {
     @Column(name = "domain")
     private Set<String> autoApproveEmailDomains = new HashSet<>();
 
+    @Column(name = "display_name", nullable = false)
+    private String displayName = "Toms Blog";
+
+    @Column(name = "tagline")
+    private String tagline;
+
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
@@ -87,6 +93,22 @@ public class TenantSettingsJpaEntity {
 
     public void setAutoApproveEmailDomains(Set<String> autoApproveEmailDomains) {
         this.autoApproveEmailDomains = autoApproveEmailDomains;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getTagline() {
+        return tagline;
+    }
+
+    public void setTagline(String tagline) {
+        this.tagline = tagline;
     }
 
     public Instant getUpdatedAt() {

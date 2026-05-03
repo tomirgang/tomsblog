@@ -5,6 +5,7 @@ import de.tomsblog.usermanagement.application.port.inbound.TenantSettingsUseCase
 import de.tomsblog.usermanagement.application.port.outbound.TenantSettingsRepository;
 import de.tomsblog.usermanagement.domain.model.LoginMode;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -12,6 +13,9 @@ import java.util.Set;
  *
  * @req SWR-044
  * @req SWR-045
+ * @req SWR-050
+ * @req SWR-052
+ * @req SWR-053
  */
 public class TenantSettingsService implements TenantSettingsUseCase {
 
@@ -40,6 +44,28 @@ public class TenantSettingsService implements TenantSettingsUseCase {
         settings.updateAutoApproveOidc(autoApproveOidc);
         settings.setAutoApproveEmailDomains(autoApproveEmailDomains);
         return repository.save(settings);
+    }
+
+    @Override
+    public TenantSettings updateSettings(
+            TenantId tenantId,
+            LoginMode loginMode,
+            boolean autoApproveOidc,
+            Set<String> autoApproveEmailDomains,
+            String displayName,
+            String tagline) {
+        var settings = getOrCreate(tenantId);
+        settings.updateLoginMode(loginMode);
+        settings.updateAutoApproveOidc(autoApproveOidc);
+        settings.setAutoApproveEmailDomains(autoApproveEmailDomains);
+        settings.updateDisplayName(displayName);
+        settings.updateTagline(tagline);
+        return repository.save(settings);
+    }
+
+    @Override
+    public List<TenantSettings> listAllTenants() {
+        return repository.findAll();
     }
 
     private TenantSettings getOrCreate(TenantId tenantId) {

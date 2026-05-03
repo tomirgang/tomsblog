@@ -1,7 +1,9 @@
 package de.tomsblog.usermanagement.adapter.outbound.persistence;
 
+import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.outbound.UserProfileRepository;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
  * JPA adapter implementing the user profile repository port.
  *
  * @req SWR-043
+ * @req SWR-051
  */
 @Repository
 @Transactional
@@ -38,5 +41,13 @@ public class JpaUserProfileRepository implements UserProfileRepository {
     @Transactional(readOnly = true)
     public Optional<UserProfile> findByUsername(String username) {
         return springDataRepository.findByUsername(username).map(UserProfileMapper::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserProfile> findByTenantId(TenantId tenantId) {
+        return springDataRepository.findByTenantId(tenantId.value()).stream()
+                .map(UserProfileMapper::toDomain)
+                .toList();
     }
 }

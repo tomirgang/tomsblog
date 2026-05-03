@@ -6,6 +6,7 @@ import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.domain.model.Role;
 import de.tomsblog.usermanagement.domain.model.TenantMembership;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -133,5 +134,31 @@ class JpaUserProfileRepositoryIntegrationTest {
         assertThat(updated.get().getEmail()).isEqualTo("new@example.com");
         assertThat(updated.get().getDisplayName()).isEqualTo("New Name");
         assertThat(updated.get().isApproved()).isTrue();
+    }
+
+    @Test
+    @DisplayName("SWR-051: findByTenantId returns users with membership in tenant")
+    void findByTenantIdReturnsMembers() {
+        TenantId tenantId = TenantId.generate();
+        UserProfile member = UserProfile.createFromOidc("sub-member", "member@test.com", "Member");
+        member.addTenantMembership(new TenantMembership(tenantId, Role.AUTHOR));
+        repository.save(member);
+
+        UserProfile nonMember = UserProfile.createFromOidc("sub-other", "other@test.com", "Other");
+        nonMember.addTenantMembership(new TenantMembership(TenantId.generate(), Role.READER));
+        repository.save(nonMember);
+
+        List<UserProfile> found = repository.findByTenantId(tenantId);
+
+        assertThat(found).hasSize(1);
+        assertThat(found.get(0).getOidcSubject()).isEqualTo("sub-member");
+    }
+
+    @Test
+    @DisplayName("SWR-051: findByTenantId returns empty list for unknown tenant")
+    void findByTenantIdReturnsEmptyForUnknown() {
+        List<UserProfile> found = repository.findByTenantId(TenantId.generate());
+
+        assertThat(found).isEmpty();
     }
 }

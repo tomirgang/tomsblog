@@ -3,11 +3,13 @@ package de.tomsblog.usermanagement.application.port.inbound;
 import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.domain.model.Role;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
+import java.util.List;
 
 /**
  * Inbound port for user profile management.
  *
  * @req SWR-043
+ * @req SWR-051
  */
 public interface UserProfileUseCase {
 
@@ -30,4 +32,6 @@ public interface UserProfileUseCase {
     void addTenantMembership(String identifier, TenantId tenantId, Role role);
 
     void removeTenantMembership(String identifier, TenantId tenantId);
+
+    List<UserProfile> listByTenantId(TenantId tenantId);
 }

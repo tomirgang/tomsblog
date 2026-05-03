@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -80,6 +81,21 @@ class DefaultTenantFilterTest {
         Mockito.when(postUseCase.listPosts(Mockito.any())).thenReturn(List.of());
 
         mockMvc.perform(get("/posts")
+                        .header("X-Tenant-Id", "11111111-1111-1111-1111-111111111111")
+                        .header("X-Author-Id", "22222222-2222-2222-2222-222222222222"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/list"));
+    }
+
+    @Test
+    @DisplayName("SWR-053: Filter overrides tenant header with session value")
+    void sessionTenantOverride() throws Exception {
+        Mockito.when(postUseCase.listPosts(Mockito.any())).thenReturn(List.of());
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("activeTenantId", "33333333-3333-3333-3333-333333333333");
+
+        mockMvc.perform(get("/posts")
+                        .session(session)
                         .header("X-Tenant-Id", "11111111-1111-1111-1111-111111111111")
                         .header("X-Author-Id", "22222222-2222-2222-2222-222222222222"))
                 .andExpect(status().isOk())

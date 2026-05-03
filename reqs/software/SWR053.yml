@@ -1,0 +1,20 @@
+active: true
+derived: false
+header: |
+  SuperAdmin Tenant-Umschaltung
+level: 53.0
+links:
+- STK002: null
+- STK005: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Der SuperAdmin kann über einen Tenant-Selector in der Admin-Navigation
+  den aktiven Tenant wechseln. Die Auswahl wird in der HTTP-Session
+  gespeichert und überschreibt den Standard-Tenant für alle nachfolgenden
+  Requests. Reguläre Admins sind an ihren Tenant gebunden und sehen
+  keinen Selector. Der Blog-Content-Service ruft die Liste aller Tenants
+  über gRPC vom User-Management-Service ab. POST /admin/switch-tenant
+  speichert die Auswahl in der Session und leitet auf die aktuelle Seite
+  zurück.

@@ -3,6 +3,7 @@ package de.tomsblog.usermanagement.adapter.outbound.persistence;
 import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.outbound.TenantSettingsRepository;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @req SWR-044
  * @req SWR-045
+ * @req SWR-053
  */
 @Repository
 @Transactional
@@ -34,5 +36,13 @@ public class JpaTenantSettingsRepository implements TenantSettingsRepository {
     @Transactional(readOnly = true)
     public Optional<TenantSettings> findByTenantId(TenantId tenantId) {
         return springDataRepository.findByTenantId(tenantId.value()).map(TenantSettingsMapper::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TenantSettings> findAll() {
+        return springDataRepository.findAll().stream()
+                .map(TenantSettingsMapper::toDomain)
+                .toList();
     }
 }

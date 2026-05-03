@@ -875,6 +875,10 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWR-041 | Featured-Zeitraum im Domain-Modell | Post.featuredFrom/featuredUntil, Post.updateFeatured(), Post.isFeatured(), CreatePostCommand, UpdatePostCommand, PostResponse, V7 Migration
 | SWR-042 | Featured Posts auf der Landing Page | BlogViewController.index(), PostUseCase.listFeaturedPosts(), PostRepository.findFeaturedByTenantId(), posts/list.html
 | SWA-028 | Featured-Post-Abfrage im Persistence Adapter | PostRepository.findFeaturedByTenantId(), JPA Query mit Datumsfilterung
+| SWR-050 | Tenant-Branding im Header | TenantBrandingAdvice, UserManagementClient.getTenantSettings(), fragments/header.html
+| SWR-051 | Admin-UI Benutzerliste und -verwaltung | AdminController.listUsers/approveUser/rejectUser/changeRole, admin/users.html
+| SWR-052 | Admin-UI Tenant-Einstellungen | AdminController.showSettings/updateSettings, admin/settings.html
+| SWR-053 | SuperAdmin Tenant-Umschaltung | AdminController.switchTenant, TenantBrandingAdvice.tenants(), DefaultTenantFilter Session-Override
 |===
 
 == Sicherheit: Admin-Login (SWR-028)
@@ -979,3 +983,136 @@ blog:
 ----
 
 In der lokalen Entwicklung wird ein Default-Passwort gesetzt. Im Produktionsbetrieb wird das Passwort über eine Umgebungsvariable injiziert.
+
+== Admin-Oberfläche (SWR-051, SWR-052, SWR-053)
+
+Die Admin-Oberfläche stellt Thymeleaf-basierte Verwaltungsseiten für Benutzerverwaltung und Tenant-Einstellungen bereit.
+Sie ist nur für Benutzer mit den Rollen ADMIN oder SUPERADMIN zugänglich.
+
+=== Architektur
+
+Das folgende Klassendiagramm zeigt die Struktur des Admin-UI-Adapters:
+
+[mermaid]
+----
+classDiagram
+    class AdminController {
+        -UserManagementClient userManagementClient
+        +listUsers(tenantId, session, model) String
+        +approveUser(identifier, tenantId, session) String
+        +rejectUser(identifier, tenantId, session) String
+        +changeRole(identifier, role, tenantId, session) String
+        +showSettings(tenantId, session, model) String
+        +updateSettings(form, tenantId, session) String
+        +switchTenant(tenantId, session, referer) String
+    }
+
+    class TenantBrandingAdvice {
+        -UserManagementClient userManagementClient
+        +tenantName(request, session) String
+        +tenantTagline(request, session) String
+        +tenants(authentication) List
+        +activeTenantId(request, session) String
+    }
+
+    class UserManagementClient {
+        <<interface>>
+        +listUsersByTenant(tenantId) List~UserProfileDto~
+        +approveUser(identifier) void
+        +rejectUser(identifier) void
+        +changeUserRole(identifier, tenantId, role) void
+        +updateTenantSettings(tenantId, settings) TenantSettingsDto
+        +listTenants() List~TenantInfoDto~
+    }
+
+    AdminController --> UserManagementClient : uses
+    TenantBrandingAdvice --> UserManagementClient : uses
+----
+
+Der `AdminController` liegt im Package `adapter.inbound.web` und kommuniziert über den `UserManagementClient` (gRPC) mit dem User-Management-Service.
+Der `TenantBrandingAdvice` ist ein `@ControllerAdvice`, der den Tenant-Namen und die Tenant-Liste als globale Model-Attribute bereitstellt.
+
+=== Tenant-Branding (SWR-050)
+
+Der `TenantBrandingAdvice` lädt bei jedem Request die TenantSettings (inkl. `displayName` und `tagline`) über gRPC und stellt sie als Model-Attribute bereit:
+
+* `tenantName`: Der konfigurierte Anzeigename des Tenants (Fallback: "Toms Blog")
+* `tenantTagline`: Die optionale Tagline des Tenants
+
+Das Header-Fragment (`fragments/header.html`) verwendet `${tenantName}` statt eines hardcodierten Blog-Titels.
+
+=== SuperAdmin Tenant-Umschaltung (SWR-053)
+
+Der SuperAdmin kann über einen Tenant-Selector in der Navigation den aktiven Tenant wechseln:
+
+[mermaid]
+----
+sequenceDiagram
+    actor SuperAdmin
+    participant Header as Header Fragment
+    participant Controller as AdminController
+    participant Session as HTTP Session
+    participant Filter as DefaultTenantFilter
+
+    SuperAdmin->>Header: Tenant-Dropdown auswählen
+    Header->>Controller: POST /admin/switch-tenant (tenantId)
+    Controller->>Session: setAttribute("activeTenantId", tenantId)
+    Controller-->>SuperAdmin: redirect (Referer)
+
+    SuperAdmin->>Filter: nächster Request
+    Filter->>Session: getAttribute("activeTenantId")
+    Filter->>Filter: X-Tenant-Id = Session-Wert
+    Filter-->>SuperAdmin: Request mit neuem Tenant
+----
+
+Die Tenant-Liste wird über `UserManagementClient.listTenants()` geladen und im Header-Fragment als Dropdown angezeigt (nur für SUPERADMIN sichtbar).
+Der `DefaultTenantFilter` prüft, ob ein Session-Override vorhanden ist, und verwendet diesen statt des Default-Tenants.
+
+=== Benutzerverwaltung (SWR-051)
+
+Die Seite `/admin/users` zeigt eine Tabelle aller Benutzer des aktuellen Tenants:
+
+[cols="1,2"]
+|===
+| Spalte | Beschreibung
+
+| Name | Display-Name des Benutzers
+| E-Mail | E-Mail-Adresse
+| Rolle | Aktuelle Rolle im Tenant
+| Status | Approval-Status (PENDING, APPROVED, REJECTED)
+| Aktionen | Approve/Reject-Buttons, Rollen-Dropdown
+|===
+
+Aktionen werden als POST-Formulare mit CSRF-Token abgesetzt und leiten nach Ausführung zurück auf `/admin/users`.
+
+=== Tenant-Einstellungen (SWR-052)
+
+Die Seite `/admin/settings` zeigt ein Formular mit den konfigurierbaren Tenant-Einstellungen:
+
+* **Login-Methode**: Radio-Buttons für INTERNAL, OIDC, BOTH
+* **Auto-Approval OIDC**: Checkbox
+* **Auto-Approval E-Mail-Domains**: Textfeld (kommagetrennt)
+* **Display-Name**: Textfeld für den Blog-Titel
+* **Tagline**: Textfeld für die optionale Tagline
+
+Änderungen werden über `POST /admin/settings` an den User-Management-Service propagiert.
+
+=== Template-Struktur
+
+[mermaid]
+----
+graph TD
+    A[layout/default.html] -->|layout:fragment=content| H[admin/users.html]
+    A -->|layout:fragment=content| I[admin/settings.html]
+    A --> C[fragments/header.html]
+    C --> J[Tenant-Selector - nur SUPERADMIN]
+    C --> K[Admin-Link - ADMIN/SUPERADMIN]
+----
+
+=== Security-Konfiguration
+
+Die bestehende `SecurityConfiguration` wird erweitert:
+
+* `/admin/users` und `/admin/settings`: Zugriff nur mit Rolle `ADMIN` oder `SUPERADMIN`
+* `/admin/switch-tenant`: Zugriff nur mit Rolle `SUPERADMIN`
+* Der Break-Glass-Login unter `/admin/login` bleibt unverändert (nur SUPERADMIN)

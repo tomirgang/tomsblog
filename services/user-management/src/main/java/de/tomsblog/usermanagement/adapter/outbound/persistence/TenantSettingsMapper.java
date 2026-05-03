@@ -18,6 +18,8 @@ public final class TenantSettingsMapper {
         entity.setLoginMode(settings.getLoginMode().name());
         entity.setAutoApproveOidc(settings.isAutoApproveOidc());
         entity.setAutoApproveEmailDomains(new HashSet<>(settings.getAutoApproveEmailDomains()));
+        entity.setDisplayName(settings.getDisplayName() != null ? settings.getDisplayName() : "Toms Blog");
+        entity.setTagline(settings.getTagline());
         return entity;
     }
 
@@ -26,6 +28,8 @@ public final class TenantSettingsMapper {
                 TenantId.of(entity.getTenantId()),
                 LoginMode.valueOf(entity.getLoginMode()),
                 entity.isAutoApproveOidc(),
-                new HashSet<>(entity.getAutoApproveEmailDomains()));
+                new HashSet<>(entity.getAutoApproveEmailDomains()),
+                entity.getDisplayName(),
+                entity.getTagline());
     }
 }

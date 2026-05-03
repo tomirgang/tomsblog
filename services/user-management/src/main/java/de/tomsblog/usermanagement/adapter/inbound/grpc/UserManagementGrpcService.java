@@ -1,7 +1,12 @@
 package de.tomsblog.usermanagement.adapter.inbound.grpc;
 
+import de.tomsblog.grpc.usermanagement.ApproveUserRequest;
+import de.tomsblog.grpc.usermanagement.ChangeUserRoleRequest;
 import de.tomsblog.grpc.usermanagement.FindByOidcSubjectRequest;
 import de.tomsblog.grpc.usermanagement.FindByUsernameRequest;
+import de.tomsblog.grpc.usermanagement.ListUsersByTenantRequest;
+import de.tomsblog.grpc.usermanagement.ListUsersResponse;
+import de.tomsblog.grpc.usermanagement.RejectUserRequest;
 import de.tomsblog.grpc.usermanagement.SyncOidcUserRequest;
 import de.tomsblog.grpc.usermanagement.TenantMembership;
 import de.tomsblog.grpc.usermanagement.UserManagementServiceGrpc;
@@ -10,6 +15,7 @@ import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.inbound.SyncOidcUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.UserProfileUseCase;
 import de.tomsblog.usermanagement.application.service.UserProfileNotFoundException;
+import de.tomsblog.usermanagement.domain.model.Role;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -22,6 +28,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
  *
  * @req SWR-046
  * @req SWR-043
+ * @req SWR-051
  */
 @GrpcService
 public class UserManagementGrpcService extends UserManagementServiceGrpc.UserManagementServiceImplBase {
@@ -78,6 +85,75 @@ public class UserManagementGrpcService extends UserManagementServiceGrpc.UserMan
         } catch (IllegalArgumentException e) {
             responseObserver.onError(
                     Status.INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
+    }
+
+    @Override
+    public void listUsersByTenant(
+            ListUsersByTenantRequest request, StreamObserver<ListUsersResponse> responseObserver) {
+        try {
+            TenantId tenantId = TenantId.of(UUID.fromString(request.getTenantId()));
+            var users = userProfileUseCase.listByTenantId(tenantId);
+            var builder = ListUsersResponse.newBuilder();
+            users.forEach(u -> builder.addUsers(toResponse(u)));
+            responseObserver.onNext(builder.build());
+            responseObserver.onCompleted();
+        } catch (IllegalArgumentException e) {
+            responseObserver.onError(
+                    Status.INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
+    }
+
+    @Override
+    public void approveUser(ApproveUserRequest request, StreamObserver<UserProfileResponse> responseObserver) {
+        try {
+            userProfileUseCase.approveUser(request.getIdentifier());
+            var profile = findProfileByIdentifier(request.getIdentifier());
+            responseObserver.onNext(toResponse(profile));
+            responseObserver.onCompleted();
+        } catch (UserProfileNotFoundException e) {
+            responseObserver.onError(
+                    Status.NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
+        }
+    }
+
+    @Override
+    public void rejectUser(RejectUserRequest request, StreamObserver<UserProfileResponse> responseObserver) {
+        try {
+            userProfileUseCase.rejectUser(request.getIdentifier());
+            var profile = findProfileByIdentifier(request.getIdentifier());
+            responseObserver.onNext(toResponse(profile));
+            responseObserver.onCompleted();
+        } catch (UserProfileNotFoundException e) {
+            responseObserver.onError(
+                    Status.NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
+        }
+    }
+
+    @Override
+    public void changeUserRole(ChangeUserRoleRequest request, StreamObserver<UserProfileResponse> responseObserver) {
+        try {
+            TenantId tenantId = TenantId.of(UUID.fromString(request.getTenantId()));
+            Role role = Role.valueOf(request.getRole());
+            userProfileUseCase.removeTenantMembership(request.getIdentifier(), tenantId);
+            userProfileUseCase.addTenantMembership(request.getIdentifier(), tenantId, role);
+            var profile = findProfileByIdentifier(request.getIdentifier());
+            responseObserver.onNext(toResponse(profile));
+            responseObserver.onCompleted();
+        } catch (UserProfileNotFoundException e) {
+            responseObserver.onError(
+                    Status.NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
+        } catch (IllegalArgumentException e) {
+            responseObserver.onError(
+                    Status.INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
+    }
+
+    private UserProfile findProfileByIdentifier(String identifier) {
+        try {
+            return userProfileUseCase.findByOidcSubject(identifier);
+        } catch (UserProfileNotFoundException e) {
+            return userProfileUseCase.findByUsername(identifier);
         }
     }
 

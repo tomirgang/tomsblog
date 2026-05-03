@@ -1,0 +1,19 @@
+active: true
+derived: false
+header: |
+  Tenant-Branding im Header
+level: 50.0
+links:
+- STK002: null
+- STK040: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Der Blog-Header zeigt den konfigurierbaren Tenant-Namen (statt
+  hardcoded "Toms Blog") und optional eine Tagline an. Das Domain-Modell
+  TenantSettings im User-Management-Service wird um displayName (String,
+  nicht leer) und tagline (String, optional) erweitert. Der Blog-Content-
+  Service ruft die Branding-Daten über gRPC vom User-Management-Service
+  ab und stellt sie als Model-Attribut für das Header-Fragment bereit.
+  Fallback bei fehlendem displayName: "Toms Blog".

@@ -3,18 +3,29 @@ package de.tomsblog.blogcontent.adapter.outbound.usermanagement;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import de.tomsblog.grpc.usermanagement.ApproveUserRequest;
+import de.tomsblog.grpc.usermanagement.ChangeUserRoleRequest;
 import de.tomsblog.grpc.usermanagement.FindByUsernameRequest;
 import de.tomsblog.grpc.usermanagement.GetTenantSettingsRequest;
+import de.tomsblog.grpc.usermanagement.ListTenantsRequest;
+import de.tomsblog.grpc.usermanagement.ListTenantsResponse;
+import de.tomsblog.grpc.usermanagement.ListUsersByTenantRequest;
+import de.tomsblog.grpc.usermanagement.ListUsersResponse;
+import de.tomsblog.grpc.usermanagement.RejectUserRequest;
 import de.tomsblog.grpc.usermanagement.SyncOidcUserRequest;
+import de.tomsblog.grpc.usermanagement.TenantInfoResponse;
 import de.tomsblog.grpc.usermanagement.TenantSettingsResponse;
 import de.tomsblog.grpc.usermanagement.TenantSettingsServiceGrpc;
+import de.tomsblog.grpc.usermanagement.UpdateTenantSettingsRequest;
 import de.tomsblog.grpc.usermanagement.UserManagementServiceGrpc;
 import de.tomsblog.grpc.usermanagement.UserProfileResponse;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -148,5 +159,149 @@ class UserManagementClientTest {
         assertThat(result).isNotNull();
         assertThat(result.email()).isNull();
         assertThat(result.displayName()).isNull();
+    }
+
+    @Test
+    @DisplayName("SWR-051: listUsersByTenant returns user list")
+    void listUsersByTenant_returnsList() {
+        var response = ListUsersResponse.newBuilder()
+                .addUsers(UserProfileResponse.newBuilder()
+                        .setId(UUID.randomUUID().toString())
+                        .setOidcSubject("sub-1")
+                        .setAuthSource("OIDC")
+                        .setApprovalStatus("APPROVED")
+                        .build())
+                .build();
+        when(userManagementStub.listUsersByTenant(any(ListUsersByTenantRequest.class)))
+                .thenReturn(response);
+
+        List<UserProfileDto> result = client.listUsersByTenant(TENANT_ID);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).oidcSubject()).isEqualTo("sub-1");
+    }
+
+    @Test
+    @DisplayName("SWR-051: approveUser calls gRPC")
+    void approveUser_callsGrpc() {
+        var response = UserProfileResponse.newBuilder()
+                .setId(UUID.randomUUID().toString())
+                .setOidcSubject("sub-1")
+                .setAuthSource("OIDC")
+                .setApprovalStatus("APPROVED")
+                .build();
+        when(userManagementStub.approveUser(any(ApproveUserRequest.class))).thenReturn(response);
+
+        client.approveUser("sub-1");
+
+        verify(userManagementStub).approveUser(any(ApproveUserRequest.class));
+    }
+
+    @Test
+    @DisplayName("SWR-051: rejectUser calls gRPC")
+    void rejectUser_callsGrpc() {
+        var response = UserProfileResponse.newBuilder()
+                .setId(UUID.randomUUID().toString())
+                .setOidcSubject("sub-1")
+                .setAuthSource("OIDC")
+                .setApprovalStatus("REJECTED")
+                .build();
+        when(userManagementStub.rejectUser(any(RejectUserRequest.class))).thenReturn(response);
+
+        client.rejectUser("sub-1");
+
+        verify(userManagementStub).rejectUser(any(RejectUserRequest.class));
+    }
+
+    @Test
+    @DisplayName("SWR-051: changeUserRole calls gRPC")
+    void changeUserRole_callsGrpc() {
+        var response = UserProfileResponse.newBuilder()
+                .setId(UUID.randomUUID().toString())
+                .setOidcSubject("sub-1")
+                .setAuthSource("OIDC")
+                .setApprovalStatus("APPROVED")
+                .build();
+        when(userManagementStub.changeUserRole(any(ChangeUserRoleRequest.class)))
+                .thenReturn(response);
+
+        client.changeUserRole("sub-1", TENANT_ID, "ADMIN");
+
+        verify(userManagementStub).changeUserRole(any(ChangeUserRoleRequest.class));
+    }
+
+    @Test
+    @DisplayName("SWR-052: updateTenantSettings sends gRPC and returns result")
+    void updateTenantSettings_returnsSettings() {
+        var response = TenantSettingsResponse.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .setLoginMode("OIDC")
+                .setAutoApproveOidc(true)
+                .addAutoApproveEmailDomains("test.com")
+                .setDisplayName("My Blog")
+                .setTagline("Cool blog")
+                .build();
+        when(tenantSettingsStub.updateTenantSettings(any(UpdateTenantSettingsRequest.class)))
+                .thenReturn(response);
+
+        TenantSettingsDto result =
+                client.updateTenantSettings(TENANT_ID, "OIDC", true, Set.of("test.com"), "My Blog", "Cool blog");
+
+        assertThat(result.loginMode()).isEqualTo("OIDC");
+        assertThat(result.displayName()).isEqualTo("My Blog");
+        assertThat(result.tagline()).isEqualTo("Cool blog");
+    }
+
+    @Test
+    @DisplayName("SWR-052: updateTenantSettings handles null displayName and tagline")
+    void updateTenantSettings_handlesNulls() {
+        var response = TenantSettingsResponse.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .setLoginMode("BOTH")
+                .setDisplayName("Blog")
+                .setTagline("")
+                .build();
+        when(tenantSettingsStub.updateTenantSettings(any(UpdateTenantSettingsRequest.class)))
+                .thenReturn(response);
+
+        TenantSettingsDto result = client.updateTenantSettings(TENANT_ID, "BOTH", false, Set.of(), null, null);
+
+        assertThat(result.tagline()).isNull();
+    }
+
+    @Test
+    @DisplayName("SWR-053: listTenants returns tenant info list")
+    void listTenants_returnsList() {
+        var response = ListTenantsResponse.newBuilder()
+                .addTenants(TenantInfoResponse.newBuilder()
+                        .setTenantId(TENANT_ID.toString())
+                        .setDisplayName("Blog A")
+                        .build())
+                .build();
+        when(tenantSettingsStub.listTenants(any(ListTenantsRequest.class))).thenReturn(response);
+
+        List<TenantInfoDto> result = client.listTenants();
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).tenantId()).isEqualTo(TENANT_ID);
+        assertThat(result.get(0).displayName()).isEqualTo("Blog A");
+    }
+
+    @Test
+    @DisplayName("SWR-046: getTenantSettings maps displayName and empty tagline to null")
+    void getTenantSettings_mapsEmptyTaglineToNull() {
+        var response = TenantSettingsResponse.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .setLoginMode("BOTH")
+                .setDisplayName("My Blog")
+                .setTagline("")
+                .build();
+        when(tenantSettingsStub.getTenantSettings(any(GetTenantSettingsRequest.class)))
+                .thenReturn(response);
+
+        TenantSettingsDto result = client.getTenantSettings(TENANT_ID);
+
+        assertThat(result.displayName()).isEqualTo("My Blog");
+        assertThat(result.tagline()).isNull();
     }
 }

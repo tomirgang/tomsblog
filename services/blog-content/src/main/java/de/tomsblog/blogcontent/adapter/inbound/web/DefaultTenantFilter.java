@@ -45,22 +45,39 @@ public class DefaultTenantFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        String sessionTenantOverride = resolveSessionTenant(request);
         boolean missingTenant = request.getHeader("X-Tenant-Id") == null;
         boolean missingAuthor = request.getHeader("X-Author-Id") == null;
 
-        if (missingTenant || missingAuthor) {
-            filterChain.doFilter(new DefaultHeaderRequestWrapper(request, missingTenant, missingAuthor), response);
+        if (sessionTenantOverride != null || missingTenant || missingAuthor) {
+            filterChain.doFilter(
+                    new DefaultHeaderRequestWrapper(request, missingTenant, missingAuthor, sessionTenantOverride),
+                    response);
         } else {
             filterChain.doFilter(request, response);
         }
     }
 
+    private String resolveSessionTenant(HttpServletRequest request) {
+        var session = request.getSession(false);
+        if (session != null) {
+            Object value = session.getAttribute("activeTenantId");
+            if (value != null) {
+                return value.toString();
+            }
+        }
+        return null;
+    }
+
     private class DefaultHeaderRequestWrapper extends HttpServletRequestWrapper {
         private final Map<String, String> additionalHeaders = new HashMap<>();
 
-        DefaultHeaderRequestWrapper(HttpServletRequest request, boolean addTenant, boolean addAuthor) {
+        DefaultHeaderRequestWrapper(
+                HttpServletRequest request, boolean addTenant, boolean addAuthor, String sessionTenantOverride) {
             super(request);
-            if (addTenant) {
+            if (sessionTenantOverride != null) {
+                additionalHeaders.put("X-Tenant-Id", sessionTenantOverride);
+            } else if (addTenant) {
                 additionalHeaders.put("X-Tenant-Id", defaultTenantId);
             }
             if (addAuthor) {

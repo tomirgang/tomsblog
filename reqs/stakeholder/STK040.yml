@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Tenant-Branding in Navigation
+level: 40.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Als Betreiber möchte ich, dass die Blog-Navigation den Namen und
+  optional eine Tagline des aktuellen Tenants anzeigt, damit Besucher
+  die Zugehörigkeit zum jeweiligen Blog erkennen.

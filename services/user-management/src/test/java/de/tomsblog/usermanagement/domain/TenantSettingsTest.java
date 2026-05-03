@@ -40,7 +40,8 @@ class TenantSettingsTest {
         @Test
         @DisplayName("SWR-044: reconstitute recreates settings from persistence")
         void reconstituteRecreatesSettings() {
-            var settings = TenantSettings.reconstitute(TENANT_ID, LoginMode.OIDC, true, Set.of("example.com"));
+            var settings = TenantSettings.reconstitute(
+                    TENANT_ID, LoginMode.OIDC, true, Set.of("example.com"), "Toms Blog", null);
 
             assertThat(settings.getTenantId()).isEqualTo(TENANT_ID);
             assertThat(settings.getLoginMode()).isEqualTo(LoginMode.OIDC);
@@ -206,6 +207,16 @@ class TenantSettingsTest {
         }
 
         @Test
+        @DisplayName("SWR-045: handles email without @ symbol")
+        void handlesEmailWithoutAtSymbol() {
+            var settings = TenantSettings.create(TENANT_ID);
+            settings.addAutoApproveEmailDomain("company.com");
+
+            assertThat(settings.shouldAutoApprove(AuthSource.INTERNAL, "noatsymbol"))
+                    .isFalse();
+        }
+
+        @Test
         @DisplayName("SWR-045: email domain matching is case-insensitive")
         void emailDomainMatchingCaseInsensitive() {
             var settings = TenantSettings.create(TENANT_ID);
@@ -224,6 +235,61 @@ class TenantSettingsTest {
                     .isFalse();
             assertThat(settings.shouldAutoApprove(AuthSource.INTERNAL, "user@any.com"))
                     .isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("Branding")
+    class Branding {
+
+        @Test
+        @DisplayName("SWR-050: create sets default displayName")
+        void createSetsDefaultDisplayName() {
+            var settings = TenantSettings.create(TENANT_ID);
+
+            assertThat(settings.getDisplayName()).isEqualTo("Toms Blog");
+            assertThat(settings.getTagline()).isNull();
+        }
+
+        @Test
+        @DisplayName("SWR-050: reconstitute preserves displayName and tagline")
+        void reconstitutePreservesBranding() {
+            var settings =
+                    TenantSettings.reconstitute(TENANT_ID, LoginMode.BOTH, false, Set.of(), "My Blog", "A tagline");
+
+            assertThat(settings.getDisplayName()).isEqualTo("My Blog");
+            assertThat(settings.getTagline()).isEqualTo("A tagline");
+        }
+
+        @Test
+        @DisplayName("SWR-050: updateDisplayName changes display name")
+        void updateDisplayName() {
+            var settings = TenantSettings.create(TENANT_ID);
+
+            settings.updateDisplayName("New Name");
+
+            assertThat(settings.getDisplayName()).isEqualTo("New Name");
+        }
+
+        @Test
+        @DisplayName("SWR-050: updateTagline changes tagline")
+        void updateTagline() {
+            var settings = TenantSettings.create(TENANT_ID);
+
+            settings.updateTagline("My tagline");
+
+            assertThat(settings.getTagline()).isEqualTo("My tagline");
+        }
+
+        @Test
+        @DisplayName("SWR-050: updateTagline allows null")
+        void updateTaglineAllowsNull() {
+            var settings =
+                    TenantSettings.reconstitute(TENANT_ID, LoginMode.BOTH, false, Set.of(), "Blog", "old tagline");
+
+            settings.updateTagline(null);
+
+            assertThat(settings.getTagline()).isNull();
         }
     }
 }

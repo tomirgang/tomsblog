@@ -15,7 +15,8 @@ class TenantSettingsMapperTest {
     @DisplayName("SWR-044: toEntity maps domain to JPA entity")
     void toEntityMaps() {
         var tenantId = TenantId.generate();
-        var settings = TenantSettings.reconstitute(tenantId, LoginMode.OIDC, true, Set.of("example.com", "test.org"));
+        var settings = TenantSettings.reconstitute(
+                tenantId, LoginMode.OIDC, true, Set.of("example.com", "test.org"), "Toms Blog", null);
 
         var entity = TenantSettingsMapper.toEntity(settings);
 
@@ -47,7 +48,8 @@ class TenantSettingsMapperTest {
     @DisplayName("SWR-044: roundtrip preserves all fields")
     void roundtripPreservesFields() {
         var tenantId = TenantId.generate();
-        var original = TenantSettings.reconstitute(tenantId, LoginMode.BOTH, true, Set.of("a.com", "b.com"));
+        var original = TenantSettings.reconstitute(
+                tenantId, LoginMode.BOTH, true, Set.of("a.com", "b.com"), "Toms Blog", null);
 
         var entity = TenantSettingsMapper.toEntity(original);
         var restored = TenantSettingsMapper.toDomain(entity);
@@ -56,5 +58,58 @@ class TenantSettingsMapperTest {
         assertThat(restored.getLoginMode()).isEqualTo(original.getLoginMode());
         assertThat(restored.isAutoApproveOidc()).isEqualTo(original.isAutoApproveOidc());
         assertThat(restored.getAutoApproveEmailDomains()).isEqualTo(original.getAutoApproveEmailDomains());
+    }
+
+    @Test
+    @DisplayName("SWR-050: toEntity maps branding fields")
+    void toEntityMapsBranding() {
+        var tenantId = TenantId.generate();
+        var settings = TenantSettings.reconstitute(tenantId, LoginMode.BOTH, false, Set.of(), "My Blog", "A tagline");
+
+        var entity = TenantSettingsMapper.toEntity(settings);
+
+        assertThat(entity.getDisplayName()).isEqualTo("My Blog");
+        assertThat(entity.getTagline()).isEqualTo("A tagline");
+    }
+
+    @Test
+    @DisplayName("SWR-050: toDomain maps branding fields")
+    void toDomainMapsBranding() {
+        var entity = new TenantSettingsJpaEntity();
+        entity.setTenantId(java.util.UUID.randomUUID());
+        entity.setLoginMode("BOTH");
+        entity.setAutoApproveOidc(false);
+        entity.setAutoApproveEmailDomains(Set.of());
+        entity.setDisplayName("Custom Blog");
+        entity.setTagline("Great tagline");
+
+        var settings = TenantSettingsMapper.toDomain(entity);
+
+        assertThat(settings.getDisplayName()).isEqualTo("Custom Blog");
+        assertThat(settings.getTagline()).isEqualTo("Great tagline");
+    }
+
+    @Test
+    @DisplayName("SWR-050: toEntity defaults displayName when null")
+    void toEntityDefaultsDisplayName() {
+        var tenantId = TenantId.generate();
+        var settings = TenantSettings.reconstitute(tenantId, LoginMode.BOTH, false, Set.of(), null, null);
+
+        var entity = TenantSettingsMapper.toEntity(settings);
+
+        assertThat(entity.getDisplayName()).isEqualTo("Toms Blog");
+    }
+
+    @Test
+    @DisplayName("SWR-050: roundtrip preserves branding fields")
+    void roundtripPreservesBranding() {
+        var tenantId = TenantId.generate();
+        var original = TenantSettings.reconstitute(tenantId, LoginMode.BOTH, false, Set.of(), "My Blog", "My tagline");
+
+        var entity = TenantSettingsMapper.toEntity(original);
+        var restored = TenantSettingsMapper.toDomain(entity);
+
+        assertThat(restored.getDisplayName()).isEqualTo("My Blog");
+        assertThat(restored.getTagline()).isEqualTo("My tagline");
     }
 }

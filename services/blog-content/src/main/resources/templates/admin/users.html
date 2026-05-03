@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title>Users</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h2>Benutzerverwaltung</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>E-Mail</th>
+                    <th>Rolle</th>
+                    <th>Status</th>
+                    <th>Aktionen</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.displayName() ?: user.username() ?: user.oidcSubject()}">Name</td>
+                    <td th:text="${user.email()}">email@example.com</td>
+                    <td>
+                        <span th:each="role : ${user.globalRoles()}" th:text="${role}" class="badge"></span>
+                    </td>
+                    <td>
+                        <span th:text="${user.approvalStatus()}"
+                              th:classappend="${user.approvalStatus() == 'PENDING'} ? 'contrast' : (${user.approvalStatus() == 'APPROVED'} ? '' : 'secondary')">
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:0.5rem;align-items:center">
+                            <form th:if="${user.approvalStatus() == 'PENDING'}"
+                                  th:action="@{/admin/users/{id}/approve(id=${user.oidcSubject() ?: user.username()})}"
+                                  method="post" style="margin:0">
+                                <button type="submit" class="outline" style="padding:0.25rem 0.5rem;margin:0">Approve</button>
+                            </form>
+                            <form th:if="${user.approvalStatus() == 'PENDING'}"
+                                  th:action="@{/admin/users/{id}/reject(id=${user.oidcSubject() ?: user.username()})}"
+                                  method="post" style="margin:0">
+                                <button type="submit" class="outline secondary" style="padding:0.25rem 0.5rem;margin:0">Reject</button>
+                            </form>
+                            <form th:action="@{/admin/users/{id}/role(id=${user.oidcSubject() ?: user.username()})}"
+                                  method="post" style="margin:0;display:flex;gap:0.25rem;align-items:center">
+                                <select name="role" style="padding:0.25rem;margin:0">
+                                    <option value="READER">READER</option>
+                                    <option value="REVIEWER">REVIEWER</option>
+                                    <option value="AUTHOR">AUTHOR</option>
+                                    <option value="ADMIN">ADMIN</option>
+                                </select>
+                                <button type="submit" class="outline" style="padding:0.25rem 0.5rem;margin:0">Set</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <p th:if="${#lists.isEmpty(users)}">Keine Benutzer in diesem Tenant.</p>
+        <nav>
+            <a th:href="@{/admin/settings}">Tenant-Einstellungen</a>
+        </nav>
+    </section>
+</body>
+</html>

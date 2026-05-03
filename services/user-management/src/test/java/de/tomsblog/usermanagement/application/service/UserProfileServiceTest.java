@@ -80,7 +80,12 @@ class UserProfileServiceTest {
             when(repository.findByOidcSubject("sub-2")).thenReturn(Optional.empty());
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
             var settings = de.tomsblog.usermanagement.domain.model.TenantSettings.reconstitute(
-                    TENANT_ID, de.tomsblog.usermanagement.domain.model.LoginMode.BOTH, true, java.util.Set.of());
+                    TENANT_ID,
+                    de.tomsblog.usermanagement.domain.model.LoginMode.BOTH,
+                    true,
+                    java.util.Set.of(),
+                    "Toms Blog",
+                    null);
             when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
 
             var command = new SyncOidcUserCommand("sub-2", "user@any.com", "User", List.of(), TENANT_ID);
@@ -98,7 +103,9 @@ class UserProfileServiceTest {
                     TENANT_ID,
                     de.tomsblog.usermanagement.domain.model.LoginMode.BOTH,
                     false,
-                    java.util.Set.of("company.com"));
+                    java.util.Set.of("company.com"),
+                    "Toms Blog",
+                    null);
             when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
 
             var command = new SyncOidcUserCommand("sub-3", "user@company.com", "User", List.of(), TENANT_ID);
@@ -304,6 +311,33 @@ class UserProfileServiceTest {
 
             assertThat(profile.getTenantMemberships()).isEmpty();
             verify(repository).save(profile);
+        }
+    }
+
+    @Nested
+    @DisplayName("listByTenantId")
+    class ListByTenantId {
+
+        @Test
+        @DisplayName("SWR-051: returns users for given tenant")
+        void returnsUsersForTenant() {
+            var p1 = UserProfile.createFromOidc("sub-1", "a@b.com", "User1");
+            var p2 = UserProfile.createInternal("admin", "hash", "admin@b.com", "Admin");
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(List.of(p1, p2));
+
+            var result = service.listByTenantId(TENANT_ID);
+
+            assertThat(result).hasSize(2);
+        }
+
+        @Test
+        @DisplayName("SWR-051: returns empty list when no users in tenant")
+        void returnsEmptyList() {
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(List.of());
+
+            var result = service.listByTenantId(TENANT_ID);
+
+            assertThat(result).isEmpty();
         }
     }
 }

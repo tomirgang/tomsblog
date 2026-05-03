@@ -9,6 +9,10 @@ import java.util.UUID;
  *
  * @req SWR-043
  * @req SWR-046
+ * @req SWR-050
+ * @req SWR-051
+ * @req SWR-052
+ * @req SWR-053
  */
 public interface UserManagementClient {
 
@@ -24,7 +28,43 @@ public interface UserManagementClient {
     UserProfileDto findByUsername(String username);
 
     /**
-     * Retrieves tenant settings (login mode, auto-approval) from the User Management Service.
+     * Retrieves tenant settings (login mode, auto-approval, branding) from the User Management Service.
      */
     TenantSettingsDto getTenantSettings(UUID tenantId);
+
+    /**
+     * Lists all users belonging to a specific tenant.
+     */
+    List<UserProfileDto> listUsersByTenant(UUID tenantId);
+
+    /**
+     * Approves a user.
+     */
+    void approveUser(String identifier);
+
+    /**
+     * Rejects a user.
+     */
+    void rejectUser(String identifier);
+
+    /**
+     * Changes a user's role in a tenant.
+     */
+    void changeUserRole(String identifier, UUID tenantId, String role);
+
+    /**
+     * Updates tenant settings.
+     */
+    TenantSettingsDto updateTenantSettings(
+            UUID tenantId,
+            String loginMode,
+            boolean autoApproveOidc,
+            java.util.Set<String> autoApproveEmailDomains,
+            String displayName,
+            String tagline);
+
+    /**
+     * Lists all tenants.
+     */
+    List<TenantInfoDto> listTenants();
 }

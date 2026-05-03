@@ -41,6 +41,8 @@ public class SecurityConfiguration {
 
     /**
      * Break-glass admin filter chain: form-based login at /admin/login for SUPERADMIN.
+     * Admin pages (/admin/users, /admin/settings) accessible by ADMIN and SUPERADMIN.
+     * Tenant switching only for SUPERADMIN.
      */
     @Bean
     @Order(1)
@@ -48,6 +50,10 @@ public class SecurityConfiguration {
         http.securityMatcher("/admin/**")
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/admin/login")
                         .permitAll()
+                        .requestMatchers("/admin/switch-tenant")
+                        .hasRole("SUPERADMIN")
+                        .requestMatchers("/admin/users", "/admin/users/**", "/admin/settings")
+                        .hasAnyRole("SUPERADMIN", "ADMIN")
                         .anyRequest()
                         .hasRole("SUPERADMIN"))
                 .formLogin(form -> form.loginPage("/admin/login")

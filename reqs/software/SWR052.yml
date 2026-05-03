@@ -1,0 +1,19 @@
+active: true
+derived: false
+header: |
+  Admin-UI Tenant-Einstellungen
+level: 52.0
+links:
+- STK031: null
+- STK042: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Unter /admin/settings wird eine Thymeleaf-Seite bereitgestellt, die
+  die Tenant-Einstellungen (Login-Mode, Auto-Approval-Regeln,
+  Branding mit displayName und tagline) anzeigt und bearbeitbar macht.
+  Zugriff nur für Benutzer mit Rolle ADMIN oder SUPERADMIN. Änderungen
+  werden über gRPC an den User-Management-Service propagiert. Der
+  User-Management-Service stellt dafür einen UpdateTenantSettings-RPC
+  bereit.
