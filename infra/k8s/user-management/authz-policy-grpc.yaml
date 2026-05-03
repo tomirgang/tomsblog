@@ -1,0 +1,25 @@
+apiVersion: policy.linkerd.io/v1alpha1
+kind: MeshTLSAuthentication
+metadata:
+  name: blog-content-identity
+  namespace: tomsblog
+spec:
+  identities:
+    - "blog-content.tomsblog.serviceaccount.identity.linkerd.cluster.local"
+---
+apiVersion: policy.linkerd.io/v1alpha1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-blog-content-to-user-management
+  namespace: tomsblog
+  labels:
+    app: user-management
+spec:
+  targetRef:
+    group: policy.linkerd.io
+    kind: Server
+    name: user-management-grpc
+  requiredAuthenticationRefs:
+    - name: blog-content-identity
+      kind: MeshTLSAuthentication
+      group: policy.linkerd.io

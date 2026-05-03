@@ -67,7 +67,7 @@ ghcr.io/tomirgang/tomsblog/blog-content:<tag>
 ghcr.io/tomirgang/tomsblog/user-management:<tag>
 ```
 
-Als Tag wird Semantic Versioning im Format `<major>.<minor>.<patch>` verwendet (z.B. `0.8.2`).
+Als Tag wird Semantic Versioning im Format `<major>.<minor>.<patch>` verwendet (z.B. `0.8.4`).
 Flux Image Automation aktualisiert das Deployment-Manifest automatisch bei neuen Releases.
 
 ### Secrets
@@ -178,15 +178,18 @@ env:
 
 #### User Management Service Verbindung
 
-| Variable               | Beschreibung                           | Default                    |
-| ---------------------- | -------------------------------------- | -------------------------- |
-| `USER_MANAGEMENT_URL`  | Base-URL des User Management Service   | `http://localhost:8081`    |
+| Variable                      | Beschreibung                           | Default                    |
+| ----------------------------- | -------------------------------------- | -------------------------- |
+| `USER_MANAGEMENT_GRPC_HOST`   | Hostname des User Management Service   | `localhost`                |
+| `USER_MANAGEMENT_GRPC_PORT`   | gRPC-Port des User Management Service  | `9090`                     |
 
 Im Kubernetes-Cluster typischerweise:
 
 ```yaml
-- name: USER_MANAGEMENT_URL
-  value: "http://user-management.tomsblog.svc.cluster.local:8081"
+- name: USER_MANAGEMENT_GRPC_HOST
+  value: "user-management.tomsblog.svc.cluster.local"
+- name: USER_MANAGEMENT_GRPC_PORT
+  value: "9090"
 ```
 
 #### Sonstige
@@ -246,7 +249,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: blog-content
-          image: ghcr.io/tomirgang/tomsblog/blog-content:0.8.2
+          image: ghcr.io/tomirgang/tomsblog/blog-content:0.8.4
           ports:
             - containerPort: 8080
           securityContext:
@@ -296,9 +299,9 @@ spec:
               value: "http://user-management.tomsblog.svc.cluster.local:8081"
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: /actuator/health/liveness
               port: 8080
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -352,10 +355,13 @@ spec:
 
 Beide Services stellen Spring Boot Actuator Endpunkte bereit:
 
-| Endpunkt                    | Zweck             |
-| --------------------------- | ----------------- |
-| `/actuator/health`          | Liveness-Probe    |
-| `/actuator/health/readiness`| Readiness-Probe   |
+| Endpunkt                      | Zweck            | Beschreibung                              |
+| ----------------------------- | ---------------- | ----------------------------------------- |
+| `/actuator/health/liveness`   | Liveness-Probe   | Prüft nur App-Lifecycle (keine ext. Deps) |
+| `/actuator/health/readiness`  | Readiness-Probe  | Prüft App-Lifecycle und Datenbankzugang   |
+| `/actuator/health`            | Gesamtstatus     | Aggregiert alle Health-Indikatoren        |
+
+IMPORTANT: Die Liveness-Probe muss `/actuator/health/liveness` verwenden (nicht `/actuator/health`), da der aggregierte Endpunkt externe Dependencies einschließt (z.B. gRPC zu user-management) und bei deren Ausfall den Pod unnötig neu startet.
 
 ## Backup-Storage (Garage / S3)
 

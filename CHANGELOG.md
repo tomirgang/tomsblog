@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- GitHub Actions CI: Container-Build als Matrix-Job für alle Services (blog-content, user-management)
+- Dockerfile für user-management Service
+- Kubernetes-Manifeste für user-management (Deployment, Service, Secret, Linkerd Server/AuthzPolicy)
+- Flux Image-Automation für user-management (ImageRepository, ImagePolicy, ImageUpdateAutomation)
+- application-k8s.yml für user-management mit Health-Probe-Gruppen
+
+### Changed
+
+- CI-Workflow: Release-Assets enthalten nun auch user-management JAR
+- Infra-Dokumentation (image-automation.adoc, ADMINS.md) um user-management erweitert
+- ADMINS.md: Health-Check-Dokumentation aktualisiert (liveness/readiness Probe-Gruppen)
+- ADMINS.md: gRPC-Verbindungskonfiguration statt REST-URL für User Management
+
 ## [0.8.4] - 2026-05-03
 
 ## [0.8.3] - 2026-05-03

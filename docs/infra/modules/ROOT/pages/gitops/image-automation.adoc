@@ -45,16 +45,31 @@ Das Deployment enthält einen Flux-Marker-Kommentar, der dem Image Automation Co
 ----
 containers:
   - name: blog-content
-    image: ghcr.io/tomirgang/tomsblog/blog-content:0.8.2 # {"$imagepolicy": "flux-system:blog-content"}
+    image: ghcr.io/tomirgang/tomsblog/blog-content:0.8.4 # {"$imagepolicy": "flux-system:blog-content"}
+----
+
+[source,yaml]
+----
+containers:
+  - name: user-management
+    image: ghcr.io/tomirgang/tomsblog/user-management:0.8.4 # {"$imagepolicy": "flux-system:user-management"}
 ----
 
 === Flux-Ressourcen (tomsblog/infra/k8s/flux-system/)
 
-Die Image-Automation wird über drei Ressourcen im `tomsblog`-Repository konfiguriert:
+Die Image-Automation wird über folgende Ressourcen im `tomsblog`-Repository konfiguriert:
+
+==== blog-content
 
 * **ImageRepository** (`blog-content-image.yaml`) -- überwacht `ghcr.io/tomirgang/tomsblog/blog-content`
 * **ImagePolicy** (`blog-content-image.yaml`) -- filtert Tags mit Muster `^\d+\.\d+\.\d+$` und wählt die höchste SemVer-Version (`>=0.1.0`)
 * **ImageUpdateAutomation** (`blog-content-image-automation.yaml`) -- schreibt neue Tags in `infra/k8s/` zurück
+
+==== user-management
+
+* **ImageRepository** (`user-management-image.yaml`) -- überwacht `ghcr.io/tomirgang/tomsblog/user-management`
+* **ImagePolicy** (`user-management-image.yaml`) -- filtert Tags mit Muster `^\d+\.\d+\.\d+$` und wählt die höchste SemVer-Version (`>=0.1.0`)
+* **ImageUpdateAutomation** (`user-management-image-automation.yaml`) -- schreibt neue Tags in `infra/k8s/` zurück
 
 === Voraussetzungen
 

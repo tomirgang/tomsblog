@@ -5,3 +5,5 @@ resources:
   - kustomization-app.yaml
   - blog-content-image.yaml
   - blog-content-image-automation.yaml
+  - user-management-image.yaml
+  - user-management-image-automation.yaml

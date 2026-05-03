@@ -8,4 +8,5 @@ resources:
   - postgres/cluster.yaml
   - pvc.yaml
   - blog-content
+  - user-management
   - routing

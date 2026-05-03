@@ -15,6 +15,10 @@ spec:
       kind: Deployment
       name: blog-content
       namespace: tomsblog
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: user-management
+      namespace: tomsblog
     - apiVersion: postgresql.cnpg.io/v1
       kind: Cluster
       name: postgres-cluster
