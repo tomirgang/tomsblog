@@ -30,10 +30,6 @@ if [[ -n "$(git status --porcelain)" ]]; then
     die "Working directory is not clean. Commit or stash changes first."
 fi
 
-git fetch origin
-git fetch github
-git pull github main || die "Failed to pull from github. Resolve any conflicts and try again."
-
 # Ensure we're on main branch
 BRANCH="$(git branch --show-current)"
 if [[ "$BRANCH" != "main" && "$BRANCH" != "master" ]]; then
@@ -41,6 +37,13 @@ if [[ "$BRANCH" != "main" && "$BRANCH" != "master" ]]; then
     read -rp "Continue anyway? [y/N] " confirm
     [[ "$confirm" =~ ^[Yy]$ ]] || exit 0
 fi
+
+# Sync with both remotes to ensure we have the latest refs
+git fetch origin || die "Failed to fetch from origin."
+git fetch github || die "Failed to fetch from github."
+
+# Rebase local branch on top of github to avoid merge commits
+git pull --rebase github "$BRANCH" || die "Failed to rebase on github/$BRANCH. Resolve conflicts and try again."
 
 if [[ "$REBUILD" == true ]]; then
     # Rebuild mode: just run tests without version changes
@@ -137,14 +140,16 @@ git commit -m "release: v$NEW_VERSION"
 info "Creating tag v$NEW_VERSION..."
 git tag -a "v$NEW_VERSION" -m "Release $NEW_VERSION"
 
-# Push to both remotes
-info "Pushing to origin..."
-git push origin "$BRANCH"
-git push origin "v$NEW_VERSION"
+# Rebase on github to incorporate any upstream changes (e.g. from Flux/CI)
+info "Rebasing on github/$BRANCH before push..."
+git pull --rebase github "$BRANCH" || die "Failed to rebase on github/$BRANCH. Resolve conflicts and try again."
+
+# Push to both remotes (atomic ensures branch + tag arrive together)
+info "Pushing to origin (force)..."
+git push --force --atomic origin "$BRANCH" "v$NEW_VERSION"
 
 info "Pushing to github..."
-git push github "$BRANCH"
-git push github "v$NEW_VERSION"
+git push --atomic github "$BRANCH" "v$NEW_VERSION"
 
 # Set version back to SNAPSHOT for development
 NEXT_SNAPSHOT="$NEW_VERSION-SNAPSHOT"
@@ -165,7 +170,14 @@ fi
 
 git add -A
 git commit -m "chore: set development version $NEXT_SNAPSHOT"
-git push -f origin "$BRANCH"
+
+# Rebase again in case CI/Flux pushed between release push and now
+git pull --rebase github "$BRANCH" || die "Failed to rebase SNAPSHOT commit. Resolve conflicts and try again."
+
+info "Pushing development version to origin (force)..."
+git push --force origin "$BRANCH"
+
+info "Pushing development version to github..."
 git push github "$BRANCH"
 
 echo ""
