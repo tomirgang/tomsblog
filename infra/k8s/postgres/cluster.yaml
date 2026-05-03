@@ -10,6 +10,8 @@ spec:
     initdb:
       database: blog_content
       owner: blog_content
+      postInitApplicationSQL:
+        - CREATE DATABASE user_management OWNER app;
 
   postgresql:
     parameters:

@@ -46,6 +46,30 @@ sequenceDiagram
     OP->>OP: Erstelle neue Replica
 ----
 
+== Datenbanken
+
+Der Cluster folgt dem Database-per-Service-Pattern (ADR-0019). Beim Bootstrap werden alle benötigten Datenbanken automatisch erstellt:
+
+[cols="1,2,1"]
+|===
+| Datenbank | Service | Owner
+
+| blog_content | blog-content | app (via initdb)
+| user_management | user-management | app (via postInitApplicationSQL)
+|===
+
+Die `initdb`-Konfiguration erstellt die primäre Datenbank (`blog_content`). Weitere Datenbanken werden über `postInitApplicationSQL` angelegt:
+
+[source,yaml]
+----
+bootstrap:
+  initdb:
+    database: blog_content
+    owner: blog_content
+    postInitApplicationSQL:
+      - CREATE DATABASE user_management OWNER app;
+----
+
 == Credentials
 
 Die Datenbank-Credentials werden vom Operator automatisch als Kubernetes Secret erstellt:
@@ -58,7 +82,7 @@ Die Datenbank-Credentials werden vom Operator automatisch als Kubernetes Secret 
 | postgres-cluster-superuser | username, password (für Admin-Zugang)
 |===
 
-Der blog-content Service referenziert das `postgres-cluster-app` Secret in seiner Deployment-Konfiguration.
+Beide Services (blog-content und user-management) referenzieren das `postgres-cluster-app` Secret in ihrer Deployment-Konfiguration.
 
 == Verbindung zum App-Repository
 

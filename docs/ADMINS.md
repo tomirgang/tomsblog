@@ -52,9 +52,17 @@ metadata:
   namespace: postgres
 spec:
   instances: 2
+  bootstrap:
+    initdb:
+      database: blog_content
+      owner: blog_content
+      postInitApplicationSQL:
+        - CREATE DATABASE user_management OWNER app;
   storage:
     size: 10Gi
 ```
+
+Beim Bootstrap werden automatisch alle Service-Datenbanken angelegt (`blog_content` via initdb, `user_management` via postInitApplicationSQL).
 
 Die Datenbankverbindung wird über Umgebungsvariablen konfiguriert (siehe unten).
 
