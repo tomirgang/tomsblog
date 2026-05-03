@@ -117,8 +117,14 @@ public class BlogViewController {
 
         Optional<Post> previousPost = postUseCase.findPreviousPublishedPost(postSlug, tenant);
         Optional<Post> nextPost = postUseCase.findNextPublishedPost(postSlug, tenant);
-        previousPost.ifPresent(p -> model.addAttribute("previousPost", p));
-        nextPost.ifPresent(p -> model.addAttribute("nextPost", p));
+        previousPost.ifPresent(p -> {
+            model.addAttribute("previousPost", p);
+            model.addAttribute("previousPostExcerpt", extractFirstParagraph(renderContent(p)));
+        });
+        nextPost.ifPresent(p -> {
+            model.addAttribute("nextPost", p);
+            model.addAttribute("nextPostExcerpt", extractFirstParagraph(renderContent(p)));
+        });
 
         addSeriesNavigation(post, previousPost.orElse(null), nextPost.orElse(null), tenant, model);
 

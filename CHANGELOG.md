@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ### Added
 
 - Infra: S3-kompatibler Objektspeicher (Garage) auf Netcup VM bereitgestellt (Backup-Storage für Kubernetes)
+- PostgreSQL Backup-Strategie: CloudNativePG Barman Object Store mit täglichen Base Backups und WAL-Streaming auf Garage S3
+- ScheduledBackup-Ressource für automatische tägliche Backups um 02:00 UTC (30 Tage Retention)
+- Disaster-Recovery-Plan dokumentiert (Restore, PITR, Ablauf) in ADMINS.md und Infra-Doku
+- Thymeleaf: Drop-down-Vorschau für vorherigen und nächsten Post auf der Detailseite (Titel, Datum, Textauszug)
 
 ## [0.8.0] - 2026-05-03
 

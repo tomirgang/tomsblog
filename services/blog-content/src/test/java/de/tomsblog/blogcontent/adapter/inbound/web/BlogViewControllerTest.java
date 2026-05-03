@@ -263,7 +263,9 @@ class BlogViewControllerTest {
         mockMvc.perform(get("/posts/current-post").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("previousPost"))
-                .andExpect(model().attributeExists("nextPost"));
+                .andExpect(model().attributeExists("nextPost"))
+                .andExpect(model().attributeExists("previousPostExcerpt"))
+                .andExpect(model().attributeExists("nextPostExcerpt"));
     }
 
     @Test
