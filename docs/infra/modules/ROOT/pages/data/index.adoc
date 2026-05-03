@@ -19,5 +19,5 @@ Die Plattform folgt dem Database-per-Service-Pattern (ADR-0019). Aktuell wird Po
 
 == Weiterführend
 
-* xref:cloudnativepg.adoc[CloudNativePG] -- Cluster-Definition, Failover, Credentials
-* xref:backup.adoc[Backup & Recovery] -- Backup-Strategie, RPO/RTO
+* xref:data/cloudnativepg.adoc[CloudNativePG] -- Cluster-Definition, Failover, Credentials
+* xref:data/backup.adoc[Backup & Recovery] -- Backup-Strategie, RPO/RTO

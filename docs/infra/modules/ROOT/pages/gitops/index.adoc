@@ -40,6 +40,6 @@ Flux prüft beide Repositories alle 10 Minuten auf Änderungen und reconciled de
 
 == Weiterführend
 
-* xref:flux.adoc[Flux-Konfiguration] -- GitRepository, Kustomization, Health-Checks
-* xref:image-automation.adoc[Image-Automation] -- Versionierte Tags, automatische Manifest-Updates
-* xref:secrets.adoc[Secrets-Management] -- SOPS + age Verschlüsselung
+* xref:gitops/flux.adoc[Flux-Konfiguration] -- GitRepository, Kustomization, Health-Checks
+* xref:gitops/image-automation.adoc[Image-Automation] -- Versionierte Tags, automatische Manifest-Updates
+* xref:gitops/secrets.adoc[Secrets-Management] -- SOPS + age Verschlüsselung

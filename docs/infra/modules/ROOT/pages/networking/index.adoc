@@ -29,6 +29,6 @@ sequenceDiagram
 
 == Weiterführend
 
-* xref:traefik.adoc[Traefik Ingress Controller] -- Konfiguration und Entrypoints
-* xref:tls.adoc[TLS & Zertifikate] -- cert-manager, Let's Encrypt
-* xref:network-policies.adoc[Network Policies] -- Egress/Ingress-Regeln
+* xref:networking/traefik.adoc[Traefik Ingress Controller] -- Konfiguration und Entrypoints
+* xref:networking/tls.adoc[TLS & Zertifikate] -- cert-manager, Let's Encrypt
+* xref:networking/network-policies.adoc[Network Policies] -- Egress/Ingress-Regeln

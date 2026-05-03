@@ -57,5 +57,5 @@ graph LR
 
 == Weiterführend
 
-* xref:provisioning.adoc[Provisionierung (IaC)] -- OpenTofu-Workflow und IaC-Repository
-* xref:networking.adoc[Netzwerk & DNS] -- WireGuard, Load Balancer, DNS-Konfiguration
+* xref:cluster-setup/provisioning.adoc[Provisionierung (IaC)] -- OpenTofu-Workflow und IaC-Repository
+* xref:cluster-setup/networking.adoc[Netzwerk & DNS] -- WireGuard, Load Balancer, DNS-Konfiguration

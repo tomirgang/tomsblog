@@ -43,5 +43,5 @@ graph TB
 
 == Weiterführend
 
-* xref:mtls.adoc[mTLS] -- Zertifikats-Hierarchie und Trust Anchor
-* xref:authorization.adoc[AuthorizationPolicies] -- Zugriffskontrolle
+* xref:service-mesh/mtls.adoc[mTLS] -- Zertifikats-Hierarchie und Trust Anchor
+* xref:service-mesh/authorization.adoc[AuthorizationPolicies] -- Zugriffskontrolle

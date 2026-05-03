@@ -23,6 +23,6 @@ flux get all
 
 == Weiterführend
 
-* xref:rollback.adoc[Rollback-Verfahren] -- Deployment zurückrollen
-* xref:disaster-recovery.adoc[Disaster Recovery] -- Cluster-Neuaufbau
-* xref:monitoring.adoc[Monitoring & Alerting] -- Observability-Stack
+* xref:operations/rollback.adoc[Rollback-Verfahren] -- Deployment zurückrollen
+* xref:operations/disaster-recovery.adoc[Disaster Recovery] -- Cluster-Neuaufbau
+* xref:operations/monitoring.adoc[Monitoring & Alerting] -- Observability-Stack
