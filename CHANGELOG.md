@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.8.6] - 2026-05-03
+
 ### Fixed
 
 - CloudNativePG Cluster: `postInitApplicationSQL` ergänzt, um `user_management` Datenbank beim Bootstrap automatisch anzulegen (fehlende DB verursachte CrashLoopBackOff des user-management Pods)
