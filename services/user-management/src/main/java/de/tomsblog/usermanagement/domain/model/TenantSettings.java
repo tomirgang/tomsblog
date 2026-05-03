@@ -22,6 +22,8 @@ public class TenantSettings {
     private final Set<String> autoApproveEmailDomains;
     private String displayName;
     private String tagline;
+    private String impressumContent;
+    private String privacyPolicyContent;
 
     private TenantSettings(
             TenantId tenantId,
@@ -29,17 +31,21 @@ public class TenantSettings {
             boolean autoApproveOidc,
             Set<String> autoApproveEmailDomains,
             String displayName,
-            String tagline) {
+            String tagline,
+            String impressumContent,
+            String privacyPolicyContent) {
         this.tenantId = Objects.requireNonNull(tenantId, "tenantId must not be null");
         this.loginMode = Objects.requireNonNull(loginMode, "loginMode must not be null");
         this.autoApproveOidc = autoApproveOidc;
         this.autoApproveEmailDomains = new HashSet<>(autoApproveEmailDomains);
         this.displayName = displayName;
         this.tagline = tagline;
+        this.impressumContent = impressumContent;
+        this.privacyPolicyContent = privacyPolicyContent;
     }
 
     public static TenantSettings create(TenantId tenantId) {
-        return new TenantSettings(tenantId, LoginMode.BOTH, false, Set.of(), "Toms Blog", null);
+        return new TenantSettings(tenantId, LoginMode.BOTH, false, Set.of(), "Toms Blog", null, null, null);
     }
 
     public static TenantSettings reconstitute(
@@ -48,8 +54,18 @@ public class TenantSettings {
             boolean autoApproveOidc,
             Set<String> autoApproveEmailDomains,
             String displayName,
-            String tagline) {
-        return new TenantSettings(tenantId, loginMode, autoApproveOidc, autoApproveEmailDomains, displayName, tagline);
+            String tagline,
+            String impressumContent,
+            String privacyPolicyContent) {
+        return new TenantSettings(
+                tenantId,
+                loginMode,
+                autoApproveOidc,
+                autoApproveEmailDomains,
+                displayName,
+                tagline,
+                impressumContent,
+                privacyPolicyContent);
     }
 
     public void updateLoginMode(LoginMode loginMode) {
@@ -128,5 +144,21 @@ public class TenantSettings {
 
     public void updateTagline(String tagline) {
         this.tagline = tagline;
+    }
+
+    public String getImpressumContent() {
+        return impressumContent;
+    }
+
+    public void updateImpressumContent(String impressumContent) {
+        this.impressumContent = impressumContent;
+    }
+
+    public String getPrivacyPolicyContent() {
+        return privacyPolicyContent;
+    }
+
+    public void updatePrivacyPolicyContent(String privacyPolicyContent) {
+        this.privacyPolicyContent = privacyPolicyContent;
     }
 }

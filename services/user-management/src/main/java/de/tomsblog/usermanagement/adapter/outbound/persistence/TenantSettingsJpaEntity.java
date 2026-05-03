@@ -46,6 +46,12 @@ public class TenantSettingsJpaEntity {
     @Column(name = "tagline")
     private String tagline;
 
+    @Column(name = "impressum_content", columnDefinition = "TEXT")
+    private String impressumContent;
+
+    @Column(name = "privacy_policy_content", columnDefinition = "TEXT")
+    private String privacyPolicyContent;
+
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
@@ -117,5 +123,21 @@ public class TenantSettingsJpaEntity {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getImpressumContent() {
+        return impressumContent;
+    }
+
+    public void setImpressumContent(String impressumContent) {
+        this.impressumContent = impressumContent;
+    }
+
+    public String getPrivacyPolicyContent() {
+        return privacyPolicyContent;
+    }
+
+    public void setPrivacyPolicyContent(String privacyPolicyContent) {
+        this.privacyPolicyContent = privacyPolicyContent;
     }
 }

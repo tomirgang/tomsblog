@@ -62,7 +62,9 @@ public class TenantSettingsGrpcService extends TenantSettingsServiceGrpc.TenantS
                     request.getAutoApproveOidc(),
                     new HashSet<>(request.getAutoApproveEmailDomainsList()),
                     request.getDisplayName(),
-                    request.getTagline().isEmpty() ? null : request.getTagline());
+                    request.getTagline().isEmpty() ? null : request.getTagline(),
+                    request.getImpressumContent().isEmpty() ? null : request.getImpressumContent(),
+                    request.getPrivacyPolicyContent().isEmpty() ? null : request.getPrivacyPolicyContent());
             responseObserver.onNext(toResponse(settings));
             responseObserver.onCompleted();
         } catch (IllegalArgumentException e) {
@@ -91,7 +93,10 @@ public class TenantSettingsGrpcService extends TenantSettingsServiceGrpc.TenantS
                 .setLoginMode(settings.getLoginMode().name())
                 .setAutoApproveOidc(settings.isAutoApproveOidc())
                 .setDisplayName(settings.getDisplayName() != null ? settings.getDisplayName() : "Toms Blog")
-                .setTagline(settings.getTagline() != null ? settings.getTagline() : "");
+                .setTagline(settings.getTagline() != null ? settings.getTagline() : "")
+                .setImpressumContent(settings.getImpressumContent() != null ? settings.getImpressumContent() : "")
+                .setPrivacyPolicyContent(
+                        settings.getPrivacyPolicyContent() != null ? settings.getPrivacyPolicyContent() : "");
 
         settings.getAutoApproveEmailDomains().forEach(builder::addAutoApproveEmailDomains);
 

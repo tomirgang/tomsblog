@@ -42,7 +42,7 @@ class JpaTenantSettingsRepositoryIntegrationTest {
     void saveAndFind() {
         var tenantId = TenantId.generate();
         var settings = TenantSettings.reconstitute(
-                tenantId, LoginMode.OIDC, true, Set.of("example.com", "test.org"), "Toms Blog", null);
+                tenantId, LoginMode.OIDC, true, Set.of("example.com", "test.org"), "Toms Blog", null, null, null);
 
         repository.save(settings);
         var found = repository.findByTenantId(tenantId);
@@ -66,11 +66,12 @@ class JpaTenantSettingsRepositoryIntegrationTest {
     @DisplayName("SWR-044: save updates existing settings")
     void saveUpdatesExisting() {
         var tenantId = TenantId.generate();
-        var settings = TenantSettings.reconstitute(tenantId, LoginMode.BOTH, false, Set.of(), "Toms Blog", null);
+        var settings =
+                TenantSettings.reconstitute(tenantId, LoginMode.BOTH, false, Set.of(), "Toms Blog", null, null, null);
         repository.save(settings);
 
-        var updated =
-                TenantSettings.reconstitute(tenantId, LoginMode.INTERNAL, true, Set.of("corp.com"), "Toms Blog", null);
+        var updated = TenantSettings.reconstitute(
+                tenantId, LoginMode.INTERNAL, true, Set.of("corp.com"), "Toms Blog", null, null, null);
         repository.save(updated);
 
         var found = repository.findByTenantId(tenantId);
@@ -85,7 +86,7 @@ class JpaTenantSettingsRepositoryIntegrationTest {
     void emailDomainsPersistedCorrectly() {
         var tenantId = TenantId.generate();
         var settings = TenantSettings.reconstitute(
-                tenantId, LoginMode.BOTH, false, Set.of("a.com", "b.org", "c.net"), "Toms Blog", null);
+                tenantId, LoginMode.BOTH, false, Set.of("a.com", "b.org", "c.net"), "Toms Blog", null, null, null);
 
         repository.save(settings);
         var found = repository.findByTenantId(tenantId);
@@ -100,9 +101,10 @@ class JpaTenantSettingsRepositoryIntegrationTest {
     void findAllReturnsAllTenants() {
         var tenantId1 = TenantId.generate();
         var tenantId2 = TenantId.generate();
-        repository.save(TenantSettings.reconstitute(tenantId1, LoginMode.BOTH, false, Set.of(), "Blog 1", null));
         repository.save(
-                TenantSettings.reconstitute(tenantId2, LoginMode.OIDC, true, Set.of("x.com"), "Blog 2", "A tagline"));
+                TenantSettings.reconstitute(tenantId1, LoginMode.BOTH, false, Set.of(), "Blog 1", null, null, null));
+        repository.save(TenantSettings.reconstitute(
+                tenantId2, LoginMode.OIDC, true, Set.of("x.com"), "Blog 2", "A tagline", null, null));
 
         var all = repository.findAll();
 
@@ -115,7 +117,7 @@ class JpaTenantSettingsRepositoryIntegrationTest {
     void brandingFieldsPersistedCorrectly() {
         var tenantId = TenantId.generate();
         var settings = TenantSettings.reconstitute(
-                tenantId, LoginMode.BOTH, false, Set.of(), "My Custom Blog", "A great tagline");
+                tenantId, LoginMode.BOTH, false, Set.of(), "My Custom Blog", "A great tagline", null, null);
 
         repository.save(settings);
         var found = repository.findByTenantId(tenantId);

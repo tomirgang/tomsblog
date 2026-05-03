@@ -80,7 +80,8 @@ public class AdminController {
         } catch (Exception e) {
             LOG.warn("Failed to load tenant settings for '{}'.", activeTenant, e);
             model.addAttribute(
-                    "settings", new TenantSettingsDto(activeTenant, "BOTH", false, Set.of(), "Toms Blog", null));
+                    "settings",
+                    new TenantSettingsDto(activeTenant, "BOTH", false, Set.of(), "Toms Blog", null, null, null));
         }
         return "admin/settings";
     }
@@ -93,7 +94,9 @@ public class AdminController {
             @RequestParam(defaultValue = "false") boolean autoApproveOidc,
             @RequestParam(defaultValue = "") String autoApproveEmailDomains,
             @RequestParam String displayName,
-            @RequestParam(required = false) String tagline) {
+            @RequestParam(required = false) String tagline,
+            @RequestParam(required = false) String impressumContent,
+            @RequestParam(required = false) String privacyPolicyContent) {
         UUID activeTenant = resolveActiveTenant(tenantId, session);
         Set<String> domains = new LinkedHashSet<>();
         if (!autoApproveEmailDomains.isBlank()) {
@@ -103,7 +106,14 @@ public class AdminController {
                     .forEach(domains::add);
         }
         userManagementClient.updateTenantSettings(
-                activeTenant, loginMode, autoApproveOidc, domains, displayName, tagline);
+                activeTenant,
+                loginMode,
+                autoApproveOidc,
+                domains,
+                displayName,
+                tagline,
+                impressumContent,
+                privacyPolicyContent);
         return "redirect:/admin/settings";
     }
 

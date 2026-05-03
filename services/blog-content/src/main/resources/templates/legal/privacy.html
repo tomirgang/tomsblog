@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title>Datenschutzerklärung</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h2>Datenschutzerklärung</h2>
+        <div th:if="${customContent}" th:utext="${customContent}">
+            Tenant-spezifische Datenschutzerklärung
+        </div>
+        <div th:unless="${customContent}">
+            <p>Datenschutz</p>
+            <p>
+                Diese Datenschutzerklärung gilt als Platzhalter. Bitte konfigurieren Sie
+                Ihre Datenschutzerklärung in den Tenant-Einstellungen.
+            </p>
+        </div>
+    </section>
+</body>
+</html>

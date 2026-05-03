@@ -75,7 +75,6 @@
 - [x] SuperAdmin-Account: Credentials über Infrastruktur (Umgebungsvariable/Secret), automatisch beim Start angelegt
 - [x] Benutzer-Freigabe: Neue User müssen durch Tenant-Admin approved werden (STK028)
 - [x] Optionales OIDC-Gruppen-Mapping auf plattforminterne Rollen
-- [ ] Audit-Logging für alle relevanten Aktionen
 - [x] Thymeleaf: Login-/Registrierungsseiten
 - [x] Thymeleaf: Multi-Tenant-Navigation (Tenant-Branding, Umschaltung)
 - [x] Thymeleaf: Admin-Oberfläche (Benutzer, Tenants, Einstellungen)
@@ -87,8 +86,8 @@
 - [x] Backup-Strategie für PostgreSQL
 - [x] Backup-Storage auf Netcup VM (Garage/S3)
 - [x] Disaster-Recovery-Plan dokumentieren
-- [ ] Standard Impressum and Privacy Policy
-- [ ] Optional Tenant spezifisches Impressum and Privacy Policy
+- [x] Standard Impressum and Privacy Policy
+- [x] Optional Tenant spezifisches Impressum and Privacy Policy
 - [x] Security-Reviews (OWASP)
 
 > **MVP nach Phase 4:** Mehrbenutzerfähiger Blog mit Login, Tenant-Trennung und Admin-UI.
@@ -105,6 +104,7 @@
 - [ ] Infra: RabbitMQ Deployment (RabbitMQ Cluster Operator via Helm, siehe ADR-0026)
 - [ ] Infra: MongoDB Deployment (Community Operator via Helm, siehe ADR-0026)
 - [ ] Migration auf Helm Charts für Operator-managed Services (ADR-0026)
+- [ ] Audit-Logging für alle relevanten Aktionen
 - [ ] Security-Reviews (OWASP)
 
 > **MVP nach Phase 5:** Asynchrone Verarbeitung aktiv, Events fließen zwischen Services.

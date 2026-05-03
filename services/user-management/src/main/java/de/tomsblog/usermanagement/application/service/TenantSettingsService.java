@@ -53,13 +53,17 @@ public class TenantSettingsService implements TenantSettingsUseCase {
             boolean autoApproveOidc,
             Set<String> autoApproveEmailDomains,
             String displayName,
-            String tagline) {
+            String tagline,
+            String impressumContent,
+            String privacyPolicyContent) {
         var settings = getOrCreate(tenantId);
         settings.updateLoginMode(loginMode);
         settings.updateAutoApproveOidc(autoApproveOidc);
         settings.setAutoApproveEmailDomains(autoApproveEmailDomains);
         settings.updateDisplayName(displayName);
         settings.updateTagline(tagline);
+        settings.updateImpressumContent(impressumContent);
+        settings.updatePrivacyPolicyContent(privacyPolicyContent);
         return repository.save(settings);
     }
 

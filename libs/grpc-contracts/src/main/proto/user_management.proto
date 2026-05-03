@@ -88,6 +88,8 @@ message TenantSettingsResponse {
   repeated string auto_approve_email_domains = 4;
   string display_name = 5;
   string tagline = 6;
+  string impressum_content = 7;
+  string privacy_policy_content = 8;
 }
 
 message ListUsersByTenantRequest {
@@ -119,6 +121,8 @@ message UpdateTenantSettingsRequest {
   repeated string auto_approve_email_domains = 4;
   string display_name = 5;
   string tagline = 6;
+  string impressum_content = 7;
+  string privacy_policy_content = 8;
 }
 
 message ListTenantsRequest {

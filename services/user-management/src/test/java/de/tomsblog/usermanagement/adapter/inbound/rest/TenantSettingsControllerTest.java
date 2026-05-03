@@ -46,8 +46,8 @@ class TenantSettingsControllerTest {
     @Test
     @DisplayName("SWR-044: GET /api/tenants/{tenantId}/settings returns settings")
     void getSettings() throws Exception {
-        var settings =
-                TenantSettings.reconstitute(TENANT_ID, LoginMode.OIDC, true, Set.of("example.com"), "Toms Blog", null);
+        var settings = TenantSettings.reconstitute(
+                TENANT_ID, LoginMode.OIDC, true, Set.of("example.com"), "Toms Blog", null, null, null);
         when(tenantSettingsUseCase.getSettings(TENANT_ID)).thenReturn(settings);
 
         mockMvc.perform(get("/api/tenants/{tenantId}/settings", TENANT_UUID).header("X-API-Key", API_KEY))
@@ -61,7 +61,8 @@ class TenantSettingsControllerTest {
     @Test
     @DisplayName("SWR-044: PUT /api/tenants/{tenantId}/settings/login-mode updates login mode")
     void updateLoginMode() throws Exception {
-        var settings = TenantSettings.reconstitute(TENANT_ID, LoginMode.INTERNAL, false, Set.of(), "Toms Blog", null);
+        var settings = TenantSettings.reconstitute(
+                TENANT_ID, LoginMode.INTERNAL, false, Set.of(), "Toms Blog", null, null, null);
         when(tenantSettingsUseCase.updateLoginMode(eq(TENANT_ID), eq(LoginMode.INTERNAL)))
                 .thenReturn(settings);
 
@@ -88,8 +89,8 @@ class TenantSettingsControllerTest {
     @Test
     @DisplayName("SWR-045: PUT /api/tenants/{tenantId}/settings/auto-approval updates auto-approval")
     void updateAutoApproval() throws Exception {
-        var settings =
-                TenantSettings.reconstitute(TENANT_ID, LoginMode.BOTH, true, Set.of("test.com"), "Toms Blog", null);
+        var settings = TenantSettings.reconstitute(
+                TENANT_ID, LoginMode.BOTH, true, Set.of("test.com"), "Toms Blog", null, null, null);
         when(tenantSettingsUseCase.updateAutoApproval(eq(TENANT_ID), eq(true), any()))
                 .thenReturn(settings);
 
@@ -107,7 +108,8 @@ class TenantSettingsControllerTest {
     @Test
     @DisplayName("SWR-045: PUT /api/tenants/{tenantId}/settings/auto-approval with null domains uses empty set")
     void updateAutoApprovalNullDomains() throws Exception {
-        var settings = TenantSettings.reconstitute(TENANT_ID, LoginMode.BOTH, false, Set.of(), "Toms Blog", null);
+        var settings =
+                TenantSettings.reconstitute(TENANT_ID, LoginMode.BOTH, false, Set.of(), "Toms Blog", null, null, null);
         when(tenantSettingsUseCase.updateAutoApproval(eq(TENANT_ID), eq(false), eq(Set.of())))
                 .thenReturn(settings);
 

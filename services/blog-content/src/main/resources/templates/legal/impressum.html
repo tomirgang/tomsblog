@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title>Impressum</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h2>Impressum</h2>
+        <div th:if="${customContent}" th:utext="${customContent}">
+            Tenant-spezifisches Impressum
+        </div>
+        <div th:unless="${customContent}">
+            <p>Angaben gemäß § 5 TMG</p>
+            <p>
+                Dieses Impressum gilt als Platzhalter. Bitte konfigurieren Sie
+                Ihr Impressum in den Tenant-Einstellungen.
+            </p>
+        </div>
+    </section>
+</body>
+</html>

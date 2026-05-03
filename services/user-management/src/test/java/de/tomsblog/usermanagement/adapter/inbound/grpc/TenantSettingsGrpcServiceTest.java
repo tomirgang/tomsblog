@@ -111,14 +111,16 @@ class TenantSettingsGrpcServiceTest {
     @DisplayName("SWR-052: updateTenantSettings updates and returns settings via gRPC")
     void updateTenantSettings_updatesAndReturns() {
         var settings = TenantSettings.reconstitute(
-                TenantId.of(TENANT_ID), LoginMode.OIDC, true, Set.of("test.com"), "My Blog", "A tagline");
+                TenantId.of(TENANT_ID), LoginMode.OIDC, true, Set.of("test.com"), "My Blog", "A tagline", null, null);
         when(tenantSettingsUseCase.updateSettings(
                         eq(TenantId.of(TENANT_ID)),
                         eq(LoginMode.OIDC),
                         eq(true),
                         eq(Set.of("test.com")),
                         eq("My Blog"),
-                        eq("A tagline")))
+                        eq("A tagline"),
+                        eq(null),
+                        eq(null)))
                 .thenReturn(settings);
 
         var request = UpdateTenantSettingsRequest.newBuilder()
@@ -186,7 +188,7 @@ class TenantSettingsGrpcServiceTest {
     @DisplayName("SWR-052: updateTenantSettings treats empty tagline as null")
     void updateTenantSettings_emptyTaglineAsNull() {
         var settings = TenantSettings.create(TenantId.of(TENANT_ID));
-        when(tenantSettingsUseCase.updateSettings(any(), any(), eq(false), any(), any(), eq(null)))
+        when(tenantSettingsUseCase.updateSettings(any(), any(), eq(false), any(), any(), eq(null), eq(null), eq(null)))
                 .thenReturn(settings);
 
         var request = UpdateTenantSettingsRequest.newBuilder()
@@ -218,9 +220,11 @@ class TenantSettingsGrpcServiceTest {
     @Test
     @DisplayName("SWR-053: listTenants returns all tenants via gRPC")
     void listTenants_returnsAll() {
-        var s1 = TenantSettings.reconstitute(TenantId.of(TENANT_ID), LoginMode.BOTH, false, Set.of(), "Blog A", null);
+        var s1 = TenantSettings.reconstitute(
+                TenantId.of(TENANT_ID), LoginMode.BOTH, false, Set.of(), "Blog A", null, null, null);
         var id2 = UUID.fromString("00000000-0000-0000-0000-000000000002");
-        var s2 = TenantSettings.reconstitute(TenantId.of(id2), LoginMode.OIDC, false, Set.of(), "Blog B", "tagline");
+        var s2 = TenantSettings.reconstitute(
+                TenantId.of(id2), LoginMode.OIDC, false, Set.of(), "Blog B", "tagline", null, null);
         when(tenantSettingsUseCase.listAllTenants()).thenReturn(List.of(s1, s2));
 
         var request = ListTenantsRequest.newBuilder().build();
@@ -270,5 +274,88 @@ class TenantSettingsGrpcServiceTest {
         grpcService.listTenants(request, observer);
 
         assertThat(result.get().getTenantsList()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("SWR-055: updateTenantSettings passes impressum and privacy content")
+    void updateTenantSettings_withLegalContent() {
+        var settings = TenantSettings.reconstitute(
+                TenantId.of(TENANT_ID),
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                "<p>Impressum</p>",
+                "<p>Privacy</p>");
+        when(tenantSettingsUseCase.updateSettings(
+                        any(), any(), eq(false), any(), any(), eq(null), eq("<p>Impressum</p>"), eq("<p>Privacy</p>")))
+                .thenReturn(settings);
+
+        var request = UpdateTenantSettingsRequest.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .setLoginMode("BOTH")
+                .setDisplayName("Blog")
+                .setImpressumContent("<p>Impressum</p>")
+                .setPrivacyPolicyContent("<p>Privacy</p>")
+                .build();
+
+        var result = new AtomicReference<TenantSettingsResponse>();
+        StreamObserver<TenantSettingsResponse> observer = new StreamObserver<>() {
+            @Override
+            public void onNext(TenantSettingsResponse value) {
+                result.set(value);
+            }
+
+            @Override
+            public void onError(Throwable t) {}
+
+            @Override
+            public void onCompleted() {}
+        };
+
+        grpcService.updateTenantSettings(request, observer);
+
+        assertThat(result.get()).isNotNull();
+        assertThat(result.get().getImpressumContent()).isEqualTo("<p>Impressum</p>");
+        assertThat(result.get().getPrivacyPolicyContent()).isEqualTo("<p>Privacy</p>");
+    }
+
+    @Test
+    @DisplayName("SWR-054: getTenantSettings returns legal content in response")
+    void getTenantSettings_withLegalContent() {
+        var settings = TenantSettings.reconstitute(
+                TenantId.of(TENANT_ID),
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                "<p>My Impressum</p>",
+                "<p>My Privacy</p>");
+        when(tenantSettingsUseCase.getSettings(TenantId.of(TENANT_ID))).thenReturn(settings);
+
+        var request = GetTenantSettingsRequest.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .build();
+
+        var result = new AtomicReference<TenantSettingsResponse>();
+        StreamObserver<TenantSettingsResponse> observer = new StreamObserver<>() {
+            @Override
+            public void onNext(TenantSettingsResponse value) {
+                result.set(value);
+            }
+
+            @Override
+            public void onError(Throwable t) {}
+
+            @Override
+            public void onCompleted() {}
+        };
+
+        grpcService.getTenantSettings(request, observer);
+
+        assertThat(result.get().getImpressumContent()).isEqualTo("<p>My Impressum</p>");
+        assertThat(result.get().getPrivacyPolicyContent()).isEqualTo("<p>My Privacy</p>");
     }
 }

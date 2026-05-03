@@ -1,0 +1,12 @@
+active: true
+derived: false
+header: |
+  Impressum und Datenschutzerklärung im Footer
+level: 43.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Als Besucher möchte ich im Footer Links zu Impressum und Datenschutzerklärung
+  sehen, um die rechtlichen Informationen des Betreibers aufrufen zu können.

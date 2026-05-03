@@ -41,8 +41,8 @@ class TenantSettingsServiceTest {
         @Test
         @DisplayName("SWR-044: returns existing settings when found")
         void returnsExistingSettings() {
-            var settings =
-                    TenantSettings.reconstitute(TENANT_ID, LoginMode.OIDC, true, Set.of("test.com"), "Toms Blog", null);
+            var settings = TenantSettings.reconstitute(
+                    TENANT_ID, LoginMode.OIDC, true, Set.of("test.com"), "Toms Blog", null, null, null);
             when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
 
             var result = service.getSettings(TENANT_ID);
@@ -138,8 +138,8 @@ class TenantSettingsServiceTest {
             when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            var result =
-                    service.updateSettings(TENANT_ID, LoginMode.OIDC, true, Set.of("test.com"), "My Blog", "A tagline");
+            var result = service.updateSettings(
+                    TENANT_ID, LoginMode.OIDC, true, Set.of("test.com"), "My Blog", "A tagline", null, null);
 
             assertThat(result.getLoginMode()).isEqualTo(LoginMode.OIDC);
             assertThat(result.isAutoApproveOidc()).isTrue();
@@ -155,7 +155,8 @@ class TenantSettingsServiceTest {
             when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.empty());
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            var result = service.updateSettings(TENANT_ID, LoginMode.INTERNAL, false, Set.of(), "New Blog", null);
+            var result = service.updateSettings(
+                    TENANT_ID, LoginMode.INTERNAL, false, Set.of(), "New Blog", null, null, null);
 
             assertThat(result.getLoginMode()).isEqualTo(LoginMode.INTERNAL);
             assertThat(result.getDisplayName()).isEqualTo("New Blog");

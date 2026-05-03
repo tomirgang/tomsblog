@@ -29,7 +29,9 @@ public interface TenantSettingsUseCase {
             boolean autoApproveOidc,
             Set<String> autoApproveEmailDomains,
             String displayName,
-            String tagline);
+            String tagline,
+            String impressumContent,
+            String privacyPolicyContent);
 
     List<TenantSettings> listAllTenants();
 }

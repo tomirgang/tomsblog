@@ -20,6 +20,8 @@ public final class TenantSettingsMapper {
         entity.setAutoApproveEmailDomains(new HashSet<>(settings.getAutoApproveEmailDomains()));
         entity.setDisplayName(settings.getDisplayName() != null ? settings.getDisplayName() : "Toms Blog");
         entity.setTagline(settings.getTagline());
+        entity.setImpressumContent(settings.getImpressumContent());
+        entity.setPrivacyPolicyContent(settings.getPrivacyPolicyContent());
         return entity;
     }
 
@@ -30,6 +32,8 @@ public final class TenantSettingsMapper {
                 entity.isAutoApproveOidc(),
                 new HashSet<>(entity.getAutoApproveEmailDomains()),
                 entity.getDisplayName(),
-                entity.getTagline());
+                entity.getTagline(),
+                entity.getImpressumContent(),
+                entity.getPrivacyPolicyContent());
     }
 }

@@ -61,7 +61,9 @@ public interface UserManagementClient {
             boolean autoApproveOidc,
             java.util.Set<String> autoApproveEmailDomains,
             String displayName,
-            String tagline);
+            String tagline,
+            String impressumContent,
+            String privacyPolicyContent);
 
     /**
      * Lists all tenants.

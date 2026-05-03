@@ -244,8 +244,8 @@ class UserManagementClientTest {
         when(tenantSettingsStub.updateTenantSettings(any(UpdateTenantSettingsRequest.class)))
                 .thenReturn(response);
 
-        TenantSettingsDto result =
-                client.updateTenantSettings(TENANT_ID, "OIDC", true, Set.of("test.com"), "My Blog", "Cool blog");
+        TenantSettingsDto result = client.updateTenantSettings(
+                TENANT_ID, "OIDC", true, Set.of("test.com"), "My Blog", "Cool blog", null, null);
 
         assertThat(result.loginMode()).isEqualTo("OIDC");
         assertThat(result.displayName()).isEqualTo("My Blog");
@@ -264,7 +264,8 @@ class UserManagementClientTest {
         when(tenantSettingsStub.updateTenantSettings(any(UpdateTenantSettingsRequest.class)))
                 .thenReturn(response);
 
-        TenantSettingsDto result = client.updateTenantSettings(TENANT_ID, "BOTH", false, Set.of(), null, null);
+        TenantSettingsDto result =
+                client.updateTenantSettings(TENANT_ID, "BOTH", false, Set.of(), null, null, null, null);
 
         assertThat(result.tagline()).isNull();
     }

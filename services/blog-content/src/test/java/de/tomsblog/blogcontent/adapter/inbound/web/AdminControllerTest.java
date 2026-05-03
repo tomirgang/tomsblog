@@ -95,7 +95,7 @@ class AdminControllerTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("SWR-052: GET /admin/settings shows tenant settings")
     void showSettings() throws Exception {
-        var settings = new TenantSettingsDto(TENANT_ID, "BOTH", false, Set.of(), "My Blog", "A tagline");
+        var settings = new TenantSettingsDto(TENANT_ID, "BOTH", false, Set.of(), "My Blog", "A tagline", null, null);
         when(userManagementClient.getTenantSettings(TENANT_ID)).thenReturn(settings);
 
         mockMvc.perform(get("/admin/settings").header("X-Tenant-Id", TENANT_ID.toString()))
@@ -133,7 +133,14 @@ class AdminControllerTest {
 
         verify(userManagementClient)
                 .updateTenantSettings(
-                        TENANT_ID, "OIDC", true, Set.of("test.com", "example.org"), "My Blog", "A cool blog");
+                        TENANT_ID,
+                        "OIDC",
+                        true,
+                        Set.of("test.com", "example.org"),
+                        "My Blog",
+                        "A cool blog",
+                        null,
+                        null);
     }
 
     @Test
@@ -149,7 +156,7 @@ class AdminControllerTest {
                         .param("tagline", ""))
                 .andExpect(status().is3xxRedirection());
 
-        verify(userManagementClient).updateTenantSettings(TENANT_ID, "BOTH", false, Set.of(), "Blog", "");
+        verify(userManagementClient).updateTenantSettings(TENANT_ID, "BOTH", false, Set.of(), "Blog", "", null, null);
     }
 
     @Test

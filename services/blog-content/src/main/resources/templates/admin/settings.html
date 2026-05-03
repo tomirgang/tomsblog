@@ -52,6 +52,17 @@
                        placeholder="example.com, company.org">
             </fieldset>
 
+            <fieldset>
+                <legend>Rechtliche Seiten</legend>
+                <label for="impressumContent">Impressum (HTML)</label>
+                <textarea id="impressumContent" name="impressumContent" rows="8"
+                          th:text="${settings.impressumContent()}"></textarea>
+                <label for="privacyPolicyContent">Datenschutzerklärung (HTML)</label>
+                <textarea id="privacyPolicyContent" name="privacyPolicyContent" rows="8"
+                          th:text="${settings.privacyPolicyContent()}"></textarea>
+                <small>Leer lassen für Standard-Platzhalter.</small>
+            </fieldset>
+
             <button type="submit">Speichern</button>
         </form>
         <nav>

@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Standard-Impressum und Datenschutzerklärung
+level: 54.0
+links:
+- STK043: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Das System muss unter /impressum und /privacy statische Seiten bereitstellen,
+  die im Footer verlinkt werden. Der Inhalt wird als Platform-Default
+  ausgeliefert, solange kein Tenant-spezifischer Inhalt konfiguriert ist.
+  Die Seiten verwenden das Standard-Layout (Header, Footer, Navigation).

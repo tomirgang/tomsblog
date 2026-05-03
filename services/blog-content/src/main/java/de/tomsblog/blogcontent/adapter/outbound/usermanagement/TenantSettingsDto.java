@@ -8,6 +8,7 @@ import java.util.UUID;
  *
  * @req SWR-044
  * @req SWR-050
+ * @req SWR-055
  */
 public record TenantSettingsDto(
         UUID tenantId,
@@ -15,4 +16,6 @@ public record TenantSettingsDto(
         boolean autoApproveOidc,
         Set<String> autoApproveEmailDomains,
         String displayName,
-        String tagline) {}
+        String tagline,
+        String impressumContent,
+        String privacyPolicyContent) {}

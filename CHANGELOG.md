@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Standard-Impressum und Datenschutzerklärung als statische Seiten unter /impressum und /privacy (SWR-054)
+- Tenant-spezifisches Impressum und Datenschutzerklärung über Admin-Einstellungen konfigurierbar (SWR-055)
+- Footer-Links zu Impressum und Datenschutz auf allen Seiten
+- DB-Migration V4: impressum_content und privacy_policy_content Felder in tenant_settings
+- gRPC-Erweiterung: impressum_content und privacy_policy_content in TenantSettingsResponse/UpdateTenantSettingsRequest
+
 ## [0.8.1] - 2026-05-03
 
 ### Added

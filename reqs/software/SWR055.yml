@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Tenant-spezifisches Impressum und Datenschutzerklärung
+level: 55.0
+links:
+- STK044: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Die TenantSettings werden um zwei optionale TEXT-Felder impressum_content
+  und privacy_policy_content erweitert. Sind diese konfiguriert, wird deren
+  Inhalt (HTML) auf /impressum bzw. /privacy anstelle des Platform-Defaults
+  gerendert. Die Konfiguration erfolgt über die Admin-Einstellungen-Seite.

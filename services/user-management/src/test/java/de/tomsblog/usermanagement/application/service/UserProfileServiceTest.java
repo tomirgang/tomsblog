@@ -85,6 +85,8 @@ class UserProfileServiceTest {
                     true,
                     java.util.Set.of(),
                     "Toms Blog",
+                    null,
+                    null,
                     null);
             when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
 
@@ -105,6 +107,8 @@ class UserProfileServiceTest {
                     false,
                     java.util.Set.of("company.com"),
                     "Toms Blog",
+                    null,
+                    null,
                     null);
             when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
 

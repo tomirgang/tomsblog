@@ -79,7 +79,9 @@ public class UserManagementGrpcClient implements UserManagementClient {
                 response.getAutoApproveOidc(),
                 new HashSet<>(response.getAutoApproveEmailDomainsList()),
                 response.getDisplayName(),
-                response.getTagline().isEmpty() ? null : response.getTagline());
+                response.getTagline().isEmpty() ? null : response.getTagline(),
+                response.getImpressumContent().isEmpty() ? null : response.getImpressumContent(),
+                response.getPrivacyPolicyContent().isEmpty() ? null : response.getPrivacyPolicyContent());
     }
 
     @Override
@@ -120,7 +122,9 @@ public class UserManagementGrpcClient implements UserManagementClient {
             boolean autoApproveOidc,
             Set<String> autoApproveEmailDomains,
             String displayName,
-            String tagline) {
+            String tagline,
+            String impressumContent,
+            String privacyPolicyContent) {
         var request = UpdateTenantSettingsRequest.newBuilder()
                 .setTenantId(tenantId.toString())
                 .setLoginMode(loginMode)
@@ -128,6 +132,8 @@ public class UserManagementGrpcClient implements UserManagementClient {
                 .addAllAutoApproveEmailDomains(autoApproveEmailDomains)
                 .setDisplayName(displayName != null ? displayName : "")
                 .setTagline(tagline != null ? tagline : "")
+                .setImpressumContent(impressumContent != null ? impressumContent : "")
+                .setPrivacyPolicyContent(privacyPolicyContent != null ? privacyPolicyContent : "")
                 .build();
         var response = tenantSettingsStub.updateTenantSettings(request);
         return new TenantSettingsDto(
@@ -136,7 +142,9 @@ public class UserManagementGrpcClient implements UserManagementClient {
                 response.getAutoApproveOidc(),
                 new HashSet<>(response.getAutoApproveEmailDomainsList()),
                 response.getDisplayName(),
-                response.getTagline().isEmpty() ? null : response.getTagline());
+                response.getTagline().isEmpty() ? null : response.getTagline(),
+                response.getImpressumContent().isEmpty() ? null : response.getImpressumContent(),
+                response.getPrivacyPolicyContent().isEmpty() ? null : response.getPrivacyPolicyContent());
     }
 
     @Override

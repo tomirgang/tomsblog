@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Tenant-spezifisches Impressum und Datenschutzerklärung
+level: 44.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Als Tenant-Admin möchte ich ein eigenes Impressum und eine eigene
+  Datenschutzerklärung hinterlegen können, damit mein Blog die korrekten
+  rechtlichen Informationen des jeweiligen Betreibers anzeigt.

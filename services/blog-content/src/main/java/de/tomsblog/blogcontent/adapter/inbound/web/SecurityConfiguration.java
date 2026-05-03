@@ -108,6 +108,9 @@ public class SecurityConfiguration {
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/posts/{slug}")
                         .permitAll()
+                        // Public: legal pages
+                        .requestMatchers(HttpMethod.GET, "/impressum", "/privacy")
+                        .permitAll()
                         // Everything else requires authentication (default-deny)
                         .anyRequest()
                         .authenticated())

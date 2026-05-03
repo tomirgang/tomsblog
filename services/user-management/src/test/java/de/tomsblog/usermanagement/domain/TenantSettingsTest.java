@@ -41,7 +41,7 @@ class TenantSettingsTest {
         @DisplayName("SWR-044: reconstitute recreates settings from persistence")
         void reconstituteRecreatesSettings() {
             var settings = TenantSettings.reconstitute(
-                    TENANT_ID, LoginMode.OIDC, true, Set.of("example.com"), "Toms Blog", null);
+                    TENANT_ID, LoginMode.OIDC, true, Set.of("example.com"), "Toms Blog", null, null, null);
 
             assertThat(settings.getTenantId()).isEqualTo(TENANT_ID);
             assertThat(settings.getLoginMode()).isEqualTo(LoginMode.OIDC);
@@ -254,8 +254,8 @@ class TenantSettingsTest {
         @Test
         @DisplayName("SWR-050: reconstitute preserves displayName and tagline")
         void reconstitutePreservesBranding() {
-            var settings =
-                    TenantSettings.reconstitute(TENANT_ID, LoginMode.BOTH, false, Set.of(), "My Blog", "A tagline");
+            var settings = TenantSettings.reconstitute(
+                    TENANT_ID, LoginMode.BOTH, false, Set.of(), "My Blog", "A tagline", null, null);
 
             assertThat(settings.getDisplayName()).isEqualTo("My Blog");
             assertThat(settings.getTagline()).isEqualTo("A tagline");
@@ -284,8 +284,8 @@ class TenantSettingsTest {
         @Test
         @DisplayName("SWR-050: updateTagline allows null")
         void updateTaglineAllowsNull() {
-            var settings =
-                    TenantSettings.reconstitute(TENANT_ID, LoginMode.BOTH, false, Set.of(), "Blog", "old tagline");
+            var settings = TenantSettings.reconstitute(
+                    TENANT_ID, LoginMode.BOTH, false, Set.of(), "Blog", "old tagline", null, null);
 
             settings.updateTagline(null);
 
