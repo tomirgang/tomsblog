@@ -1,0 +1,34 @@
+active: true
+derived: false
+header: |
+  User-Management-Service Architektur (hexagonal)
+level: 29.0
+links:
+- SWR043: null
+- SWR007: _idI4rzQ2_WbYBmTwEWCjZjMSMtm1vzQ4tgSzjXWqI4=
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Der User-Management-Service folgt der hexagonalen Architektur (SWA-001):
+  - Domain Layer: UserProfile (Aggregate Root) mit OidcSubject, E-Mail,
+    DisplayName, ApprovalStatus (PENDING, APPROVED, REJECTED), Rollen
+    (Set<Role>) und TenantMemberships (Set<TenantMembership>).
+    Role ist ein Enum (SUPERADMIN, ADMIN, AUTHOR, REVIEWER, READER).
+    Der SUPERADMIN-Account wird beim Service-Start aus Infrastruktur-
+    Konfiguration (Umgebungsvariable/Secret) angelegt oder aktualisiert.
+    TenantMembership ist ein Value Object (TenantId, Role).
+    TenantSettings Value Object mit LoginMode (INTERNAL, OIDC, BOTH),
+    autoApproveOidc (boolean) und autoApproveEmailDomains (Set<String>).
+  - Application Layer: UserProfileUseCase (Inbound Port) mit Operationen
+    syncFromOidc, syncFromInternal, findByOidcSubject, findByUsername,
+    assignRole, removeRole, approveUser, addTenantMembership,
+    removeTenantMembership. TenantSettingsUseCase fuer Login-Modus-
+    Konfiguration. UserProfileRepository (Outbound Port) fuer Persistenz.
+  - Adapter Layer Inbound: REST-Controller (UserController) unter /api/users.
+  - Adapter Layer Outbound: JPA-basierte PostgreSQL-Persistenz mit Flyway-
+    Migrationen. Eigene Datenbank (Database per Service).
+  - Optional: OIDC-Gruppen-Attribute werden aus dem ID Token extrahiert
+    und auf plattforminterne Rollen gemappt (konfigurierbar).
+  - Der Service hat keine eigene Web-UI. Administration erfolgt ueber
+    die Blog-Content-Service-Admin-Oberflaeche (spaeter).

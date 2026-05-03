@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Benutzer-Freigabe durch Tenant-Admin
+level: 28.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Die Plattform muss unterstützen, dass neue Benutzer durch den
+  Tenant-Administrator freigegeben (approved) werden müssen, bevor sie
+  über die Rolle Reader hinausgehende Rechte erhalten. Bis zur
+  Freigabe hat ein registrierter Benutzer nur Lesezugriff.

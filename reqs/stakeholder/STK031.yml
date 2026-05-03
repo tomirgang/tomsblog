@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Konfigurierbare Login-Methode pro Tenant
+level: 31.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Der Tenant-Administrator soll festlegen können, ob der Login für
+  Benutzer über interne Accounts (formbasiert), über OIDC oder über
+  beides erfolgt. Auch wenn nur OIDC-Login für reguläre Benutzer
+  aktiviert ist, muss ein separates Admin-Login-Formular unter einer
+  eigenen URL als Break-Glass-Lösung verfügbar bleiben.

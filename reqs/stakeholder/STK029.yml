@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Nicht angemeldete Benutzer als Reader behandeln
+level: 29.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Nicht angemeldete Benutzer (anonyme Besucher) sollen wie Benutzer
+  mit der Rolle Reader behandelt werden. Sie haben Lesezugriff auf
+  alle veröffentlichten Inhalte ohne Registrierung oder Login.

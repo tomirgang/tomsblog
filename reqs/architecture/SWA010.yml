@@ -1,7 +1,7 @@
 active: true
 derived: false
 header: |
-  Custom Auth Service als eigener Microservice
+  Authentik OIDC und leichtgewichtiger User-Management-Service
 level: 10.0
 links:
 - SWR007: _idI4rzQ2_WbYBmTwEWCjZjMSMtm1vzQ4tgSzjXWqI4=
@@ -10,7 +10,12 @@ normative: true
 ref: ''
 reviewed: 34sMDpUrh37fKEHWJ3OoClk5jSh-qPbQzN7RUoCi75o=
 text: |
-  Die Authentifizierung und Autorisierung wird als eigener Microservice
-  implementiert (kein Keycloak). Der Auth Service unterstützt OIDC als
-  Relying Party und stellt JWTs für die interne Service-Kommunikation aus.
-  Andere Services validieren Tokens lokal via Public Key.
+  Die Authentifizierung erfolgt über Authentik (https://auth.do9ita.de)
+  als externem OIDC Provider (ADR-0027). Ein leichtgewichtiger interner
+  User-Management-Service verwaltet plattformspezifische Benutzerprofile,
+  Rollen (ADMIN, AUTHOR, READER) und Tenant-Zuordnungen. Services mit
+  Web-UI agieren als OAuth2 Client (Spring Security OAuth2 Login).
+  API-Endpunkte werden als OAuth2 Resource Server geschützt. Der
+  User-Management-Service synchronisiert Benutzerdaten aus dem OIDC
+  ID Token und stellt eine REST-API für Profil- und Rollenabfragen
+  bereit.

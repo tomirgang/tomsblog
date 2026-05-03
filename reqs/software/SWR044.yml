@@ -1,0 +1,26 @@
+active: true
+derived: false
+header: |
+  Konfigurierbare Login-Methode und Break-Glass Admin-Login
+level: 44.0
+links:
+- STK031: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Der User-Management-Service verwaltet pro Tenant die konfigurierte
+  Login-Methode (SWR-043):
+  - LoginMode Enum: INTERNAL (nur formbasiert), OIDC (nur OIDC-Provider),
+    BOTH (formbasiert und OIDC).
+  - Die Login-Methode wird als Tenant-Einstellung gespeichert und ueber
+    die Tenant-Konfiguration abgefragt.
+  - Wenn LoginMode OIDC ist, zeigt die regulaere Login-Seite nur den
+    OIDC-Login-Button.
+  - Unabhaengig vom LoginMode steht unter /admin/login ein separates
+    formbasiertes Login-Formular bereit (Break-Glass-Loesung).
+    Nur der SUPERADMIN kann sich dort anmelden. Die Credentials werden
+    ueber die Infrastruktur gesetzt (Umgebungsvariable/Secret).
+  - Der Blog Content Service wertet den LoginMode beim Rendern der
+    Login-Seite aus und zeigt entsprechend Formular, OIDC-Button oder
+    beides an.

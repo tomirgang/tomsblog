@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import com.code_intelligence.jazzer.junit.FuzzTest;
 import de.tomsblog.blogcontent.adapter.inbound.web.SecurityConfiguration;
+import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
 import de.tomsblog.blogcontent.application.port.inbound.TagUseCase;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +36,9 @@ class TagControllerFuzzTest {
 
     @MockitoBean
     private TagUseCase tagUseCase;
+
+    @MockitoBean
+    private UserManagementClient userManagementClient;
 
     @FuzzTest(maxDuration = "30s")
     @DisplayName("SWR-023: POST /api/tags must not return 5xx for any input")

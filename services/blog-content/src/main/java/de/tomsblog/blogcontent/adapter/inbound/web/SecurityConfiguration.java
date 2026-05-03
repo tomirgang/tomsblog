@@ -1,8 +1,11 @@
 package de.tomsblog.blogcontent.adapter.inbound.web;
 
+import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
+import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,19 +17,21 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * Spring Security configuration for the blog content service.
+ * Spring Security configuration with OIDC login (Authentik) and break-glass admin form login.
  *
- * <p>Protects all write operations behind form-based login (web UI) and HTTP Basic (REST API).
- * Public read access remains available for published posts.
+ * <p>Two filter chains:
+ * <ol>
+ *   <li>{@code /admin/login} chain (Order 1): form-based login for SUPERADMIN (break-glass)</li>
+ *   <li>Default chain (Order 2): OIDC login via Authentik + public read access</li>
+ * </ol>
  *
- * <p>This is an MVP solution for Phase 2. It will be replaced by the Custom Identity Provider
- * (SWR-016, SWA-010) in Phase 4.
- *
+ * @req SWR-016
  * @req SWR-028
+ * @req SWR-044
  */
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties(AdminProperties.class)
+@EnableConfigurationProperties({AdminProperties.class, UserManagementProperties.class})
 public class SecurityConfiguration {
 
     private final AdminProperties adminProperties;
@@ -35,8 +40,36 @@ public class SecurityConfiguration {
         this.adminProperties = adminProperties;
     }
 
+    /**
+     * Break-glass admin filter chain: form-based login at /admin/login for SUPERADMIN.
+     */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
+        http.securityMatcher("/admin/**")
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/admin/login")
+                        .permitAll()
+                        .anyRequest()
+                        .hasRole("SUPERADMIN"))
+                .formLogin(form -> form.loginPage("/admin/login")
+                        .loginProcessingUrl("/admin/login")
+                        .defaultSuccessUrl("/posts", true)
+                        .permitAll())
+                .logout(logout -> logout.logoutUrl("/admin/logout")
+                        .logoutSuccessUrl("/posts")
+                        .permitAll())
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"));
+
+        return http.build();
+    }
+
+    /**
+     * Main filter chain: OIDC login via Authentik, form login as fallback, public read access.
+     */
+    @Bean
+    @Order(2)
+    public SecurityFilterChain defaultFilterChain(HttpSecurity http, SyncingOidcUserService oidcUserService)
+            throws Exception {
         http.authorizeHttpRequests(auth -> auth
                         // Public: static resources
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico")
@@ -63,6 +96,9 @@ public class SecurityConfiguration {
                         // Everything else requires authentication (default-deny)
                         .anyRequest()
                         .authenticated())
+                .oauth2Login(oauth2 -> oauth2.loginPage("/login")
+                        .defaultSuccessUrl("/posts", true)
+                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcUserService)))
                 .formLogin(form -> form.loginPage("/login")
                         .defaultSuccessUrl("/posts", true)
                         .permitAll())
@@ -73,12 +109,15 @@ public class SecurityConfiguration {
         return http.build();
     }
 
+    /**
+     * In-memory user details for the SUPERADMIN break-glass login.
+     */
     @Bean
     public UserDetailsService userDetailsService() {
         var admin = User.builder()
                 .username(adminProperties.username())
                 .password(passwordEncoder().encode(adminProperties.password()))
-                .roles("ADMIN")
+                .roles("SUPERADMIN", "ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(admin);
     }
@@ -86,5 +125,10 @@ public class SecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SyncingOidcUserService syncingOidcUserService(UserManagementClient userManagementClient) {
+        return new SyncingOidcUserService(userManagementClient);
     }
 }

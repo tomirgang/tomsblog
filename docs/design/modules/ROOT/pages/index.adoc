@@ -26,3 +26,4 @@ Während die arc42-Dokumentation die übergreifende Systemarchitektur beschreibt
 Die folgenden Services sind dokumentiert:
 
 * xref:blog-content/index.adoc[Blog Content Service] -- der zentrale Service für die Verwaltung von Blog-Inhalten (Posts, Tags, Übersetzungen)
+* xref:user-management/index.adoc[User Management Service] -- verwaltet Benutzerprofile, Rollen und Tenant-Zuordnungen (OIDC-Integration mit Authentik)

@@ -9,5 +9,7 @@ ref: ''
 reviewed: mDS-DAHBR4nu0Joa0VgI6H2rQWz8hx3yLAYv8ahqIcg=
 text: |
   Das System muss verschiedene Benutzerrollen unterstützen:
-  Administrator, Autor und Leser. Zugriffsrechte werden
-  rollenbasiert vergeben.
+  Super-Administrator (Plattform- und Tenant-Verwaltung),
+  Administrator (Benutzer- und Inhaltsverwaltung innerhalb eines Tenants),
+  Autor, Reviewer und Leser. Zugriffsrechte werden rollenbasiert vergeben.
+  Nicht angemeldete Benutzer werden wie Leser behandelt.

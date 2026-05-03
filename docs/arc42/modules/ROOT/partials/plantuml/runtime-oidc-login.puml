@@ -1,0 +1,23 @@
+@startuml
+actor Benutzer
+participant "Blog Content\nService" as blog
+participant "Authentik\n(OIDC Provider)" as authentik
+participant "User Management\nService" as usermgmt
+database "PostgreSQL\n(user-mgmt)" as db
+
+Benutzer -> blog : GET /posts/new\n(geschuetzt)
+blog -> blog : Nicht authentifiziert
+blog -> Benutzer : 302 Redirect zu\nAuthentik /authorize
+Benutzer -> authentik : Login-Seite
+authentik -> authentik : Passwort + MFA pruefen
+authentik -> Benutzer : 302 Redirect mit\nAuthorization Code
+Benutzer -> blog : GET /login/oauth2/code/authentik\n?code=...
+blog -> authentik : POST /token\n(Code + PKCE Verifier)
+authentik -> blog : ID Token + Access Token
+blog -> usermgmt : POST /api/users/sync\n{oidcSubject, email, name}
+usermgmt -> db : Upsert UserProfile
+db -> usermgmt : UserProfile mit Rollen
+usermgmt -> blog : UserProfile\n{roles, tenantMemberships}
+blog -> blog : Session erstellen\nmit Rollen als Authorities
+blog -> Benutzer : 302 Redirect zu /posts
+@enduml

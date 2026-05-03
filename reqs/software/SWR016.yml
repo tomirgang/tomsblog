@@ -1,7 +1,7 @@
 active: true
 derived: false
 header: |
-  Custom Identity Provider mit OIDC
+  OIDC Login mit Authentik als externem Provider
 level: 16.0
 links:
 - STK005: mDS-DAHBR4nu0Joa0VgI6H2rQWz8hx3yLAYv8ahqIcg=
@@ -9,7 +9,15 @@ normative: true
 ref: ''
 reviewed: Z9cMYhhgo-iqsmtuTxU2lipMibMR46AFwdfbJpIWsoo=
 text: |
-  Das System muss einen eigenen Identity Provider Service bereitstellen.
-  Dieser Service muss OpenID Connect (OIDC) Login unterstützen, sodass
-  Benutzer sich über externe OIDC Provider (z.B. Google, GitHub) anmelden
-  können. Der Service verwaltet Benutzerkonten, Rollen und Sessions.
+  Das System muss OpenID Connect (OIDC) Login über Authentik
+  (https://auth.do9ita.de) als externen Identity Provider unterstützen
+  (siehe ADR-0027). Der Authorization Code Flow mit PKCE wird verwendet.
+  Services, die eine Web-Oberfläche bereitstellen (z.B. Blog Content
+  Service), agieren als OAuth2 Client (Spring Security OAuth2 Login).
+  API-Endpunkte werden als OAuth2 Resource Server geschützt und validieren
+  Authentik-JWTs. Authentik übernimmt Login-Flows, MFA, Session-Management
+  und Passwort-Policies. Dies ersetzt die einfache formbasierte
+  Admin-Authentifizierung (SWR-028).
+  Optional können Gruppen-Attribute aus dem OIDC ID Token (groups Claim)
+  übernommen und auf plattforminterne Rollen gemappt werden. Das Mapping
+  ist pro Tenant konfigurierbar.

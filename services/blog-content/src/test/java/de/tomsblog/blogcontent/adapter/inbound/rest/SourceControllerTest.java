@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import de.tomsblog.blogcontent.adapter.inbound.web.SecurityConfiguration;
+import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
 import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
 import de.tomsblog.blogcontent.application.service.PostNotFoundException;
 import de.tomsblog.blogcontent.domain.model.*;
@@ -34,6 +35,9 @@ class SourceControllerTest {
 
     @MockitoBean
     private PostUseCase postUseCase;
+
+    @MockitoBean
+    private UserManagementClient userManagementClient;
 
     private final UUID tenantId = UUID.randomUUID();
     private final UUID postId = UUID.randomUUID();

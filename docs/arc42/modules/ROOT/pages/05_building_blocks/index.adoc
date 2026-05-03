@@ -111,3 +111,42 @@ Die Datenbank-Schema-Verwaltung erfolgt über Flyway (SWA-013). Alle Migrationen
 |===
 
 NOTE: Weitere Services werden analog strukturiert. Details werden ergänzt, sobald sie implementiert sind.
+
+== Ebene 2: User Management Service
+
+Der User Management Service verwaltet plattformspezifische Benutzerprofile, Rollen und Tenant-Zuordnungen (SWR-043, SWA-029). Er agiert als Ergänzung zum externen OIDC Provider Authentik (ADR-0027, SWR-016). Authentik übernimmt Authentifizierung (Login, MFA, Passwort-Policies), während der User Management Service die Autorisierungsdaten (Rollen, Tenant-Mitgliedschaften) intern verwaltet.
+
+=== Domain Layer (domain/)
+
+[cols="1,1,2"]
+|===
+| Baustein | Typ | Beschreibung
+
+| `UserProfile` | Aggregate Root | OidcSubject (eindeutige OIDC-Kennung), E-Mail, DisplayName, ApprovalStatus (PENDING/APPROVED/REJECTED), Rollen, TenantMemberships. Synchronisiert sich aus OIDC-Claims.
+| `Role` | Enum | SUPERADMIN, ADMIN, AUTHOR, REVIEWER, READER (SWR-007). SUPERADMIN wird ueber Infrastruktur-Konfiguration angelegt.
+| `TenantMembership` | Value Object | TenantId + Role. Ein Benutzer kann in verschiedenen Tenants unterschiedliche Rollen haben.
+| `UserProfileId` | Value Object | Typsichere ID (Record)
+|===
+
+=== Application Layer (application/)
+
+[cols="1,2"]
+|===
+| Baustein | Beschreibung
+
+| `UserProfileUseCase` | Inbound Port: syncFromOidc, findByOidcSubject, approveUser, rejectUser, assignRole, removeRole, addTenantMembership, removeTenantMembership
+| `UserProfileRepository` | Outbound Port: Persistence-Abstraktion für UserProfiles
+| `UserProfileService` | Implementiert UserProfileUseCase, orchestriert Domain und Ports
+|===
+
+=== Adapter Layer (adapter/)
+
+[cols="1,2"]
+|===
+| Baustein | Beschreibung
+
+| `UserController` | REST Inbound Adapter: POST /api/users/sync, GET /api/users/{oidcSubject}, POST /api/users/{oidcSubject}/approve, POST /api/users/{oidcSubject}/reject
+| `JpaUserProfileRepository` | JPA Outbound Adapter: Implementiert UserProfileRepository
+| `UserProfileJpaEntity` | JPA-Entity für Benutzerprofile
+| `UserProfileMapper` | Bidirektionales Mapping zwischen Domain und JPA
+|===

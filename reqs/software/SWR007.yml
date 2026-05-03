@@ -5,11 +5,21 @@ header: |
 level: 7.0
 links:
 - STK005: mDS-DAHBR4nu0Joa0VgI6H2rQWz8hx3yLAYv8ahqIcg=
+- STK028: null
+- STK029: null
 normative: true
 ref: ''
 reviewed: _idI4rzQ2_WbYBmTwEWCjZjMSMtm1vzQ4tgSzjXWqI4=
 text: |
-  Das System muss drei Rollen unterstützen: ADMIN, AUTHOR, READER.
-  Nur AUTHOR und ADMIN duerfen Posts erstellen/bearbeiten.
-  Nur ADMIN darf Tenants und Benutzer verwalten.
+  Das System muss fünf Rollen unterstützen: SUPERADMIN, ADMIN, AUTHOR,
+  REVIEWER, READER.
+  SUPERADMIN verwaltet Tenants und die Plattform-Konfiguration. Sein
+  Passwort wird ausschließlich über die Infrastruktur gesetzt
+  (Umgebungsvariable/Secret). Es gibt genau einen SUPERADMIN pro
+  Plattform-Instanz.
+  ADMIN verwaltet Benutzer und Inhalte innerhalb eines Tenants und gibt
+  neue Benutzer frei (STK028).
+  AUTHOR darf Posts erstellen, bearbeiten und veröffentlichen.
+  REVIEWER darf Posts lesen und Review-Feedback geben, aber nicht erstellen.
   READER hat nur Lesezugriff auf veröffentlichte Posts.
+  Nicht angemeldete Benutzer werden wie READER behandelt (STK029).

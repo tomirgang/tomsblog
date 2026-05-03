@@ -6,6 +6,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
 import de.tomsblog.blogcontent.application.port.inbound.CreatePostCommand;
 import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
 import de.tomsblog.blogcontent.application.port.inbound.UpdatePostCommand;
@@ -38,6 +39,9 @@ class BlogViewControllerTest {
 
     @MockitoBean
     private MarkdownRenderer markdownRenderer;
+
+    @MockitoBean
+    private UserManagementClient userManagementClient;
 
     private final UUID tenantId = UUID.randomUUID();
     private final AuthorId authorId = AuthorId.generate();

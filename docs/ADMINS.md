@@ -1,0 +1,358 @@
+# Administrationshandbuch
+
+Dieses Dokument beschreibt die Konfiguration und das Deployment der Toms Blog Plattform
+auf einem generischen Kubernetes Cluster.
+
+## Voraussetzungen
+
+| Komponente         | Mindestversion | Zweck                              |
+| ------------------ | -------------- | ---------------------------------- |
+| Kubernetes         | 1.28+          | Container-Orchestrierung           |
+| kubectl            | 1.28+          | Cluster-Verwaltung                 |
+| Helm               | 3.x            | Optional, für Operator-Installtion |
+| PostgreSQL         | 16+            | Datenbank (pro Service)            |
+| Ingress-Controller | Traefik / Nginx| HTTP(S)-Routing                    |
+| cert-manager       | 1.x            | TLS-Zertifikate (Let's Encrypt)    |
+| OIDC Provider      | OIDC 1.0       | Authentifizierung (z.B. Authentik) |
+
+## Architekturübersicht
+
+Die Plattform besteht aus zwei Services:
+
+| Service            | Port | Datenbank                | Beschreibung                          |
+| ------------------ | ---- | ------------------------ | ------------------------------------- |
+| blog-content       | 8080 | PostgreSQL (eigene DB)   | Blog-Inhalte, Thymeleaf-UI, SSR      |
+| user-management    | 8081 | PostgreSQL (eigene DB)   | Benutzerverwaltung, Rollen, Tenants   |
+
+Beide Services folgen der hexagonalen Architektur und kommunizieren über REST.
+
+## Deployment
+
+### Namespaces
+
+```bash
+kubectl create namespace tomsblog
+```
+
+### PostgreSQL
+
+Jeder Service benötigt eine eigene PostgreSQL-Datenbank (Database-per-Service, ADR-0019).
+Die Datenbank kann über den CloudNativePG Operator, einen managed Service oder eine
+eigenständige PostgreSQL-Installation bereitgestellt werden.
+
+**Beispiel mit CloudNativePG:**
+
+```yaml
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres-cluster
+  namespace: postgres
+spec:
+  instances: 2
+  storage:
+    size: 10Gi
+```
+
+Die Datenbankverbindung wird über Umgebungsvariablen konfiguriert (siehe unten).
+
+### Container-Images
+
+Die Images werden über die GitHub Container Registry bereitgestellt:
+
+```
+ghcr.io/tomirgang/tomsblog/blog-content:<tag>
+ghcr.io/tomirgang/tomsblog/user-management:<tag>
+```
+
+Als Tag wird der Commit-SHA im Format `sha-<hash>` verwendet.
+
+### Secrets
+
+Secrets für die Applikation müssen im Namespace `tomsblog` bereitgestellt werden:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: blog-content-secrets
+  namespace: tomsblog
+type: Opaque
+stringData:
+  admin-password: "<SuperAdmin-Passwort>"
+  oidc-client-id: "<OIDC Client ID>"
+  oidc-client-secret: "<OIDC Client Secret>"
+```
+
+Für die Verschlüsselung der Secrets im Git-Repository wird SOPS empfohlen (ADR-0025).
+
+## Konfiguration
+
+### blog-content Service
+
+Alle Konfigurationsparameter werden über Umgebungsvariablen gesetzt.
+Die Anwendung nutzt Spring Boot, daher können alle `application.yml`-Werte
+über Umgebungsvariablen überschrieben werden
+(z.B. `spring.datasource.url` wird zu `SPRING_DATASOURCE_URL`).
+
+#### Datenbank
+
+| Variable                    | Beschreibung                        | Beispiel                                                       |
+| --------------------------- | ----------------------------------- | -------------------------------------------------------------- |
+| `SPRING_DATASOURCE_URL`    | JDBC-URL zur PostgreSQL-Datenbank   | `jdbc:postgresql://postgres:5432/blogcontent`                  |
+| `SPRING_DATASOURCE_USERNAME` | Datenbankbenutzer                 | `app`                                                          |
+| `SPRING_DATASOURCE_PASSWORD` | Datenbankpasswort                 | (aus Secret)                                                   |
+
+#### SuperAdmin (Break-Glass Login)
+
+Der SuperAdmin-Account wird beim Start automatisch als In-Memory-Benutzer angelegt.
+Der Login ist ausschließlich über `/admin/login` (formbasiert) möglich.
+
+| Variable              | Beschreibung              | Default  |
+| --------------------- | ------------------------- | -------- |
+| `BLOG_ADMIN_PASSWORD` | Passwort des SuperAdmin   | `admin`  |
+
+Der Benutzername ist fest auf `admin` konfiguriert.
+In Produktion muss `BLOG_ADMIN_PASSWORD` über ein Kubernetes Secret gesetzt werden.
+
+#### OIDC Konfiguration
+
+Die OIDC-Anbindung an einen externen Identity Provider (z.B. Authentik, Keycloak, Entra ID)
+wird vollständig über Umgebungsvariablen oder Kubernetes Secrets konfiguriert.
+Eine Änderung der OIDC-Konfiguration erfordert kein Neubauen des Container-Images.
+
+| Variable                  | Beschreibung                              | Default                                                          |
+| ------------------------- | ----------------------------------------- | ---------------------------------------------------------------- |
+| `OIDC_CLIENT_ID`          | Client-ID der OIDC-Registrierung          | `blog-content`                                                   |
+| `OIDC_CLIENT_SECRET`      | Client-Secret der OIDC-Registrierung      | (leer)                                                           |
+| `OIDC_AUTHORIZATION_URI`  | Authorization-Endpunkt des OIDC-Providers | `https://auth.do9ita.de/application/o/authorize/`                |
+| `OIDC_TOKEN_URI`          | Token-Endpunkt des OIDC-Providers         | `https://auth.do9ita.de/application/o/tomsblog/token/`           |
+| `OIDC_USERINFO_URI`       | UserInfo-Endpunkt des OIDC-Providers      | `https://auth.do9ita.de/application/o/tomsblog/userinfo/`        |
+| `OIDC_JWKSET_URI`         | JWK-Set-Endpunkt des OIDC-Providers       | `https://auth.do9ita.de/application/o/tomsblog/jwks/`            |
+
+**Beispiel: Authentik**
+
+```yaml
+env:
+  - name: OIDC_CLIENT_ID
+    valueFrom:
+      secretKeyRef:
+        name: blog-content-secrets
+        key: oidc-client-id
+  - name: OIDC_CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: blog-content-secrets
+        key: oidc-client-secret
+  - name: OIDC_AUTHORIZATION_URI
+    value: "https://auth.example.com/application/o/authorize/"
+  - name: OIDC_TOKEN_URI
+    value: "https://auth.example.com/application/o/myapp/token/"
+  - name: OIDC_USERINFO_URI
+    value: "https://auth.example.com/application/o/myapp/userinfo/"
+  - name: OIDC_JWKSET_URI
+    value: "https://auth.example.com/application/o/myapp/jwks/"
+```
+
+**Beispiel: Keycloak**
+
+```yaml
+env:
+  - name: OIDC_AUTHORIZATION_URI
+    value: "https://keycloak.example.com/realms/myrealm/protocol/openid-connect/auth"
+  - name: OIDC_TOKEN_URI
+    value: "https://keycloak.example.com/realms/myrealm/protocol/openid-connect/token"
+  - name: OIDC_USERINFO_URI
+    value: "https://keycloak.example.com/realms/myrealm/protocol/openid-connect/userinfo"
+  - name: OIDC_JWKSET_URI
+    value: "https://keycloak.example.com/realms/myrealm/protocol/openid-connect/certs"
+```
+
+#### User Management Service Verbindung
+
+| Variable               | Beschreibung                           | Default                    |
+| ---------------------- | -------------------------------------- | -------------------------- |
+| `USER_MANAGEMENT_URL`  | Base-URL des User Management Service   | `http://localhost:8081`    |
+
+Im Kubernetes-Cluster typischerweise:
+
+```yaml
+- name: USER_MANAGEMENT_URL
+  value: "http://user-management.tomsblog.svc.cluster.local:8081"
+```
+
+#### Sonstige
+
+| Variable                   | Beschreibung                     | Default                                      |
+| -------------------------- | -------------------------------- | -------------------------------------------- |
+| `BLOG_DEFAULT_TENANT_ID`   | Standard-Tenant-ID               | `00000000-0000-0000-0000-000000000001`       |
+| `BLOG_DEFAULT_AUTHOR_ID`   | Standard-Autor-ID                | `00000000-0000-0000-0000-000000000001`       |
+| `SPRING_PROFILES_ACTIVE`   | Aktive Spring-Profile            | (keines)                                     |
+
+### user-management Service
+
+#### Datenbank
+
+Der User Management Service benötigt eine eigene PostgreSQL-Datenbank.
+
+| Variable                    | Beschreibung                        | Beispiel                                                       |
+| --------------------------- | ----------------------------------- | -------------------------------------------------------------- |
+| `SPRING_DATASOURCE_URL`    | JDBC-URL zur PostgreSQL-Datenbank   | `jdbc:postgresql://postgres:5433/usermanagement`               |
+| `SPRING_DATASOURCE_USERNAME` | Datenbankbenutzer                 | `app`                                                          |
+| `SPRING_DATASOURCE_PASSWORD` | Datenbankpasswort                 | (aus Secret)                                                   |
+
+## Deployment-Manifest (Beispiel)
+
+Minimales Deployment-Manifest für den blog-content Service:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog-content
+  namespace: tomsblog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blog-content
+  template:
+    metadata:
+      labels:
+        app: blog-content
+    spec:
+      containers:
+        - name: blog-content
+          image: ghcr.io/tomirgang/tomsblog/blog-content:sha-abc1234
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/blogcontent"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+            - name: BLOG_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: blog-content-secrets
+                  key: admin-password
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: blog-content-secrets
+                  key: oidc-client-id
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: blog-content-secrets
+                  key: oidc-client-secret
+            - name: OIDC_AUTHORIZATION_URI
+              value: "https://auth.example.com/authorize"
+            - name: OIDC_TOKEN_URI
+              value: "https://auth.example.com/token"
+            - name: OIDC_USERINFO_URI
+              value: "https://auth.example.com/userinfo"
+            - name: OIDC_JWKSET_URI
+              value: "https://auth.example.com/jwks"
+            - name: USER_MANAGEMENT_URL
+              value: "http://user-management.tomsblog.svc.cluster.local:8081"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blog-content
+  namespace: tomsblog
+spec:
+  selector:
+    app: blog-content
+  ports:
+    - port: 8080
+      targetPort: 8080
+```
+
+## Ingress
+
+Beispiel mit Traefik IngressRoute:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: blog-content
+  namespace: tomsblog
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+    - hosts:
+        - blog.example.com
+      secretName: blog-tls
+  rules:
+    - host: blog.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: blog-content
+                port:
+                  number: 8080
+```
+
+## Health Checks
+
+Beide Services stellen Spring Boot Actuator Endpunkte bereit:
+
+| Endpunkt                    | Zweck             |
+| --------------------------- | ----------------- |
+| `/actuator/health`          | Liveness-Probe    |
+| `/actuator/health/readiness`| Readiness-Probe   |
+
+## Datenbank-Migrationen
+
+Beide Services verwenden Flyway für automatische Datenbank-Migrationen.
+Die Migrationen werden beim Start des Services automatisch ausgeführt.
+Ein manueller Eingriff ist nicht erforderlich.
+
+## OIDC Provider einrichten
+
+### Allgemeine Schritte
+
+1. Im OIDC Provider eine neue OAuth2/OIDC Application anlegen
+2. Redirect URI konfigurieren: `https://<blog-domain>/login/oauth2/code/authentik`
+3. Scopes aktivieren: `openid`, `profile`, `email`
+4. Client-ID und Client-Secret notieren
+5. Die Endpunkt-URLs des Providers ermitteln (Authorization, Token, UserInfo, JWKS)
+6. Werte als Kubernetes Secrets und Umgebungsvariablen konfigurieren (siehe oben)
+
+### Authentik
+
+1. Unter *Applications* eine neue *OAuth2/OpenID Provider* erstellen
+2. Redirect URI: `https://<blog-domain>/login/oauth2/code/authentik`
+3. Signing Key auswählen
+4. Die Application mit dem Provider verknüpfen
+5. Client-ID und Client-Secret aus der Provider-Konfiguration übernehmen
+
+### Gruppen-Mapping
+
+OIDC-Gruppen aus dem `groups`-Claim werden automatisch an den User Management Service
+weitergeleitet. Die Zuordnung zu plattforminternen Rollen kann dort konfiguriert werden.

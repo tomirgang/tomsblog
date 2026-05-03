@@ -1,0 +1,26 @@
+active: true
+derived: false
+header: |
+  Auto-Approval bei OIDC-Login und E-Mail-Domain
+level: 45.0
+links:
+- STK028: null
+- STK032: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Der User-Management-Service unterstuetzt optionale automatische
+  Freigabe (Auto-Approval) neuer Benutzer (SWR-043):
+  - Pro Tenant konfigurierbar ueber TenantSettings:
+    autoApproveOidc (boolean): Neue Benutzer, die sich ueber OIDC
+    anmelden, werden automatisch auf APPROVED gesetzt.
+    autoApproveEmailDomains (Set<String>): Neue Benutzer, deren
+    E-Mail-Domain in dieser Liste enthalten ist, werden automatisch
+    auf APPROVED gesetzt.
+  - Die Auto-Approval-Pruefung erfolgt im syncFromOidc-Flow: Beim
+    Erstellen eines neuen UserProfile wird geprueft, ob eine der
+    Auto-Approval-Regeln greift. Falls ja, wird der ApprovalStatus
+    direkt auf APPROVED gesetzt statt auf PENDING.
+  - Auto-Approval aendert nur den initialen Status. Manuelle Ablehnung
+    (reject) durch einen Admin ist weiterhin moeglich.

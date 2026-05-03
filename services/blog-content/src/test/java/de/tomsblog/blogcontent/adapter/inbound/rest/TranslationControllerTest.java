@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import de.tomsblog.blogcontent.adapter.inbound.web.SecurityConfiguration;
+import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
 import de.tomsblog.blogcontent.application.port.inbound.TranslationUseCase;
 import de.tomsblog.blogcontent.application.service.TranslationNotFoundException;
 import de.tomsblog.blogcontent.domain.model.*;
@@ -33,6 +34,9 @@ class TranslationControllerTest {
 
     @MockitoBean
     private TranslationUseCase translationUseCase;
+
+    @MockitoBean
+    private UserManagementClient userManagementClient;
 
     private final UUID tenantId = UUID.randomUUID();
     private final UUID postId = UUID.randomUUID();

@@ -6,6 +6,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
 import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
 import de.tomsblog.blogcontent.application.port.outbound.MarkdownRenderer;
 import de.tomsblog.blogcontent.domain.model.Post;
@@ -28,7 +29,9 @@ import org.springframework.test.web.servlet.MockMvc;
 /**
  * Tests verifying the security configuration for the blog content service.
  *
+ * @req SWR-016
  * @req SWR-028
+ * @req SWR-044
  */
 @WebMvcTest({BlogViewController.class, LoginController.class})
 @Import(SecurityConfiguration.class)
@@ -42,6 +45,9 @@ class SecurityConfigurationTest {
 
     @MockitoBean
     private MarkdownRenderer markdownRenderer;
+
+    @MockitoBean
+    private UserManagementClient userManagementClient;
 
     @Nested
     @DisplayName("SWR-028: Public endpoints accessible without authentication")
@@ -166,6 +172,17 @@ class SecurityConfigurationTest {
         @DisplayName("DELETE /api/posts/{id} returns 401 when not authenticated")
         void deletePostApi_returns401() throws Exception {
             mockMvc.perform(delete("/api/posts/" + java.util.UUID.randomUUID())).andExpect(status().isUnauthorized());
+        }
+    }
+
+    @Nested
+    @DisplayName("SWR-044: Admin login endpoint")
+    class AdminLoginEndpoint {
+
+        @Test
+        @DisplayName("GET /admin/login is publicly accessible")
+        void adminLogin_isPublic() throws Exception {
+            mockMvc.perform(get("/admin/login")).andExpect(status().isOk());
         }
     }
 }

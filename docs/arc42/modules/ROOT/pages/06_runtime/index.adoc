@@ -16,3 +16,15 @@ plantuml::partial$plantuml/runtime-publish.puml[format=svg]
 Der Ablauf der Post-Erstellung zeigt das Zusammenspiel von REST-Adapter, Application Layer und Domain (SWR-001, SWA-001). Bei erfolgreicher Erstellung wird ein `PostCreatedEvent` registriert (SWR-009).
 
 plantuml::partial$plantuml/runtime-create.puml[format=svg]
+
+== OIDC Login mit Authentik
+
+Der OIDC-Login-Ablauf zeigt die Authentifizierung ueber Authentik als externem Identity Provider und die anschliessende Synchronisation der Benutzerdaten mit dem User Management Service (SWR-016, SWR-043, SWA-010, ADR-0027):
+
+1. **Redirect zu Authentik**: Ein nicht-authentifizierter Zugriff auf einen geschuetzten Endpunkt loest den OAuth2 Authorization Code Flow mit PKCE aus.
+2. **Authentifizierung**: Authentik prueft Passwort und optionalen zweiten Faktor (MFA).
+3. **Token-Austausch**: Blog Content Service tauscht den Authorization Code gegen ID Token und Access Token.
+4. **Profil-Synchronisation**: Blog Content Service ruft den User Management Service auf, um das Benutzerprofil zu synchronisieren und Rollen abzufragen.
+5. **Session**: Eine HTTP-Session wird mit den Rollen als Spring Security Authorities erstellt.
+
+plantuml::partial$plantuml/runtime-oidc-login.puml[format=svg]

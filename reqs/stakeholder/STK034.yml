@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Administrationsdokumentation für generisches Kubernetes
+level: 34.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Konfiguration und Deployment der Applikation auf einem generischen
+  Kubernetes Cluster soll in docs/ADMINS.md beschrieben sein.
+  Die Dokumentation muss alle notwendigen Schritte, Konfigurationsparameter,
+  Secrets und Beispiele enthalten, damit ein Administrator die Plattform
+  ohne projektspezifisches Vorwissen deployen kann.

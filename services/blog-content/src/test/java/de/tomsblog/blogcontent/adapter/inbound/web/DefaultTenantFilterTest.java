@@ -4,6 +4,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
 import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
 import de.tomsblog.blogcontent.application.port.outbound.MarkdownRenderer;
 import java.util.List;
@@ -30,6 +31,9 @@ class DefaultTenantFilterTest {
 
     @MockitoBean
     private MarkdownRenderer markdownRenderer;
+
+    @MockitoBean
+    private UserManagementClient userManagementClient;
 
     @Test
     @DisplayName("SWR-027: Filter injects default headers when both are missing")

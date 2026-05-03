@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  OIDC Konfiguration über Infrastruktur oder Admin UI
+level: 33.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Die OIDC-Konfiguration (Client-ID, Client-Secret, Endpunkt-URLs)
+  soll über die Infrastruktur-Konfiguration (Umgebungsvariablen,
+  Kubernetes Secrets) oder über die Admin-UI möglich sein.
+  Eine Änderung der OIDC-Konfiguration darf kein Neubauen des
+  Container-Images erfordern.

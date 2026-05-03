@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- OIDC Login mit Authentik (Spring Security OAuth2 Client, Authorization Code Flow)
+- Leichtgewichtiger User-Management-Service (Benutzerverwaltung, Rollen, Tenant-Zuordnung, Freigabe-Workflow)
+- Break-Glass SuperAdmin-Login unter /admin/login (formbasiert, nur SUPERADMIN)
+- SuperAdmin-Account: Credentials über Umgebungsvariable/Kubernetes Secret konfigurierbar
+- Rollen- und Berechtigungsmodell (SuperAdmin, Admin, Autor, Reviewer, Leser)
+- Benutzer-Freigabe-Workflow: Neue User starten mit Status PENDING, Approve/Reject über REST-API
+- OIDC-Gruppen-Mapping: Gruppen aus dem `groups`-Claim werden an den User Management Service weitergeleitet
+- Thymeleaf Login-Seite mit OIDC-Button und optionalem Formular-Login
+- Admin-Login-Seite für SuperAdmin Break-Glass Zugang
+- Administrationshandbuch (docs/ADMINS.md) mit Kubernetes-Deployment und OIDC-Konfiguration
+- OIDC-Konfiguration vollständig über Umgebungsvariablen/Infrastruktur-Config steuerbar (kein Rebuild nötig)
+- Stakeholder-Requirement STK-033 (OIDC Konfiguration über Infrastruktur oder Admin UI)
+- Stakeholder-Requirement STK-034 (Administrationsdokumentation für generisches Kubernetes)
+
 ## [0.6.0] - 2026-05-03
 
 ### Added

@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  E-Mail-Benachrichtigungen und Abonnements
+level: 30.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Die Plattform soll E-Mail-Benachrichtigungen unterstützen:
+  - Passwort-Reset per E-Mail.
+  - Passwortloser Login durch E-Mail-Bestätigung (Magic Link).
+  - Benachrichtigungen bei neuen Posts und bei anstehenden Reviews.
+  - Pro Tenant optional konfigurierbare Abonnements (Subscriptions):
+    Benutzer können Benachrichtigungen abonnieren für alle neuen Posts,
+    bestimmte Tags, Suchbegriffe oder bestimmte Autoren.

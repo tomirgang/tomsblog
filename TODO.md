@@ -65,15 +65,30 @@
 - [x] Serien-Navigation für thematisch zusammenhängende Posts (STK026)
 - [x] Identity-Provider evaluieren (ADR-0027: Authentik + internes User Management)
 - [ ] Featured Posts: Posts für einen Zeitraum hervorheben und auf der Landing Page prominent darstellen (STK027)
-- [ ] OIDC Login integrieren (Spring Security OAuth2 Client, Authentik unter auth.do9ita.de)
-- [ ] Leichtgewichtiger User-Management-Service (OIDC Relying Party, Rollen, Tenant-Zuordnung)
+- [x] OIDC Login integrieren (Spring Security OAuth2 Client, Authentik unter auth.do9ita.de)
+- [x] Leichtgewichtiger User-Management-Service (OIDC Relying Party, Rollen, Tenant-Zuordnung)
+- [ ] Konfigurierbare Login-Methode pro Tenant: intern, OIDC oder beides (STK031)
+- [x] Break-Glass SuperAdmin-Login unter /admin/login (immer formbasiert, nur SUPERADMIN)
+- [ ] Auto-Approval: optional für OIDC-Benutzer und/oder E-Mail-Domain-Whitelist (STK032)
 - [ ] Multi-Tenant-Isolation (Schema-basiert vs. Row-Level-Security)
-- [ ] Rollen- und Berechtigungsmodell (Admin, Autor, Leser)
+- [x] Rollen- und Berechtigungsmodell (SuperAdmin, Admin, Autor, Reviewer, Leser; anonyme Besucher = Leser)
+- [x] SuperAdmin-Account: Credentials über Infrastruktur (Umgebungsvariable/Secret), automatisch beim Start angelegt
+- [x] Benutzer-Freigabe: Neue User müssen durch Tenant-Admin approved werden (STK028)
+- [x] Optionales OIDC-Gruppen-Mapping auf plattforminterne Rollen
 - [ ] Audit-Logging für alle relevanten Aktionen
-- [ ] Thymeleaf: Login-/Registrierungsseiten
+- [x] Thymeleaf: Login-/Registrierungsseiten
 - [ ] Thymeleaf: Multi-Tenant-Navigation (Tenant-Branding, Umschaltung)
 - [ ] Thymeleaf: Admin-Oberfläche (Benutzer, Tenants, Einstellungen)
-- [ ] Infra: Keycloak-Deployment auf K8s
+- [x] Infra: Authentik-Anbindung konfigurieren (OIDC Application unter auth.do9ita.de)
+- [x] OIDC Konfiguration über Infrastruktur Config oder Admin UI (STK033)
+- [x] Administrationsdokumentation für generisches Kubernetes in docs/ADMINS.md (STK034)
+- [ ] Infra: S3-kompatibles Storage (Garage auf Netcup VM)
+- [ ] Backup-Strategie für PostgreSQL
+- [ ] Backup-Storage auf Netcup VM (Garage/S3)
+- [ ] Disaster-Recovery-Plan dokumentieren
+- [ ] Standard Impressum and Privacy Policy
+- [ ] Optional Tenant spezifisches Impressum and Privacy Policy
+- [ ] Security-Reviews (OWASP)
 
 > **MVP nach Phase 4:** Mehrbenutzerfähiger Blog mit Login, Tenant-Trennung und Admin-UI.
 
@@ -89,6 +104,7 @@
 - [ ] Infra: RabbitMQ Deployment (RabbitMQ Cluster Operator via Helm, siehe ADR-0026)
 - [ ] Infra: MongoDB Deployment (Community Operator via Helm, siehe ADR-0026)
 - [ ] Migration auf Helm Charts für Operator-managed Services (ADR-0026)
+- [ ] Security-Reviews (OWASP)
 
 > **MVP nach Phase 5:** Asynchrone Verarbeitung aktiv, Events fließen zwischen Services.
 
@@ -102,6 +118,7 @@
 - [ ] AuthorizationPolicy: nur blog-content darf ai-service aufrufen
 - [ ] Thymeleaf: WYSIWYG-Editor für Autoren (ersetzt einfaches Formular)
 - [ ] Thymeleaf: Übersetzungs-UI (Review/Approve-Workflow)
+- [ ] Security-Reviews (OWASP)
 
 > **MVP nach Phase 6:** Autoren schreiben mit WYSIWYG-Editor und nutzen KI-Übersetzung mit Review-Schritt.
 
@@ -116,6 +133,7 @@
 - [ ] Chaos Testing: Steady-State-Hypothesen und Experimente formulieren
 - [ ] Chaos Testing: Automatisierte Chaos-Experimente in CI/CD integrieren
 - [ ] Chaos Testing: Ergebnisse auswerten und Resilience-Verbesserungen umsetzen
+- [ ] Security-Reviews (OWASP)
 
 > **MVP nach Phase 7:** Blog mit RSS-Feeds, navigierbaren Tag-Seiten und nachgewiesener Resilience durch Chaos Testing.
 
@@ -126,7 +144,7 @@
 - [ ] Storage-Backend (S3/Garage)
 - [ ] Thymeleaf: Attachment-Upload im Editor (Drag & Drop)
 - [ ] Thymeleaf: Quellen-Verwaltung mit Vorschau archivierter Seiten
-- [ ] Infra: S3-kompatibles Storage (Garage auf Netcup VM)
+- [ ] Security-Reviews (OWASP)
 
 > **MVP nach Phase 8:** Vollständiges Content-Management mit Dateianhängen und Quellenarchiv.
 
@@ -143,13 +161,26 @@
 
 ---
 
-## Meilenstein 2: Kommentare & Interaktion
+## Meilenstein 2: Kommentare, E-Mail & Interaktion
 
 - [ ] External Secrets Operator (ESO) für externe Secret-Stores (ADR-0025)
 - [ ] Kommentar-Domain-Modell & Service
 - [ ] Moderation (Spam-Filter, Freigabe-Workflow)
 - [ ] Thymeleaf-Integration (Kommentarformular, Anzeige)
 - [ ] Event: Kommentar erstellt → Benachrichtigung
+- [ ] Passwort-Reset per E-Mail
+- [ ] Passwortloser Login durch E-Mail-Bestätigung (Magic Link)
+- [ ] Optionale E-Mail-Verifizierung für nicht-OIDC-Benutzer (interne Accounts)
+- [ ] E-Mail-Benachrichtigungen: Neuer Post veröffentlicht
+- [ ] E-Mail-Benachrichtigungen: Review angefordert
+- [ ] Abonnement-System pro Tenant (optionales Feature):
+    - Alle neuen Posts abonnieren
+    - Bestimmte Tags abonnieren
+    - Suchbegriff abonnieren
+    - Bestimmte Autoren abonnieren
+- [ ] Für neue Abonnenten wir ein Reader Acount angelegt, optional mit Passwort.
+- [ ] Registrierte Benutzer können ihre Abonnements verwalten
+- [ ] DSGVO Auskunft für Benutzer
 
 ---
 

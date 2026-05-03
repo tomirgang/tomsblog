@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Auto-Approval neuer Benutzer
+level: 32.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Die Plattform soll optional eine automatische Freigabe (Auto-Approval)
+  neuer Benutzer unterstützen. Auto-Approval kann aktiviert werden für:
+  - Benutzer, die sich über OIDC anmelden (Login-Quelle ist vertrauenswürdig).
+  - Benutzer, deren E-Mail-Adresse zu einer konfigurierbaren Liste
+    erlaubter E-Mail-Domains gehört.
+  Die Konfiguration erfolgt pro Tenant.

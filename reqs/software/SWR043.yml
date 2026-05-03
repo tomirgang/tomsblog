@@ -1,0 +1,37 @@
+active: true
+derived: false
+header: |
+  User-Management-Service fuer Profile, Rollen und Tenant-Zuordnung
+level: 43.0
+links:
+- STK005: mDS-DAHBR4nu0Joa0VgI6H2rQWz8hx3yLAYv8ahqIcg=
+- STK028: null
+- STK029: null
+- STK031: null
+- STK032: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Ein leichtgewichtiger User-Management-Service verwaltet plattformspezifische
+  Benutzerdaten (ADR-0027):
+  - Synchronisiert Benutzerprofile aus OIDC-Claims (Subject, E-Mail, Name)
+    beim ersten Login und bei jedem weiteren Login (Upsert-Semantik).
+  - Uebernimmt optional Gruppen-Attribute aus der OIDC-Quelle und mappt
+    sie auf plattforminterne Rollen.
+  - Verwaltet Rollen (SUPERADMIN, ADMIN, AUTHOR, REVIEWER, READER) pro
+    Benutzer (SWR-007).
+  - SUPERADMIN ist ein plattformweiter Account, dessen Credentials ueber
+    die Infrastruktur (Umgebungsvariable/Secret) gesetzt werden. Er wird
+    beim Service-Start automatisch angelegt oder aktualisiert.
+  - Neue regulaere Benutzer erhalten initial die Rolle READER und den
+    Status PENDING. Ein Tenant-Admin (ADMIN) muss den Benutzer freigeben
+    (approve), bevor hoehere Rollen zugewiesen werden koennen (STK028).
+  - Nicht angemeldete Benutzer werden wie READER behandelt (STK029).
+  - Verwaltet Tenant-Zuordnungen (welcher Benutzer zu welchem Tenant gehoert).
+  - Stellt eine REST-API bereit fuer Profil-Synchronisation (POST /api/users/sync),
+    Profilabfrage (GET /api/users/{oidcSubject}), Rollenverwaltung und
+    Benutzer-Freigabe (POST /api/users/{oidcSubject}/approve).
+  - Verwendet eine eigene PostgreSQL-Datenbank (Database per Service, ADR-0019).
+  - Die REST-API ist nur fuer interne Service-Kommunikation vorgesehen
+    (geschuetzt durch Linkerd mTLS, SWA-023).

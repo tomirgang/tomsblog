@@ -23,6 +23,7 @@
         <module>libs/shared-kernel</module>
         <module>libs/event-contracts</module>
         <module>services/blog-content</module>
+        <module>services/user-management</module>
     </modules>
 
     <properties>

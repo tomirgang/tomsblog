@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import de.tomsblog.blogcontent.adapter.inbound.web.SecurityConfiguration;
+import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
 import de.tomsblog.blogcontent.application.port.inbound.TagUseCase;
 import de.tomsblog.blogcontent.application.service.TagNotFoundException;
 import de.tomsblog.blogcontent.domain.model.Tag;
@@ -34,6 +35,9 @@ class TagControllerTest {
 
     @MockitoBean
     private TagUseCase tagUseCase;
+
+    @MockitoBean
+    private UserManagementClient userManagementClient;
 
     private final UUID tenantId = UUID.randomUUID();
 
