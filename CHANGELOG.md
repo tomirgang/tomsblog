@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-05-03
+
 ### Added
 
 - Standard-Impressum und Datenschutzerklärung als statische Seiten unter /impressum und /privacy (SWR-054)
