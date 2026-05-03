@@ -1,5 +1,6 @@
 name: tomsblog-design
 version: true
+prerelease: -dev
 title: "Toms Blog: Software Detail Design"
 start_page: ROOT:index.adoc
 nav:
