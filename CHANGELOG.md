@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.5.3] - 2026-05-03
+
 ### Changed
 
 - cert-manager Duplikat entfernt: k3s-HelmChart deaktiviert (`enable_cert_manager = false`), nur Flux-verwaltete Installation bleibt
