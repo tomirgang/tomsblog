@@ -1,4 +1,4 @@
-apiVersion: image.toolkit.fluxcd.io/v1beta2
+apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageUpdateAutomation
 metadata:
   name: blog-content
@@ -16,7 +16,7 @@ spec:
       author:
         name: flux-automation
         email: flux@tomsblog.local
-      messageTemplate: 'chore(image): update blog-content to {{.NewTag}}'
+      messageTemplate: 'chore(image): update blog-content to {{range .Changed.Changes}}{{.NewValue}}{{end}}'
     push:
       branch: main
   update:

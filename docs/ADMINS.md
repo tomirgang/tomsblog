@@ -67,7 +67,8 @@ ghcr.io/tomirgang/tomsblog/blog-content:<tag>
 ghcr.io/tomirgang/tomsblog/user-management:<tag>
 ```
 
-Als Tag wird der Commit-SHA im Format `sha-<hash>` verwendet.
+Als Tag wird Semantic Versioning im Format `<major>.<minor>.<patch>` verwendet (z.B. `0.8.2`).
+Flux Image Automation aktualisiert das Deployment-Manifest automatisch bei neuen Releases.
 
 ### Secrets
 
@@ -245,7 +246,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: blog-content
-          image: ghcr.io/tomirgang/tomsblog/blog-content:sha-abc1234
+          image: ghcr.io/tomirgang/tomsblog/blog-content:0.8.2
           ports:
             - containerPort: 8080
           securityContext:

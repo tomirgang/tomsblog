@@ -3,7 +3,7 @@
 
 == Versionierte Image-Tags (INF-008)
 
-Das Deployment verwendet versionierte Commit-SHA-Tags statt `latest`. Flux Image Automation überwacht die Container Registry und aktualisiert das Deployment-Manifest im Git-Repository automatisch.
+Das Deployment verwendet Semantic Versioning (SemVer) Tags. Flux Image Automation überwacht die Container Registry und aktualisiert das Deployment-Manifest im Git-Repository automatisch, sobald eine neue Version veröffentlicht wird.
 
 === Tag-Schema
 
@@ -11,9 +11,10 @@ Das Deployment verwendet versionierte Commit-SHA-Tags statt `latest`. Flux Image
 |===
 | Variante | Format | Beispiel
 
-| Commit-SHA | `sha-<7-stelliger-hash>` | `sha-abc1234`
-| Semver (bei Tags) | `<version>` | `0.5.2`
+| SemVer (Release) | `<major>.<minor>.<patch>` | `0.8.2`
 |===
+
+NOTE: CI-Builds erzeugen zusätzlich `sha-<hash>` Tags für Traceability, aber die Image-Automation verwendet ausschließlich SemVer-Tags.
 
 === Ablauf
 
@@ -27,11 +28,11 @@ sequenceDiagram
     participant REPO as Git Repository
     participant K8S as Kubernetes
 
-    Dev->>GH: Push auf main
+    Dev->>GH: Release-Tag (v0.8.2) pushen
     GH->>GH: Build & Test
-    GH->>GHCR: docker push :sha-b015522
+    GH->>GHCR: docker push :0.8.2
     FLUX->>GHCR: Poll (alle 5 Min)
-    FLUX->>FLUX: ImagePolicy: neuer sha-Tag erkannt
+    FLUX->>FLUX: ImagePolicy: neuer SemVer-Tag erkannt
     FLUX->>REPO: git commit (deployment.yaml aktualisiert)
     FLUX->>K8S: Reconcile → Rolling Update
 ----
@@ -44,19 +45,19 @@ Das Deployment enthält einen Flux-Marker-Kommentar, der dem Image Automation Co
 ----
 containers:
   - name: blog-content
-    image: ghcr.io/tomirgang/tomsblog/blog-content:sha-b015522 # {"$imagepolicy": "flux-system:blog-content"}
+    image: ghcr.io/tomirgang/tomsblog/blog-content:0.8.2 # {"$imagepolicy": "flux-system:blog-content"}
 ----
 
-=== Flux-Ressourcen (kubernetes-playground)
+=== Flux-Ressourcen (tomsblog/infra/k8s/flux-system/)
 
-Die Image-Automation wird über drei Ressourcen konfiguriert:
+Die Image-Automation wird über drei Ressourcen im `tomsblog`-Repository konfiguriert:
 
 * **ImageRepository** (`blog-content-image.yaml`) -- überwacht `ghcr.io/tomirgang/tomsblog/blog-content`
-* **ImagePolicy** (`blog-content-image.yaml`) -- filtert Tags mit Muster `^sha-[a-f0-9]\{7}$`
+* **ImagePolicy** (`blog-content-image.yaml`) -- filtert Tags mit Muster `^\d+\.\d+\.\d+$` und wählt die höchste SemVer-Version (`>=0.1.0`)
 * **ImageUpdateAutomation** (`blog-content-image-automation.yaml`) -- schreibt neue Tags in `infra/k8s/` zurück
 
 === Voraussetzungen
 
 * Flux Image Reflector Controller und Image Automation Controller installiert (gotk-components)
 * Git-Credentials-Secret `tomsblog-git-credentials` im Namespace `flux-system` (GitHub PAT mit `contents:write`)
-* CI-Workflow taggt Images mit `type=sha` (docker/metadata-action)
+* CI-Workflow taggt Images mit SemVer-Tag bei Release (docker/metadata-action `type=semver`)

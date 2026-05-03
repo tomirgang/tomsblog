@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+
+- Flux Image-Automation auf SemVer-basierte Tags umgestellt (zuvor SHA-basiert)
+- Doppelte ImageUpdateAutomation aus kubernetes-playground entfernt (Race-Condition behoben)
+- Infra-Dokumentation (image-automation.adoc, ADMINS.md) an SemVer-Strategie angepasst
+
+### Fixed
+
+- ACME HTTP-01 Challenge-Pfad von HTTPS-Redirect ausgenommen (IngressRoute)
+- blog-content Pod CrashLoopBackOff: emptyDir-Volume für /tmp bei readOnlyRootFilesystem
+- Liveness-Probe initialDelaySeconds auf 60s erhöht (App-Startzeit ~40s)
+
 ## [0.8.2] - 2026-05-03
 
 ### Added

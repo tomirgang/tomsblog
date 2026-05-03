@@ -104,6 +104,8 @@
 - [ ] Infra: RabbitMQ Deployment (RabbitMQ Cluster Operator via Helm, siehe ADR-0026)
 - [ ] Infra: MongoDB Deployment (Community Operator via Helm, siehe ADR-0026)
 - [ ] Migration auf Helm Charts für Operator-managed Services (ADR-0026)
+- [ ] 2 Blog Deployments und Shared Session über Redis
+- [ ] Fix ADR Markdown rendering
 - [ ] Audit-Logging für alle relevanten Aktionen
 - [ ] Security-Reviews (OWASP)
 
