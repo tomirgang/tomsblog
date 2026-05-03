@@ -1,0 +1,23 @@
+active: true
+derived: false
+header: |
+  Serien-Navigation für thematisch zusammenhängende Posts
+level: 40.0
+links:
+- STK026: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Posts können optional in thematische Serien eingebunden werden:
+  - Ein Post kann einen vorherigen und einen nächsten Post innerhalb einer
+    Serie referenzieren (seriesPreviousPostId, seriesNextPostId).
+  - Beide Felder sind optional (nullable UUID-Referenzen).
+  - Serien-Links werden auf der Post-Detailseite angezeigt, sofern sie sich
+    von der chronologischen Navigation (SWR-039) unterscheiden.
+  - Die Serienfelder können beim Erstellen und Bearbeiten eines Posts gesetzt werden.
+  - Flyway-Migration fügt die Spalten series_previous_post_id und
+    series_next_post_id zur posts-Tabelle hinzu.
+  - Das Domain-Modell (Post) wird um die optionalen PostId-Felder erweitert.
+  - CreatePostCommand und UpdatePostCommand werden um die Serienfelder erweitert.
+  - Die REST-API und die PostResponse enthalten die Serienfelder.

@@ -32,8 +32,11 @@ classDiagram
         -List~Source~ sources
         -List~Attachment~ attachments
         -List~DomainEvent~ domainEvents
+        -PostId seriesPreviousPostId
+        -PostId seriesNextPostId
         +publish() void
         +updateContent(title, content) void
+        +updateSeriesNavigation(prev, next) void
         +addSource(source) void
         +addAttachment(attachment) void
         +registerEvent(event) void
@@ -104,6 +107,8 @@ Es erfüllt die Anforderungen SWR-001 (CRUD-Operationen) und SWR-002 (Veröffent
 
 Jeder Post ist einem Tenant zugeordnet (SWR-003) und registriert bei Zustandsänderungen Domain Events (SWR-009), die für die serviceübergreifende Kommunikation genutzt werden.
 
+Für die Serien-Navigation (SWR-040) enthält jeder Post zwei optionale Referenzen (`seriesPreviousPostId`, `seriesNextPostId`) auf andere Posts derselben Serie. Diese werden über `updateSeriesNavigation()` gesetzt und ermöglichen eine thematische Verkettung unabhängig von der chronologischen Reihenfolge.
+
 === Translation Aggregate
 
 Das `Translation`-Aggregate hat gemäß SWA-008 einen eigenen Lifecycle, der unabhängig vom Post verwaltet wird.
@@ -134,6 +139,10 @@ classDiagram
         +listPublishedPosts(tenantId) List~Post~
         +getPublishedPostBySlug(slug, tenantId) Post
         +deletePost(postId, tenantId) void
+        +searchPublishedPosts(query, tenantId) List~Post~
+        +findPreviousPublishedPost(slug, tenantId) Optional~Post~
+        +findNextPublishedPost(slug, tenantId) Optional~Post~
+        +getPostIfPublished(postId, tenantId) Optional~Post~
     }
 
     class TagUseCase {
@@ -165,6 +174,9 @@ classDiagram
         +findPublishedByTenantId(tenantId) List~Post~
         +findBySlugAndTenantId(slug, tenantId) Optional~Post~
         +deleteByIdAndTenantId(postId, tenantId) void
+        +searchPublished(query, tenantId) List~Post~
+        +findPreviousPublished(tenantId, publishedAt) Optional~Post~
+        +findNextPublished(tenantId, publishedAt) Optional~Post~
     }
 
     class TagRepository {
@@ -218,6 +230,12 @@ classDiagram
 Das Interface `PostUseCase` definiert alle fachlichen Operationen, die der Service nach außen anbietet.
 Es bildet die Grundlage für die REST-API (SWR-001) und stellt sicher, dass die Fachlogik unabhängig vom Aufrufkontext bleibt.
 
+Für die Volltextsuche (SWR-038) bietet `PostUseCase` die Methode `searchPublishedPosts(query, tenantId)`, die bei vorhandenem Suchbegriff an das Repository delegiert und bei leerem Query alle veröffentlichten Posts zurückgibt.
+
+Für die chronologische Navigation (SWR-039) stehen `findPreviousPublishedPost(slug, tenantId)` und `findNextPublishedPost(slug, tenantId)` zur Verfügung. Diese ermitteln anhand des `publishedAt`-Zeitstempels den zeitlich vorherigen bzw. nächsten veröffentlichten Post.
+
+Für die Serien-Navigation (SWR-040) ermöglicht `getPostIfPublished(postId, tenantId)` das Laden eines veröffentlichten Posts über seine ID, um die Serien-Verknüpfungen aufzulösen.
+
 Das Interface `TagUseCase` kapselt die Tag-Verwaltung (SWR-020) mit Operationen für Erstellen, Umbenennen, Löschen und Lesen.
 Das Interface `TranslationUseCase` kapselt den Übersetzungs-Workflow (SWR-021) inklusive manueller und KI-gestützter Erstellung sowie Freigabe und Ablehnung.
 
@@ -225,6 +243,10 @@ Das Interface `TranslationUseCase` kapselt den Übersetzungs-Workflow (SWR-021) 
 
 Die Outbound Ports `PostRepository`, `TagRepository`, `TranslationRepository` und `EventPublisher` abstrahieren die technischen Abhängigkeiten.
 `PostRepository` stellt die Persistenz sicher, wobei alle Abfragen Tenant-scoped sind (SWR-003).
+
+Für die Volltextsuche (SWR-038) bietet `PostRepository` die Methode `searchPublished(query, tenantId)`, die PostgreSQL `plainto_tsquery` für die Suche nutzt.
+Für die chronologische Navigation (SWR-039) stehen `findPreviousPublished(tenantId, publishedAt)` und `findNextPublished(tenantId, publishedAt)` zur Verfügung, die den nächsten bzw. vorherigen Post nach Veröffentlichungszeitpunkt ermitteln.
+
 `TagRepository` bietet zusätzlich eine Duplikat-Prüfung über `existsByTenantIdAndName()` (SWR-020).
 `TranslationRepository` unterstützt Abfragen nach PostId und Locale (SWR-021).
 `EventPublisher` ermöglicht die asynchrone Kommunikation via Domain Events (SWR-009).
@@ -232,6 +254,12 @@ Die Outbound Ports `PostRepository`, `TagRepository`, `TranslationRepository` un
 === PostService
 
 Der `PostService` orchestriert Domain-Objekte und Ports. Er sorgt dafür, dass bei jeder Post-Erstellung ein `PostCreatedEvent` und bei jeder Veröffentlichung ein `PostPublishedEvent` publiziert wird.
+
+Bei der Volltextsuche (SWR-038) prüft der Service, ob der Suchbegriff leer oder null ist. Ist dies der Fall, werden alle veröffentlichten Posts zurückgegeben. Andernfalls wird die Suche an das Repository delegiert.
+
+Für die chronologische Navigation (SWR-039) ermittelt der Service zunächst den aktuellen Post über den Slug, extrahiert den `publishedAt`-Zeitstempel und fragt dann den zeitlich vorherigen bzw. nächsten Post ab.
+
+Bei Create und Update werden optionale Serien-Navigationsfelder (SWR-040) über `Post.updateSeriesNavigation()` gesetzt.
 
 === TagService
 
@@ -274,7 +302,10 @@ Der `PostController` bildet den REST Inbound Adapter und setzt die in SWR-001 de
 | PUT  | /api/posts/{id} | Post aktualisieren
 | DELETE | /api/posts/{id} | Post löschen
 | PUT  | /api/posts/{id}/publish | Post veröffentlichen (SWR-002)
+| GET  | /api/posts/search?q= | Volltextsuche über veröffentlichte Posts (SWR-038)
 |===
+
+Die Antwort von `GET /api/posts/{id}` enthält die optionalen Felder `seriesPreviousPostId` und `seriesNextPostId` (SWR-040), sofern der Post Teil einer Serie ist.
 
 ==== TagController
 
@@ -359,7 +390,7 @@ classDiagram
         -Pattern FIRST_PARAGRAPH_PATTERN
         -int LANDING_PAGE_LIMIT
         +index(tenantId, model, principal) String
-        +listPosts(tenantId, model, principal) String
+        +listPosts(tenantId, q, model, principal) String
         +showPost(slug, tenantId, model) String
         +newPostForm(model) String
         +createPost(form, result, tenantId, authorId, model) String
@@ -368,6 +399,8 @@ classDiagram
         -buildExcerpts(posts) Map~UUID String~
         -renderContent(post) String
         -extractFirstParagraph(html) String
+        -addSeriesNavigation(post, chronoPrev, chronoNext, tenantId, model) void
+        -parseUuid(value) UUID
     }
 
     class MarkdownRenderer {
@@ -387,6 +420,8 @@ classDiagram
         +String locale
         +String socialMediaTitle
         +String socialMediaSummary
+        +String seriesPreviousPostId
+        +String seriesNextPostId
     }
 
     class PostUseCase {
@@ -398,6 +433,10 @@ classDiagram
         +listPublishedPosts(tenantId) List~Post~
         +listRecentPublishedPosts(tenantId, limit) List~Post~
         +getPublishedPostBySlug(slug, tenantId) Post
+        +searchPublishedPosts(query, tenantId) List~Post~
+        +findPreviousPublishedPost(slug, tenantId) Optional~Post~
+        +findNextPublishedPost(slug, tenantId) Optional~Post~
+        +getPostIfPublished(postId, tenantId) Optional~Post~
     }
 
     BlogViewController --> PostUseCase : uses
@@ -408,6 +447,12 @@ classDiagram
 Der `BlogViewController` liegt im Package `adapter.inbound.web` und greift über die bestehenden Inbound Ports (`PostUseCase`) auf die Fachlogik zu.
 Er gibt Thymeleaf-View-Namen zurück, die vom Spring MVC ViewResolver aufgelöst werden.
 Für Markdown-Posts delegiert er das Rendering an den `MarkdownRenderer`-Port (SWA-024).
+
+Für die Volltextsuche (SWR-038) akzeptiert `listPosts()` einen optionalen Query-Parameter `q`. Ist dieser gesetzt, werden die Suchergebnisse angezeigt und der Suchbegriff im Formular vorbelegt.
+
+Für die chronologische Navigation (SWR-039) ermittelt `showPost()` den vorherigen und nächsten veröffentlichten Post und fügt sie dem Model hinzu. Die Navigation wird in der Detailansicht als Previous/Next-Links dargestellt.
+
+Für die Serien-Navigation (SWR-040) prüft die Methode `addSeriesNavigation()`, ob der aktuelle Post Serien-Verknüpfungen hat. Falls die Serien-Posts sich von den chronologischen Nachbarn unterscheiden, werden sie als zusätzliche Links angezeigt. Sind sie identisch, wird die doppelte Anzeige unterdrückt.
 
 Die `PostFormData`-Klasse dient als Form-Backing-Bean für die Thymeleaf-Formulare und kapselt die Eingabefelder mit Bean-Validation-Annotationen.
 Das Feld `contentType` erlaubt die Auswahl zwischen HTML und Markdown (SWR-035).
@@ -667,6 +712,8 @@ erDiagram
         varchar locale
         varchar social_media_title
         varchar social_media_summary
+        uuid series_previous_post_id FK
+        uuid series_next_post_id FK
         timestamp created_at
         timestamp updated_at
     }
@@ -722,6 +769,8 @@ Die Migrationen liegen unter `src/main/resources/db/migration/` und werden beim 
 | V2 | Tags-Schema mit Unique-Index auf (tenant_id, name) und (tenant_id, slug)
 | V3 | Translations-Schema mit FK auf posts, Unique auf (post_id, locale)
 | V4 | content_type-Spalte (VARCHAR(20), NOT NULL, Default 'HTML') zu posts (SWA-027)
+| V5 | GIN-Index für Volltextsuche über title und content mit tsvector (SWR-038)
+| V6 | Optionale Serien-Navigationsfelder series_previous_post_id und series_next_post_id (SWR-040)
 |===
 
 == Ablauf: Post erstellen und veröffentlichen
@@ -807,6 +856,9 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWA-025 | ControllerAdvice für globale Modellattribute | VersionModelAdvice
 | SWA-026 | Landing Page mit Paginierung am Repository | PostRepository.findRecentPublishedByTenantId(TenantId, int), PageRequest
 | SWA-027 | ContentType im Domain-Modell und Persistenz | ContentType Enum, V4 Migration, PostJpaEntity.contentType
+| SWR-038 | Volltextsuche für Blog Posts | BlogViewController.listPosts(q), PostUseCase.searchPublishedPosts(), PostRepository.searchPublished(), V5 GIN-Index, posts/list.html Suchformular
+| SWR-039 | Chronologische Previous/Next-Navigation | BlogViewController.showPost(), PostUseCase.findPreviousPublishedPost/findNextPublishedPost(), PostRepository.findPreviousPublished/findNextPublished(), posts/show.html
+| SWR-040 | Serien-Navigation | Post.seriesPreviousPostId/seriesNextPostId, BlogViewController.addSeriesNavigation(), PostUseCase.getPostIfPublished(), V6 Migration, posts/show.html, posts/form.html
 |===
 
 == Sicherheit: Admin-Login (SWR-028)

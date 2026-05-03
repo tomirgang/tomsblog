@@ -16,6 +16,7 @@ import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.blogcontent.domain.model.Source;
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Application service orchestrating post use cases.
@@ -24,6 +25,9 @@ import java.util.List;
  * @req SWR-002
  * @req SWR-009
  * @req SWR-026
+ * @req SWR-038
+ * @req SWR-039
+ * @req SWR-040
  */
 public class PostService implements PostUseCase {
 
@@ -43,6 +47,9 @@ public class PostService implements PostUseCase {
         Post post = Post.create(
                 command.tenantId(), command.authorId(), command.title(), command.content(), contentType, locale);
         post.updateSocialMedia(command.socialMediaTitle(), command.socialMediaSummary());
+        post.updateSeriesNavigation(
+                command.seriesPreviousPostId() != null ? PostId.of(command.seriesPreviousPostId()) : null,
+                command.seriesNextPostId() != null ? PostId.of(command.seriesNextPostId()) : null);
         Post saved = postRepository.save(post);
         eventPublisher.publish(post.getDomainEvents());
         post.clearDomainEvents();
@@ -54,6 +61,9 @@ public class PostService implements PostUseCase {
         Post post = findOrThrow(command.postId(), command.tenantId());
         post.updateContent(command.title(), command.content());
         post.updateSocialMedia(command.socialMediaTitle(), command.socialMediaSummary());
+        post.updateSeriesNavigation(
+                command.seriesPreviousPostId() != null ? PostId.of(command.seriesPreviousPostId()) : null,
+                command.seriesNextPostId() != null ? PostId.of(command.seriesNextPostId()) : null);
         return postRepository.save(post);
     }
 
@@ -127,6 +137,45 @@ public class PostService implements PostUseCase {
     public List<Source> listSources(PostId postId, TenantId tenantId) {
         Post post = findOrThrow(postId, tenantId);
         return post.getSources();
+    }
+
+    /** @req SWR-038 */
+    @Override
+    public List<Post> searchPublishedPosts(String query, TenantId tenantId) {
+        if (query == null || query.isBlank()) {
+            return postRepository.findPublishedByTenantId(tenantId);
+        }
+        return postRepository.searchPublished(query, tenantId);
+    }
+
+    /** @req SWR-039 */
+    @Override
+    public Optional<Post> findPreviousPublishedPost(Slug slug, TenantId tenantId) {
+        Post current =
+                postRepository.findBySlugAndTenantId(slug, tenantId).orElseThrow(() -> new PostNotFoundException(slug));
+        if (current.getPublishedAt() == null) {
+            return Optional.empty();
+        }
+        return postRepository.findPreviousPublished(tenantId, current.getPublishedAt());
+    }
+
+    /** @req SWR-039 */
+    @Override
+    public Optional<Post> findNextPublishedPost(Slug slug, TenantId tenantId) {
+        Post current =
+                postRepository.findBySlugAndTenantId(slug, tenantId).orElseThrow(() -> new PostNotFoundException(slug));
+        if (current.getPublishedAt() == null) {
+            return Optional.empty();
+        }
+        return postRepository.findNextPublished(tenantId, current.getPublishedAt());
+    }
+
+    /** @req SWR-040 */
+    @Override
+    public Optional<Post> getPostIfPublished(PostId postId, TenantId tenantId) {
+        return postRepository
+                .findByIdAndTenantId(postId, tenantId)
+                .filter(post -> post.getStatus() == PostStatus.PUBLISHED);
     }
 
     private Post findOrThrow(PostId postId, TenantId tenantId) {

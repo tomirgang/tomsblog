@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-/** @req SWR-001 */
+/** @req SWR-001 @req SWR-040 */
 public record PostResponse(
         UUID id,
         UUID tenantId,
@@ -28,7 +28,9 @@ public record PostResponse(
         String socialMediaTitle,
         String socialMediaSummary,
         String effectiveSocialMediaTitle,
-        String effectiveSocialMediaSummary) {
+        String effectiveSocialMediaSummary,
+        UUID seriesPreviousPostId,
+        UUID seriesNextPostId) {
 
     public static PostResponse from(Post post) {
         return new PostResponse(
@@ -48,7 +50,11 @@ public record PostResponse(
                 post.getSocialMediaTitle(),
                 post.getSocialMediaSummary(),
                 post.getEffectiveSocialMediaTitle(),
-                post.getEffectiveSocialMediaSummary());
+                post.getEffectiveSocialMediaSummary(),
+                post.getSeriesPreviousPostId() != null
+                        ? post.getSeriesPreviousPostId().value()
+                        : null,
+                post.getSeriesNextPostId() != null ? post.getSeriesNextPostId().value() : null);
     }
 
     public record SourceResponse(String url, String title) {

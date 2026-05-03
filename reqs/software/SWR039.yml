@@ -1,0 +1,21 @@
+active: true
+derived: false
+header: |
+  Chronologische Previous/Next-Navigation auf Post-Detailseiten
+level: 39.0
+links:
+- STK025: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Auf der Detailseite eines veröffentlichten Blog-Posts werden Links zum
+  chronologisch vorherigen und nächsten Post angezeigt:
+  - Navigation basiert auf dem Veröffentlichungsdatum (published_at).
+  - Nur veröffentlichte Posts (Status PUBLISHED) werden berücksichtigt.
+  - Die Navigation ist tenant-isoliert.
+  - Der vorherige Post ist der nächstältere veröffentlichte Post.
+  - Der nächste Post ist der nächstjüngere veröffentlichte Post.
+  - Links werden nur angezeigt, wenn ein vorheriger bzw. nächster Post existiert.
+  - Das PostRepository wird um findPreviousPublished und findNextPublished erweitert.
+  - Der BlogViewController übergibt die Navigationsdaten an das Template.

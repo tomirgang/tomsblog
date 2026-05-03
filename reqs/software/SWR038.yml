@@ -1,0 +1,23 @@
+active: true
+derived: false
+header: |
+  Volltextsuche für veröffentlichte Blog Posts
+level: 38.0
+links:
+- STK022: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Der Blog Content Service muss eine Volltextsuche über veröffentlichte
+  Blog-Posts eines Tenants bereitstellen:
+  - Die Suche durchsucht Titel und Inhalt der Posts.
+  - Nur veröffentlichte Posts (Status PUBLISHED) sind durchsuchbar.
+  - Die Suche ist tenant-isoliert (nur Posts des eigenen Tenants).
+  - PostgreSQL-native Volltextsuche mit tsvector/tsquery und GIN-Index.
+  - Suchergebnisse werden nach Relevanz (ts_rank) sortiert.
+  - REST-API: GET /api/posts/search?q={query} liefert eine Liste von PostResponse.
+  - Web-UI: Suchformular auf der Post-Liste, Ergebnisse im selben Template.
+  - Leerer oder fehlender Suchbegriff liefert alle veröffentlichten Posts.
+  - Das PostRepository wird um eine searchPublished-Methode erweitert.
+  - Der PostUseCase wird um searchPublishedPosts erweitert.

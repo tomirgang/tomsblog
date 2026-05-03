@@ -15,6 +15,7 @@ import java.security.Principal;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Web adapter serving Thymeleaf views for the public blog UI.
@@ -37,6 +39,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * @req SWR-035
  * @req SWR-036
  * @req SWR-037
+ * @req SWR-038
+ * @req SWR-039
+ * @req SWR-040
  */
 @Controller
 public class BlogViewController {
@@ -72,12 +77,19 @@ public class BlogViewController {
         return "posts/list";
     }
 
-    /** @req SWR-026 @req SWR-028 */
+    /** @req SWR-026 @req SWR-028 @req SWR-038 */
     @GetMapping("/posts")
-    public String listPosts(@RequestHeader("X-Tenant-Id") UUID tenantId, Model model, Principal principal) {
+    public String listPosts(
+            @RequestHeader("X-Tenant-Id") UUID tenantId,
+            @RequestParam(name = "q", required = false) String query,
+            Model model,
+            Principal principal) {
         TenantId tenant = new TenantId(tenantId);
         List<Post> posts;
-        if (principal != null) {
+        if (query != null && !query.isBlank()) {
+            posts = postUseCase.searchPublishedPosts(query, tenant);
+            model.addAttribute("searchQuery", query);
+        } else if (principal != null) {
             posts = postUseCase.listPosts(tenant);
         } else {
             posts = postUseCase.listPublishedPosts(tenant);
@@ -89,12 +101,22 @@ public class BlogViewController {
         return "posts/list";
     }
 
-    /** @req SWR-026 @req SWR-035 */
+    /** @req SWR-026 @req SWR-035 @req SWR-039 @req SWR-040 */
     @GetMapping("/posts/{slug}")
     public String showPost(@PathVariable String slug, @RequestHeader("X-Tenant-Id") UUID tenantId, Model model) {
-        Post post = postUseCase.getPublishedPostBySlug(new Slug(slug), new TenantId(tenantId));
+        Slug postSlug = new Slug(slug);
+        TenantId tenant = new TenantId(tenantId);
+        Post post = postUseCase.getPublishedPostBySlug(postSlug, tenant);
         model.addAttribute("post", post);
         model.addAttribute("renderedContent", renderContent(post));
+
+        Optional<Post> previousPost = postUseCase.findPreviousPublishedPost(postSlug, tenant);
+        Optional<Post> nextPost = postUseCase.findNextPublishedPost(postSlug, tenant);
+        previousPost.ifPresent(p -> model.addAttribute("previousPost", p));
+        nextPost.ifPresent(p -> model.addAttribute("nextPost", p));
+
+        addSeriesNavigation(post, previousPost.orElse(null), nextPost.orElse(null), tenant, model);
+
         return "posts/show";
     }
 
@@ -126,7 +148,9 @@ public class BlogViewController {
                 form.getContentType(),
                 form.getLocale(),
                 form.getSocialMediaTitle(),
-                form.getSocialMediaSummary());
+                form.getSocialMediaSummary(),
+                parseUuid(form.getSeriesPreviousPostId()),
+                parseUuid(form.getSeriesNextPostId()));
         postUseCase.createPost(command);
         return "redirect:/posts";
     }
@@ -141,7 +165,13 @@ public class BlogViewController {
                 post.getContentType().name(),
                 post.getLocale().languageTag(),
                 post.getSocialMediaTitle(),
-                post.getSocialMediaSummary());
+                post.getSocialMediaSummary(),
+                post.getSeriesPreviousPostId() != null
+                        ? post.getSeriesPreviousPostId().value().toString()
+                        : null,
+                post.getSeriesNextPostId() != null
+                        ? post.getSeriesNextPostId().value().toString()
+                        : null);
         model.addAttribute("postForm", form);
         model.addAttribute("editMode", true);
         model.addAttribute("postId", id);
@@ -167,7 +197,9 @@ public class BlogViewController {
                 form.getTitle(),
                 form.getContent(),
                 form.getSocialMediaTitle(),
-                form.getSocialMediaSummary());
+                form.getSocialMediaSummary(),
+                parseUuid(form.getSeriesPreviousPostId()),
+                parseUuid(form.getSeriesNextPostId()));
         postUseCase.updatePost(command);
         return "redirect:/posts";
     }
@@ -212,5 +244,36 @@ public class BlogViewController {
             return matcher.group(0);
         }
         return html;
+    }
+
+    /**
+     * Adds series navigation to the model if the post has series links that differ from chronological navigation.
+     *
+     * @req SWR-040
+     */
+    private void addSeriesNavigation(Post post, Post chronoPrev, Post chronoNext, TenantId tenantId, Model model) {
+        if (post.getSeriesPreviousPostId() != null) {
+            boolean sameAsChronoPrev = chronoPrev != null && chronoPrev.getId().equals(post.getSeriesPreviousPostId());
+            if (!sameAsChronoPrev) {
+                postUseCase
+                        .getPostIfPublished(post.getSeriesPreviousPostId(), tenantId)
+                        .ifPresent(p -> model.addAttribute("seriesPreviousPost", p));
+            }
+        }
+        if (post.getSeriesNextPostId() != null) {
+            boolean sameAsChronoNext = chronoNext != null && chronoNext.getId().equals(post.getSeriesNextPostId());
+            if (!sameAsChronoNext) {
+                postUseCase
+                        .getPostIfPublished(post.getSeriesNextPostId(), tenantId)
+                        .ifPresent(p -> model.addAttribute("seriesNextPost", p));
+            }
+        }
+    }
+
+    private static UUID parseUuid(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return UUID.fromString(value);
     }
 }

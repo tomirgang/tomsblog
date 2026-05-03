@@ -5,6 +5,7 @@ import de.tomsblog.blogcontent.domain.model.Post;
 import de.tomsblog.blogcontent.domain.model.PostId;
 import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.shared.tenant.TenantId;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @req SWR-003
  * @req SWR-006
  * @req SWR-026
+ * @req SWR-038
+ * @req SWR-039
  */
 @Repository
 @Transactional
@@ -86,5 +89,34 @@ public class JpaPostRepository implements PostRepository {
     @Override
     public void deleteByIdAndTenantId(PostId id, TenantId tenantId) {
         springDataRepo.deleteByIdAndTenantId(id.value(), tenantId.value());
+    }
+
+    /** @req SWR-038 */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Post> searchPublished(String query, TenantId tenantId) {
+        return springDataRepo.searchPublished(query, tenantId.value()).stream()
+                .map(PostMapper::toDomain)
+                .toList();
+    }
+
+    /** @req SWR-039 */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Post> findPreviousPublished(TenantId tenantId, Instant publishedAt) {
+        return springDataRepo
+                .findFirstByTenantIdAndStatusAndPublishedAtBeforeOrderByPublishedAtDesc(
+                        tenantId.value(), PostStatusJpa.PUBLISHED, publishedAt)
+                .map(PostMapper::toDomain);
+    }
+
+    /** @req SWR-039 */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Post> findNextPublished(TenantId tenantId, Instant publishedAt) {
+        return springDataRepo
+                .findFirstByTenantIdAndStatusAndPublishedAtAfterOrderByPublishedAtAsc(
+                        tenantId.value(), PostStatusJpa.PUBLISHED, publishedAt)
+                .map(PostMapper::toDomain);
     }
 }

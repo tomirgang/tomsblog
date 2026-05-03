@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Volltextsuche für Blog Posts über Titel und Inhalt mit PostgreSQL tsvector/tsquery (STK-022, SWR-038)
+- Chronologische Previous/Next-Navigation auf Post-Detailseiten (STK-025, SWR-039)
+- Serien-Navigation für thematisch zusammenhängende Posts mit optionalen Vorgänger/Nachfolger-Verknüpfungen (STK-026, SWR-040)
+- GIN-Index für Volltextsuche (V5-Migration)
+- Serien-Navigationsfelder in Posts-Tabelle (V6-Migration)
+- Suchformular in der Post-Liste und Suchergebnis-Anzeige
+- Chronologische und Serien-Navigationslinks auf Post-Detailseiten
+- REST-Endpunkt GET /api/posts/search für Volltextsuche
+
 ## [0.5.4] - 2026-05-03
 
 ### Added

@@ -15,6 +15,7 @@ import de.tomsblog.blogcontent.domain.model.*;
 import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -129,6 +130,10 @@ class BlogViewControllerTest {
         when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
                 .thenReturn(post);
         when(markdownRenderer.renderToHtml("# Hello")).thenReturn("<h1>Hello</h1>");
+        when(postUseCase.findPreviousPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+        when(postUseCase.findNextPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
 
         mockMvc.perform(get("/posts/md-post").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
@@ -204,6 +209,10 @@ class BlogViewControllerTest {
         post.publish();
         when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
                 .thenReturn(post);
+        when(postUseCase.findPreviousPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+        when(postUseCase.findNextPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
 
         mockMvc.perform(get("/posts/my-post").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
@@ -220,6 +229,45 @@ class BlogViewControllerTest {
 
         mockMvc.perform(get("/posts/nonexistent").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("SWR-039: GET /posts/{slug} includes previous and next post navigation")
+    void showPost_includesChronologicalNavigation() throws Exception {
+        Post current = Post.create(TenantId.of(tenantId), authorId, "Current Post", "Content", PostLocale.german());
+        current.publish();
+        Post previous = Post.create(TenantId.of(tenantId), authorId, "Previous Post", "Content", PostLocale.german());
+        previous.publish();
+        Post next = Post.create(TenantId.of(tenantId), authorId, "Next Post", "Content", PostLocale.german());
+        next.publish();
+
+        when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
+                .thenReturn(current);
+        when(postUseCase.findPreviousPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.of(previous));
+        when(postUseCase.findNextPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.of(next));
+
+        mockMvc.perform(get("/posts/current-post").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("previousPost"))
+                .andExpect(model().attributeExists("nextPost"));
+    }
+
+    @Test
+    @DisplayName("SWR-038: GET /posts?q=search returns search results")
+    void listPosts_withSearchQuery_returnsSearchResults() throws Exception {
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Found Post", "Content", PostLocale.german());
+        post.publish();
+        when(postUseCase.searchPublishedPosts(eq("found"), any(TenantId.class))).thenReturn(List.of(post));
+
+        mockMvc.perform(get("/posts").param("q", "found").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/list"))
+                .andExpect(model().attribute("searchQuery", "found"))
+                .andExpect(model().attribute("posts", org.hamcrest.Matchers.hasSize(1)));
+
+        verify(postUseCase).searchPublishedPosts(eq("found"), any(TenantId.class));
     }
 
     @Test
@@ -384,5 +432,299 @@ class BlogViewControllerTest {
                 .andExpect(redirectedUrl("/posts"));
 
         verify(postUseCase).publishPost(any(PostId.class), any(TenantId.class));
+    }
+
+    @Test
+    @DisplayName("SWR-040: GET /posts/{slug} shows series navigation when different from chronological")
+    void showPost_showsSeriesNavigation() throws Exception {
+        PostId seriesPrevId = PostId.generate();
+        PostId seriesNextId = PostId.generate();
+        Post current = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                authorId,
+                "Series Post",
+                Slug.fromTitle("Series Post"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                java.util.Set.of(),
+                List.of(),
+                List.of(),
+                java.time.Instant.now(),
+                null,
+                null,
+                seriesPrevId,
+                seriesNextId);
+
+        Post seriesPrev = Post.create(TenantId.of(tenantId), authorId, "Series Prev", "Content", PostLocale.german());
+        seriesPrev.publish();
+        Post seriesNext = Post.create(TenantId.of(tenantId), authorId, "Series Next", "Content", PostLocale.german());
+        seriesNext.publish();
+
+        when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
+                .thenReturn(current);
+        when(postUseCase.findPreviousPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+        when(postUseCase.findNextPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+        when(postUseCase.getPostIfPublished(eq(seriesPrevId), any(TenantId.class)))
+                .thenReturn(Optional.of(seriesPrev));
+        when(postUseCase.getPostIfPublished(eq(seriesNextId), any(TenantId.class)))
+                .thenReturn(Optional.of(seriesNext));
+
+        mockMvc.perform(get("/posts/series-post").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("seriesPreviousPost"))
+                .andExpect(model().attributeExists("seriesNextPost"));
+    }
+
+    @Test
+    @DisplayName("SWR-040: GET /posts/{slug} hides series navigation when same as chronological")
+    void showPost_hidesSeriesNavigationWhenSameAsChronological() throws Exception {
+        Post chronoPrev = Post.create(TenantId.of(tenantId), authorId, "Chrono Prev", "Content", PostLocale.german());
+        chronoPrev.publish();
+
+        Post current = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                authorId,
+                "Current",
+                Slug.fromTitle("Current"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                java.util.Set.of(),
+                List.of(),
+                List.of(),
+                java.time.Instant.now(),
+                null,
+                null,
+                chronoPrev.getId(),
+                null);
+
+        when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
+                .thenReturn(current);
+        when(postUseCase.findPreviousPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.of(chronoPrev));
+        when(postUseCase.findNextPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/posts/current").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeDoesNotExist("seriesPreviousPost"));
+
+        verify(postUseCase, never()).getPostIfPublished(any(), any());
+    }
+
+    @Test
+    @DisplayName("SWR-038: GET /posts?q= with empty search returns all published (anonymous)")
+    void listPosts_emptySearch_returnsAllPublished() throws Exception {
+        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of());
+
+        mockMvc.perform(get("/posts").param("q", "").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeDoesNotExist("searchQuery"));
+
+        verify(postUseCase).listPublishedPosts(any(TenantId.class));
+    }
+
+    @Test
+    @DisplayName("SWR-040: POST /posts with series fields passes them to command")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void createPost_withSeriesFields() throws Exception {
+        UUID prevId = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), authorId, "New Post", "Content", PostLocale.german());
+        when(postUseCase.createPost(any(CreatePostCommand.class))).thenReturn(post);
+
+        mockMvc.perform(post("/posts")
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", authorId.value().toString())
+                        .param("title", "New Post")
+                        .param("content", "Some content")
+                        .param("contentType", "HTML")
+                        .param("locale", "de")
+                        .param("seriesPreviousPostId", prevId.toString()))
+                .andExpect(status().is3xxRedirection());
+
+        verify(postUseCase).createPost(any(CreatePostCommand.class));
+    }
+
+    @Test
+    @DisplayName("SWR-040: POST /posts/{id} with series fields passes them to command")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void updatePost_withSeriesFields() throws Exception {
+        UUID postId = UUID.randomUUID();
+        UUID nextId = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Updated", "Content", PostLocale.german());
+        when(postUseCase.updatePost(any(UpdatePostCommand.class))).thenReturn(post);
+
+        mockMvc.perform(post("/posts/{id}", postId)
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .param("title", "Updated")
+                        .param("content", "Content")
+                        .param("contentType", "HTML")
+                        .param("locale", "de")
+                        .param("seriesNextPostId", nextId.toString()))
+                .andExpect(status().is3xxRedirection());
+
+        verify(postUseCase).updatePost(any(UpdatePostCommand.class));
+    }
+
+    @Test
+    @DisplayName("SWR-040: GET /posts/{id}/edit pre-fills series fields")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void editPostForm_prefillsSeriesFields() throws Exception {
+        UUID postId = UUID.randomUUID();
+        UUID prevId = UUID.randomUUID();
+        UUID nextId = UUID.randomUUID();
+        Post post = Post.reconstitute(
+                PostId.of(postId),
+                TenantId.of(tenantId),
+                authorId,
+                "Series Post",
+                Slug.fromTitle("Series Post"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.DRAFT,
+                PostLocale.german(),
+                java.util.Set.of(),
+                List.of(),
+                List.of(),
+                null,
+                null,
+                null,
+                PostId.of(prevId),
+                PostId.of(nextId));
+        when(postUseCase.getPost(any(PostId.class), any(TenantId.class))).thenReturn(post);
+
+        mockMvc.perform(get("/posts/{id}/edit", postId).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/form"))
+                .andExpect(model().attributeExists("postForm"));
+    }
+
+    @Test
+    @DisplayName("SWR-040: Series next same as chrono next is suppressed")
+    void showPost_seriesNextSameAsChronoNext_isSuppressed() throws Exception {
+        Post chronoNext = Post.create(TenantId.of(tenantId), authorId, "Chrono Next", "Content", PostLocale.german());
+        chronoNext.publish();
+
+        Post current = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                authorId,
+                "Current",
+                Slug.fromTitle("Current"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                java.util.Set.of(),
+                List.of(),
+                List.of(),
+                java.time.Instant.now(),
+                null,
+                null,
+                null,
+                chronoNext.getId());
+
+        when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
+                .thenReturn(current);
+        when(postUseCase.findPreviousPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+        when(postUseCase.findNextPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.of(chronoNext));
+
+        mockMvc.perform(get("/posts/current").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeDoesNotExist("seriesNextPost"));
+
+        verify(postUseCase, never()).getPostIfPublished(any(), any());
+    }
+
+    @Test
+    @DisplayName("SWR-040: Series nav with getPostIfPublished returning empty")
+    void showPost_seriesNavPostNotPublished_noSeriesInModel() throws Exception {
+        PostId seriesPrevId = PostId.generate();
+
+        Post current = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                authorId,
+                "Current",
+                Slug.fromTitle("Current"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                java.util.Set.of(),
+                List.of(),
+                List.of(),
+                java.time.Instant.now(),
+                null,
+                null,
+                seriesPrevId,
+                null);
+
+        when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
+                .thenReturn(current);
+        when(postUseCase.findPreviousPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+        when(postUseCase.findNextPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+        when(postUseCase.getPostIfPublished(eq(seriesPrevId), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/posts/current").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeDoesNotExist("seriesPreviousPost"));
+    }
+
+    @Test
+    @DisplayName("SWR-040: Series next different from chrono next is shown")
+    void showPost_seriesNextDifferentFromChronoNext_isShown() throws Exception {
+        Post chronoNext = Post.create(TenantId.of(tenantId), authorId, "Chrono Next", "Content", PostLocale.german());
+        chronoNext.publish();
+
+        PostId seriesNextId = PostId.generate();
+        Post seriesNext = Post.create(TenantId.of(tenantId), authorId, "Series Next", "Content", PostLocale.german());
+        seriesNext.publish();
+
+        Post current = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                authorId,
+                "Current",
+                Slug.fromTitle("Current"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                java.util.Set.of(),
+                List.of(),
+                List.of(),
+                java.time.Instant.now(),
+                null,
+                null,
+                null,
+                seriesNextId);
+
+        when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
+                .thenReturn(current);
+        when(postUseCase.findPreviousPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+        when(postUseCase.findNextPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.of(chronoNext));
+        when(postUseCase.getPostIfPublished(eq(seriesNextId), any(TenantId.class)))
+                .thenReturn(Optional.of(seriesNext));
+
+        mockMvc.perform(get("/posts/current").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("seriesNextPost"));
     }
 }

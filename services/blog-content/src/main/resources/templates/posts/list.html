@@ -10,6 +10,19 @@
     <section layout:fragment="content">
         <h1>Blog Posts</h1>
 
+        <form th:action="@{/posts}" method="get" role="search">
+            <fieldset role="group">
+                <input type="search" name="q" th:value="${searchQuery}" placeholder="Posts durchsuchen..." aria-label="Suche">
+                <button type="submit">Suchen</button>
+            </fieldset>
+        </form>
+
+        <p th:if="${searchQuery != null}" class="search-info">
+            <span th:text="${#lists.size(posts)}">0</span> Ergebnis(se) für
+            &laquo;<span th:text="${searchQuery}">query</span>&raquo;
+            &mdash; <a th:href="@{/posts}">Suche zurücksetzen</a>
+        </p>
+
         <p sec:authorize="isAuthenticated()"><a th:href="@{/posts/new}" role="button">Neuen Post erstellen</a></p>
 
         <p th:if="${#lists.isEmpty(posts)}">Noch keine Beiträge vorhanden.</p>

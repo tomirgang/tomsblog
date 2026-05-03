@@ -53,6 +53,18 @@
                           placeholder="Zusammenfassung für Social Media"></textarea>
             </details>
 
+            <details>
+                <summary>Serien-Navigation (optional)</summary>
+
+                <label for="seriesPreviousPostId">Vorheriger Post in der Serie (UUID)</label>
+                <input type="text" id="seriesPreviousPostId" th:field="*{seriesPreviousPostId}"
+                       placeholder="UUID des vorherigen Posts" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}">
+
+                <label for="seriesNextPostId">Nächster Post in der Serie (UUID)</label>
+                <input type="text" id="seriesNextPostId" th:field="*{seriesNextPostId}"
+                       placeholder="UUID des nächsten Posts" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}">
+            </details>
+
             <div role="group">
                 <button type="submit" th:text="${editMode} ? 'Speichern' : 'Erstellen'">Absenden</button>
                 <a th:href="@{/posts}" role="button" class="secondary">Abbrechen</a>

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
  * @req SWR-001
  * @req SWR-002
  * @req SWR-015
+ * @req SWR-038
  */
 @RestController
 @RequestMapping("/api/posts")
@@ -52,7 +53,9 @@ public class PostController {
                 request.contentType(),
                 request.locale(),
                 request.socialMediaTitle(),
-                request.socialMediaSummary());
+                request.socialMediaSummary(),
+                request.seriesPreviousPostId(),
+                request.seriesNextPostId());
         Post post = postUseCase.createPost(command);
         PostResponse response = PostResponse.from(post);
         URI location = URI.create("/api/posts/" + post.getId().asString());
@@ -79,6 +82,18 @@ public class PostController {
         return ResponseEntity.ok(responses);
     }
 
+    /** @req SWR-038 */
+    @GetMapping("/search")
+    @Operation(summary = "Search published posts", description = "Full-text search over published posts of a tenant.")
+    @ApiResponse(responseCode = "200", description = "Search results")
+    public ResponseEntity<List<PostResponse>> searchPosts(
+            @Parameter(hidden = true) @RequestHeader("X-Tenant-Id") UUID tenantId,
+            @RequestParam(name = "q", required = false, defaultValue = "") String query) {
+        List<Post> posts = postUseCase.searchPublishedPosts(query, TenantId.of(tenantId));
+        List<PostResponse> responses = posts.stream().map(PostResponse::from).toList();
+        return ResponseEntity.ok(responses);
+    }
+
     @PutMapping("/{id}")
     @Operation(summary = "Update a blog post", description = "Updates title, content, and social media fields.")
     @ApiResponse(responseCode = "200", description = "Post updated")
@@ -93,7 +108,9 @@ public class PostController {
                 request.title(),
                 request.content(),
                 request.socialMediaTitle(),
-                request.socialMediaSummary());
+                request.socialMediaSummary(),
+                request.seriesPreviousPostId(),
+                request.seriesNextPostId());
         Post post = postUseCase.updatePost(command);
         return ResponseEntity.ok(PostResponse.from(post));
     }

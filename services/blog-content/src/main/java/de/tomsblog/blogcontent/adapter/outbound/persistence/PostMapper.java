@@ -33,6 +33,12 @@ public final class PostMapper {
         entity.setPublishedAt(post.getPublishedAt());
         entity.setSocialMediaTitle(post.getSocialMediaTitle());
         entity.setSocialMediaSummary(post.getSocialMediaSummary());
+        entity.setSeriesPreviousPostId(
+                post.getSeriesPreviousPostId() != null
+                        ? post.getSeriesPreviousPostId().value()
+                        : null);
+        entity.setSeriesNextPostId(
+                post.getSeriesNextPostId() != null ? post.getSeriesNextPostId().value() : null);
         return entity;
     }
 
@@ -65,6 +71,8 @@ public final class PostMapper {
                 attachments,
                 entity.getPublishedAt(),
                 entity.getSocialMediaTitle(),
-                entity.getSocialMediaSummary());
+                entity.getSocialMediaSummary(),
+                entity.getSeriesPreviousPostId() != null ? PostId.of(entity.getSeriesPreviousPostId()) : null,
+                entity.getSeriesNextPostId() != null ? PostId.of(entity.getSeriesNextPostId()) : null);
     }
 }

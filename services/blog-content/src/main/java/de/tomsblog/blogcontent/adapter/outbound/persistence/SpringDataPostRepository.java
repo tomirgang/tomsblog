@@ -1,10 +1,13 @@
 package de.tomsblog.blogcontent.adapter.outbound.persistence;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface SpringDataPostRepository extends JpaRepository<PostJpaEntity, UUID> {
 
@@ -20,4 +23,22 @@ public interface SpringDataPostRepository extends JpaRepository<PostJpaEntity, U
     Optional<PostJpaEntity> findBySlugAndTenantId(String slug, UUID tenantId);
 
     void deleteByIdAndTenantId(UUID id, UUID tenantId);
+
+    /** @req SWR-038 */
+    @Query(
+            value = "SELECT * FROM posts WHERE tenant_id = :tenantId AND status = 'PUBLISHED'"
+                    + " AND to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(content, ''))"
+                    + " @@ plainto_tsquery('simple', :query)"
+                    + " ORDER BY ts_rank(to_tsvector('simple', coalesce(title, '') || ' '"
+                    + " || coalesce(content, '')), plainto_tsquery('simple', :query)) DESC",
+            nativeQuery = true)
+    List<PostJpaEntity> searchPublished(@Param("query") String query, @Param("tenantId") UUID tenantId);
+
+    /** @req SWR-039 */
+    Optional<PostJpaEntity> findFirstByTenantIdAndStatusAndPublishedAtBeforeOrderByPublishedAtDesc(
+            UUID tenantId, PostStatusJpa status, Instant publishedAt);
+
+    /** @req SWR-039 */
+    Optional<PostJpaEntity> findFirstByTenantIdAndStatusAndPublishedAtAfterOrderByPublishedAtAsc(
+            UUID tenantId, PostStatusJpa status, Instant publishedAt);
 }

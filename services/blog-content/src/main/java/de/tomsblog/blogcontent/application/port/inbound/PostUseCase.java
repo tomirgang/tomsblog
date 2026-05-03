@@ -6,6 +6,7 @@ import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.blogcontent.domain.model.Source;
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Inbound port for post management use cases.
@@ -14,6 +15,8 @@ import java.util.List;
  * @req SWR-002
  * @req SWR-012
  * @req SWR-026
+ * @req SWR-038
+ * @req SWR-039
  */
 public interface PostUseCase {
 
@@ -58,4 +61,16 @@ public interface PostUseCase {
      * @req SWR-012
      */
     List<Source> listSources(PostId postId, TenantId tenantId);
+
+    /** @req SWR-038 */
+    List<Post> searchPublishedPosts(String query, TenantId tenantId);
+
+    /** @req SWR-039 */
+    Optional<Post> findPreviousPublishedPost(Slug slug, TenantId tenantId);
+
+    /** @req SWR-039 */
+    Optional<Post> findNextPublishedPost(Slug slug, TenantId tenantId);
+
+    /** @req SWR-040 */
+    Optional<Post> getPostIfPublished(PostId postId, TenantId tenantId);
 }

@@ -4,6 +4,7 @@ import de.tomsblog.blogcontent.domain.model.Post;
 import de.tomsblog.blogcontent.domain.model.PostId;
 import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.shared.tenant.TenantId;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,8 @@ import java.util.Optional;
  * @req SWR-003
  * @req SWR-026
  * @req SWR-033
+ * @req SWR-038
+ * @req SWR-039
  */
 public interface PostRepository {
 
@@ -33,4 +36,13 @@ public interface PostRepository {
     Optional<Post> findBySlugAndTenantId(Slug slug, TenantId tenantId);
 
     void deleteByIdAndTenantId(PostId id, TenantId tenantId);
+
+    /** @req SWR-038 */
+    List<Post> searchPublished(String query, TenantId tenantId);
+
+    /** @req SWR-039 */
+    Optional<Post> findPreviousPublished(TenantId tenantId, Instant publishedAt);
+
+    /** @req SWR-039 */
+    Optional<Post> findNextPublished(TenantId tenantId, Instant publishedAt);
 }

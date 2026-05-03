@@ -64,6 +64,12 @@ public class PostJpaEntity implements Auditable {
     @Column(name = "social_media_summary", columnDefinition = "TEXT")
     private String socialMediaSummary;
 
+    @Column(name = "series_previous_post_id")
+    private UUID seriesPreviousPostId;
+
+    @Column(name = "series_next_post_id")
+    private UUID seriesNextPostId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -209,6 +215,22 @@ public class PostJpaEntity implements Auditable {
 
     public void setSocialMediaSummary(String socialMediaSummary) {
         this.socialMediaSummary = socialMediaSummary;
+    }
+
+    public UUID getSeriesPreviousPostId() {
+        return seriesPreviousPostId;
+    }
+
+    public void setSeriesPreviousPostId(UUID seriesPreviousPostId) {
+        this.seriesPreviousPostId = seriesPreviousPostId;
+    }
+
+    public UUID getSeriesNextPostId() {
+        return seriesNextPostId;
+    }
+
+    public void setSeriesNextPostId(UUID seriesNextPostId) {
+        this.seriesNextPostId = seriesNextPostId;
     }
 
     @Override

@@ -34,6 +34,35 @@
             </footer>
         </article>
 
+        <nav th:if="${previousPost != null or nextPost != null}" aria-label="Chronologische Navigation">
+            <ul>
+                <li th:if="${previousPost != null}">
+                    <a th:href="@{/posts/{slug}(slug=${previousPost.slug.value})}"
+                       th:text="'&larr; ' + ${previousPost.title}">&larr; Vorheriger Post</a>
+                </li>
+                <li th:if="${nextPost != null}">
+                    <a th:href="@{/posts/{slug}(slug=${nextPost.slug.value})}"
+                       th:text="${nextPost.title} + ' &rarr;'">Nächster Post &rarr;</a>
+                </li>
+            </ul>
+        </nav>
+
+        <nav th:if="${seriesPreviousPost != null or seriesNextPost != null}" aria-label="Serien-Navigation">
+            <hgroup>
+                <h4>Serie</h4>
+            </hgroup>
+            <ul>
+                <li th:if="${seriesPreviousPost != null}">
+                    <a th:href="@{/posts/{slug}(slug=${seriesPreviousPost.slug.value})}"
+                       th:text="'&larr; Serie: ' + ${seriesPreviousPost.title}">&larr; Serie: Vorheriger Beitrag</a>
+                </li>
+                <li th:if="${seriesNextPost != null}">
+                    <a th:href="@{/posts/{slug}(slug=${seriesNextPost.slug.value})}"
+                       th:text="'Serie: ' + ${seriesNextPost.title} + ' &rarr;'">Serie: Nächster Beitrag &rarr;</a>
+                </li>
+            </ul>
+        </nav>
+
         <nav>
             <a th:href="@{/posts}">&larr; Zurück zur Übersicht</a>
         </nav>

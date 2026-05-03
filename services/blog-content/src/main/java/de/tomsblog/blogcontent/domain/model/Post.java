@@ -20,6 +20,7 @@ import java.util.Set;
  * @req SWR-001
  * @req SWR-003
  * @req SWR-012
+ * @req SWR-040
  */
 public class Post extends AggregateRoot {
 
@@ -38,6 +39,8 @@ public class Post extends AggregateRoot {
     private Instant publishedAt;
     private String socialMediaTitle;
     private String socialMediaSummary;
+    private PostId seriesPreviousPostId;
+    private PostId seriesNextPostId;
 
     private Post(
             PostId id,
@@ -230,6 +233,22 @@ public class Post extends AggregateRoot {
      * Returns the effective social media summary: the explicit value if set,
      * otherwise the first paragraph of the post content.
      */
+    /** @req SWR-040 */
+    public PostId getSeriesPreviousPostId() {
+        return seriesPreviousPostId;
+    }
+
+    /** @req SWR-040 */
+    public PostId getSeriesNextPostId() {
+        return seriesNextPostId;
+    }
+
+    /** @req SWR-040 */
+    public void updateSeriesNavigation(PostId seriesPreviousPostId, PostId seriesNextPostId) {
+        this.seriesPreviousPostId = seriesPreviousPostId;
+        this.seriesNextPostId = seriesNextPostId;
+    }
+
     public String getEffectiveSocialMediaSummary() {
         if (socialMediaSummary != null && !socialMediaSummary.isBlank()) {
             return socialMediaSummary;
@@ -264,12 +283,16 @@ public class Post extends AggregateRoot {
             List<Attachment> attachments,
             Instant publishedAt,
             String socialMediaTitle,
-            String socialMediaSummary) {
+            String socialMediaSummary,
+            PostId seriesPreviousPostId,
+            PostId seriesNextPostId) {
         Post post = new Post(id, tenantId, authorId, title, slug, content, contentType, locale);
         post.status = status;
         post.publishedAt = publishedAt;
         post.socialMediaTitle = socialMediaTitle;
         post.socialMediaSummary = socialMediaSummary;
+        post.seriesPreviousPostId = seriesPreviousPostId;
+        post.seriesNextPostId = seriesNextPostId;
         post.tags.addAll(tags);
         post.sources.addAll(sources);
         post.attachments.addAll(attachments);

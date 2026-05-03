@@ -96,6 +96,8 @@ class PostControllerTest {
                         AttachmentId.generate(), "photo.jpg", "image/jpeg", 4096, true, "s3://bucket/photo.jpg")),
                 Instant.now(),
                 null,
+                null,
+                null,
                 null);
         when(postUseCase.getPost(any(), any())).thenReturn(post);
 
@@ -226,5 +228,73 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("SWR-038: GET /api/posts/search returns search results")
+    void searchPosts_returns200() throws Exception {
+        Post post =
+                Post.create(TenantId.of(tenantId), AuthorId.of(authorId), "Found Post", "Content", PostLocale.german());
+        post.publish();
+        when(postUseCase.searchPublishedPosts(eq("found"), any())).thenReturn(List.of(post));
+
+        mockMvc.perform(get("/api/posts/search").param("q", "found").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].title").value("Found Post"));
+    }
+
+    @Test
+    @DisplayName("SWR-038: GET /api/posts/search without query returns all published")
+    void searchPosts_withoutQuery_returnsAll() throws Exception {
+        when(postUseCase.searchPublishedPosts(eq(""), any())).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/posts/search").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    @DisplayName("SWR-040: GET /api/posts/{id} returns series navigation fields")
+    void getPost_returnsSeriesFields() throws Exception {
+        UUID prevId = UUID.randomUUID();
+        UUID nextId = UUID.randomUUID();
+        Post post = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                AuthorId.of(authorId),
+                "Series Post",
+                Slug.fromTitle("Series Post"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                Set.of(),
+                List.of(),
+                List.of(),
+                Instant.now(),
+                null,
+                null,
+                PostId.of(prevId),
+                PostId.of(nextId));
+        when(postUseCase.getPost(any(), any())).thenReturn(post);
+
+        mockMvc.perform(get("/api/posts/{id}", post.getId().value()).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.seriesPreviousPostId").value(prevId.toString()))
+                .andExpect(jsonPath("$.seriesNextPostId").value(nextId.toString()));
+    }
+
+    @Test
+    @DisplayName("SWR-040: GET /api/posts/{id} returns null series fields when not set")
+    void getPost_returnsNullSeriesFields() throws Exception {
+        Post post = Post.create(
+                TenantId.of(tenantId), AuthorId.of(authorId), "Normal Post", "Content", PostLocale.german());
+        when(postUseCase.getPost(any(), any())).thenReturn(post);
+
+        mockMvc.perform(get("/api/posts/{id}", post.getId().value()).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.seriesPreviousPostId").doesNotExist())
+                .andExpect(jsonPath("$.seriesNextPostId").doesNotExist());
     }
 }
