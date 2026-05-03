@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Deklarative Datenbankverwaltung mit CloudNativePG Database CRD
+level: 13.0
+links:
+- STK007: Nwd-mVuiQVakHJYWDxXDmwxpAWV_SwK47nZ0Yjoypvc=
+normative: true
+ref: ''
+reviewed: BE34IZMVKIOgbRoo4tiGekI6w7FIkSDi5Uao1GU2rr4=
+text: |
+  Alle Service-Datenbanken muessen als eigenstaendige CloudNativePG Database
+  Custom Resources (CRD) verwaltet werden (ab CNPG >= 1.25). Jede Datenbank
+  wird als separates Kubernetes-Manifest in infra/k8s/postgres/ definiert.
+  Der Operator reconciliert den Zustand und meldet Fehler im .status-Feld.
+  Die databaseReclaimPolicy muss auf retain gesetzt sein, um versehentlichen
+  Datenverlust zu verhindern. Die bisherige Loesung ueber
+  postInitApplicationSQL wird durch die Database CRD abgeloest.

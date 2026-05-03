@@ -4,10 +4,10 @@ header: |
   Standard-Impressum und Datenschutzerklärung
 level: 54.0
 links:
-- STK043: null
+- STK043: L6-eKYOGseUYgrPkOQWFo2Ab_x1fiH3A0e8JDm51PFI=
 normative: true
 ref: ''
-reviewed: null
+reviewed: Zg02e5eu6UTryWy2mpuA6f4-1UdPRZ8yCVE0tdJm1Lo=
 text: |
   Das System muss unter /impressum und /privacy statische Seiten bereitstellen,
   die im Footer verlinkt werden. Der Inhalt wird als Platform-Default

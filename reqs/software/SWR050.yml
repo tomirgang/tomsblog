@@ -4,11 +4,11 @@ header: |
   Tenant-Branding im Header
 level: 50.0
 links:
-- STK002: null
-- STK040: null
+- STK002: odeKEu9UpzjY59ggwZDKZdlqWK1cS1Kv8d51BZR8Kg4=
+- STK040: 2x698_cVwO7YADM5eg-Pr9_9Af2P6Oft-Q8yV6vrsn8=
 normative: true
 ref: ''
-reviewed: null
+reviewed: 8AeRa2rPe1IWvXGikAc1kYr_q62dMePmrgFE-OPr110=
 text: |
   Der Blog-Header zeigt den konfigurierbaren Tenant-Namen (statt
   hardcoded "Toms Blog") und optional eine Tagline an. Das Domain-Modell

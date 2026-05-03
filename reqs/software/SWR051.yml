@@ -4,12 +4,12 @@ header: |
   Admin-UI Benutzerliste und -verwaltung
 level: 51.0
 links:
-- STK005: null
-- STK028: null
-- STK041: null
+- STK005: v8g_bEs32zgnwkF20CyrITDlYxQIKJo8g9z7cl9fpnA=
+- STK028: 1FpJYob_VPe4Ba9cVyJM3Vw-bvz6B4pc6FIKrvKmvcE=
+- STK041: 67LAqX2g83LVMlj9mRyFbLqex3iF1nTiUYScdzlyfg0=
 normative: true
 ref: ''
-reviewed: null
+reviewed: fL5VmaX68r5keEFvo3dVSMy_HRe4-oYLlTJf2odTMec=
 text: |
   Unter /admin/users wird eine Thymeleaf-Seite bereitgestellt, die alle
   Benutzer des aktuellen Tenants auflistet (Name, E-Mail, Rolle,

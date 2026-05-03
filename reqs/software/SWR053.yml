@@ -4,11 +4,11 @@ header: |
   SuperAdmin Tenant-Umschaltung
 level: 53.0
 links:
-- STK002: null
-- STK005: null
+- STK002: odeKEu9UpzjY59ggwZDKZdlqWK1cS1Kv8d51BZR8Kg4=
+- STK005: v8g_bEs32zgnwkF20CyrITDlYxQIKJo8g9z7cl9fpnA=
 normative: true
 ref: ''
-reviewed: null
+reviewed: 5cZG-LyH6vntiat1nf--7nXlzqee0PUuAckJTGHrrRs=
 text: |
   Der SuperAdmin kann über einen Tenant-Selector in der Admin-Navigation
   den aktiven Tenant wechseln. Die Auswahl wird in der HTTP-Session

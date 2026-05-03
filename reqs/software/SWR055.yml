@@ -4,10 +4,10 @@ header: |
   Tenant-spezifisches Impressum und Datenschutzerklärung
 level: 55.0
 links:
-- STK044: null
+- STK044: oidsXiU-40q4l0X9nDIQ4ngFbP8iUuudfmPaBwPCXiQ=
 normative: true
 ref: ''
-reviewed: null
+reviewed: 9Jh-YnQW8fy1hSBp7jHaaEEQj9TsaP3doGCzWxakSV8=
 text: |
   Die TenantSettings werden um zwei optionale TEXT-Felder impressum_content
   und privacy_policy_content erweitert. Sind diese konfiguriert, wird deren

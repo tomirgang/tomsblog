@@ -4,11 +4,11 @@ header: |
   Admin-UI Tenant-Einstellungen
 level: 52.0
 links:
-- STK031: null
-- STK042: null
+- STK031: uZDNIW31JtuE8T5VVwHmiyiqjlwra-UNugogGKaPFs0=
+- STK042: Ly_Lu-LYuD8bSFA7q-4nICdioXGenKbrOZaMKzL6E9U=
 normative: true
 ref: ''
-reviewed: null
+reviewed: yFHRqo8SA73uDBL0GpafMIxzAf8Ru4CccCpVUs4DBJ0=
 text: |
   Unter /admin/settings wird eine Thymeleaf-Seite bereitgestellt, die
   die Tenant-Einstellungen (Login-Mode, Auto-Approval-Regeln,

@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- ADR-0029: Deklarative Datenbankverwaltung mit CloudNativePG Database CRD (Migration von postInitApplicationSQL auf Database CRD, geplant für Phase 5)
+- Infrastructure Requirement INF-013: Deklarative Datenbankverwaltung mit CloudNativePG Database CRD
+- Architecture Requirement SWA-030: Deklarative Datenbank-Ressourcen pro Service
+- TODO Phase 5: CNPG-Upgrade und Database-CRD-Migration eingeplant
+
 ## [0.8.6] - 2026-05-03
 
 ### Fixed
