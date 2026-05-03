@@ -10,6 +10,17 @@ spring:
       ddl-auto: validate
     show-sql: false
 
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState,db
+
 springdoc:
   api-docs:
     enabled: false
