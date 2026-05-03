@@ -9,7 +9,7 @@ plantuml::partial$plantuml/building-blocks-l1.puml[format=svg]
 
 == Ebene 2: Blog Content Service
 
-Der Blog Content Service setzt die zentrale Blog-Funktionalität um (SWR-001, SWR-002, SWR-003, SWR-006, SWR-012, SWR-013, SWR-024). Seine hexagonale Struktur (SWA-001) wird im folgenden Diagramm dargestellt:
+Der Blog Content Service setzt die zentrale Blog-Funktionalität um (SWR-001, SWR-002, SWR-003, SWR-006, SWR-012, SWR-013, SWR-024, SWR-033, SWR-034, SWR-035, SWR-036, SWR-037). Seine hexagonale Struktur (SWA-001) wird im folgenden Diagramm dargestellt:
 
 plantuml::partial$plantuml/building-blocks-l2.puml[format=svg]
 
@@ -23,7 +23,8 @@ Reine Java-Klassen ohne Framework-Abhaengigkeiten. Die gemeinsamen Domain Primit
 |===
 | Baustein | Typ | Beschreibung
 
-| `Post` | Aggregate Root | Titel, Slug, Content, Status, Locale, AuthorId (Referenz), TagIds, Sources, Attachments. Registriert Domain Events.
+| `Post` | Aggregate Root | Titel, Slug, Content, ContentType (HTML/MARKDOWN), Status, Locale, AuthorId (Referenz), TagIds, Sources, Attachments. Registriert Domain Events.
+| `ContentType` | Enum | HTML, MARKDOWN. Steuert die Rendering-Logik fuer die Anzeige (SWR-035, SWA-027).
 | `Translation` | Aggregate Root | Uebersetzung eines Posts mit eigenem Lifecycle (DRAFT/REVIEW_PENDING/APPROVED/REJECTED).
 | `Tag` | Entity | TagId, TenantId, name, slug. Tenant-scoped mit eigener Identitaet.
 | `PostId`, `TagId`, `TranslationId`, `AttachmentId` | Value Objects | Typsichere IDs (Records)
@@ -51,9 +52,10 @@ NOTE: `AuthorId` liegt im `shared-kernel` (SWA-002). Der blog-content Service ha
 | `CreatePostCommand`, `UpdatePostCommand` | Command Records fuer Post-Operationen
 | `CreateTagCommand`, `RenameTagCommand` | Command Records fuer Tag-Operationen
 | `CreateTranslationCommand`, `UpdateTranslationCommand` | Command Records fuer Uebersetzungs-Operationen
-| `PostRepository` | Outbound Port: Persistence-Abstraktion fuer Posts
+| `PostRepository` | Outbound Port: Persistence-Abstraktion fuer Posts (inkl. findRecentPublishedByTenantId fuer Landing Page, SWR-033)
 | `TagRepository` | Outbound Port: Persistence-Abstraktion fuer Tags
 | `TranslationRepository` | Outbound Port: Persistence-Abstraktion fuer Uebersetzungen
+| `MarkdownRenderer` | Outbound Port: Markdown-zu-HTML-Rendering-Abstraktion (SWR-035, SWA-024)
 | `EventPublisher` | Outbound Port: Event-Publishing-Abstraktion
 | `PostService` | Implementiert PostUseCase, orchestriert Domain und Ports
 | `TagService` | Implementiert TagUseCase, prueft Duplikate bei Erstellung
@@ -73,6 +75,8 @@ NOTE: `AuthorId` liegt im `shared-kernel` (SWA-002). Der blog-content Service ha
 | `TagController` | REST Inbound Adapter: Tag CRUD (SWR-020), Tenant via Header
 | `TranslationController` | REST Inbound Adapter: Translation CRUD + Workflow (SWR-021), Tenant via Header
 | `SourceController` | REST Inbound Adapter: Quellenverwaltung (SWR-012), Tenant via Header
+| `BlogViewController` | Thymeleaf Inbound Adapter: Landing Page (SWR-033), Post-Liste, Einzelansicht mit Markdown-Rendering (SWR-035), Vorschau (SWR-036, SWR-037)
+| `VersionModelAdvice` | ControllerAdvice: Stellt appVersion global bereit (SWR-034, SWA-025)
 | `GlobalExceptionHandler` | Problem Details (RFC 9457) Fehlerbehandlung
 | `OpenApiConfiguration` | OpenAPI/Swagger Konfiguration: API-Metadaten, X-Tenant-Id Header (SWR-024, SWA-016)
 | `JpaPostRepository` | JPA Outbound Adapter: Implementiert PostRepository
@@ -87,6 +91,7 @@ NOTE: `AuthorId` liegt im `shared-kernel` (SWA-002). Der blog-content Service ha
 | `PostMapper` | Bidirektionales Mapping zwischen Domain-Post und PostJpaEntity
 | `TagMapper` | Bidirektionales Mapping zwischen Domain-Tag und TagJpaEntity
 | `TranslationMapper` | Bidirektionales Mapping zwischen Domain-Translation und TranslationJpaEntity
+| `FlexmarkMarkdownRenderer` | Outbound Adapter: Markdown-Rendering mit flexmark-java (SWR-035, SWA-024)
 | `LoggingEventPublisher` | Interim Event Adapter (wird durch Kafka ersetzt)
 | `BlogContentConfiguration` | Spring-Konfiguration: Wiring der Adapter an die Ports
 |===
@@ -102,6 +107,7 @@ Die Datenbank-Schema-Verwaltung erfolgt über Flyway (SWA-013). Alle Migrationen
 | `V1__create_posts_schema.sql` | posts, post_tags, post_sources, post_attachments
 | `V2__create_tags_schema.sql` | tags mit Unique-Index auf (tenant_id, name) und (tenant_id, slug)
 | `V3__create_translations_schema.sql` | translations mit FK auf posts, Unique auf (post_id, locale)
+| `V4__add_content_type_to_posts.sql` | content_type VARCHAR(20) NOT NULL DEFAULT 'HTML' (SWR-035, SWA-027)
 |===
 
 NOTE: Weitere Services werden analog strukturiert. Details werden ergänzt, sobald sie implementiert sind.

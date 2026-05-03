@@ -1,0 +1,20 @@
+active: true
+derived: false
+header: |
+  VersionModelAdvice ControllerAdvice
+level: 25.0
+links:
+- SWA025: bU8oO3Uw5QdI2WGQDoaUMovoiltwrxFbLe5BxPM7kEI=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/web/VersionModelAdvice.java
+  type: file
+- path: services/blog-content/src/main/resources/templates/fragments/footer.html
+  type: file
+reviewed: quIQKJhW8ERsezBK-HnmvVmdCd4odtVHggkDP1vKYsY=
+text: |
+  Implementierung des VersionModelAdvice als @ControllerAdvice. Die Klasse
+  liest die Version aus BuildProperties (generiert durch spring-boot-maven-plugin
+  build-info Goal) und stellt sie als Modellattribut „appVersion" bereit.
+  Der Footer-Fragment zeigt die Version mit Präfix „v" an.

@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Versionsnummer im Footer (ControllerAdvice Unit Test)
+level: 11.0
+links:
+- SWR034: dsWkkgsoccr5l4WHFjgTgYIc4LvBPiO2sa_NKYmc7xs=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/test/java/de/tomsblog/blogcontent/adapter/inbound/web/VersionModelAdviceTest.java
+  type: file
+reviewed: aIchVw1nrnyeoadczvt7uD8b3ZIUKLydymOJmap0S_Q=
+text: |
+  Testfälle für VersionModelAdvice:
+  - BuildProperties vorhanden: gibt korrekte Version zurück
+  - BuildProperties nicht vorhanden: nutzt Fallback-Property
+  Testklasse: VersionModelAdviceTest (Unit Test)

@@ -19,6 +19,7 @@ public final class PostMapper {
         entity.setTitle(post.getTitle());
         entity.setSlug(post.getSlug().value());
         entity.setContent(post.getContent());
+        entity.setContentType(post.getContentType().name());
         entity.setStatus(PostStatusJpa.valueOf(post.getStatus().name()));
         entity.setLocale(post.getLocale().languageTag());
         entity.setTagIds(post.getTags().stream().map(TagId::value).collect(Collectors.toSet()));
@@ -56,6 +57,7 @@ public final class PostMapper {
                 entity.getTitle(),
                 new Slug(entity.getSlug()),
                 entity.getContent(),
+                ContentType.valueOf(entity.getContentType()),
                 PostStatus.valueOf(entity.getStatus().name()),
                 PostLocale.of(entity.getLocale()),
                 tags,

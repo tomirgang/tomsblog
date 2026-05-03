@@ -24,6 +24,14 @@
                       placeholder="Inhalt des Posts"></textarea>
             <small th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="error">Fehler</small>
 
+            <label for="contentType">Format</label>
+            <select id="contentType" th:field="*{contentType}"
+                    th:aria-invalid="${#fields.hasErrors('contentType') ? 'true' : 'false'}">
+                <option value="HTML">HTML</option>
+                <option value="MARKDOWN">Markdown</option>
+            </select>
+            <small th:if="${#fields.hasErrors('contentType')}" th:errors="*{contentType}" class="error">Fehler</small>
+
             <label for="locale">Sprache</label>
             <select id="locale" th:field="*{locale}"
                     th:aria-invalid="${#fields.hasErrors('locale') ? 'true' : 'false'}">

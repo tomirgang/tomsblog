@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  HTML- und Markdown-Unterstützung mit Rendering
+level: 35.0
+links:
+- STK019: _N0RnU4hzIOsnQCmRexyvHhGk-vlbp69UPJkonSPR7I=
+normative: true
+ref: ''
+reviewed: 5VJyC-r_vKet9YRx4VG0LjJ4bJAaLSLk5eyZTOs6Qf8=
+text: |
+  Blog-Posts können wahlweise in HTML oder Markdown verfasst werden. Der
+  Content-Type wird pro Post gespeichert. Markdown-Inhalte werden serverseitig
+  mit flexmark-java zu HTML gerendert. Mermaid-Diagramme und Code-Blöcke mit
+  Syntax-Highlighting werden clientseitig via Mermaid.js und highlight.js
+  dargestellt.

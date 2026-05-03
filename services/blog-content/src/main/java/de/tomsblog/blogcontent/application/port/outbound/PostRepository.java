@@ -13,6 +13,7 @@ import java.util.Optional;
  * @req SWR-001
  * @req SWR-003
  * @req SWR-026
+ * @req SWR-033
  */
 public interface PostRepository {
 
@@ -24,6 +25,9 @@ public interface PostRepository {
 
     /** @req SWR-026 */
     List<Post> findPublishedByTenantId(TenantId tenantId);
+
+    /** @req SWR-033 */
+    List<Post> findRecentPublishedByTenantId(TenantId tenantId, int limit);
 
     /** @req SWR-026 */
     Optional<Post> findBySlugAndTenantId(Slug slug, TenantId tenantId);

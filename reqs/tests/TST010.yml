@@ -1,0 +1,19 @@
+active: true
+derived: false
+header: |
+  Landing Page zeigt maximal drei Posts (Unit + WebMvcTest)
+level: 10.0
+links:
+- SWR033: 11asWmQE589Eo0eAUQjmh0-y2ob7jNQ1E1VLVG88VuY=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/test/java/de/tomsblog/blogcontent/adapter/inbound/web/BlogViewControllerTest.java
+  type: file
+reviewed: 9US65mX07JKHpNxCT3mfr5a-YK0zj5L9wIFtnWo49s0=
+text: |
+  Testfälle für die Landing-Page-Begrenzung:
+  - GET / (anonym) ruft listRecentPublishedPosts mit Limit 3 auf
+  - GET / (authentifiziert) mit mehr als 3 Posts zeigt nur 3 Einträge
+  - GET / (authentifiziert) mit weniger als 3 Posts zeigt alle
+  Testklasse: BlogViewControllerTest (@WebMvcTest)

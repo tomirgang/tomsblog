@@ -83,6 +83,13 @@ class PostTest {
     }
 
     @Test
+    @DisplayName("SWR-001: Create post with null title throws exception")
+    void createPostWithNullTitleThrows() {
+        assertThatThrownBy(() -> Post.create(tenantId, authorId, null, "Content", PostLocale.german()))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     @DisplayName("Tags (by ID) can be added and removed")
     void tagsCanBeAddedAndRemoved() {
         Post post = Post.create(tenantId, authorId, "Test", "Content", PostLocale.german());

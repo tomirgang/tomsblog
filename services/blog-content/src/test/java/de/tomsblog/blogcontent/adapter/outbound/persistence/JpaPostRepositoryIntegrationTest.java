@@ -205,4 +205,30 @@ class JpaPostRepositoryIntegrationTest {
 
         assertThat(found).isEmpty();
     }
+
+    @Test
+    @DisplayName("SWR-033: findRecentPublishedByTenantId returns limited results")
+    void findRecentPublishedByTenantId_returnsLimitedResults() {
+        for (int i = 0; i < 5; i++) {
+            Post post = Post.create(tenantId, authorId, "Post " + i, "Content " + i, PostLocale.german());
+            post.publish();
+            repository.save(post);
+        }
+
+        List<Post> result = repository.findRecentPublishedByTenantId(tenantId, 3);
+
+        assertThat(result).hasSize(3);
+        assertThat(result).allMatch(p -> p.getStatus() == PostStatus.PUBLISHED);
+    }
+
+    @Test
+    @DisplayName("SWR-035: Save and retrieve post with content type MARKDOWN")
+    void saveAndRetrievePostWithMarkdownContentType() {
+        Post post = Post.create(tenantId, authorId, "MD Post", "# Hello", ContentType.MARKDOWN, PostLocale.german());
+        Post saved = repository.save(post);
+
+        Optional<Post> found = repository.findByIdAndTenantId(saved.getId(), tenantId);
+        assertThat(found).isPresent();
+        assertThat(found.get().getContentType()).isEqualTo(ContentType.MARKDOWN);
+    }
 }

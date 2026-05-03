@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
+import de.tomsblog.blogcontent.application.port.outbound.MarkdownRenderer;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,9 @@ class DefaultTenantFilterTest {
     @MockitoBean
     private PostUseCase postUseCase;
 
+    @MockitoBean
+    private MarkdownRenderer markdownRenderer;
+
     @Test
     @DisplayName("SWR-027: Filter injects default headers when both are missing")
     void missingBothHeaders_usesDefaults() throws Exception {
@@ -36,6 +40,7 @@ class DefaultTenantFilterTest {
                         .with(csrf())
                         .param("title", "Test")
                         .param("content", "Content")
+                        .param("contentType", "HTML")
                         .param("locale", "de"))
                 .andExpect(status().is3xxRedirection());
     }
@@ -50,6 +55,7 @@ class DefaultTenantFilterTest {
                         .header("X-Tenant-Id", "11111111-1111-1111-1111-111111111111")
                         .param("title", "Test")
                         .param("content", "Content")
+                        .param("contentType", "HTML")
                         .param("locale", "de"))
                 .andExpect(status().is3xxRedirection());
     }

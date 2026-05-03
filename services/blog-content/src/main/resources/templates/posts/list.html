@@ -33,9 +33,9 @@
                     </time>
                 </small>
             </header>
-            <p th:text="${excerpts[post.id.value]}">
+            <div th:utext="${excerpts[post.id.value]}">
                 Post preview text...
-            </p>
+            </div>
             <footer>
                 <a th:if="${post.status.name() == 'PUBLISHED'}"
                    th:href="@{/posts/{slug}(slug=${post.slug.value})}">Weiterlesen</a>
@@ -49,6 +49,10 @@
                 </form>
             </footer>
         </article>
+
+        <nav th:if="${landingPage}">
+            <a th:href="@{/posts}">Alle Beiträge anzeigen &rarr;</a>
+        </nav>
     </section>
 </body>
 </html>

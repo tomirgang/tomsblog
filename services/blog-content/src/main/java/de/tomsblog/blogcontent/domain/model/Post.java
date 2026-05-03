@@ -29,6 +29,7 @@ public class Post extends AggregateRoot {
     private String title;
     private Slug slug;
     private String content;
+    private ContentType contentType;
     private PostStatus status;
     private PostLocale locale;
     private final Set<TagId> tags;
@@ -45,6 +46,7 @@ public class Post extends AggregateRoot {
             String title,
             Slug slug,
             String content,
+            ContentType contentType,
             PostLocale locale) {
         this.id = Objects.requireNonNull(id);
         this.tenantId = Objects.requireNonNull(tenantId);
@@ -52,6 +54,7 @@ public class Post extends AggregateRoot {
         this.title = Objects.requireNonNull(title);
         this.slug = Objects.requireNonNull(slug);
         this.content = Objects.requireNonNull(content);
+        this.contentType = Objects.requireNonNull(contentType);
         this.locale = Objects.requireNonNull(locale);
         this.status = PostStatus.DRAFT;
         this.tags = new HashSet<>();
@@ -64,17 +67,34 @@ public class Post extends AggregateRoot {
      *
      * @req SWR-001
      * @req SWR-003
+     * @req SWR-035
      */
-    public static Post create(TenantId tenantId, AuthorId authorId, String title, String content, PostLocale locale) {
+    public static Post create(
+            TenantId tenantId,
+            AuthorId authorId,
+            String title,
+            String content,
+            ContentType contentType,
+            PostLocale locale) {
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Title must not be blank");
         }
         Objects.requireNonNull(authorId, "AuthorId must not be null");
         PostId id = PostId.generate();
         Slug slug = Slug.fromTitle(title);
-        Post post = new Post(id, tenantId, authorId, title, slug, content, locale);
+        Post post = new Post(id, tenantId, authorId, title, slug, content, contentType, locale);
         post.registerEvent(PostCreatedEvent.of(id, tenantId));
         return post;
+    }
+
+    /**
+     * Convenience overload that defaults to HTML content type.
+     *
+     * @req SWR-001
+     * @req SWR-003
+     */
+    public static Post create(TenantId tenantId, AuthorId authorId, String title, String content, PostLocale locale) {
+        return create(tenantId, authorId, title, content, ContentType.HTML, locale);
     }
 
     /**
@@ -163,6 +183,10 @@ public class Post extends AggregateRoot {
         return content;
     }
 
+    public ContentType getContentType() {
+        return contentType;
+    }
+
     public PostStatus getStatus() {
         return status;
     }
@@ -232,6 +256,7 @@ public class Post extends AggregateRoot {
             String title,
             Slug slug,
             String content,
+            ContentType contentType,
             PostStatus status,
             PostLocale locale,
             Set<TagId> tags,
@@ -240,7 +265,7 @@ public class Post extends AggregateRoot {
             Instant publishedAt,
             String socialMediaTitle,
             String socialMediaSummary) {
-        Post post = new Post(id, tenantId, authorId, title, slug, content, locale);
+        Post post = new Post(id, tenantId, authorId, title, slug, content, contentType, locale);
         post.status = status;
         post.publishedAt = publishedAt;
         post.socialMediaTitle = socialMediaTitle;

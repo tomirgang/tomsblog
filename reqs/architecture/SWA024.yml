@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Outbound Port und Adapter für Markdown-Rendering
+level: 24.0
+links:
+- SWR035: bxMSaU-rfi39nLJmt6i4Kdg2qCSjS3FTh8_YMMM-LXA=
+normative: true
+ref: ''
+reviewed: m9-0jeXp8jVz2GIChloAWUG_poGrO0_fkDvyeo9rw6g=
+text: |
+  Das Markdown-Rendering wird über einen dedizierten Outbound Port
+  (MarkdownRenderer) abstrahiert. Die Implementierung
+  (FlexmarkMarkdownRenderer) nutzt flexmark-java 0.64.8 zur serverseitigen
+  Konvertierung von Markdown zu HTML. Der Port liegt im Package
+  application.port.outbound, der Adapter im Package adapter.outbound.markdown.
+  Diese Trennung ermöglicht den späteren Austausch der Rendering-Engine ohne
+  Änderung an der Domain oder den Inbound-Adaptern.

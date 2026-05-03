@@ -24,6 +24,7 @@ classDiagram
         -String title
         -Slug slug
         -String content
+        -ContentType contentType
         -PostStatus status
         -PostLocale locale
         -AuthorId authorId
@@ -347,26 +348,42 @@ Er bildet einen separaten Inbound Adapter neben der REST API und nutzt dieselben
 
 ==== Architektur
 
+Das folgende Klassendiagramm zeigt die Struktur des Thymeleaf Web UI Adapters mit den Abhängigkeiten zum MarkdownRenderer-Port (SWA-024) und PostUseCase:
+
 [mermaid]
 ----
 classDiagram
     class BlogViewController {
         -PostUseCase postUseCase
-        -Pattern HTML_TAG_PATTERN
-        -int EXCERPT_LENGTH
-        +index(model, tenantId, principal) String
-        +listPosts(model, tenantId, principal) String
-        +showPost(slug, model, tenantId) String
+        -MarkdownRenderer markdownRenderer
+        -Pattern FIRST_PARAGRAPH_PATTERN
+        -int LANDING_PAGE_LIMIT
+        +index(tenantId, model, principal) String
+        +listPosts(tenantId, model, principal) String
+        +showPost(slug, tenantId, model) String
         +newPostForm(model) String
         +createPost(form, result, tenantId, authorId, model) String
         +editPostForm(id, tenantId, model) String
         +updatePost(id, form, result, tenantId, model) String
         -buildExcerpts(posts) Map~UUID String~
+        -renderContent(post) String
+        -extractFirstParagraph(html) String
+    }
+
+    class MarkdownRenderer {
+        <<interface>>
+        +renderToHtml(markdown) String
+    }
+
+    class VersionModelAdvice {
+        -String appVersion
+        +appVersion() String
     }
 
     class PostFormData {
         +String title
         +String content
+        +String contentType
         +String locale
         +String socialMediaTitle
         +String socialMediaSummary
@@ -379,29 +396,45 @@ classDiagram
         +getPost(postId, tenantId) Post
         +listPosts(tenantId) List~Post~
         +listPublishedPosts(tenantId) List~Post~
+        +listRecentPublishedPosts(tenantId, limit) List~Post~
         +getPublishedPostBySlug(slug, tenantId) Post
     }
 
     BlogViewController --> PostUseCase : uses
+    BlogViewController --> MarkdownRenderer : uses
     BlogViewController --> PostFormData : binds
 ----
 
 Der `BlogViewController` liegt im Package `adapter.inbound.web` und greift über die bestehenden Inbound Ports (`PostUseCase`) auf die Fachlogik zu.
 Er gibt Thymeleaf-View-Namen zurück, die vom Spring MVC ViewResolver aufgelöst werden.
+Für Markdown-Posts delegiert er das Rendering an den `MarkdownRenderer`-Port (SWA-024).
 
 Die `PostFormData`-Klasse dient als Form-Backing-Bean für die Thymeleaf-Formulare und kapselt die Eingabefelder mit Bean-Validation-Annotationen.
+Das Feld `contentType` erlaubt die Auswahl zwischen HTML und Markdown (SWR-035).
 
-==== Öffentliche Blog-Ansicht (SWR-026)
+Der `VersionModelAdvice` (SWR-034, SWA-025) stellt die Anwendungsversion als globales Modellattribut `appVersion` für alle Views bereit, ohne dass jeder Controller-Handler dies explizit setzen muss.
 
-Die öffentliche Blog-Ansicht besteht aus zwei Seiten:
+==== Öffentliche Blog-Ansicht (SWR-026, SWR-033, SWR-036, SWR-037)
 
-* **Post-Liste** (`/` und `/posts`): Zeigt alle veröffentlichten Posts des Tenants in absteigender chronologischer Reihenfolge (neueste zuerst). Pro Eintrag werden Titel, Veröffentlichungsdatum und eine Klartext-Vorschau (max. 200 Zeichen, HTML-Tags entfernt) angezeigt. Die Landing Page (`/`) und `/posts` nutzen dieselbe View.
-* **Einzelansicht** (`/posts/{slug}`): Zeigt einen einzelnen veröffentlichten Post mit Titel, Veröffentlichungsdatum, Volltext, Quellen und Tags.
+Die öffentliche Blog-Ansicht besteht aus drei logischen Seiten:
+
+* **Landing Page** (`/`, SWR-033): Zeigt die drei neuesten veröffentlichten Posts des Tenants. Die Begrenzung erfolgt über `listRecentPublishedPosts(tenantId, 3)` direkt auf Datenbankebene (SWA-026). Ein Link führt zur vollständigen Post-Liste.
+* **Post-Liste** (`/posts`): Zeigt alle veröffentlichten Posts des Tenants in absteigender chronologischer Reihenfolge.
+* **Einzelansicht** (`/posts/{slug}`, SWR-035): Zeigt einen einzelnen veröffentlichten Post. Markdown-Inhalte werden vor der Anzeige serverseitig zu HTML gerendert. Code-Blöcke erhalten clientseitiges Syntax-Highlighting (highlight.js), Mermaid-Codeblöcke werden als Diagramme dargestellt (mermaid.js).
 
 Nicht veröffentlichte Posts (DRAFT, ARCHIVED) sind in der öffentlichen Ansicht nicht sichtbar.
 Die Slug-basierte URL sorgt für SEO-freundliche, leserliche Adressen.
 
-Die `buildExcerpts()`-Methode im Controller entfernt HTML-Tags via Regex und kürzt den Text auf 200 Zeichen, um eine saubere Vorschau ohne Markup darzustellen.
+===== Gerenderte Vorschau (SWR-036, SWR-037)
+
+Die `buildExcerpts()`-Methode erzeugt für jeden Post eine gerenderte HTML-Vorschau. Der Ablauf:
+
+1. `renderContent(post)` prüft den ContentType: bei MARKDOWN wird der MarkdownRenderer aufgerufen, bei HTML wird der Content direkt verwendet.
+2. `extractFirstParagraph(html)` extrahiert das erste `<p>`-Element per Regex (`FIRST_PARAGRAPH_PATTERN`).
+3. Ist kein `<p>`-Element vorhanden, wird der gesamte gerenderte Inhalt als Vorschau verwendet.
+4. Die Excerpts werden als `Map<UUID, String>` im Model bereitgestellt und in der Post-Liste via `th:utext` gerendert dargestellt.
+
+Das folgende Sequenzdiagramm zeigt den Ablauf für Landing Page und Einzelansicht inklusive Markdown-Rendering:
 
 [mermaid]
 ----
@@ -410,31 +443,38 @@ sequenceDiagram
     participant Controller as BlogViewController
     participant Service as PostService
     participant Repo as PostRepository
+    participant MD as MarkdownRenderer
 
-    Reader->>Controller: GET / oder GET /posts
-    Controller->>Service: listPublishedPosts(tenantId)
-    Service->>Repo: findPublishedByTenantId(tenantId)
-    Repo-->>Service: List<Post> (nur PUBLISHED, sortiert nach publishedAt DESC)
+    Reader->>Controller: GET /
+    Controller->>Service: listRecentPublishedPosts(tenantId, 3)
+    Service->>Repo: findRecentPublishedByTenantId(tenantId, 3)
+    Repo-->>Service: List<Post> (max. 3, sortiert nach publishedAt DESC)
     Service-->>Controller: List<Post>
-    Note over Controller: buildExcerpts() entfernt HTML-Tags, kürzt auf 200 Zeichen
-    Controller-->>Reader: posts/list.html (Model: posts, excerpts)
+    Note over Controller: buildExcerpts(): renderContent() + extractFirstParagraph()
+    Controller-->>Reader: posts/list.html (Model: posts, excerpts, landingPage=true)
 
     Reader->>Controller: GET /posts/{slug}
     Controller->>Service: getPublishedPostBySlug(slug, tenantId)
     Service->>Repo: findBySlugAndTenantId(slug, tenantId)
     Repo-->>Service: Optional<Post>
     Service-->>Controller: Post (nur wenn PUBLISHED)
-    Controller-->>Reader: posts/show.html (Model: post)
+    alt ContentType == MARKDOWN
+        Controller->>MD: renderToHtml(post.content)
+        MD-->>Controller: HTML-String
+    end
+    Controller-->>Reader: posts/show.html (Model: post, renderedContent)
 ----
 
-Für die öffentliche Ansicht werden zwei neue Methoden am `PostRepository`-Port benötigt:
+Für die öffentliche Ansicht werden drei Methoden am `PostRepository`-Port benötigt:
 
 * `findPublishedByTenantId(TenantId)` - Gibt alle veröffentlichten Posts zurück, sortiert nach `publishedAt` absteigend.
+* `findRecentPublishedByTenantId(TenantId, int limit)` - Gibt die neuesten veröffentlichten Posts zurück, begrenzt auf `limit` Einträge (SWR-033, SWA-026). Nutzt Spring Data `Pageable`.
 * `findBySlugAndTenantId(Slug, TenantId)` - Sucht einen Post anhand seines Slugs.
 
-Am `PostUseCase`-Port werden entsprechend zwei neue Methoden definiert:
+Am `PostUseCase`-Port werden entsprechend drei Methoden definiert:
 
 * `listPublishedPosts(TenantId)` - Delegiert an das Repository und gibt nur PUBLISHED-Posts zurück.
+* `listRecentPublishedPosts(TenantId, int limit)` - Gibt maximal `limit` neueste PUBLISHED-Posts zurück (SWR-033).
 * `getPublishedPostBySlug(Slug, TenantId)` - Gibt den Post zurück, wenn er existiert und den Status PUBLISHED hat. Wirft `PostNotFoundException` falls nicht gefunden oder nicht veröffentlicht.
 
 ==== Formular zum Erstellen und Bearbeiten von Posts (SWR-027)
@@ -448,6 +488,7 @@ Die Klasse `PostFormData` kapselt die Formulareingaben und stellt die serverseit
 
 * `title` (NotBlank) - Titel des Posts
 * `content` (NotBlank) - Inhalt des Posts
+* `contentType` (NotBlank) - Format des Inhalts: „HTML" oder „MARKDOWN" (SWR-035)
 * `locale` (NotBlank) - Sprache des Posts (z.B. "de", "en")
 * `socialMediaTitle` (optional) - Titel für Social Media
 * `socialMediaSummary` (optional) - Zusammenfassung für Social Media
@@ -526,10 +567,10 @@ graph TD
 
 * **layout/default.html**: Basis-Layout mit HTML5-Grundgerüst, PicoCSS-Einbindung (CDN), semantischer Struktur (header, nav, main, footer)
 * **fragments/header.html**: Seitenkopf mit Blog-Titel und Navigationslinks (inkl. Link auf /posts)
-* **fragments/footer.html**: Fußzeile mit Copyright und Links
-* **posts/list.html**: Post-Liste (dient auch als Landing Page), mit `th:each` über die Posts (SWR-026), Klartext-Vorschau aus `excerpts`-Map, Links zum Erstellen und Bearbeiten (SWR-027)
-* **posts/show.html**: Einzelansicht eines Posts mit vollem Inhalt, Quellen und Tags (SWR-026)
-* **posts/form.html**: Wiederverwendbares Formular für Erstellen und Bearbeiten eines Posts (SWR-027)
+* **fragments/footer.html**: Fußzeile mit Copyright, Links und Anwendungsversion (SWR-034)
+* **posts/list.html**: Post-Liste mit gerenderten HTML-Vorschauen (SWR-036, SWR-037) aus `excerpts`-Map via `th:utext`, „Alle Posts"-Link bei Landing Page (SWR-033), Links zum Erstellen und Bearbeiten (SWR-027)
+* **posts/show.html**: Einzelansicht eines Posts mit gerendertem Inhalt (SWR-035), highlight.js für Syntax-Highlighting, mermaid.js für Diagramme
+* **posts/form.html**: Wiederverwendbares Formular für Erstellen und Bearbeiten eines Posts mit ContentType-Auswahl (SWR-035, SWR-027)
 
 ==== Default-Tenant-Filter (MVP-Betrieb)
 
@@ -574,6 +615,37 @@ Status und Source werden als Strings persistiert und im `TranslationMapper` übe
 Der `LoggingEventPublisher` ist ein Interim-Adapter, der Domain Events zunächst nur loggt.
 Er wird in einer späteren Phase durch einen Kafka-Producer ersetzt (SWA-005), der die Events an den zentralen Event-Broker sendet (SWR-009).
 
+=== Outbound Adapter: Markdown Rendering (SWA-024)
+
+Der `FlexmarkMarkdownRenderer` implementiert den `MarkdownRenderer`-Port (SWR-035) mit flexmark-java 0.64.8.
+Er liegt im Package `adapter.outbound.markdown` und ist als Spring `@Component` registriert.
+
+Das folgende Klassendiagramm zeigt die Port-Adapter-Beziehung:
+
+[mermaid]
+----
+classDiagram
+    class MarkdownRenderer {
+        <<interface>>
+        +renderToHtml(markdown) String
+    }
+
+    class FlexmarkMarkdownRenderer {
+        -Parser parser
+        -HtmlRenderer renderer
+        +renderToHtml(markdown) String
+    }
+
+    MarkdownRenderer <|.. FlexmarkMarkdownRenderer : implements
+----
+
+Der Renderer wird im `BlogViewController` für zwei Zwecke eingesetzt:
+
+1. **Einzelansicht** (`showPost`): Rendert den gesamten Markdown-Inhalt zu HTML, bevor er als `renderedContent` an das Template übergeben wird.
+2. **Vorschau** (`buildExcerpts`): Rendert den Content zu HTML, damit `extractFirstParagraph()` das erste `<p>`-Element extrahieren kann.
+
+Clientseitig werden Code-Blöcke durch highlight.js (CDN, v11.11.1) mit Syntax-Highlighting versehen. Mermaid-Codeblöcke (mit der Klasse `language-mermaid`) werden durch mermaid.js (CDN, v11) als SVG-Diagramme gerendert.
+
 == Datenbank-Schema (Flyway)
 
 Die Schema-Verwaltung erfolgt über Flyway-Migrationen (SWA-013, ADR-0015). Hibernate validiert das Schema gegen die Entity-Klassen (`ddl-auto: validate`), nimmt aber keine Änderungen vor.
@@ -590,6 +662,7 @@ erDiagram
         varchar title
         varchar slug
         text content
+        varchar content_type
         varchar status
         varchar locale
         varchar social_media_title
@@ -640,6 +713,16 @@ erDiagram
 ----
 
 Die Migrationen liegen unter `src/main/resources/db/migration/` und werden beim Service-Start automatisch ausgeführt.
+
+[cols="1,3"]
+|===
+| Migration | Beschreibung
+
+| V1 | Posts-Grundschema (posts, post_tags, post_sources, post_attachments)
+| V2 | Tags-Schema mit Unique-Index auf (tenant_id, name) und (tenant_id, slug)
+| V3 | Translations-Schema mit FK auf posts, Unique auf (post_id, locale)
+| V4 | content_type-Spalte (VARCHAR(20), NOT NULL, Default 'HTML') zu posts (SWA-027)
+|===
 
 == Ablauf: Post erstellen und veröffentlichen
 
@@ -715,6 +798,15 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWR-026 | Öffentliche Blog-Ansicht (Post-Liste, Einzelansicht) | BlogViewController.listPosts/showPost, posts/list.html, posts/show.html, PostRepository.findPublishedByTenantId/findBySlugAndTenantId
 | SWR-027 | Thymeleaf Post-Formular | BlogViewController.newPostForm/createPost/editPostForm/updatePost, posts/form.html
 | SWR-028 | Admin-Login zum Schutz der Schreiboperationen | SecurityConfiguration, login.html, HTTP Basic für REST API
+| SWR-033 | Landing Page zeigt maximal drei neueste Posts | BlogViewController.index(), PostUseCase.listRecentPublishedPosts(), PostRepository.findRecentPublishedByTenantId()
+| SWR-034 | Versionsnummer im Footer | VersionModelAdvice, BuildProperties, fragments/footer.html
+| SWR-035 | HTML- und Markdown-Unterstützung mit Rendering | ContentType, MarkdownRenderer, FlexmarkMarkdownRenderer, BlogViewController.renderContent(), posts/show.html (highlight.js, mermaid.js)
+| SWR-036 | Gerenderte Vorschau in der Post-Liste | BlogViewController.buildExcerpts(), posts/list.html (th:utext)
+| SWR-037 | Vorschau zeigt den ersten Abschnitt | BlogViewController.extractFirstParagraph(), FIRST_PARAGRAPH_PATTERN
+| SWA-024 | Outbound Port für Markdown-Rendering | MarkdownRenderer (Port), FlexmarkMarkdownRenderer (Adapter)
+| SWA-025 | ControllerAdvice für globale Modellattribute | VersionModelAdvice
+| SWA-026 | Landing Page mit Paginierung am Repository | PostRepository.findRecentPublishedByTenantId(TenantId, int), PageRequest
+| SWA-027 | ContentType im Domain-Modell und Persistenz | ContentType Enum, V4 Migration, PostJpaEntity.contentType
 |===
 
 == Sicherheit: Admin-Login (SWR-028)

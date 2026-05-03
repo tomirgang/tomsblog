@@ -1,6 +1,6 @@
 package de.tomsblog.blogcontent.adapter.inbound.web;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import de.tomsblog.blogcontent.application.port.inbound.CreatePostCommand;
 import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
 import de.tomsblog.blogcontent.application.port.inbound.UpdatePostCommand;
+import de.tomsblog.blogcontent.application.port.outbound.MarkdownRenderer;
 import de.tomsblog.blogcontent.application.service.PostNotFoundException;
 import de.tomsblog.blogcontent.domain.model.*;
 import de.tomsblog.shared.domain.AuthorId;
@@ -34,28 +35,32 @@ class BlogViewControllerTest {
     @MockitoBean
     private PostUseCase postUseCase;
 
+    @MockitoBean
+    private MarkdownRenderer markdownRenderer;
+
     private final UUID tenantId = UUID.randomUUID();
     private final AuthorId authorId = AuthorId.generate();
 
     @Test
-    @DisplayName("SWR-025: GET / returns post list view")
+    @DisplayName("SWR-033: GET / returns post list view with max 3 recent posts")
     void index_returnsPostListView() throws Exception {
-        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of());
+        when(postUseCase.listRecentPublishedPosts(any(TenantId.class), eq(3))).thenReturn(List.of());
 
         mockMvc.perform(get("/").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/list"))
                 .andExpect(model().attributeExists("posts"))
-                .andExpect(model().attributeExists("excerpts"));
+                .andExpect(model().attributeExists("excerpts"))
+                .andExpect(model().attribute("landingPage", true));
     }
 
     @Test
-    @DisplayName("SWR-025: GET / strips HTML tags from excerpts")
-    void index_stripsHtmlFromExcerpts() throws Exception {
+    @DisplayName("SWR-037: GET / extracts first paragraph as rendered excerpt")
+    void index_extractsFirstParagraphAsExcerpt() throws Exception {
         Post post = Post.create(
                 TenantId.of(tenantId), authorId, "HTML Post", "<h1>Title</h1><p>Hello world</p>", PostLocale.german());
         post.publish();
-        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of(post));
+        when(postUseCase.listRecentPublishedPosts(any(TenantId.class), eq(3))).thenReturn(List.of(post));
 
         mockMvc.perform(get("/").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
@@ -64,16 +69,16 @@ class BlogViewControllerTest {
                                 org.hamcrest.Matchers.hasEntry(
                                         org.hamcrest.Matchers.equalTo(
                                                 post.getId().value()),
-                                        org.hamcrest.Matchers.equalTo("TitleHello world"))));
+                                        org.hamcrest.Matchers.equalTo("<p>Hello world</p>"))));
     }
 
     @Test
-    @DisplayName("SWR-025: GET / truncates long excerpts to 200 chars")
-    void index_truncatesLongExcerpts() throws Exception {
-        String longContent = "<p>" + "a".repeat(250) + "</p>";
-        Post post = Post.create(TenantId.of(tenantId), authorId, "Long Post", longContent, PostLocale.german());
+    @DisplayName("SWR-036: GET / returns full content as excerpt when no paragraph found")
+    void index_returnsFullContentWhenNoParagraph() throws Exception {
+        String content = "<div>No paragraph here</div>";
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Long Post", content, PostLocale.german());
         post.publish();
-        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of(post));
+        when(postUseCase.listRecentPublishedPosts(any(TenantId.class), eq(3))).thenReturn(List.of(post));
 
         mockMvc.perform(get("/").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
@@ -82,11 +87,11 @@ class BlogViewControllerTest {
                                 org.hamcrest.Matchers.hasEntry(
                                         org.hamcrest.Matchers.equalTo(
                                                 post.getId().value()),
-                                        org.hamcrest.Matchers.equalTo("a".repeat(200) + "..."))));
+                                        org.hamcrest.Matchers.equalTo(content))));
     }
 
     @Test
-    @DisplayName("SWR-025: GET / with auth returns all posts")
+    @DisplayName("SWR-033: GET / with auth returns at most 3 posts")
     @WithMockUser(username = "admin", roles = "ADMIN")
     void index_authenticated_returnsAllPosts() throws Exception {
         Post post = Post.create(TenantId.of(tenantId), authorId, "Draft", "Content", PostLocale.german());
@@ -97,7 +102,56 @@ class BlogViewControllerTest {
                 .andExpect(view().name("posts/list"));
 
         verify(postUseCase).listPosts(any(TenantId.class));
-        verify(postUseCase, never()).listPublishedPosts(any(TenantId.class));
+        verify(postUseCase, never()).listRecentPublishedPosts(any(TenantId.class), anyInt());
+    }
+
+    @Test
+    @DisplayName("SWR-033: GET / with auth truncates list when more than 3 posts")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void index_authenticated_truncatesWhenMoreThanThree() throws Exception {
+        Post p1 = Post.create(TenantId.of(tenantId), authorId, "Post One", "<p>C1</p>", PostLocale.german());
+        Post p2 = Post.create(TenantId.of(tenantId), authorId, "Post Two", "<p>C2</p>", PostLocale.german());
+        Post p3 = Post.create(TenantId.of(tenantId), authorId, "Post Three", "<p>C3</p>", PostLocale.german());
+        Post p4 = Post.create(TenantId.of(tenantId), authorId, "Post Four", "<p>C4</p>", PostLocale.german());
+        when(postUseCase.listPosts(any(TenantId.class))).thenReturn(List.of(p1, p2, p3, p4));
+
+        mockMvc.perform(get("/").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("posts", org.hamcrest.Matchers.hasSize(3)));
+    }
+
+    @Test
+    @DisplayName("SWR-035: GET /posts/{slug} renders markdown content")
+    void showPost_rendersMarkdownContent() throws Exception {
+        Post post = Post.create(
+                TenantId.of(tenantId), authorId, "MD Post", "# Hello", ContentType.MARKDOWN, PostLocale.german());
+        post.publish();
+        when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
+                .thenReturn(post);
+        when(markdownRenderer.renderToHtml("# Hello")).thenReturn("<h1>Hello</h1>");
+
+        mockMvc.perform(get("/posts/md-post").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("renderedContent", "<h1>Hello</h1>"));
+
+        verify(markdownRenderer).renderToHtml("# Hello");
+    }
+
+    @Test
+    @DisplayName("SWR-036: Excerpt for blank content returns empty string")
+    void index_blankContent_returnsEmptyExcerpt() throws Exception {
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Empty Post", "", PostLocale.german());
+        post.publish();
+        when(postUseCase.listRecentPublishedPosts(any(TenantId.class), eq(3))).thenReturn(List.of(post));
+
+        mockMvc.perform(get("/").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute(
+                                "excerpts",
+                                org.hamcrest.Matchers.hasEntry(
+                                        org.hamcrest.Matchers.equalTo(
+                                                post.getId().value()),
+                                        org.hamcrest.Matchers.equalTo(""))));
     }
 
     @Test
@@ -144,7 +198,7 @@ class BlogViewControllerTest {
     }
 
     @Test
-    @DisplayName("SWR-026: GET /posts/{slug} returns post detail view")
+    @DisplayName("SWR-026: GET /posts/{slug} returns post detail view with rendered content")
     void showPost_returnsShowView() throws Exception {
         Post post = Post.create(TenantId.of(tenantId), authorId, "My Post", "Full content here", PostLocale.german());
         post.publish();
@@ -154,7 +208,8 @@ class BlogViewControllerTest {
         mockMvc.perform(get("/posts/my-post").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/show"))
-                .andExpect(model().attributeExists("post"));
+                .andExpect(model().attributeExists("post"))
+                .andExpect(model().attributeExists("renderedContent"));
     }
 
     @Test
@@ -191,6 +246,7 @@ class BlogViewControllerTest {
                         .header("X-Author-Id", authorId.value().toString())
                         .param("title", "New Post")
                         .param("content", "Some content")
+                        .param("contentType", "HTML")
                         .param("locale", "de"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/posts"));
@@ -208,6 +264,7 @@ class BlogViewControllerTest {
                         .header("X-Author-Id", authorId.value().toString())
                         .param("title", "")
                         .param("content", "Some content")
+                        .param("contentType", "HTML")
                         .param("locale", "de"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/form"))
@@ -227,6 +284,7 @@ class BlogViewControllerTest {
                         .header("X-Author-Id", authorId.value().toString())
                         .param("title", "Title")
                         .param("content", "")
+                        .param("contentType", "HTML")
                         .param("locale", "de"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/form"))
@@ -245,6 +303,7 @@ class BlogViewControllerTest {
                         .header("X-Author-Id", authorId.value().toString())
                         .param("title", "Title")
                         .param("content", "Content")
+                        .param("contentType", "HTML")
                         .param("locale", ""))
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/form"))
@@ -284,6 +343,7 @@ class BlogViewControllerTest {
                         .header("X-Tenant-Id", tenantId.toString())
                         .param("title", "Updated Post")
                         .param("content", "Updated content")
+                        .param("contentType", "HTML")
                         .param("locale", "de"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/posts"));
@@ -302,6 +362,7 @@ class BlogViewControllerTest {
                         .header("X-Tenant-Id", tenantId.toString())
                         .param("title", "")
                         .param("content", "Content")
+                        .param("contentType", "HTML")
                         .param("locale", "de"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/form"))

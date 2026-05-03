@@ -32,6 +32,9 @@ public class PostJpaEntity implements Auditable {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "content_type", nullable = false)
+    private String contentType;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PostStatusJpa status;
@@ -134,6 +137,14 @@ public class PostJpaEntity implements Auditable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     public PostStatusJpa getStatus() {

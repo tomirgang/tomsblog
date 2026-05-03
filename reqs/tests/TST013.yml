@@ -1,0 +1,21 @@
+active: true
+derived: false
+header: |
+  Gerenderte Vorschau und erster Absatz (WebMvcTest)
+level: 13.0
+links:
+- SWR036: 04zujC58ZvIL1BqMQJU9woTs120fg6PsdjdAp1hOBAw=
+- SWR037: AW2dBmLszjg0wre-S6TdNoHOEiGz6fISUby0130v6ps=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/test/java/de/tomsblog/blogcontent/adapter/inbound/web/BlogViewControllerTest.java
+  type: file
+reviewed: 9VQw5Lu4Mh7IH3rE_PDGIVZreS986hupZQBUZ08MhKM=
+text: |
+  Testfälle für Vorschau-Rendering:
+  - HTML-Post: erstes <p>-Element wird als Excerpt extrahiert
+  - Kein <p>-Element vorhanden: gesamter Content als Excerpt
+  - Blank-Content: leerer Excerpt-String
+  - Markdown-Post: MarkdownRenderer wird aufgerufen, Ergebnis als Excerpt
+  Testklasse: BlogViewControllerTest (@WebMvcTest)

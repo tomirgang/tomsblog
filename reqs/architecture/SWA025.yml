@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  ControllerAdvice für globale Modellattribute (VersionModelAdvice)
+level: 25.0
+links:
+- SWR034: dsWkkgsoccr5l4WHFjgTgYIc4LvBPiO2sa_NKYmc7xs=
+normative: true
+ref: ''
+reviewed: FEO644oHDTaFWVgPuC6li2XTbiQa5pBOJc4KhJ2rSGI=
+text: |
+  Querschnittliche Modellattribute (z.B. Anwendungsversion) werden über
+  Spring @ControllerAdvice bereitgestellt. Der VersionModelAdvice injiziert
+  die Build-Version aus Spring Boot BuildProperties (mit Fallback auf
+  spring.application.version) als globales Modelattribut „appVersion" in
+  alle Thymeleaf-Views. Dieses Pattern vermeidet Duplikation in jedem
+  einzelnen Controller-Handler.

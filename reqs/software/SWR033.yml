@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Landing Page zeigt maximal drei neueste Posts
+level: 33.0
+links:
+- STK017: OBpEJf2FUhWL16mzHeUf6gtvDF2P_13y2vxMLKgymeU=
+normative: true
+ref: ''
+reviewed: isqeufCXmv_ZEqSawZjWWP5Y7FxPEuHm-_L2jwioqbA=
+text: |
+  Die Landing Page (Route „/") zeigt ausschließlich die drei neuesten
+  veröffentlichten Blog-Posts an. Die vollständige Post-Liste bleibt unter
+  „/posts" erreichbar.

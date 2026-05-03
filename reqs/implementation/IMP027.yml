@@ -1,0 +1,25 @@
+active: true
+derived: false
+header: |
+  ContentType-Feld und Flyway-Migration V4
+level: 27.0
+links:
+- SWA027: SMyq6QxN5HcPYjhwupKw9JWVEzrW8uzVZX7z2_MwpEg=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/domain/model/ContentType.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/PostJpaEntity.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/PostMapper.java
+  type: file
+- path: services/blog-content/src/main/resources/db/migration/V4__add_content_type_to_posts.sql
+  type: file
+reviewed: HQN6njySDHaOTshb-EvrerZrF3vlQX8DItDmhkqN5s8=
+text: |
+  Das ContentType-Enum (HTML, MARKDOWN) wird im Domain-Modell definiert.
+  Die PostJpaEntity bildet es als VARCHAR-Spalte ab. Der PostMapper
+  konvertiert bidirektional. Die Flyway-Migration V4 fügt die Spalte
+  content_type mit Default 'HTML' hinzu, sodass bestehende Posts
+  automatisch als HTML-Posts gelten.

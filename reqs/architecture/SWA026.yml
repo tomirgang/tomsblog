@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Landing Page mit begrenzter Post-Anzahl und Paginierung am Repository
+level: 26.0
+links:
+- SWR033: 11asWmQE589Eo0eAUQjmh0-y2ob7jNQ1E1VLVG88VuY=
+normative: true
+ref: ''
+reviewed: jRh0Jdj-2sKh9u1M98vnLOuColFwsy5_DQGIDF-7vpA=
+text: |
+  Die Landing Page beschränkt die Anzeige auf maximal drei Posts. Dafür
+  wird am PostRepository-Port eine neue Methode
+  findRecentPublishedByTenantId(TenantId, int limit) definiert. Die
+  JPA-Implementierung nutzt Spring Data Pageable (PageRequest.of(0, limit))
+  um die Begrenzung effizient auf Datenbankebene durchzuführen, statt alle
+  Posts zu laden und im Speicher zu beschneiden.

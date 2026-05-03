@@ -87,6 +87,7 @@ class PostControllerTest {
                 "Rich Post",
                 Slug.fromTitle("Rich Post"),
                 "Content with references",
+                ContentType.HTML,
                 PostStatus.PUBLISHED,
                 PostLocale.german(),
                 Set.of(),

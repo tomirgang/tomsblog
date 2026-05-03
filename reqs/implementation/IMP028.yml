@@ -1,0 +1,22 @@
+active: true
+derived: false
+header: |
+  Gerenderte Vorschau mit erstem Absatz
+level: 28.0
+links:
+- SWA027: SMyq6QxN5HcPYjhwupKw9JWVEzrW8uzVZX7z2_MwpEg=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/web/BlogViewController.java
+  type: file
+- path: services/blog-content/src/main/resources/templates/posts/list.html
+  type: file
+reviewed: JYTUT_xZH3BcGGU9PskxDWaMafn7OkCVJy7a1nKaAps=
+text: |
+  Die buildExcerpts()-Methode im BlogViewController rendert zuerst den
+  Content (Markdown zu HTML falls nötig), dann extrahiert
+  extractFirstParagraph() das erste <p>-Element per Regex. Die Post-Liste
+  zeigt das Ergebnis via th:utext als gerenderten HTML-Ausschnitt. Ist kein
+  <p>-Element vorhanden, wird der gesamte gerenderte Inhalt als Vorschau
+  verwendet.

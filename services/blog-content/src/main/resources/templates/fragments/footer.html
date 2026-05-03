@@ -6,6 +6,8 @@
             <span th:text="'&copy; ' + ${#dates.year(#dates.createNow())} + ' Toms Blog'">
                 &copy; 2026 Toms Blog
             </span>
+            &nbsp;|&nbsp;
+            <span th:text="'v' + ${appVersion}">v0.0.0</span>
         </small>
     </div>
 </body>

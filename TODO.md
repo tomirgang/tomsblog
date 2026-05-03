@@ -54,12 +54,12 @@
 
 ### Phase 4: Benutzerverwaltung & Multi-Tenancy
 
-- [ ] CI/CD: Versionierte Image-Tags (Commit-SHA) statt `latest`, Deployment-Manifest automatisch aktualisieren (Flux GitOps)
-- [ ] Landing Page: nur die neuesten 3 Posts anzeigen (STK017)
-- [ ] Footer: Versionsnummer der Anwendung anzeigen (STK018)
-- [ ] Blog Content: HTML und Markdown unterstützen, Markdown gerendert darstellen inkl. Mermaid-Diagramme und Syntax-Highlighting (STK019)
-- [ ] Vorschau in Post-Liste: gerendert darstellen statt Plaintext (STK020)
-- [ ] Vorschau in Post-Liste: ersten Abschnitt anzeigen (STK021)
+- [x] CI/CD: Versionierte Image-Tags (Commit-SHA) statt `latest`, Deployment-Manifest automatisch aktualisieren (Flux GitOps)
+- [x] Landing Page: nur die neuesten 3 Posts anzeigen (STK017)
+- [x] Footer: Versionsnummer der Anwendung anzeigen (STK018)
+- [x] Blog Content: HTML und Markdown unterstützen, Markdown gerendert darstellen inkl. Mermaid-Diagramme und Syntax-Highlighting (STK019)
+- [x] Vorschau in Post-Liste: gerendert darstellen statt Plaintext (STK020)
+- [x] Vorschau in Post-Liste: ersten Abschnitt anzeigen (STK021)
 - [ ] Volltextsuche für Blog Posts (STK022)
 - [x] Identity-Provider evaluieren (ADR-0027: Authentik + internes User Management)
 - [ ] OIDC Login integrieren (Spring Security OAuth2 Client, Authentik unter auth.do9ita.de)

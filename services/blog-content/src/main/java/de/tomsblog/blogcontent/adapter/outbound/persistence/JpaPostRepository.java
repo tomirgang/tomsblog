@@ -7,6 +7,7 @@ import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +57,18 @@ public class JpaPostRepository implements PostRepository {
     public List<Post> findPublishedByTenantId(TenantId tenantId) {
         return springDataRepo
                 .findAllByTenantIdAndStatusOrderByPublishedAtDesc(tenantId.value(), PostStatusJpa.PUBLISHED)
+                .stream()
+                .map(PostMapper::toDomain)
+                .toList();
+    }
+
+    /** @req SWR-033 */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Post> findRecentPublishedByTenantId(TenantId tenantId, int limit) {
+        return springDataRepo
+                .findAllByTenantIdAndStatusOrderByPublishedAtDesc(
+                        tenantId.value(), PostStatusJpa.PUBLISHED, PageRequest.of(0, limit))
                 .stream()
                 .map(PostMapper::toDomain)
                 .toList();

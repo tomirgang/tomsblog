@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Gerenderte Vorschau in der Post-Liste
+level: 36.0
+links:
+- STK020: ZWHxKvvIwiFyJ3TwNaf26ov6at-2dCi8tjRT0izwt90=
+normative: true
+ref: ''
+reviewed: 651pupqb_wfMM-R9Jw4Q1vStO-vZ9GR-lGPW1h0R-qk=
+text: |
+  Die Post-Liste zeigt eine gerenderte HTML-Vorschau anstelle von Plaintext.
+  Bei Markdown-Posts wird der Vorschau-Text zuerst zu HTML gerendert, bevor er
+  angezeigt wird.

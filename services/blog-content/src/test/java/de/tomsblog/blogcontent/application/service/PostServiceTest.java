@@ -58,7 +58,7 @@ class PostServiceTest {
                 .publish(any());
 
         CreatePostCommand command =
-                new CreatePostCommand(tenantId, authorId, "Test Title", "Test Content", "de", null, null);
+                new CreatePostCommand(tenantId, authorId, "Test Title", "Test Content", "HTML", "de", null, null);
 
         Post result = postService.createPost(command);
 
@@ -74,7 +74,8 @@ class PostServiceTest {
     void createPost_defaultLocale() {
         when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        CreatePostCommand command = new CreatePostCommand(tenantId, authorId, "Test", "Content", null, null, null);
+        CreatePostCommand command =
+                new CreatePostCommand(tenantId, authorId, "Test", "Content", null, null, null, null);
 
         Post result = postService.createPost(command);
 
@@ -249,6 +250,19 @@ class PostServiceTest {
 
         assertThat(result).hasSize(2);
         verify(postRepository).findPublishedByTenantId(tenantId);
+    }
+
+    @Test
+    @DisplayName("SWR-033: listRecentPublishedPosts delegates to repository with limit")
+    void listRecentPublishedPosts_delegatesToRepository() {
+        Post post1 = Post.create(tenantId, authorId, "Post 1", "Content 1", PostLocale.german());
+        post1.publish();
+        when(postRepository.findRecentPublishedByTenantId(tenantId, 3)).thenReturn(List.of(post1));
+
+        List<Post> result = postService.listRecentPublishedPosts(tenantId, 3);
+
+        assertThat(result).hasSize(1);
+        verify(postRepository).findRecentPublishedByTenantId(tenantId, 3);
     }
 
     @Test

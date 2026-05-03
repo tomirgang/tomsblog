@@ -1,0 +1,20 @@
+active: true
+derived: false
+header: |
+  FlexmarkMarkdownRenderer Outbound Adapter
+level: 24.0
+links:
+- SWA024: cs9WBWCMY9mrceqd9XbJSO_fpmWOZ5ouzRvmy2Y7fbw=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/markdown/FlexmarkMarkdownRenderer.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/application/port/outbound/MarkdownRenderer.java
+  type: file
+reviewed: 5RqgSX1zzitpBYatdi8XXB-WWijnXQo_6Pu0_aUEWes=
+text: |
+  Implementierung des MarkdownRenderer Outbound Ports mit flexmark-java.
+  Der FlexmarkMarkdownRenderer ist ein Spring @Component im Package
+  adapter.outbound.markdown. Er parst Markdown-Text und rendert ihn zu HTML.
+  Null- und Blank-Eingaben ergeben einen leeren String.

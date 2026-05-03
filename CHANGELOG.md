@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Landing Page: nur die neuesten 3 Posts anzeigen (STK-017, SWR-033)
+- Footer: Versionsnummer der Anwendung anzeigen (STK-018, SWR-034)
+- Blog Content: HTML und Markdown unterstützen, Markdown gerendert darstellen inkl. Mermaid-Diagramme und Syntax-Highlighting (STK-019, SWR-035)
+- Vorschau in Post-Liste: gerendert darstellen statt Plaintext (STK-020, SWR-036)
+- Vorschau in Post-Liste: ersten Abschnitt anzeigen (STK-021, SWR-037)
+- ContentType-Feld im Domain-Modell (HTML/MARKDOWN) mit Datenmigration V4
+- Flexmark-basierter Markdown-Renderer als Outbound-Adapter
+- VersionModelAdvice (ControllerAdvice) für globale appVersion-Modellvariable
+- highlight.js und Mermaid.js (CDN) für clientseitiges Syntax-Highlighting und Diagramm-Rendering
+
 ## [0.5.3] - 2026-05-03
 
 ### Changed

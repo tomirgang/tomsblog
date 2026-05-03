@@ -2,7 +2,7 @@ package de.tomsblog.blogcontent.adapter.inbound.web;
 
 import jakarta.validation.constraints.NotBlank;
 
-/** @req SWR-027 */
+/** @req SWR-027 @req SWR-035 */
 public class PostFormData {
 
     @NotBlank
@@ -12,18 +12,29 @@ public class PostFormData {
     private String content;
 
     @NotBlank
+    private String contentType;
+
+    @NotBlank
     private String locale;
 
     private String socialMediaTitle;
 
     private String socialMediaSummary;
 
-    public PostFormData() {}
+    public PostFormData() {
+        this.contentType = "HTML";
+    }
 
     public PostFormData(
-            String title, String content, String locale, String socialMediaTitle, String socialMediaSummary) {
+            String title,
+            String content,
+            String contentType,
+            String locale,
+            String socialMediaTitle,
+            String socialMediaSummary) {
         this.title = title;
         this.content = content;
+        this.contentType = contentType;
         this.locale = locale;
         this.socialMediaTitle = socialMediaTitle;
         this.socialMediaSummary = socialMediaSummary;
@@ -43,6 +54,14 @@ public class PostFormData {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     public String getLocale() {

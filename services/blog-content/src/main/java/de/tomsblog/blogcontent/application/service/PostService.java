@@ -7,6 +7,7 @@ import de.tomsblog.blogcontent.application.port.inbound.RemoveSourceCommand;
 import de.tomsblog.blogcontent.application.port.inbound.UpdatePostCommand;
 import de.tomsblog.blogcontent.application.port.outbound.EventPublisher;
 import de.tomsblog.blogcontent.application.port.outbound.PostRepository;
+import de.tomsblog.blogcontent.domain.model.ContentType;
 import de.tomsblog.blogcontent.domain.model.Post;
 import de.tomsblog.blogcontent.domain.model.PostId;
 import de.tomsblog.blogcontent.domain.model.PostLocale;
@@ -37,7 +38,10 @@ public class PostService implements PostUseCase {
     @Override
     public Post createPost(CreatePostCommand command) {
         PostLocale locale = command.locale() != null ? PostLocale.of(command.locale()) : PostLocale.german();
-        Post post = Post.create(command.tenantId(), command.authorId(), command.title(), command.content(), locale);
+        ContentType contentType =
+                command.contentType() != null ? ContentType.valueOf(command.contentType()) : ContentType.HTML;
+        Post post = Post.create(
+                command.tenantId(), command.authorId(), command.title(), command.content(), contentType, locale);
         post.updateSocialMedia(command.socialMediaTitle(), command.socialMediaSummary());
         Post saved = postRepository.save(post);
         eventPublisher.publish(post.getDomainEvents());
@@ -81,6 +85,12 @@ public class PostService implements PostUseCase {
     @Override
     public List<Post> listPublishedPosts(TenantId tenantId) {
         return postRepository.findPublishedByTenantId(tenantId);
+    }
+
+    /** @req SWR-033 */
+    @Override
+    public List<Post> listRecentPublishedPosts(TenantId tenantId, int limit) {
+        return postRepository.findRecentPublishedByTenantId(tenantId, limit);
     }
 
     /** @req SWR-026 */

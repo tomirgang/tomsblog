@@ -1,12 +1,13 @@
 package de.tomsblog.blogcontent.adapter.inbound.web;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
+import de.tomsblog.blogcontent.application.port.outbound.MarkdownRenderer;
 import de.tomsblog.blogcontent.domain.model.Post;
 import de.tomsblog.blogcontent.domain.model.PostLocale;
 import de.tomsblog.blogcontent.domain.model.Slug;
@@ -39,6 +40,9 @@ class SecurityConfigurationTest {
     @MockitoBean
     private PostUseCase postUseCase;
 
+    @MockitoBean
+    private MarkdownRenderer markdownRenderer;
+
     @Nested
     @DisplayName("SWR-028: Public endpoints accessible without authentication")
     class PublicEndpoints {
@@ -46,6 +50,9 @@ class SecurityConfigurationTest {
         @Test
         @DisplayName("GET / is publicly accessible")
         void index_isPublic() throws Exception {
+            when(postUseCase.listRecentPublishedPosts(any(TenantId.class), anyInt()))
+                    .thenReturn(List.of());
+
             mockMvc.perform(get("/")).andExpect(status().isOk());
         }
 

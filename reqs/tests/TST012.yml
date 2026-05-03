@@ -1,0 +1,20 @@
+active: true
+derived: false
+header: |
+  Markdown-Rendering (Unit Test FlexmarkMarkdownRenderer)
+level: 12.0
+links:
+- SWR035: bxMSaU-rfi39nLJmt6i4Kdg2qCSjS3FTh8_YMMM-LXA=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/test/java/de/tomsblog/blogcontent/adapter/outbound/markdown/FlexmarkMarkdownRendererTest.java
+  type: file
+reviewed: v4I3RyPGSjLQ2yqozwktkTbdkJVyMKUymLdO3gMzpuc=
+text: |
+  Testfälle für den Markdown-Renderer:
+  - Rendert Markdown-Überschriften und Absätze zu HTML
+  - Null-Eingabe ergibt leeren String
+  - Blank-Eingabe ergibt leeren String
+  - Code-Blöcke werden mit language-class gerendert
+  Testklasse: FlexmarkMarkdownRendererTest (Unit Test)

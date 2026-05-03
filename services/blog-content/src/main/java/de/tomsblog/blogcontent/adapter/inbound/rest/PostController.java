@@ -49,6 +49,7 @@ public class PostController {
                 AuthorId.of(request.authorId()),
                 request.title(),
                 request.content(),
+                request.contentType(),
                 request.locale(),
                 request.socialMediaTitle(),
                 request.socialMediaSummary());

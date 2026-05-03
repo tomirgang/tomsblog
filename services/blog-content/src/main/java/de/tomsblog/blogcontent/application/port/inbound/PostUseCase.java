@@ -38,6 +38,9 @@ public interface PostUseCase {
     /** @req SWR-026 */
     List<Post> listPublishedPosts(TenantId tenantId);
 
+    /** @req SWR-033 */
+    List<Post> listRecentPublishedPosts(TenantId tenantId, int limit);
+
     /** @req SWR-026 */
     Post getPublishedPostBySlug(Slug slug, TenantId tenantId);
 

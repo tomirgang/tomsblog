@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Vorschau zeigt den ersten Abschnitt
+level: 37.0
+links:
+- STK021: KsfuyZsgYOylFzL49wdXMMwru9H55ZujUx2Z5BGOOlQ=
+normative: true
+ref: ''
+reviewed: fvBQ1qzvthRi_yqjWgtezFcB7lJqFnW4gT2XdPhiHRU=
+text: |
+  Die Vorschau in der Post-Liste umfasst den ersten Absatz des Post-Inhalts.
+  Bei HTML-Posts wird das erste <p>-Element extrahiert, bei Markdown-Posts der
+  erste Textabschnitt (bis zur ersten Leerzeile) gerendert.

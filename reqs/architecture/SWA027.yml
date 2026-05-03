@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  ContentType im Domain-Modell und Persistenz-Schema
+level: 27.0
+links:
+- SWR035: bxMSaU-rfi39nLJmt6i4Kdg2qCSjS3FTh8_YMMM-LXA=
+- SWR036: 04zujC58ZvIL1BqMQJU9woTs120fg6PsdjdAp1hOBAw=
+- SWR037: AW2dBmLszjg0wre-S6TdNoHOEiGz6fISUby0130v6ps=
+normative: true
+ref: ''
+reviewed: l3CdhtZOmYZXNZ7ppMi1DDLtcgcEjsbT0-UC_y63zXw=
+text: |
+  Das Domain-Modell wird um ein ContentType-Enum (HTML, MARKDOWN) erweitert.
+  Das Feld wird im Post-Aggregate gespeichert und über eine Flyway-Migration
+  (V4) als VARCHAR(20)-Spalte mit Default 'HTML' in der Datenbank angelegt.
+  Der ContentType steuert, ob der Inhalt vor der Anzeige durch den
+  MarkdownRenderer verarbeitet werden muss.

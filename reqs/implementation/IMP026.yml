@@ -1,0 +1,23 @@
+active: true
+derived: false
+header: |
+  Landing Page Begrenzung auf drei Posts
+level: 26.0
+links:
+- SWA026: QExKYmjuS-aCvc2zK-aU_SyhopTfkxgKc4e-saW1sr8=
+normative: true
+ref: ''
+references:
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/web/BlogViewController.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/JpaPostRepository.java
+  type: file
+- path: services/blog-content/src/main/java/de/tomsblog/blogcontent/application/port/outbound/PostRepository.java
+  type: file
+reviewed: _yJr_MpAcHpPwigvNZO6BhgHcl1q0ptAHEl0X2dFEb4=
+text: |
+  Die Landing Page (GET /) ruft listRecentPublishedPosts(tenantId, 3) auf.
+  Der JpaPostRepository implementiert dies mit PageRequest.of(0, limit) auf
+  der bestehenden findPublishedByTenantId-Query. Authentifizierte Nutzer
+  sehen ebenfalls maximal 3 Posts (Sublist aus listPosts). Ein Link zu
+  /posts ermöglicht den Zugriff auf die vollständige Liste.

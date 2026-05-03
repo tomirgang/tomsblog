@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Versionsnummer im Footer anzeigen
+level: 34.0
+links:
+- STK018: kPtiJv0Hkev0INt6CajPvmuxxXMUx4bWzVBnGe4pSzk=
+normative: true
+ref: ''
+reviewed: cNubSxjFilHyKaO3Bg_EI9DI3HQMf3ZqmR1iuiI9Cb0=
+text: |
+  Der Footer jeder Seite zeigt die aktuelle Anwendungsversion an. Die Version
+  wird zur Build-Zeit aus den Maven-Projektkoordinaten ermittelt und über
+  Spring Boot BuildProperties bereitgestellt.
