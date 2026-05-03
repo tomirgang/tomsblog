@@ -61,6 +61,8 @@
 - [x] Vorschau in Post-Liste: gerendert darstellen statt Plaintext (STK020)
 - [x] Vorschau in Post-Liste: ersten Abschnitt anzeigen (STK021)
 - [ ] Volltextsuche für Blog Posts (STK022)
+- [ ] Chronologische Previous/Next-Navigation auf Post-Detailseiten (STK025)
+- [ ] Serien-Navigation für thematisch zusammenhängende Posts (STK026)
 - [x] Identity-Provider evaluieren (ADR-0027: Authentik + internes User Management)
 - [ ] OIDC Login integrieren (Spring Security OAuth2 Client, Authentik unter auth.do9ita.de)
 - [ ] Leichtgewichtiger User-Management-Service (OIDC Relying Party, Rollen, Tenant-Zuordnung)

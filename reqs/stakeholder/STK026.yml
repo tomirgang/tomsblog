@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Serien-Navigation für thematisch zusammenhängende Posts
+level: 26.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Posts sollen Serien zu bestimmten Themen unterstützen. Ein Post kann
+  optional einen vorherigen und einen nächsten Post innerhalb derselben
+  Serie referenzieren. Diese Serien-Links sollen in der UI angezeigt
+  werden, sofern sie nicht mit der chronologischen Navigation (vorheriger/
+  nächster Post nach Veröffentlichungsdatum) übereinstimmen.

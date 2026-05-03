@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Chronologische Navigation auf Post-Detailseiten
+level: 25.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Auf der Detailseite eines Blog-Posts sollen Links zum chronologisch
+  vorherigen und nächsten Post angezeigt werden (basierend auf dem
+  Veröffentlichungsdatum). Damit können Leser bequem durch alle
+  veröffentlichten Posts navigieren.
