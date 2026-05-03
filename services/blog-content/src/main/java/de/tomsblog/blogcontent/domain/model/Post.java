@@ -7,6 +7,7 @@ import de.tomsblog.shared.domain.AggregateRoot;
 import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import java.util.Set;
  * @req SWR-003
  * @req SWR-012
  * @req SWR-040
+ * @req SWR-041
  */
 public class Post extends AggregateRoot {
 
@@ -41,6 +43,8 @@ public class Post extends AggregateRoot {
     private String socialMediaSummary;
     private PostId seriesPreviousPostId;
     private PostId seriesNextPostId;
+    private LocalDate featuredFrom;
+    private LocalDate featuredUntil;
 
     private Post(
             PostId id,
@@ -249,6 +253,41 @@ public class Post extends AggregateRoot {
         this.seriesNextPostId = seriesNextPostId;
     }
 
+    /** @req SWR-041 */
+    public void updateFeatured(LocalDate from, LocalDate until) {
+        if (from == null && until == null) {
+            this.featuredFrom = null;
+            this.featuredUntil = null;
+            return;
+        }
+        if (from == null || until == null) {
+            throw new IllegalArgumentException("featuredFrom and featuredUntil must both be set or both be null");
+        }
+        if (until.isBefore(from)) {
+            throw new IllegalArgumentException("featuredUntil must not be before featuredFrom");
+        }
+        this.featuredFrom = from;
+        this.featuredUntil = until;
+    }
+
+    /** @req SWR-041 */
+    public boolean isFeatured(LocalDate today) {
+        if (featuredFrom == null || featuredUntil == null) {
+            return false;
+        }
+        return !today.isBefore(featuredFrom) && !today.isAfter(featuredUntil);
+    }
+
+    /** @req SWR-041 */
+    public LocalDate getFeaturedFrom() {
+        return featuredFrom;
+    }
+
+    /** @req SWR-041 */
+    public LocalDate getFeaturedUntil() {
+        return featuredUntil;
+    }
+
     public String getEffectiveSocialMediaSummary() {
         if (socialMediaSummary != null && !socialMediaSummary.isBlank()) {
             return socialMediaSummary;
@@ -285,7 +324,9 @@ public class Post extends AggregateRoot {
             String socialMediaTitle,
             String socialMediaSummary,
             PostId seriesPreviousPostId,
-            PostId seriesNextPostId) {
+            PostId seriesNextPostId,
+            LocalDate featuredFrom,
+            LocalDate featuredUntil) {
         Post post = new Post(id, tenantId, authorId, title, slug, content, contentType, locale);
         post.status = status;
         post.publishedAt = publishedAt;
@@ -293,6 +334,8 @@ public class Post extends AggregateRoot {
         post.socialMediaSummary = socialMediaSummary;
         post.seriesPreviousPostId = seriesPreviousPostId;
         post.seriesNextPostId = seriesNextPostId;
+        post.featuredFrom = featuredFrom;
+        post.featuredUntil = featuredUntil;
         post.tags.addAll(tags);
         post.sources.addAll(sources);
         post.attachments.addAll(attachments);

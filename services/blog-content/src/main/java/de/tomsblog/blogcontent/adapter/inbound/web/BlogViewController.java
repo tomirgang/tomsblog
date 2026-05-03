@@ -12,6 +12,7 @@ import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
 import jakarta.validation.Valid;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @req SWR-038
  * @req SWR-039
  * @req SWR-040
+ * @req SWR-042
  */
 @Controller
 public class BlogViewController {
@@ -57,7 +59,7 @@ public class BlogViewController {
         this.markdownRenderer = markdownRenderer;
     }
 
-    /** @req SWR-033 */
+    /** @req SWR-033 @req SWR-042 */
     @GetMapping("/")
     public String index(@RequestHeader("X-Tenant-Id") UUID tenantId, Model model, Principal principal) {
         TenantId tenant = new TenantId(tenantId);
@@ -70,8 +72,11 @@ public class BlogViewController {
         } else {
             posts = postUseCase.listRecentPublishedPosts(tenant, LANDING_PAGE_LIMIT);
         }
+        List<Post> featuredPosts = postUseCase.listFeaturedPosts(tenant, LocalDate.now());
         model.addAttribute("posts", posts);
+        model.addAttribute("featuredPosts", featuredPosts);
         model.addAttribute("excerpts", buildExcerpts(posts));
+        model.addAttribute("featuredExcerpts", buildExcerpts(featuredPosts));
         model.addAttribute("authenticated", principal != null);
         model.addAttribute("landingPage", true);
         return "posts/list";
@@ -150,7 +155,9 @@ public class BlogViewController {
                 form.getSocialMediaTitle(),
                 form.getSocialMediaSummary(),
                 parseUuid(form.getSeriesPreviousPostId()),
-                parseUuid(form.getSeriesNextPostId()));
+                parseUuid(form.getSeriesNextPostId()),
+                parseLocalDate(form.getFeaturedFrom()),
+                parseLocalDate(form.getFeaturedUntil()));
         postUseCase.createPost(command);
         return "redirect:/posts";
     }
@@ -171,7 +178,9 @@ public class BlogViewController {
                         : null,
                 post.getSeriesNextPostId() != null
                         ? post.getSeriesNextPostId().value().toString()
-                        : null);
+                        : null,
+                post.getFeaturedFrom() != null ? post.getFeaturedFrom().toString() : null,
+                post.getFeaturedUntil() != null ? post.getFeaturedUntil().toString() : null);
         model.addAttribute("postForm", form);
         model.addAttribute("editMode", true);
         model.addAttribute("postId", id);
@@ -199,7 +208,9 @@ public class BlogViewController {
                 form.getSocialMediaTitle(),
                 form.getSocialMediaSummary(),
                 parseUuid(form.getSeriesPreviousPostId()),
-                parseUuid(form.getSeriesNextPostId()));
+                parseUuid(form.getSeriesNextPostId()),
+                parseLocalDate(form.getFeaturedFrom()),
+                parseLocalDate(form.getFeaturedUntil()));
         postUseCase.updatePost(command);
         return "redirect:/posts";
     }
@@ -275,5 +286,12 @@ public class BlogViewController {
             return null;
         }
         return UUID.fromString(value);
+    }
+
+    private static LocalDate parseLocalDate(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return LocalDate.parse(value);
     }
 }

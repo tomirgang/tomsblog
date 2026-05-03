@@ -7,6 +7,7 @@ import de.tomsblog.blogcontent.domain.event.PostPublishedEvent;
 import de.tomsblog.blogcontent.domain.model.*;
 import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
+import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -246,5 +247,136 @@ class PostTest {
         Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
 
         assertThatThrownBy(() -> post.addAttachment(null)).isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    @DisplayName("SWR-041: updateFeatured sets both dates")
+    void updateFeaturedSetsBothDates() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+        LocalDate from = LocalDate.of(2026, 5, 1);
+        LocalDate until = LocalDate.of(2026, 5, 31);
+
+        post.updateFeatured(from, until);
+
+        assertThat(post.getFeaturedFrom()).isEqualTo(from);
+        assertThat(post.getFeaturedUntil()).isEqualTo(until);
+    }
+
+    @Test
+    @DisplayName("SWR-041: updateFeatured with both null clears featured")
+    void updateFeaturedBothNullClears() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+        post.updateFeatured(LocalDate.of(2026, 5, 1), LocalDate.of(2026, 5, 31));
+
+        post.updateFeatured(null, null);
+
+        assertThat(post.getFeaturedFrom()).isNull();
+        assertThat(post.getFeaturedUntil()).isNull();
+    }
+
+    @Test
+    @DisplayName("SWR-041: updateFeatured with only from set throws")
+    void updateFeaturedOnlyFromThrows() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+
+        assertThatThrownBy(() -> post.updateFeatured(LocalDate.of(2026, 5, 1), null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("both be set or both be null");
+    }
+
+    @Test
+    @DisplayName("SWR-041: updateFeatured with only until set throws")
+    void updateFeaturedOnlyUntilThrows() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+
+        assertThatThrownBy(() -> post.updateFeatured(null, LocalDate.of(2026, 5, 31)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("both be set or both be null");
+    }
+
+    @Test
+    @DisplayName("SWR-041: updateFeatured with until before from throws")
+    void updateFeaturedUntilBeforeFromThrows() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+
+        assertThatThrownBy(() -> post.updateFeatured(LocalDate.of(2026, 5, 31), LocalDate.of(2026, 5, 1)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("must not be before");
+    }
+
+    @Test
+    @DisplayName("SWR-041: updateFeatured with same date is valid")
+    void updateFeaturedSameDateValid() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+        LocalDate date = LocalDate.of(2026, 5, 15);
+
+        post.updateFeatured(date, date);
+
+        assertThat(post.getFeaturedFrom()).isEqualTo(date);
+        assertThat(post.getFeaturedUntil()).isEqualTo(date);
+    }
+
+    @Test
+    @DisplayName("SWR-041: isFeatured returns true when today is in range")
+    void isFeaturedReturnsTrueInRange() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+        post.updateFeatured(LocalDate.of(2026, 5, 1), LocalDate.of(2026, 5, 31));
+
+        assertThat(post.isFeatured(LocalDate.of(2026, 5, 15))).isTrue();
+    }
+
+    @Test
+    @DisplayName("SWR-041: isFeatured returns true on boundary dates")
+    void isFeaturedReturnsTrueOnBoundaries() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+        post.updateFeatured(LocalDate.of(2026, 5, 1), LocalDate.of(2026, 5, 31));
+
+        assertThat(post.isFeatured(LocalDate.of(2026, 5, 1))).isTrue();
+        assertThat(post.isFeatured(LocalDate.of(2026, 5, 31))).isTrue();
+    }
+
+    @Test
+    @DisplayName("SWR-041: isFeatured returns false when today is outside range")
+    void isFeaturedReturnsFalseOutsideRange() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+        post.updateFeatured(LocalDate.of(2026, 5, 1), LocalDate.of(2026, 5, 31));
+
+        assertThat(post.isFeatured(LocalDate.of(2026, 4, 30))).isFalse();
+        assertThat(post.isFeatured(LocalDate.of(2026, 6, 1))).isFalse();
+    }
+
+    @Test
+    @DisplayName("SWR-041: isFeatured returns false when no featured dates set")
+    void isFeaturedReturnsFalseWhenNotSet() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+
+        assertThat(post.isFeatured(LocalDate.of(2026, 5, 15))).isFalse();
+    }
+
+    @Test
+    @DisplayName("SWR-041: isFeatured returns false when only featuredFrom is set")
+    void isFeaturedReturnsFalseWhenOnlyFromSet() {
+        Post post = Post.reconstitute(
+                PostId.generate(),
+                tenantId,
+                authorId,
+                "Title",
+                Slug.fromTitle("Title"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.DRAFT,
+                PostLocale.german(),
+                java.util.Set.of(),
+                java.util.List.of(),
+                java.util.List.of(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                LocalDate.of(2026, 5, 1),
+                null);
+
+        assertThat(post.isFeatured(LocalDate.of(2026, 5, 15))).isFalse();
     }
 }

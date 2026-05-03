@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Featured Posts: Posts können für einen Zeitraum hervorgehoben und auf der Landing Page prominent dargestellt werden (STK027, SWR-041, SWR-042)
+- Domain-Modell: `featuredFrom`/`featuredUntil` Felder auf Post, `isFeatured(LocalDate)` Methode, `updateFeatured()` mit Validierung
+- Neuer Outbound-Port: `PostRepository.findFeaturedByTenantId(TenantId, LocalDate)`
+- Neuer Inbound-Port: `PostUseCase.listFeaturedPosts(TenantId, LocalDate)`
+- REST-API: `featuredFrom`/`featuredUntil` in CreatePostRequest, UpdatePostRequest und PostResponse
+- Thymeleaf-UI: Featured-Sektion auf der Landing Page, Featured-Felder im Post-Formular
+- Flyway-Migration V7: `featured_from` und `featured_until` Spalten in der Posts-Tabelle
+
 ## [0.7.1] - 2026-05-03
 
 ### Added

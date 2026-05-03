@@ -65,6 +65,16 @@
                        placeholder="UUID des nächsten Posts" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}">
             </details>
 
+            <details>
+                <summary>Featured (optional)</summary>
+
+                <label for="featuredFrom">Featured von</label>
+                <input type="date" id="featuredFrom" th:field="*{featuredFrom}">
+
+                <label for="featuredUntil">Featured bis</label>
+                <input type="date" id="featuredUntil" th:field="*{featuredUntil}">
+            </details>
+
             <div role="group">
                 <button type="submit" th:text="${editMode} ? 'Speichern' : 'Erstellen'">Absenden</button>
                 <a th:href="@{/posts}" role="button" class="secondary">Abbrechen</a>

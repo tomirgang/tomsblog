@@ -5,12 +5,13 @@ import de.tomsblog.blogcontent.domain.model.Post;
 import de.tomsblog.blogcontent.domain.model.Source;
 import de.tomsblog.blogcontent.domain.model.TagId;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-/** @req SWR-001 @req SWR-040 */
+/** @req SWR-001 @req SWR-040 @req SWR-041 */
 public record PostResponse(
         UUID id,
         UUID tenantId,
@@ -30,7 +31,9 @@ public record PostResponse(
         String effectiveSocialMediaTitle,
         String effectiveSocialMediaSummary,
         UUID seriesPreviousPostId,
-        UUID seriesNextPostId) {
+        UUID seriesNextPostId,
+        LocalDate featuredFrom,
+        LocalDate featuredUntil) {
 
     public static PostResponse from(Post post) {
         return new PostResponse(
@@ -54,7 +57,9 @@ public record PostResponse(
                 post.getSeriesPreviousPostId() != null
                         ? post.getSeriesPreviousPostId().value()
                         : null,
-                post.getSeriesNextPostId() != null ? post.getSeriesNextPostId().value() : null);
+                post.getSeriesNextPostId() != null ? post.getSeriesNextPostId().value() : null,
+                post.getFeaturedFrom(),
+                post.getFeaturedUntil());
     }
 
     public record SourceResponse(String url, String title) {

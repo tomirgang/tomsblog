@@ -15,9 +15,11 @@ import de.tomsblog.blogcontent.application.service.PostNotFoundException;
 import de.tomsblog.blogcontent.domain.model.*;
 import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,12 @@ class BlogViewControllerTest {
 
     private final UUID tenantId = UUID.randomUUID();
     private final AuthorId authorId = AuthorId.generate();
+
+    @BeforeEach
+    void setUp() {
+        when(postUseCase.listFeaturedPosts(any(TenantId.class), any(LocalDate.class)))
+                .thenReturn(List.of());
+    }
 
     @Test
     @DisplayName("SWR-033: GET / returns post list view with max 3 recent posts")
@@ -460,7 +468,9 @@ class BlogViewControllerTest {
                 null,
                 null,
                 seriesPrevId,
-                seriesNextId);
+                seriesNextId,
+                null,
+                null);
 
         Post seriesPrev = Post.create(TenantId.of(tenantId), authorId, "Series Prev", "Content", PostLocale.german());
         seriesPrev.publish();
@@ -507,6 +517,8 @@ class BlogViewControllerTest {
                 null,
                 null,
                 chronoPrev.getId(),
+                null,
+                null,
                 null);
 
         when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
@@ -603,13 +615,70 @@ class BlogViewControllerTest {
                 null,
                 null,
                 PostId.of(prevId),
-                PostId.of(nextId));
+                PostId.of(nextId),
+                null,
+                null);
         when(postUseCase.getPost(any(PostId.class), any(TenantId.class))).thenReturn(post);
 
         mockMvc.perform(get("/posts/{id}/edit", postId).header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/form"))
                 .andExpect(model().attributeExists("postForm"));
+    }
+
+    @Test
+    @DisplayName("SWR-041: GET /posts/{id}/edit pre-fills featured fields")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void editPostForm_prefillsFeaturedFields() throws Exception {
+        UUID postId = UUID.randomUUID();
+        Post post = Post.reconstitute(
+                PostId.of(postId),
+                TenantId.of(tenantId),
+                authorId,
+                "Featured Post",
+                Slug.fromTitle("Featured Post"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.DRAFT,
+                PostLocale.german(),
+                java.util.Set.of(),
+                List.of(),
+                List.of(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                LocalDate.of(2026, 5, 1),
+                LocalDate.of(2026, 5, 31));
+        when(postUseCase.getPost(any(PostId.class), any(TenantId.class))).thenReturn(post);
+
+        mockMvc.perform(get("/posts/{id}/edit", postId).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/form"))
+                .andExpect(model().attributeExists("postForm"));
+    }
+
+    @Test
+    @DisplayName("SWR-041: POST /posts passes featured dates to command")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void createPost_withFeaturedDates() throws Exception {
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Featured", "Content", PostLocale.german());
+        when(postUseCase.createPost(any(CreatePostCommand.class))).thenReturn(post);
+
+        mockMvc.perform(post("/posts")
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", authorId.value().toString())
+                        .param("title", "Featured")
+                        .param("content", "Content")
+                        .param("contentType", "HTML")
+                        .param("locale", "de")
+                        .param("featuredFrom", "2026-05-01")
+                        .param("featuredUntil", "2026-05-31"))
+                .andExpect(status().is3xxRedirection());
+
+        verify(postUseCase).createPost(any(CreatePostCommand.class));
     }
 
     @Test
@@ -635,7 +704,9 @@ class BlogViewControllerTest {
                 null,
                 null,
                 null,
-                chronoNext.getId());
+                chronoNext.getId(),
+                null,
+                null);
 
         when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
                 .thenReturn(current);
@@ -673,6 +744,8 @@ class BlogViewControllerTest {
                 null,
                 null,
                 seriesPrevId,
+                null,
+                null,
                 null);
 
         when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
@@ -716,7 +789,9 @@ class BlogViewControllerTest {
                 null,
                 null,
                 null,
-                seriesNextId);
+                seriesNextId,
+                null,
+                null);
 
         when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
                 .thenReturn(current);

@@ -5,6 +5,7 @@ import de.tomsblog.blogcontent.domain.model.PostId;
 import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.shared.tenant.TenantId;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
  * @req SWR-033
  * @req SWR-038
  * @req SWR-039
+ * @req SWR-042
  */
 public interface PostRepository {
 
@@ -45,4 +47,7 @@ public interface PostRepository {
 
     /** @req SWR-039 */
     Optional<Post> findNextPublished(TenantId tenantId, Instant publishedAt);
+
+    /** @req SWR-042 */
+    List<Post> findFeaturedByTenantId(TenantId tenantId, LocalDate today);
 }

@@ -2,9 +2,10 @@ package de.tomsblog.blogcontent.application.port.inbound;
 
 import de.tomsblog.blogcontent.domain.model.PostId;
 import de.tomsblog.shared.tenant.TenantId;
+import java.time.LocalDate;
 import java.util.UUID;
 
-/** @req SWR-001 @req SWR-040 */
+/** @req SWR-001 @req SWR-040 @req SWR-041 */
 public record UpdatePostCommand(
         PostId postId,
         TenantId tenantId,
@@ -13,4 +14,6 @@ public record UpdatePostCommand(
         String socialMediaTitle,
         String socialMediaSummary,
         UUID seriesPreviousPostId,
-        UUID seriesNextPostId) {}
+        UUID seriesNextPostId,
+        LocalDate featuredFrom,
+        LocalDate featuredUntil) {}

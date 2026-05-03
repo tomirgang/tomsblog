@@ -6,6 +6,7 @@ import de.tomsblog.blogcontent.domain.model.PostId;
 import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.shared.tenant.TenantId;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @req SWR-026
  * @req SWR-038
  * @req SWR-039
+ * @req SWR-042
  */
 @Repository
 @Transactional
@@ -118,5 +120,14 @@ public class JpaPostRepository implements PostRepository {
                 .findFirstByTenantIdAndStatusAndPublishedAtAfterOrderByPublishedAtAsc(
                         tenantId.value(), PostStatusJpa.PUBLISHED, publishedAt)
                 .map(PostMapper::toDomain);
+    }
+
+    /** @req SWR-042 */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Post> findFeaturedByTenantId(TenantId tenantId, LocalDate today) {
+        return springDataRepo.findFeaturedByTenantId(tenantId.value(), today).stream()
+                .map(PostMapper::toDomain)
+                .toList();
     }
 }

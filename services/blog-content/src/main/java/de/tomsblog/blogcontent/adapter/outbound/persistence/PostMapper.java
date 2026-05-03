@@ -39,6 +39,8 @@ public final class PostMapper {
                         : null);
         entity.setSeriesNextPostId(
                 post.getSeriesNextPostId() != null ? post.getSeriesNextPostId().value() : null);
+        entity.setFeaturedFrom(post.getFeaturedFrom());
+        entity.setFeaturedUntil(post.getFeaturedUntil());
         return entity;
     }
 
@@ -73,6 +75,8 @@ public final class PostMapper {
                 entity.getSocialMediaTitle(),
                 entity.getSocialMediaSummary(),
                 entity.getSeriesPreviousPostId() != null ? PostId.of(entity.getSeriesPreviousPostId()) : null,
-                entity.getSeriesNextPostId() != null ? PostId.of(entity.getSeriesNextPostId()) : null);
+                entity.getSeriesNextPostId() != null ? PostId.of(entity.getSeriesNextPostId()) : null,
+                entity.getFeaturedFrom(),
+                entity.getFeaturedUntil());
     }
 }

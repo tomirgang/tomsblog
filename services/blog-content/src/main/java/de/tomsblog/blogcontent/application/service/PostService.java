@@ -15,6 +15,7 @@ import de.tomsblog.blogcontent.domain.model.PostStatus;
 import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.blogcontent.domain.model.Source;
 import de.tomsblog.shared.tenant.TenantId;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,7 @@ import java.util.Optional;
  * @req SWR-038
  * @req SWR-039
  * @req SWR-040
+ * @req SWR-042
  */
 public class PostService implements PostUseCase {
 
@@ -50,6 +52,7 @@ public class PostService implements PostUseCase {
         post.updateSeriesNavigation(
                 command.seriesPreviousPostId() != null ? PostId.of(command.seriesPreviousPostId()) : null,
                 command.seriesNextPostId() != null ? PostId.of(command.seriesNextPostId()) : null);
+        post.updateFeatured(command.featuredFrom(), command.featuredUntil());
         Post saved = postRepository.save(post);
         eventPublisher.publish(post.getDomainEvents());
         post.clearDomainEvents();
@@ -64,6 +67,7 @@ public class PostService implements PostUseCase {
         post.updateSeriesNavigation(
                 command.seriesPreviousPostId() != null ? PostId.of(command.seriesPreviousPostId()) : null,
                 command.seriesNextPostId() != null ? PostId.of(command.seriesNextPostId()) : null);
+        post.updateFeatured(command.featuredFrom(), command.featuredUntil());
         return postRepository.save(post);
     }
 
@@ -176,6 +180,12 @@ public class PostService implements PostUseCase {
         return postRepository
                 .findByIdAndTenantId(postId, tenantId)
                 .filter(post -> post.getStatus() == PostStatus.PUBLISHED);
+    }
+
+    /** @req SWR-042 */
+    @Override
+    public List<Post> listFeaturedPosts(TenantId tenantId, LocalDate today) {
+        return postRepository.findFeaturedByTenantId(tenantId, today);
     }
 
     private Post findOrThrow(PostId postId, TenantId tenantId) {

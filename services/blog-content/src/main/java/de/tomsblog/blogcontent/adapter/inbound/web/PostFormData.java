@@ -2,7 +2,7 @@ package de.tomsblog.blogcontent.adapter.inbound.web;
 
 import jakarta.validation.constraints.NotBlank;
 
-/** @req SWR-027 @req SWR-035 @req SWR-040 */
+/** @req SWR-027 @req SWR-035 @req SWR-040 @req SWR-041 */
 public class PostFormData {
 
     @NotBlank
@@ -25,6 +25,10 @@ public class PostFormData {
 
     private String seriesNextPostId;
 
+    private String featuredFrom;
+
+    private String featuredUntil;
+
     public PostFormData() {
         this.contentType = "HTML";
     }
@@ -37,7 +41,9 @@ public class PostFormData {
             String socialMediaTitle,
             String socialMediaSummary,
             String seriesPreviousPostId,
-            String seriesNextPostId) {
+            String seriesNextPostId,
+            String featuredFrom,
+            String featuredUntil) {
         this.title = title;
         this.content = content;
         this.contentType = contentType;
@@ -46,6 +52,8 @@ public class PostFormData {
         this.socialMediaSummary = socialMediaSummary;
         this.seriesPreviousPostId = seriesPreviousPostId;
         this.seriesNextPostId = seriesNextPostId;
+        this.featuredFrom = featuredFrom;
+        this.featuredUntil = featuredUntil;
     }
 
     public String getTitle() {
@@ -110,5 +118,21 @@ public class PostFormData {
 
     public void setSeriesNextPostId(String seriesNextPostId) {
         this.seriesNextPostId = seriesNextPostId;
+    }
+
+    public String getFeaturedFrom() {
+        return featuredFrom;
+    }
+
+    public void setFeaturedFrom(String featuredFrom) {
+        this.featuredFrom = featuredFrom;
+    }
+
+    public String getFeaturedUntil() {
+        return featuredUntil;
+    }
+
+    public void setFeaturedUntil(String featuredUntil) {
+        this.featuredUntil = featuredUntil;
     }
 }

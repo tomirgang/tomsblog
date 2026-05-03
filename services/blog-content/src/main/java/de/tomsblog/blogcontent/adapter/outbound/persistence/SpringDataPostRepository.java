@@ -1,6 +1,7 @@
 package de.tomsblog.blogcontent.adapter.outbound.persistence;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,4 +42,10 @@ public interface SpringDataPostRepository extends JpaRepository<PostJpaEntity, U
     /** @req SWR-039 */
     Optional<PostJpaEntity> findFirstByTenantIdAndStatusAndPublishedAtAfterOrderByPublishedAtAsc(
             UUID tenantId, PostStatusJpa status, Instant publishedAt);
+
+    /** @req SWR-042 */
+    @Query("SELECT p FROM PostJpaEntity p WHERE p.tenantId = :tenantId AND p.status = 'PUBLISHED'"
+            + " AND p.featuredFrom <= :today AND p.featuredUntil >= :today"
+            + " ORDER BY p.featuredFrom DESC")
+    List<PostJpaEntity> findFeaturedByTenantId(@Param("tenantId") UUID tenantId, @Param("today") LocalDate today);
 }

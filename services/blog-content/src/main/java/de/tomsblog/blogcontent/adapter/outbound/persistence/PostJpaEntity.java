@@ -3,6 +3,7 @@ package de.tomsblog.blogcontent.adapter.outbound.persistence;
 import de.tomsblog.shared.audit.Auditable;
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -69,6 +70,12 @@ public class PostJpaEntity implements Auditable {
 
     @Column(name = "series_next_post_id")
     private UUID seriesNextPostId;
+
+    @Column(name = "featured_from")
+    private LocalDate featuredFrom;
+
+    @Column(name = "featured_until")
+    private LocalDate featuredUntil;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
@@ -231,6 +238,22 @@ public class PostJpaEntity implements Auditable {
 
     public void setSeriesNextPostId(UUID seriesNextPostId) {
         this.seriesNextPostId = seriesNextPostId;
+    }
+
+    public LocalDate getFeaturedFrom() {
+        return featuredFrom;
+    }
+
+    public void setFeaturedFrom(LocalDate featuredFrom) {
+        this.featuredFrom = featuredFrom;
+    }
+
+    public LocalDate getFeaturedUntil() {
+        return featuredUntil;
+    }
+
+    public void setFeaturedUntil(LocalDate featuredUntil) {
+        this.featuredUntil = featuredUntil;
     }
 
     @Override

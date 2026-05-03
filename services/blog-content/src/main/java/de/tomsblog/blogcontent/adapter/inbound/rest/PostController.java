@@ -55,7 +55,9 @@ public class PostController {
                 request.socialMediaTitle(),
                 request.socialMediaSummary(),
                 request.seriesPreviousPostId(),
-                request.seriesNextPostId());
+                request.seriesNextPostId(),
+                request.featuredFrom(),
+                request.featuredUntil());
         Post post = postUseCase.createPost(command);
         PostResponse response = PostResponse.from(post);
         URI location = URI.create("/api/posts/" + post.getId().asString());
@@ -110,7 +112,9 @@ public class PostController {
                 request.socialMediaTitle(),
                 request.socialMediaSummary(),
                 request.seriesPreviousPostId(),
-                request.seriesNextPostId());
+                request.seriesNextPostId(),
+                request.featuredFrom(),
+                request.featuredUntil());
         Post post = postUseCase.updatePost(command);
         return ResponseEntity.ok(PostResponse.from(post));
     }

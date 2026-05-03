@@ -102,6 +102,8 @@ class PostControllerTest {
                 null,
                 null,
                 null,
+                null,
+                null,
                 null);
         when(postUseCase.getPost(any(), any())).thenReturn(post);
 
@@ -280,7 +282,9 @@ class PostControllerTest {
                 null,
                 null,
                 PostId.of(prevId),
-                PostId.of(nextId));
+                PostId.of(nextId),
+                null,
+                null);
         when(postUseCase.getPost(any(), any())).thenReturn(post);
 
         mockMvc.perform(get("/api/posts/{id}", post.getId().value()).header("X-Tenant-Id", tenantId.toString()))

@@ -5,6 +5,7 @@ import de.tomsblog.blogcontent.domain.model.PostId;
 import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.blogcontent.domain.model.Source;
 import de.tomsblog.shared.tenant.TenantId;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
  * @req SWR-026
  * @req SWR-038
  * @req SWR-039
+ * @req SWR-042
  */
 public interface PostUseCase {
 
@@ -73,4 +75,7 @@ public interface PostUseCase {
 
     /** @req SWR-040 */
     Optional<Post> getPostIfPublished(PostId postId, TenantId tenantId);
+
+    /** @req SWR-042 */
+    List<Post> listFeaturedPosts(TenantId tenantId, LocalDate today);
 }

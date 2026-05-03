@@ -36,7 +36,9 @@ class PostMapperTest {
                 null,
                 null,
                 PostId.of(prevId),
-                PostId.of(nextId));
+                PostId.of(nextId),
+                null,
+                null);
 
         PostJpaEntity entity = PostMapper.toEntity(post);
 

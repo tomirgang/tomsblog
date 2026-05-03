@@ -16,6 +16,7 @@ import de.tomsblog.blogcontent.domain.model.*;
 import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.domain.DomainEvent;
 import de.tomsblog.shared.tenant.TenantId;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +60,7 @@ class PostServiceTest {
                 .publish(any());
 
         CreatePostCommand command = new CreatePostCommand(
-                tenantId, authorId, "Test Title", "Test Content", "HTML", "de", null, null, null, null);
+                tenantId, authorId, "Test Title", "Test Content", "HTML", "de", null, null, null, null, null, null);
 
         Post result = postService.createPost(command);
 
@@ -75,8 +76,8 @@ class PostServiceTest {
     void createPost_defaultLocale() {
         when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        CreatePostCommand command =
-                new CreatePostCommand(tenantId, authorId, "Test", "Content", null, null, null, null, null, null);
+        CreatePostCommand command = new CreatePostCommand(
+                tenantId, authorId, "Test", "Content", null, null, null, null, null, null, null, null);
 
         Post result = postService.createPost(command);
 
@@ -92,7 +93,16 @@ class PostServiceTest {
         when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         UpdatePostCommand command = new UpdatePostCommand(
-                existing.getId(), tenantId, "Updated Title", "Updated content", "SM Title", "SM Summary", null, null);
+                existing.getId(),
+                tenantId,
+                "Updated Title",
+                "Updated content",
+                "SM Title",
+                "SM Summary",
+                null,
+                null,
+                null,
+                null);
 
         Post result = postService.updatePost(command);
 
@@ -451,7 +461,7 @@ class PostServiceTest {
         UUID nextId = UUID.randomUUID();
 
         CreatePostCommand command = new CreatePostCommand(
-                tenantId, authorId, "Series Post", "Content", "HTML", "de", null, null, prevId, nextId);
+                tenantId, authorId, "Series Post", "Content", "HTML", "de", null, null, prevId, nextId, null, null);
 
         Post result = postService.createPost(command);
 
@@ -470,13 +480,81 @@ class PostServiceTest {
         when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
         UUID prevId = UUID.randomUUID();
 
-        UpdatePostCommand command =
-                new UpdatePostCommand(existing.getId(), tenantId, "Updated", "Content", null, null, prevId, null);
+        UpdatePostCommand command = new UpdatePostCommand(
+                existing.getId(), tenantId, "Updated", "Content", null, null, prevId, null, null, null);
 
         Post result = postService.updatePost(command);
 
         assertThat(result.getSeriesPreviousPostId()).isNotNull();
         assertThat(result.getSeriesPreviousPostId().value()).isEqualTo(prevId);
         assertThat(result.getSeriesNextPostId()).isNull();
+    }
+
+    @Test
+    @DisplayName("SWR-040: updatePost sets seriesNextPostId")
+    void updatePost_withSeriesNext() {
+        Post existing = Post.create(tenantId, authorId, "Original", "Content", PostLocale.german());
+        existing.clearDomainEvents();
+        when(postRepository.findByIdAndTenantId(existing.getId(), tenantId)).thenReturn(Optional.of(existing));
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        UUID nextId = UUID.randomUUID();
+
+        UpdatePostCommand command = new UpdatePostCommand(
+                existing.getId(), tenantId, "Updated", "Content", null, null, null, nextId, null, null);
+
+        Post result = postService.updatePost(command);
+
+        assertThat(result.getSeriesNextPostId()).isNotNull();
+        assertThat(result.getSeriesNextPostId().value()).isEqualTo(nextId);
+    }
+
+    @Test
+    @DisplayName("SWR-042: listFeaturedPosts delegates to repository")
+    void listFeaturedPosts_delegatesToRepository() {
+        LocalDate today = LocalDate.of(2026, 5, 3);
+        Post post = Post.create(tenantId, authorId, "Featured", "Content", PostLocale.german());
+        post.publish();
+        post.updateFeatured(LocalDate.of(2026, 5, 1), LocalDate.of(2026, 5, 31));
+        when(postRepository.findFeaturedByTenantId(tenantId, today)).thenReturn(List.of(post));
+
+        List<Post> result = postService.listFeaturedPosts(tenantId, today);
+
+        assertThat(result).hasSize(1);
+        verify(postRepository).findFeaturedByTenantId(tenantId, today);
+    }
+
+    @Test
+    @DisplayName("SWR-041: createPost passes featured fields")
+    void createPost_withFeaturedFields() {
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        LocalDate from = LocalDate.of(2026, 5, 1);
+        LocalDate until = LocalDate.of(2026, 5, 31);
+
+        CreatePostCommand command = new CreatePostCommand(
+                tenantId, authorId, "Featured Post", "Content", "HTML", "de", null, null, null, null, from, until);
+
+        Post result = postService.createPost(command);
+
+        assertThat(result.getFeaturedFrom()).isEqualTo(from);
+        assertThat(result.getFeaturedUntil()).isEqualTo(until);
+    }
+
+    @Test
+    @DisplayName("SWR-041: updatePost passes featured fields")
+    void updatePost_withFeaturedFields() {
+        Post existing = Post.create(tenantId, authorId, "Original", "Content", PostLocale.german());
+        existing.clearDomainEvents();
+        when(postRepository.findByIdAndTenantId(existing.getId(), tenantId)).thenReturn(Optional.of(existing));
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        LocalDate from = LocalDate.of(2026, 6, 1);
+        LocalDate until = LocalDate.of(2026, 6, 30);
+
+        UpdatePostCommand command = new UpdatePostCommand(
+                existing.getId(), tenantId, "Updated", "Content", null, null, null, null, from, until);
+
+        Post result = postService.updatePost(command);
+
+        assertThat(result.getFeaturedFrom()).isEqualTo(from);
+        assertThat(result.getFeaturedUntil()).isEqualTo(until);
     }
 }

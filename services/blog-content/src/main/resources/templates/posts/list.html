@@ -10,6 +10,35 @@
     <section layout:fragment="content">
         <h1>Blog Posts</h1>
 
+        <section th:if="${landingPage and featuredPosts != null and !featuredPosts.isEmpty()}" class="featured-posts">
+            <h2>Featured</h2>
+            <article th:each="post : ${featuredPosts}" class="featured">
+                <header>
+                    <h3>
+                        <a th:if="${post.status.name() == 'PUBLISHED'}"
+                           th:href="@{/posts/{slug}(slug=${post.slug.value})}"
+                           th:text="${post.title}">Post Title</a>
+                        <span th:if="${post.status.name() != 'PUBLISHED'}"
+                              th:text="${post.title}">Post Title</span>
+                    </h3>
+                    <small>
+                        <time th:if="${post.publishedAt != null}"
+                              th:datetime="${post.publishedAt}"
+                              th:text="${#temporals.format(post.publishedAt, 'dd.MM.yyyy')}">
+                            01.01.2026
+                        </time>
+                    </small>
+                </header>
+                <div th:utext="${featuredExcerpts[post.id.value]}">
+                    Post preview text...
+                </div>
+                <footer>
+                    <a th:if="${post.status.name() == 'PUBLISHED'}"
+                       th:href="@{/posts/{slug}(slug=${post.slug.value})}">Weiterlesen</a>
+                </footer>
+            </article>
+        </section>
+
         <form th:action="@{/posts}" method="get" role="search">
             <fieldset role="group">
                 <input type="search" name="q" th:value="${searchQuery}" placeholder="Posts durchsuchen..." aria-label="Suche">
