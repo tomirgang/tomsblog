@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-05-03
+
 ### Added
 
 - Featured Posts: Posts können für einen Zeitraum hervorgehoben und auf der Landing Page prominent dargestellt werden (STK027, SWR-041, SWR-042)
