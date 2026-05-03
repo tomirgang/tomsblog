@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-05-03
+
 ### Changed
 
 - Control-Plane-Node von CX23 (2 vCPU, 4 GB) auf CX33 (4 vCPU, 8 GB) aufgerüstet (k3s-Server benötigt allein 1,3 Gi RAM)
