@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  HTTPS-Umleitung für alle Requests außer Let's Encrypt
+level: 35.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Alle HTTP-Requests müssen automatisch auf HTTPS umgeleitet werden.
+  Ausgenommen sind Requests auf den Pfad /.well-known/acme-challenge/,
+  die für die Let's Encrypt ACME HTTP-01 Challenge-Validierung
+  unverschlüsselt erreichbar bleiben müssen.

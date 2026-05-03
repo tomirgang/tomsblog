@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Traefik Default-Redirect für unbekannte Domains
+level: 12.0
+links:
+- STK036: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Ein Traefik IngressRoute auf dem websecure-Entrypoint (HTTPS, Port 443)
+  fängt alle Requests ab, die keiner konfigurierten Domain zugeordnet sind,
+  und leitet sie per 302 Redirect auf https://blog.tomirgang.de um.
+  Die Route muss eine niedrigere Priorität als alle service-spezifischen
+  IngressRoutes haben, damit bekannte Domains korrekt geroutet werden.

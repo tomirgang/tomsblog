@@ -43,7 +43,22 @@ Externer Traffic wird über den Traefik Ingress-Controller (k3s-Standard) mit au
 | Domain | blog.tomirgang.de
 | TLS Secret | blog-content-tls (automatisch verwaltet)
 | HTTP-Redirect | Permanent Redirect (301) auf HTTPS
+| Default-Redirect | Unbekannte Domains -> https://blog.tomirgang.de
 |===
+
+=== Catch-all Routing-Regeln
+
+Neben den service-spezifischen Ingress-Ressourcen existieren zwei plattformweite Catch-all IngressRoutes mit niedriger Priorität (STK035, STK036):
+
+[cols="1,1,2"]
+|===
+| Entrypoint | Regel | Verhalten
+
+| web (HTTP) | `PathPrefix(/)`, Priorität 1 | 301-Redirect auf HTTPS. ACME HTTP-01 Challenges (`/.well-known/acme-challenge/`) werden durch spezifischere cert-manager Ingress-Ressourcen vorrangig bedient.
+| websecure (HTTPS) | `PathPrefix(/)`, Priorität 1 | 302-Redirect auf `https://blog.tomirgang.de` für alle nicht konfigurierten Domains. Service-spezifische IngressRoutes haben durch Host-Regeln höhere Priorität.
+|===
+
+Die Konfiguration liegt unter `infra/k8s/routing/`.
 
 Voraussetzungen (IaC-Repository):
 

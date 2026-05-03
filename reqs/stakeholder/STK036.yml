@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Umleitung unbekannter Domains auf Hauptdomain
+level: 36.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Alle Requests von unbekannten bzw. nicht konfigurierten Domains
+  müssen auf https://blog.tomirgang.de umgeleitet werden.
+  Dies stellt sicher, dass fehlgeleiteter Traffic oder nicht
+  autorisierte Domain-Zuordnungen auf die Hauptseite verweisen.

@@ -1,0 +1,6 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ingressroute-https-redirect.yaml
+  - ingressroute-default-redirect.yaml
+  - middleware-redirect-default-domain.yaml

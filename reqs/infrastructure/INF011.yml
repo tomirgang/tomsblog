@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Traefik HTTPS-Redirect für alle Nicht-ACME-Requests
+level: 11.0
+links:
+- STK035: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Ein Traefik IngressRoute auf dem web-Entrypoint (HTTP, Port 80) leitet
+  alle eingehenden Requests per 301 Permanent Redirect auf HTTPS um.
+  Die Route muss eine niedrige Priorität haben, damit die von cert-manager
+  automatisch erstellten ACME HTTP-01 Challenge-Ingress-Ressourcen
+  (Pfad /.well-known/acme-challenge/) Vorrang erhalten und unverschlüsselt
+  erreichbar bleiben.

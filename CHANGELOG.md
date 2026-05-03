@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - REST-API: `featuredFrom`/`featuredUntil` in CreatePostRequest, UpdatePostRequest und PostResponse
 - Thymeleaf-UI: Featured-Sektion auf der Landing Page, Featured-Felder im Post-Formular
 - Flyway-Migration V7: `featured_from` und `featured_until` Spalten in der Posts-Tabelle
+- Stakeholder Requirements STK035/STK036: HTTPS-Redirect und Default-Domain-Redirect
+- Infrastructure Requirements INF011/INF012: Traefik IngressRoute-Konfiguration
+- Traefik IngressRoute: Catch-all HTTP-zu-HTTPS-Redirect (Priorität 1, ACME-Challenges ausgenommen)
+- Traefik IngressRoute: Catch-all Redirect unbekannter Domains auf https://blog.tomirgang.de
 
 ## [0.7.1] - 2026-05-03
 
