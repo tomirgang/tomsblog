@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.8.5] - 2026-05-03
+
 ### Added
 
 - GitHub Actions CI: Container-Build als Matrix-Job für alle Services (blog-content, user-management)
