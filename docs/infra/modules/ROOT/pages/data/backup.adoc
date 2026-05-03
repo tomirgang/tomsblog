@@ -1,13 +1,13 @@
 = Backup & Recovery
 :sectnums:
 
-== Status
+== Übersicht
 
-NOTE: Die Backup-Strategie ist noch nicht implementiert (INF-009). Dieses Kapitel beschreibt den geplanten Zielzustand.
+PostgreSQL-Backups werden über CloudNativePG Barman Object Store auf einen externen
+S3-kompatiblen Speicher (Garage auf Netcup VM) gesichert. Sowohl tägliche Base Backups
+als auch kontinuierliches WAL-Streaming sind konfiguriert.
 
-== Geplante Strategie
-
-=== Recovery-Ziele
+== Recovery-Ziele
 
 [cols="1,2"]
 |===
@@ -17,30 +17,44 @@ NOTE: Die Backup-Strategie ist noch nicht implementiert (INF-009). Dieses Kapite
 | RTO (Recovery Time Objective) | < 15 Minuten (Restore aus Backup)
 |===
 
-=== Backup-Architektur (geplant)
+== Backup-Architektur
 
 [mermaid]
 ----
 graph LR
-    PG[PostgreSQL Primary] -->|WAL Streaming| S3[S3-Storage<br/>Garage auf Netcup]
-    PG -->|Base Backup<br/>täglich| S3
-    S3 -->|Restore| PG_NEW[Neuer PostgreSQL Cluster]
+    PG[PostgreSQL Primary] -->|WAL Streaming<br/>komprimiert, gzip| S3[Garage S3<br/>garage.do9ita.de]
+    PG -->|Base Backup<br/>täglich 02:00 UTC| S3
+    S3 -->|Restore / PITR| PG_NEW[Neuer PostgreSQL Cluster]
 ----
 
-=== CloudNativePG Backup-Konfiguration (geplant)
+== Konfiguration
+
+=== S3-Credentials
+
+Die Zugangsdaten für den Garage-Bucket liegen als Kubernetes Secret im Namespace `postgres`:
 
 [source,yaml]
 ----
-apiVersion: postgresql.cnpg.io/v1
-kind: Cluster
+apiVersion: v1
+kind: Secret
 metadata:
-  name: postgres-cluster
+  name: backup-s3-credentials
+  namespace: postgres
+type: Opaque
+stringData:
+  ACCESS_KEY_ID: "<Access Key aus Garage>"
+  SECRET_ACCESS_KEY: "<Secret Key aus Garage>"
+----
+
+=== CloudNativePG Cluster (Backup-Sektion)
+
+[source,yaml]
+----
 spec:
-  # ... bestehende Konfiguration ...
   backup:
     barmanObjectStore:
-      destinationPath: s3://tomsblog-backups/postgres/
-      endpointURL: https://garage.netcup.example.com
+      destinationPath: s3://postgres-backup/
+      endpointURL: https://garage.do9ita.de
       s3Credentials:
         accessKeyId:
           name: backup-s3-credentials
@@ -50,12 +64,124 @@ spec:
           key: SECRET_ACCESS_KEY
       wal:
         compression: gzip
+        maxParallel: 2
     retentionPolicy: "30d"
 ----
 
+=== ScheduledBackup
+
+Tägliche Base Backups werden um 02:00 UTC erstellt:
+
+[source,yaml]
+----
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: postgres-daily-backup
+  namespace: postgres
+spec:
+  schedule: "0 2 * * *"
+  backupOwnerReference: self
+  cluster:
+    name: postgres-cluster
+  method: barmanObjectStore
+  immediate: true
+----
+
+Das Flag `immediate: true` löst beim Erstellen der Ressource sofort ein initiales Backup aus.
+
+== Garage-Bucket einrichten
+
+Auf der Netcup VM muss ein dedizierter Bucket mit API-Key existieren:
+
+[source,bash]
+----
+docker compose exec garage /garage bucket create postgres-backup
+docker compose exec garage /garage key create postgres-backup-key
+docker compose exec garage /garage bucket allow --read --write --owner postgres-backup --key postgres-backup-key
+----
+
+Die Ausgabe von `garage key info postgres-backup-key` enthält Access Key und Secret Key
+für das Kubernetes Secret.
+
+== Disaster Recovery
+
+=== Restore aus dem letzten Backup
+
+Ein neuer Cluster kann durch einen Recovery-Bootstrap aus dem Object Store erstellt werden:
+
+[source,yaml]
+----
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres-cluster-restored
+  namespace: postgres
+spec:
+  instances: 2
+  bootstrap:
+    recovery:
+      source: postgres-cluster-backup
+  externalClusters:
+    - name: postgres-cluster-backup
+      barmanObjectStore:
+        destinationPath: s3://postgres-backup/
+        endpointURL: https://garage.do9ita.de
+        s3Credentials:
+          accessKeyId:
+            name: backup-s3-credentials
+            key: ACCESS_KEY_ID
+          secretAccessKey:
+            name: backup-s3-credentials
+            key: SECRET_ACCESS_KEY
+  storage:
+    size: 10Gi
+    storageClass: hcloud-volumes
+----
+
+=== Point-in-Time Recovery (PITR)
+
+Für eine Wiederherstellung auf einen bestimmten Zeitpunkt wird `recoveryTarget` ergänzt:
+
+[source,yaml]
+----
+  bootstrap:
+    recovery:
+      source: postgres-cluster-backup
+      recoveryTarget:
+        targetTime: "2026-05-03T12:00:00Z"
+----
+
+=== Ablauf eines Disaster Recovery
+
+1. Ausfall feststellen und Ursache analysieren
+2. Entscheiden: Restore letztes Backup oder PITR auf bestimmten Zeitpunkt
+3. Recovery-Cluster-Manifest erstellen (siehe oben)
+4. `kubectl apply -f postgres-cluster-restored.yaml`
+5. Warten bis der Cluster `Ready` ist: `kubectl -n postgres get cluster`
+6. Services auf den neuen Cluster umkonfigurieren (JDBC-URL anpassen)
+7. Datenintegrität prüfen
+8. Alten Cluster entfernen
+
+== Monitoring
+
+=== Backup-Status prüfen
+
+[source,bash]
+----
+# Letzte Backups anzeigen
+kubectl -n postgres get backups
+
+# Cluster-Status inkl. letztem erfolgreichem Backup
+kubectl -n postgres get cluster postgres-cluster -o yaml | grep -A5 lastSuccessfulBackup
+----
+
+=== Alerting (empfohlen)
+
+Wenn Prometheus/Grafana eingerichtet ist (Phase 9), sollte ein Alert konfiguriert werden,
+der auslöst, wenn das letzte erfolgreiche Backup älter als 26 Stunden ist.
+
 == Offene Punkte
 
-* S3-kompatibles Storage auf Netcup VM (Garage) einrichten
-* Backup-Credentials als Secret anlegen
-* Regelmäßige Restore-Tests automatisieren
-* Alerting bei fehlgeschlagenen Backups
+* Automatisierte Restore-Tests (z.B. wöchentlicher Test-Restore in separaten Namespace)
+* Alerting bei fehlgeschlagenen Backups (nach Phase 9: Observability)

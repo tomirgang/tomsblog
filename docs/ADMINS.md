@@ -398,6 +398,91 @@ Cluster-Snapshots extern zu sichern.
 Detaillierte Einrichtungsschritte für die Garage-Instanz selbst sind in der
 separaten Infrastruktur-Dokumentation beschrieben.
 
+## PostgreSQL Backup-Strategie
+
+PostgreSQL-Backups werden durch CloudNativePG Barman Object Store automatisch verwaltet:
+
+- **Tägliche Base Backups** um 02:00 UTC via `ScheduledBackup`
+- **Kontinuierliches WAL-Streaming** (komprimiert mit gzip) für Point-in-Time Recovery
+- **Retention:** 30 Tage
+- **Ziel:** RPO < 1 Stunde, RTO < 15 Minuten
+
+Die Konfiguration befindet sich in `infra/k8s/postgres/`:
+- `cluster.yaml` (Backup-Sektion)
+- `backup-s3-credentials.yaml` (S3-Zugangsdaten)
+- `scheduled-backup.yaml` (Zeitplan)
+
+### Voraussetzung: Garage-Bucket
+
+Auf der Netcup VM muss ein dedizierter Bucket existieren:
+
+```bash
+docker compose exec garage /garage bucket create postgres-backup
+docker compose exec garage /garage key create postgres-backup-key
+docker compose exec garage /garage bucket allow --read --write --owner postgres-backup --key postgres-backup-key
+```
+
+Die Credentials aus `garage key info postgres-backup-key` in das Secret
+`backup-s3-credentials` im Namespace `postgres` eintragen.
+
+## Disaster Recovery
+
+### Restore aus dem letzten Backup
+
+Bei einem vollständigen Datenverlust kann ein neuer Cluster aus dem S3-Backup
+wiederhergestellt werden:
+
+```yaml
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres-cluster-restored
+  namespace: postgres
+spec:
+  instances: 2
+  bootstrap:
+    recovery:
+      source: postgres-cluster-backup
+  externalClusters:
+    - name: postgres-cluster-backup
+      barmanObjectStore:
+        destinationPath: s3://postgres-backup/
+        endpointURL: https://garage.do9ita.de
+        s3Credentials:
+          accessKeyId:
+            name: backup-s3-credentials
+            key: ACCESS_KEY_ID
+          secretAccessKey:
+            name: backup-s3-credentials
+            key: SECRET_ACCESS_KEY
+  storage:
+    size: 10Gi
+    storageClass: hcloud-volumes
+```
+
+### Point-in-Time Recovery (PITR)
+
+Für eine Wiederherstellung auf einen bestimmten Zeitpunkt:
+
+```yaml
+  bootstrap:
+    recovery:
+      source: postgres-cluster-backup
+      recoveryTarget:
+        targetTime: "2026-05-03T12:00:00Z"
+```
+
+### Ablauf
+
+1. Ausfall feststellen und Ursache analysieren
+2. Entscheiden: Restore letztes Backup oder PITR auf bestimmten Zeitpunkt
+3. Recovery-Cluster-Manifest erstellen (siehe oben)
+4. `kubectl apply -f postgres-cluster-restored.yaml`
+5. Warten bis der Cluster `Ready` ist: `kubectl -n postgres get cluster`
+6. Services auf den neuen Cluster umkonfigurieren (JDBC-URL anpassen)
+7. Datenintegrität prüfen
+8. Alten Cluster entfernen
+
 ## Datenbank-Migrationen
 
 Beide Services verwenden Flyway für automatische Datenbank-Migrationen.
