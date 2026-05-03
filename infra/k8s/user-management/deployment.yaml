@@ -25,7 +25,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: user-management
-          image: ghcr.io/tomirgang/tomsblog/user-management:0.8.4 # {"$imagepolicy": "flux-system:user-management"}
+          image: ghcr.io/tomirgang/tomsblog/user-management:0.8.5 # {"$imagepolicy": "flux-system:user-management"}
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
