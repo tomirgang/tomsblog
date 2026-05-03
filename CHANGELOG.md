@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.7.3] - 2026-05-03
+
 ### Added
 
 - Stakeholder Requirements STK037/STK038/STK039: Inter-Service-Kommunikationsstrategie (gRPC synchron, Kafka/RabbitMQ asynchron, REST/GraphQL nur für Clients)
