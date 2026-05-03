@@ -118,6 +118,9 @@ jobs:
       - name: Generate Antora documentation
         run: antora antora-playbook.yml
 
+      - name: Render ADR HTML pages
+        run: ./docs/scripts/render-adrs.sh docs/adr build/site/adrs
+
       - name: Generate requirements report
         run: |
           doorstop publish all build/site/requirements/
@@ -258,6 +261,9 @@ jobs:
 
       - name: Generate Antora documentation
         run: antora antora-playbook.yml
+
+      - name: Render ADR HTML pages
+        run: ./docs/scripts/render-adrs.sh docs/adr build/site/adrs
 
       - name: Generate requirements report
         run: |

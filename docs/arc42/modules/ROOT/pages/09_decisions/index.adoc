@@ -7,25 +7,25 @@ Alle Architekturentscheidungen sind als ADRs dokumentiert:
 |===
 | ADR | Titel | Status
 
-| link:{attachmentsdir}/adr/0001-hexagonale-architektur.md[0001] | Hexagonale Architektur (Ports & Adapters) | Accepted
-| link:{attachmentsdir}/adr/0002-java-und-maven.md[0002] | Java und Maven als Technologie-Basis | Accepted
-| link:{attachmentsdir}/adr/0003-monorepo-struktur.md[0003] | Monorepo-Struktur | Accepted
-| link:{attachmentsdir}/adr/0004-rest-und-graphql.md[0004] | REST für Text-Blog, GraphQL für Podcast/Video | Accepted
-| link:{attachmentsdir}/adr/0005-ui-strategie.md[0005] | UI-Strategie (Thymeleaf → Angular + React) | Accepted
-| link:{attachmentsdir}/adr/0006-event-driven-kafka.md[0006] | Event-Driven Architecture mit Kafka | Superseded by 0018
-| link:{attachmentsdir}/adr/0007-doorstop-requirement-tracing.md[0007] | Doorstop für Requirement Tracing | Accepted
-| link:{attachmentsdir}/adr/0008-shared-kernel-framework-frei.md[0008] | Shared Kernel als Framework-freie Library | Accepted
-| link:{attachmentsdir}/adr/0009-domain-modell-blog-content.md[0009] | Domain-Modell Blog Content | Accepted
-| link:{attachmentsdir}/adr/0010-grpc-service-kommunikation.md[0010] | gRPC für synchrone Service-Kommunikation | Accepted
-| link:{attachmentsdir}/adr/0011-custom-identity-provider.md[0011] | Custom Identity Provider mit OIDC | Accepted
-| link:{attachmentsdir}/adr/0012-domain-basierte-tenant-auswahl.md[0012] | Domain-basierte Tenant-Auswahl | Accepted
-| link:{attachmentsdir}/adr/0013-llm-kommentar-moderation.md[0013] | LLM-basierte Kommentar-Moderation | Accepted
-| link:{attachmentsdir}/adr/0014-shadow-banning.md[0014] | Shadow-Banning im Kommentarsystem | Accepted
-| link:{attachmentsdir}/adr/0015-flyway-datenbankmigrationen.md[0015] | Flyway für Datenbank-Migrationen | Accepted
-| link:{attachmentsdir}/adr/0016-backend-for-frontend.md[0016] | Backend for Frontend (BFF) | Accepted
-| link:{attachmentsdir}/adr/0017-api-gateway.md[0017] | API Gateway (Spring Cloud Gateway) | Accepted
-| link:{attachmentsdir}/adr/0018-dual-broker-kafka-rabbitmq.md[0018] | Dual-Broker-Strategie (Kafka + RabbitMQ) | Accepted
-| link:{attachmentsdir}/adr/0019-database-per-service.md[0019] | Database per Service (PostgreSQL / MongoDB) | Accepted
+| link:../../../adrs/0001-hexagonale-architektur.html[0001] | Hexagonale Architektur (Ports & Adapters) | Accepted
+| link:../../../adrs/0002-java-und-maven.html[0002] | Java und Maven als Technologie-Basis | Accepted
+| link:../../../adrs/0003-monorepo-struktur.html[0003] | Monorepo-Struktur | Accepted
+| link:../../../adrs/0004-rest-und-graphql.html[0004] | REST für Text-Blog, GraphQL für Podcast/Video | Accepted
+| link:../../../adrs/0005-ui-strategie.html[0005] | UI-Strategie (Thymeleaf → Angular + React) | Accepted
+| link:../../../adrs/0006-event-driven-kafka.html[0006] | Event-Driven Architecture mit Kafka | Superseded by 0018
+| link:../../../adrs/0007-doorstop-requirement-tracing.html[0007] | Doorstop für Requirement Tracing | Accepted
+| link:../../../adrs/0008-shared-kernel-framework-frei.html[0008] | Shared Kernel als Framework-freie Library | Accepted
+| link:../../../adrs/0009-domain-modell-blog-content.html[0009] | Domain-Modell Blog Content | Accepted
+| link:../../../adrs/0010-grpc-service-kommunikation.html[0010] | gRPC für synchrone Service-Kommunikation | Accepted
+| link:../../../adrs/0011-custom-identity-provider.html[0011] | Custom Identity Provider mit OIDC | Accepted
+| link:../../../adrs/0012-domain-basierte-tenant-auswahl.html[0012] | Domain-basierte Tenant-Auswahl | Accepted
+| link:../../../adrs/0013-llm-kommentar-moderation.html[0013] | LLM-basierte Kommentar-Moderation | Accepted
+| link:../../../adrs/0014-shadow-banning.html[0014] | Shadow-Banning im Kommentarsystem | Accepted
+| link:../../../adrs/0015-flyway-datenbankmigrationen.html[0015] | Flyway für Datenbank-Migrationen | Accepted
+| link:../../../adrs/0016-backend-for-frontend.html[0016] | Backend for Frontend (BFF) | Accepted
+| link:../../../adrs/0017-api-gateway.html[0017] | API Gateway (Spring Cloud Gateway) | Accepted
+| link:../../../adrs/0018-dual-broker-kafka-rabbitmq.html[0018] | Dual-Broker-Strategie (Kafka + RabbitMQ) | Accepted
+| link:../../../adrs/0019-database-per-service.html[0019] | Database per Service (PostgreSQL / MongoDB) | Accepted
 |===
 
 NOTE: ADRs werden als Markdown-Dateien in `docs/adr/` gepflegt. Dieses Kapitel dient als Index.
