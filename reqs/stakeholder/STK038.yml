@@ -1,0 +1,14 @@
+active: true
+derived: false
+header: |
+  Asynchrone Service-Kommunikation via Kafka oder RabbitMQ
+level: 38.0
+links: []
+normative: true
+ref: ''
+reviewed: KHiHAEznWHNPCQQnyqbVPELnG8zoeUVtXDno2cuyrjw=
+text: |
+  Als Architekt möchte ich, dass die asynchrone Kommunikation zwischen
+  Microservices über Kafka (Event-Streaming) oder RabbitMQ (Task-Queues)
+  abgewickelt wird, je nach Use-Case, damit eine lose Kopplung und
+  zuverlässige Nachrichtenzustellung sichergestellt ist.

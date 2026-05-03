@@ -6,7 +6,7 @@ level: 34.0
 links: []
 normative: true
 ref: ''
-reviewed: null
+reviewed: jjIw2qPBRIxbFXWgS152Obsn0QgLBx6qqIA0m9ZXcN4=
 text: |
   Konfiguration und Deployment der Applikation auf einem generischen
   Kubernetes Cluster soll in docs/ADMINS.md beschrieben sein.

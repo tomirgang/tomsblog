@@ -4,10 +4,10 @@ header: |
   Konfigurierbare Login-Methode und Break-Glass Admin-Login
 level: 44.0
 links:
-- STK031: null
+- STK031: uZDNIW31JtuE8T5VVwHmiyiqjlwra-UNugogGKaPFs0=
 normative: true
 ref: ''
-reviewed: null
+reviewed: Uhuh9OFEkoDViHjmOTuyS-6OQmmFqmKIioIzohjrzOs=
 text: |
   Der User-Management-Service verwaltet pro Tenant die konfigurierte
   Login-Methode (SWR-043):

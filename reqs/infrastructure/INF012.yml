@@ -4,10 +4,10 @@ header: |
   Traefik Default-Redirect für unbekannte Domains
 level: 12.0
 links:
-- STK036: null
+- STK036: Zl0lG4_nxkiRhXvVYXci5oM0ZJR3V5a4REgrjaaUmKo=
 normative: true
 ref: ''
-reviewed: null
+reviewed: a0B-mMc-yccxR6WpF1MqIsoFrkLVnwXaF5Me8UBAB5M=
 text: |
   Ein Traefik IngressRoute auf dem websecure-Entrypoint (HTTPS, Port 443)
   fängt alle Requests ab, die keiner konfigurierten Domain zugeordnet sind,

@@ -6,7 +6,7 @@ level: 35.0
 links: []
 normative: true
 ref: ''
-reviewed: null
+reviewed: _kGTYDrMnU_BHGFSL-e9vxHbfHuAqs_Z4b7G6EfphYw=
 text: |
   Alle HTTP-Requests müssen automatisch auf HTTPS umgeleitet werden.
   Ausgenommen sind Requests auf den Pfad /.well-known/acme-challenge/,

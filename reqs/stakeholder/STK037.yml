@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Synchrone Service-Kommunikation via gRPC
+level: 37.0
+links: []
+normative: true
+ref: ''
+reviewed: 5UjWYC9C64zAwRtoKI57JMIWIoKzMOs4XOKCsbSqS0k=
+text: |
+  Als Architekt möchte ich, dass die synchrone Kommunikation zwischen
+  Microservices ausschließlich über gRPC erfolgt, damit eine effiziente,
+  typsichere und versionierbare Schnittstelle gewährleistet ist.

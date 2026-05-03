@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  gRPC für synchrone Inter-Service-Aufrufe
+level: 46.0
+links:
+- STK037: 5UjWYC9C64zAwRtoKI57JMIWIoKzMOs4XOKCsbSqS0k=
+normative: true
+ref: ''
+reviewed: Mpy9Yh0BY6ZD6rTe6QXujPbXlreZLhe7kQjfMlhcu_c=
+text: |
+  Alle synchronen Aufrufe zwischen Microservices müssen über gRPC
+  erfolgen (ADR-0010). Jeder Service, der eine synchrone Schnittstelle
+  für andere Services bereitstellt, definiert seine API als Protocol
+  Buffers (.proto) im Modul event-contracts. REST- oder GraphQL-Endpunkte
+  dürfen nicht für Service-zu-Service-Kommunikation genutzt werden.

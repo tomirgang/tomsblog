@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  REST und GraphQL ausschließlich für Clients
+level: 39.0
+links: []
+normative: true
+ref: ''
+reviewed: T846DLMzuff8M-6Ey5om8n4PFJ0f4MekCldtrGbaRuo=
+text: |
+  Als Architekt möchte ich, dass REST- und GraphQL-Schnittstellen
+  ausschließlich für die Kommunikation mit externen Clients (Web-UI,
+  Mobile-Apps, BFF) verwendet werden und nicht für die Kommunikation
+  zwischen Services, damit eine klare Trennung zwischen Client-APIs
+  und internen Service-Schnittstellen besteht.

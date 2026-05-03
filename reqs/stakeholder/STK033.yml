@@ -6,7 +6,7 @@ level: 33.0
 links: []
 normative: true
 ref: ''
-reviewed: null
+reviewed: 7mYQktnOEVEw9mLUsQPhH2EmbjDt9GA3upK94dSi0oI=
 text: |
   Die OIDC-Konfiguration (Client-ID, Client-Secret, Endpunkt-URLs)
   soll über die Infrastruktur-Konfiguration (Umgebungsvariablen,

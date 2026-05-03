@@ -6,30 +6,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link UserManagementProperties}.
- *
- * @req SWR-043
+ * Tests for deprecated {@link UserManagementProperties}.
+ * This class verifies the deprecated marker exists (to be removed when class is deleted).
  */
+@SuppressWarnings("removal")
 class UserManagementPropertiesTest {
 
     @Test
-    @DisplayName("SWR-043: uses provided base URL")
-    void usesProvidedBaseUrl() {
-        var props = new UserManagementProperties("http://user-management:8081");
-        assertThat(props.baseUrl()).isEqualTo("http://user-management:8081");
-    }
-
-    @Test
-    @DisplayName("SWR-043: defaults to localhost:8081 when null")
-    void defaultsToLocalhostWhenNull() {
-        var props = new UserManagementProperties(null);
-        assertThat(props.baseUrl()).isEqualTo("http://localhost:8081");
-    }
-
-    @Test
-    @DisplayName("SWR-043: defaults to localhost:8081 when blank")
-    void defaultsToLocalhostWhenBlank() {
-        var props = new UserManagementProperties("   ");
-        assertThat(props.baseUrl()).isEqualTo("http://localhost:8081");
+    @DisplayName("SWR-046: UserManagementProperties is deprecated")
+    void isDeprecated() {
+        assertThat(UserManagementProperties.class.isAnnotationPresent(Deprecated.class))
+                .isTrue();
     }
 }

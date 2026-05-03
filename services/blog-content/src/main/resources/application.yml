@@ -34,8 +34,12 @@ blog:
   admin:
     username: admin
     password: ${BLOG_ADMIN_PASSWORD:admin}
-  user-management:
-    base-url: ${USER_MANAGEMENT_URL:http://localhost:8081}
+
+grpc:
+  client:
+    user-management:
+      address: static://${USER_MANAGEMENT_GRPC_HOST:localhost}:${USER_MANAGEMENT_GRPC_PORT:9090}
+      negotiation-type: plaintext
 
 springdoc:
   api-docs:

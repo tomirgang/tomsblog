@@ -4,10 +4,10 @@ header: |
   Traefik HTTPS-Redirect für alle Nicht-ACME-Requests
 level: 11.0
 links:
-- STK035: null
+- STK035: _kGTYDrMnU_BHGFSL-e9vxHbfHuAqs_Z4b7G6EfphYw=
 normative: true
 ref: ''
-reviewed: null
+reviewed: O-iXNRlcKt3GYsaU-9c2J76SxkY5YD0L2kBbCkyg8wU=
 text: |
   Ein Traefik IngressRoute auf dem web-Entrypoint (HTTP, Port 80) leitet
   alle eingehenden Requests per 301 Permanent Redirect auf HTTPS um.

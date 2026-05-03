@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  REST und GraphQL nur für Client-Kommunikation
+level: 49.0
+links:
+- STK039: T846DLMzuff8M-6Ey5om8n4PFJ0f4MekCldtrGbaRuo=
+normative: true
+ref: ''
+reviewed: CAyI6o5flIk2e1pUa5vVd-_Kfs-HdmT9gfMLXrgJv7E=
+text: |
+  REST-Endpunkte und GraphQL-Schemas dürfen ausschließlich für die
+  Kommunikation mit externen Clients bereitgestellt werden (Web-UI,
+  Mobile-Apps, BFF-Layer). Für die Kommunikation zwischen Services
+  sind nur gRPC (synchron, SWR-046), Kafka (Event-Streaming, SWR-047)
+  und RabbitMQ (Task-Queues, SWR-048) zulässig. Bestehende interne
+  REST-APIs (z.B. User-Management POST /api/users/sync) müssen
+  mittelfristig auf gRPC migriert werden.

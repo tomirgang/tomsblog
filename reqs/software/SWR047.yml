@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Kafka für Event-Streaming zwischen Services
+level: 47.0
+links:
+- STK038: KHiHAEznWHNPCQQnyqbVPELnG8zoeUVtXDno2cuyrjw=
+normative: true
+ref: ''
+reviewed: l2YVE3_mP-eRL_YIwwBlNONHyNNZWZg-HQ14MRyt7Xc=
+text: |
+  Domain Events, die für service-übergreifende Konsistenz oder
+  Benachrichtigungen relevant sind, werden über Apache Kafka publiziert
+  und konsumiert (ADR-0006). Kafka wird für Event-Streaming verwendet,
+  bei dem mehrere Consumer dasselbe Event unabhängig verarbeiten können
+  (z.B. PostPublishedEvent, UserCreatedEvent).

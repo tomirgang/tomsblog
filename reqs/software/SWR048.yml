@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  RabbitMQ für Task-Queues zwischen Services
+level: 48.0
+links:
+- STK038: KHiHAEznWHNPCQQnyqbVPELnG8zoeUVtXDno2cuyrjw=
+normative: true
+ref: ''
+reviewed: 70aaWeGuTUOMi9-rNaYs2xbiXwUh4LwCgFFN7FPdHJk=
+text: |
+  Asynchrone Aufgaben, die genau einmal verarbeitet werden müssen
+  (z.B. Übersetzungen, TTS-Generierung, Snapshot-Erstellung,
+  Benachrichtigungen), werden über RabbitMQ-Task-Queues verteilt
+  (ADR-0018). RabbitMQ wird für Work-Queues mit Einzelverarbeitung
+  verwendet, bei denen ein Job an genau einen Worker geht.

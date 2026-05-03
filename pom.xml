@@ -22,6 +22,7 @@
     <modules>
         <module>libs/shared-kernel</module>
         <module>libs/event-contracts</module>
+        <module>libs/grpc-contracts</module>
         <module>services/blog-content</module>
         <module>services/user-management</module>
     </modules>
@@ -40,6 +41,9 @@
         <jazzer.version>0.24.0</jazzer.version>
         <springdoc.version>2.8.8</springdoc.version>
         <thymeleaf-layout-dialect.version>3.4.0</thymeleaf-layout-dialect.version>
+        <grpc.version>1.72.0</grpc.version>
+        <protobuf.version>3.25.5</protobuf.version>
+        <grpc-spring-boot.version>3.1.0.RELEASE</grpc-spring-boot.version>
 
         <!-- Coverage thresholds -->
         <jacoco.line.minimum>0.95</jacoco.line.minimum>
@@ -58,6 +62,37 @@
                 <groupId>de.tomsblog</groupId>
                 <artifactId>event-contracts</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.tomsblog</groupId>
+                <artifactId>grpc-contracts</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- gRPC BOM -->
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-bom</artifactId>
+                <version>${grpc.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- gRPC Spring Boot Starter -->
+            <dependency>
+                <groupId>net.devh</groupId>
+                <artifactId>grpc-spring-boot-starter</artifactId>
+                <version>${grpc-spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.devh</groupId>
+                <artifactId>grpc-server-spring-boot-starter</artifactId>
+                <version>${grpc-spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.devh</groupId>
+                <artifactId>grpc-client-spring-boot-starter</artifactId>
+                <version>${grpc-spring-boot.version}</version>
             </dependency>
 
             <!-- Testcontainers BOM -->

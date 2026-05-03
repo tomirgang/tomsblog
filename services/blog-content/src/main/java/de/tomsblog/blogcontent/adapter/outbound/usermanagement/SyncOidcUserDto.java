@@ -1,12 +1,11 @@
 package de.tomsblog.blogcontent.adapter.outbound.usermanagement;
 
-import java.util.List;
-import java.util.UUID;
-
 /**
- * Request DTO for syncing an OIDC user with the User Management Service.
+ * This class is no longer used. gRPC uses Protocol Buffer messages directly.
  *
- * @req SWR-043
+ * @deprecated Replaced by gRPC SyncOidcUserRequest proto message (SWR-046).
  */
-public record SyncOidcUserDto(
-        String oidcSubject, String email, String displayName, List<String> oidcGroups, UUID tenantId) {}
+@Deprecated(forRemoval = true)
+public final class SyncOidcUserDto {
+    private SyncOidcUserDto() {}
+}

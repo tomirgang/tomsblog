@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package de.tomsblog.usermanagement.grpc;
+
+option java_multiple_files = true;
+option java_package = "de.tomsblog.grpc.usermanagement";
+option java_outer_classname = "UserManagementProto";
+
+// Service for synchronous inter-service communication with User Management.
+// Used by other services (e.g., blog-content) to sync users and query profiles.
+// Fulfills SWR-046: gRPC for synchronous inter-service calls.
+service UserManagementService {
+  // Synchronize an OIDC user profile (create or update) and return the result.
+  rpc SyncOidcUser (SyncOidcUserRequest) returns (UserProfileResponse);
+
+  // Find a user profile by username.
+  rpc FindByUsername (FindByUsernameRequest) returns (UserProfileResponse);
+
+  // Find a user profile by OIDC subject.
+  rpc FindByOidcSubject (FindByOidcSubjectRequest) returns (UserProfileResponse);
+}
+
+// Service for tenant settings queries.
+service TenantSettingsService {
+  // Get tenant settings (login mode, auto-approval configuration).
+  rpc GetTenantSettings (GetTenantSettingsRequest) returns (TenantSettingsResponse);
+}
+
+message SyncOidcUserRequest {
+  string oidc_subject = 1;
+  string email = 2;
+  string display_name = 3;
+  repeated string oidc_groups = 4;
+  string tenant_id = 5;
+}
+
+message FindByUsernameRequest {
+  string username = 1;
+}
+
+message FindByOidcSubjectRequest {
+  string oidc_subject = 1;
+}
+
+message GetTenantSettingsRequest {
+  string tenant_id = 1;
+}
+
+message UserProfileResponse {
+  string id = 1;
+  string oidc_subject = 2;
+  string username = 3;
+  string auth_source = 4;
+  string email = 5;
+  string display_name = 6;
+  string approval_status = 7;
+  repeated string global_roles = 8;
+  repeated TenantMembership tenant_memberships = 9;
+}
+
+message TenantMembership {
+  string tenant_id = 1;
+  string role = 2;
+}
+
+message TenantSettingsResponse {
+  string tenant_id = 1;
+  string login_mode = 2;
+  bool auto_approve_oidc = 3;
+  repeated string auto_approve_email_domains = 4;
+}

@@ -1,7 +1,6 @@
 package de.tomsblog.blogcontent.adapter.inbound.web;
 
 import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
-import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +30,7 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties({AdminProperties.class, UserManagementProperties.class})
+@EnableConfigurationProperties({AdminProperties.class})
 public class SecurityConfiguration {
 
     private final AdminProperties adminProperties;

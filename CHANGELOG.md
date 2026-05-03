@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Stakeholder Requirements STK037/STK038/STK039: Inter-Service-Kommunikationsstrategie (gRPC synchron, Kafka/RabbitMQ asynchron, REST/GraphQL nur für Clients)
+- Software Requirements SWR046-049: Konkretisierung der Kommunikationsprotokolle zwischen Services
+- gRPC-Contracts-Modul (`libs/grpc-contracts`): Protocol Buffer Definitionen und generierte Stubs für UserManagementService und TenantSettingsService
+- gRPC-Server-Adapter im User-Management-Service: `UserManagementGrpcService` und `TenantSettingsGrpcService` (Port 9090)
+- gRPC-Client-Adapter im Blog-Content-Service: `UserManagementGrpcClient` ersetzt den bisherigen REST-basierten Client
+
+### Changed
+
+- `UserManagementClient` von konkreter REST-Implementierung zu Interface refactored (hexagonale Architektur)
+- Inter-Service-Kommunikation blog-content → user-management von REST auf gRPC migriert (SWR-046, SWR-049)
+
+### Deprecated
+
+- `UserManagementProperties`: gRPC-Konfiguration erfolgt nun über `grpc.client.user-management.*`
+- `SyncOidcUserDto`: Ersetzt durch Protocol Buffer Messages
+
 ## [0.7.2] - 2026-05-03
 
 ### Added

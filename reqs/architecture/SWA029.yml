@@ -4,11 +4,11 @@ header: |
   User-Management-Service Architektur (hexagonal)
 level: 29.0
 links:
-- SWR043: null
 - SWR007: _idI4rzQ2_WbYBmTwEWCjZjMSMtm1vzQ4tgSzjXWqI4=
+- SWR043: GHQKce7q3LxC2NrsiFPSC1ax8gCgFof5TKx7UE3Skm8=
 normative: true
 ref: ''
-reviewed: null
+reviewed: dzy0lyuj0TO8x-MeKJdIdUiHIfJUj7XdSjhJ3_yXNzo=
 text: |
   Der User-Management-Service folgt der hexagonalen Architektur (SWA-001):
   - Domain Layer: UserProfile (Aggregate Root) mit OidcSubject, E-Mail,

@@ -4,11 +4,11 @@ header: |
   Auto-Approval bei OIDC-Login und E-Mail-Domain
 level: 45.0
 links:
-- STK028: null
-- STK032: null
+- STK028: 1FpJYob_VPe4Ba9cVyJM3Vw-bvz6B4pc6FIKrvKmvcE=
+- STK032: WFZdKWg1IXtL1r0wd0fsrlaFExVGZM70jgX88atZSJA=
 normative: true
 ref: ''
-reviewed: null
+reviewed: 0jgIUk1u1tD-J2zCHRjYnM7ovHh1ksClSB6a5mHPvBQ=
 text: |
   Der User-Management-Service unterstuetzt optionale automatische
   Freigabe (Auto-Approval) neuer Benutzer (SWR-043):
