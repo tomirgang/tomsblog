@@ -37,4 +37,41 @@ class FlexmarkMarkdownRendererTest {
         assertThat(html).contains("<code");
         assertThat(html).contains("System.out.println()");
     }
+
+    @Test
+    @DisplayName("SWR-035: Sanitizes script tags from inline HTML")
+    void sanitizesScriptTags() {
+        String markdown = "Hello <script>alert('xss')</script> World";
+        String html = renderer.renderToHtml(markdown);
+        assertThat(html).doesNotContain("<script>");
+        assertThat(html).doesNotContain("alert");
+    }
+
+    @Test
+    @DisplayName("SWR-035: Sanitizes javascript: URLs from links")
+    void sanitizesJavascriptUrls() {
+        String markdown = "[click](javascript:alert('xss'))";
+        String html = renderer.renderToHtml(markdown);
+        assertThat(html).doesNotContain("javascript:");
+    }
+
+    @Test
+    @DisplayName("SWR-035: Allows safe HTML elements from Markdown")
+    void allowsSafeHtmlElements() {
+        String markdown = "**bold** and *italic* and [link](https://example.com)";
+        String html = renderer.renderToHtml(markdown);
+        assertThat(html).contains("<strong>bold</strong>");
+        assertThat(html).contains("<em>italic</em>");
+        assertThat(html).contains("href=\"https://example.com\"");
+    }
+
+    @Test
+    @DisplayName("SWR-035: Sanitizes event handler attributes from raw HTML blocks")
+    void sanitizesEventHandlers() {
+        // Raw HTML block (blank lines around make it a block element for Flexmark)
+        String markdown = "\n<div onmouseover=\"alert('xss')\">hover me</div>\n";
+        String html = renderer.renderToHtml(markdown);
+        assertThat(html).doesNotContain("onmouseover");
+        assertThat(html).contains("hover me");
+    }
 }

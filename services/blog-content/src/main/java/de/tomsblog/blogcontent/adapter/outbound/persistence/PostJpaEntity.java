@@ -9,9 +9,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "posts")
+@EntityListeners(AuditingEntityListener.class)
 public class PostJpaEntity implements Auditable {
 
     @Id
@@ -83,9 +87,11 @@ public class PostJpaEntity implements Auditable {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    @CreatedBy
     @Column(name = "created_by")
     private String createdBy;
 
+    @LastModifiedBy
     @Column(name = "updated_by")
     private String updatedBy;
 

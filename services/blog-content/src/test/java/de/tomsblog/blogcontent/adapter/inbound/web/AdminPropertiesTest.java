@@ -1,6 +1,7 @@
 package de.tomsblog.blogcontent.adapter.inbound.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,11 +25,11 @@ class AdminPropertiesTest {
     }
 
     @Test
-    @DisplayName("SWR-028: AdminProperties defaults password when null")
-    void nullPassword_defaultsToAdmin() {
-        AdminProperties props = new AdminProperties("user", null);
-        assertThat(props.username()).isEqualTo("user");
-        assertThat(props.password()).isEqualTo("admin");
+    @DisplayName("SWR-028: AdminProperties throws when password is null")
+    void nullPassword_throwsException() {
+        assertThatThrownBy(() -> new AdminProperties("user", null))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("BLOG_ADMIN_PASSWORD");
     }
 
     @Test
@@ -39,9 +40,10 @@ class AdminPropertiesTest {
     }
 
     @Test
-    @DisplayName("SWR-028: AdminProperties defaults password when blank")
-    void blankPassword_defaultsToAdmin() {
-        AdminProperties props = new AdminProperties("user", "  ");
-        assertThat(props.password()).isEqualTo("admin");
+    @DisplayName("SWR-028: AdminProperties throws when password is blank")
+    void blankPassword_throwsException() {
+        assertThatThrownBy(() -> new AdminProperties("user", "  "))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("BLOG_ADMIN_PASSWORD");
     }
 }

@@ -5,6 +5,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * Configuration properties for the admin user credentials.
  *
+ * <p>The password must be configured via the BLOG_ADMIN_PASSWORD environment variable. The
+ * application will fail to start if no password is provided.
+ *
  * @req SWR-028
  */
 @ConfigurationProperties(prefix = "blog.admin")
@@ -15,7 +18,8 @@ public record AdminProperties(String username, String password) {
             username = "admin";
         }
         if (password == null || password.isBlank()) {
-            password = "admin";
+            throw new IllegalStateException(
+                    "blog.admin.password must be configured. Set BLOG_ADMIN_PASSWORD environment variable.");
         }
     }
 }

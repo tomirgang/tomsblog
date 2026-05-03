@@ -8,12 +8,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * Filter that injects default X-Tenant-Id and X-Author-Id headers when missing. The default values
  * are configurable via properties (blog.default-tenant-id, blog.default-author-id).
+ *
+ * <p>Validates that provided X-Tenant-Id headers are well-formed UUIDs to prevent header
+ * manipulation attacks.
  *
  * <p>This enables the Thymeleaf UI to work in a browser without requiring manual header injection.
  * In a later phase, this filter will be replaced by domain-based tenant resolution and proper
@@ -46,8 +50,15 @@ public class DefaultTenantFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String sessionTenantOverride = resolveSessionTenant(request);
-        boolean missingTenant = request.getHeader("X-Tenant-Id") == null;
+        String providedTenantId = request.getHeader("X-Tenant-Id");
+        boolean missingTenant = providedTenantId == null;
         boolean missingAuthor = request.getHeader("X-Author-Id") == null;
+
+        // Validate tenant ID format if provided
+        if (!missingTenant && !isValidUuid(providedTenantId)) {
+            response.sendError(HttpStatus.BAD_REQUEST.value(), "Invalid X-Tenant-Id format");
+            return;
+        }
 
         if (sessionTenantOverride != null || missingTenant || missingAuthor) {
             filterChain.doFilter(
@@ -67,6 +78,16 @@ public class DefaultTenantFilter extends OncePerRequestFilter {
             }
         }
         return null;
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private static boolean isValidUuid(String value) {
+        try {
+            UUID.fromString(value);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private class DefaultHeaderRequestWrapper extends HttpServletRequestWrapper {

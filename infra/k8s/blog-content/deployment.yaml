@@ -20,9 +20,20 @@ spec:
       labels:
         app: blog-content
     spec:
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 1000
       containers:
         - name: blog-content
           image: ghcr.io/tomirgang/tomsblog/blog-content:0.7.3 # {"$imagepolicy": "flux-system:blog-content"}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
               name: http

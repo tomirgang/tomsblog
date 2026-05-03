@@ -19,15 +19,20 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(TenantSettingsController.class)
+@Import(SecurityConfiguration.class)
+@TestPropertySource(properties = "service.api-key=test-api-key")
 class TenantSettingsControllerTest {
 
     private static final UUID TENANT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
     private static final TenantId TENANT_ID = TenantId.of(TENANT_UUID);
+    private static final String API_KEY = "test-api-key";
 
     @Autowired
     private MockMvc mockMvc;
@@ -45,7 +50,7 @@ class TenantSettingsControllerTest {
                 TenantSettings.reconstitute(TENANT_ID, LoginMode.OIDC, true, Set.of("example.com"), "Toms Blog", null);
         when(tenantSettingsUseCase.getSettings(TENANT_ID)).thenReturn(settings);
 
-        mockMvc.perform(get("/api/tenants/{tenantId}/settings", TENANT_UUID))
+        mockMvc.perform(get("/api/tenants/{tenantId}/settings", TENANT_UUID).header("X-API-Key", API_KEY))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.tenantId").value(TENANT_UUID.toString()))
                 .andExpect(jsonPath("$.loginMode").value("OIDC"))
@@ -63,6 +68,7 @@ class TenantSettingsControllerTest {
         var request = new TenantSettingsController.UpdateLoginModeRequest(LoginMode.INTERNAL);
 
         mockMvc.perform(put("/api/tenants/{tenantId}/settings/login-mode", TENANT_UUID)
+                        .header("X-API-Key", API_KEY)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -73,6 +79,7 @@ class TenantSettingsControllerTest {
     @DisplayName("SWR-044: PUT /api/tenants/{tenantId}/settings/login-mode rejects null loginMode")
     void updateLoginModeRejectsNull() throws Exception {
         mockMvc.perform(put("/api/tenants/{tenantId}/settings/login-mode", TENANT_UUID)
+                        .header("X-API-Key", API_KEY)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"loginMode\": null}"))
                 .andExpect(status().isBadRequest());
@@ -89,6 +96,7 @@ class TenantSettingsControllerTest {
         var request = new TenantSettingsController.UpdateAutoApprovalRequest(true, Set.of("test.com"));
 
         mockMvc.perform(put("/api/tenants/{tenantId}/settings/auto-approval", TENANT_UUID)
+                        .header("X-API-Key", API_KEY)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -104,6 +112,7 @@ class TenantSettingsControllerTest {
                 .thenReturn(settings);
 
         mockMvc.perform(put("/api/tenants/{tenantId}/settings/auto-approval", TENANT_UUID)
+                        .header("X-API-Key", API_KEY)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"autoApproveOidc\": false}"))
                 .andExpect(status().isOk())

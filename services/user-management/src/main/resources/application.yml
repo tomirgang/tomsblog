@@ -23,6 +23,9 @@ grpc:
   server:
     port: 9090
 
+service:
+  api-key: ${SERVICE_API_KEY}
+
 springdoc:
   api-docs:
     path: /api-docs

@@ -20,14 +20,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(UserController.class)
+@Import(SecurityConfiguration.class)
+@org.springframework.test.context.TestPropertySource(properties = "service.api-key=test-api-key")
 class UserControllerTest {
 
     private static final UUID TENANT_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final String API_KEY = "test-api-key";
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,6 +51,7 @@ class UserControllerTest {
         var request = new SyncOidcUserRequest("sub-1", "user@example.com", "User", List.of(), TENANT_ID);
 
         mockMvc.perform(post("/api/users/sync/oidc")
+                        .header("X-API-Key", API_KEY)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -62,6 +67,7 @@ class UserControllerTest {
         var request = new SyncOidcUserRequest("", "user@example.com", "User", List.of(), TENANT_ID);
 
         mockMvc.perform(post("/api/users/sync/oidc")
+                        .header("X-API-Key", API_KEY)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -77,6 +83,7 @@ class UserControllerTest {
         var request = new SyncInternalUserRequest("admin", "hash", "admin@example.com", "Admin", TENANT_ID);
 
         mockMvc.perform(post("/api/users/sync/internal")
+                        .header("X-API-Key", API_KEY)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -90,7 +97,7 @@ class UserControllerTest {
         var profile = UserProfile.createFromOidc("sub-1", "user@example.com", "User");
         when(userProfileUseCase.findByOidcSubject("sub-1")).thenReturn(profile);
 
-        mockMvc.perform(get("/api/users/by-oidc-subject/sub-1"))
+        mockMvc.perform(get("/api/users/by-oidc-subject/sub-1").header("X-API-Key", API_KEY))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.oidcSubject").value("sub-1"));
     }
@@ -100,7 +107,8 @@ class UserControllerTest {
     void findByOidcSubjectNotFound() throws Exception {
         when(userProfileUseCase.findByOidcSubject("unknown")).thenThrow(new UserProfileNotFoundException("unknown"));
 
-        mockMvc.perform(get("/api/users/by-oidc-subject/unknown")).andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/users/by-oidc-subject/unknown").header("X-API-Key", API_KEY))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -109,7 +117,7 @@ class UserControllerTest {
         var profile = UserProfile.createInternal("admin", "hash", "admin@example.com", "Admin");
         when(userProfileUseCase.findByUsername("admin")).thenReturn(profile);
 
-        mockMvc.perform(get("/api/users/by-username/admin"))
+        mockMvc.perform(get("/api/users/by-username/admin").header("X-API-Key", API_KEY))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value("admin"));
     }
@@ -117,7 +125,8 @@ class UserControllerTest {
     @Test
     @DisplayName("SWR-043: POST /api/users/{id}/approve returns 204")
     void approveUser() throws Exception {
-        mockMvc.perform(post("/api/users/sub-1/approve")).andExpect(status().isNoContent());
+        mockMvc.perform(post("/api/users/sub-1/approve").header("X-API-Key", API_KEY))
+                .andExpect(status().isNoContent());
 
         verify(userProfileUseCase).approveUser("sub-1");
     }
@@ -125,7 +134,8 @@ class UserControllerTest {
     @Test
     @DisplayName("SWR-043: POST /api/users/{id}/reject returns 204")
     void rejectUser() throws Exception {
-        mockMvc.perform(post("/api/users/sub-1/reject")).andExpect(status().isNoContent());
+        mockMvc.perform(post("/api/users/sub-1/reject").header("X-API-Key", API_KEY))
+                .andExpect(status().isNoContent());
 
         verify(userProfileUseCase).rejectUser("sub-1");
     }
@@ -138,9 +148,23 @@ class UserControllerTest {
 
         mockMvc.perform(
                         post("/api/users/sync/oidc")
+                                .header("X-API-Key", API_KEY)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
                                         "{\"oidcSubject\":\"sub-1\",\"email\":\"user@example.com\",\"displayName\":\"User\",\"tenantId\":\"00000000-0000-0000-0000-000000000001\"}"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("SWR-043: Request without API key returns 401")
+    void requestWithoutApiKeyReturns401() throws Exception {
+        mockMvc.perform(get("/api/users/by-username/admin")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("SWR-043: Request with wrong API key returns 401")
+    void requestWithWrongApiKeyReturns401() throws Exception {
+        mockMvc.perform(get("/api/users/by-username/admin").header("X-API-Key", "wrong-key"))
+                .andExpect(status().isUnauthorized());
     }
 }

@@ -1,5 +1,7 @@
 package de.tomsblog.blogcontent.domain.model;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Objects;
 
 /**
@@ -13,6 +15,14 @@ public record Source(String url, String title) {
         Objects.requireNonNull(url, "Source URL must not be null");
         if (url.isBlank()) {
             throw new IllegalArgumentException("Source URL must not be blank");
+        }
+        if (!url.matches("^https?://.*")) {
+            throw new IllegalArgumentException("Source URL must use http or https protocol");
+        }
+        try {
+            new URI(url);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Source URL is not a valid URI", e);
         }
         Objects.requireNonNull(title, "Source title must not be null");
         if (title.isBlank()) {

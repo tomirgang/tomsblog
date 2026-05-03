@@ -45,6 +45,8 @@
         <protobuf.version>3.25.5</protobuf.version>
         <grpc-spring-boot.version>3.1.0.RELEASE</grpc-spring-boot.version>
 
+        <owasp-dependency-check.version>12.1.1</owasp-dependency-check.version>
+
         <!-- Coverage thresholds -->
         <jacoco.line.minimum>0.95</jacoco.line.minimum>
         <jacoco.branch.minimum>0.95</jacoco.branch.minimum>
@@ -204,6 +206,15 @@
                             </configuration>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <version>${owasp-dependency-check.version}</version>
+                    <configuration>
+                        <failBuildOnCVSS>7</failBuildOnCVSS>
+                        <suppressionFile>dependency-check-suppressions.xml</suppressionFile>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

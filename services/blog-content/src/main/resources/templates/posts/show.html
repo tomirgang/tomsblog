@@ -4,7 +4,8 @@
       layout:decorate="~{layout/default}">
 <head>
     <title th:text="${post.title}">Post Title</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css"
+          crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
 <body>
     <section layout:fragment="content">
@@ -67,7 +68,8 @@
             <a th:href="@{/posts}">&larr; Zurück zur Übersicht</a>
         </nav>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script type="module">
             import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
             mermaid.initialize({ startOnLoad: true });

@@ -24,7 +24,8 @@ Die Plattform besteht aus zwei Services:
 | blog-content       | 8080 | PostgreSQL (eigene DB)   | Blog-Inhalte, Thymeleaf-UI, SSR      |
 | user-management    | 8081 | PostgreSQL (eigene DB)   | Benutzerverwaltung, Rollen, Tenants   |
 
-Beide Services folgen der hexagonalen Architektur und kommunizieren über REST.
+Beide Services folgen der hexagonalen Architektur und kommunizieren über gRPC (synchron)
+sowie Kafka/RabbitMQ (asynchron). REST-APIs dienen ausschließlich der Client-Kommunikation.
 
 ## Deployment
 
@@ -82,7 +83,11 @@ stringData:
   admin-password: "<SuperAdmin-Passwort>"
   oidc-client-id: "<OIDC Client ID>"
   oidc-client-secret: "<OIDC Client Secret>"
+  service-api-key: "<Gemeinsamer API-Key für Service-Kommunikation>"
 ```
+
+Der `service-api-key` muss identisch in beiden Services konfiguriert sein
+(blog-content als Client, user-management als Server).
 
 Für die Verschlüsselung der Secrets im Git-Repository wird SOPS empfohlen (ADR-0025).
 
@@ -108,12 +113,13 @@ Die Anwendung nutzt Spring Boot, daher können alle `application.yml`-Werte
 Der SuperAdmin-Account wird beim Start automatisch als In-Memory-Benutzer angelegt.
 Der Login ist ausschließlich über `/admin/login` (formbasiert) möglich.
 
-| Variable              | Beschreibung              | Default  |
-| --------------------- | ------------------------- | -------- |
-| `BLOG_ADMIN_PASSWORD` | Passwort des SuperAdmin   | `admin`  |
+| Variable              | Beschreibung              | Default      |
+| --------------------- | ------------------------- | ------------ |
+| `BLOG_ADMIN_PASSWORD` | Passwort des SuperAdmin   | (erforderlich) |
 
 Der Benutzername ist fest auf `admin` konfiguriert.
-In Produktion muss `BLOG_ADMIN_PASSWORD` über ein Kubernetes Secret gesetzt werden.
+`BLOG_ADMIN_PASSWORD` ist eine Pflichtangabe ohne Default-Wert. Der Service startet nicht,
+wenn die Variable fehlt oder leer ist. In Kubernetes wird der Wert über ein Secret gesetzt.
 
 #### OIDC Konfiguration
 
@@ -201,6 +207,18 @@ Der User Management Service benötigt eine eigene PostgreSQL-Datenbank.
 | `SPRING_DATASOURCE_USERNAME` | Datenbankbenutzer                 | `app`                                                          |
 | `SPRING_DATASOURCE_PASSWORD` | Datenbankpasswort                 | (aus Secret)                                                   |
 
+#### Service-Authentifizierung
+
+Der User Management Service ist durch API-Key-Authentifizierung geschützt.
+Alle Anfragen (außer Health-Checks) müssen den Header `X-API-Key` enthalten.
+
+| Variable          | Beschreibung                             | Default        |
+| ----------------- | ---------------------------------------- | -------------- |
+| `SERVICE_API_KEY` | API-Key für Service-zu-Service-Zugriff   | (erforderlich) |
+
+Der blog-content Service muss denselben API-Key als Umgebungsvariable erhalten,
+um den User Management Service aufrufen zu können.
+
 ## Deployment-Manifest (Beispiel)
 
 Minimales Deployment-Manifest für den blog-content Service:
@@ -221,11 +239,21 @@ spec:
       labels:
         app: blog-content
     spec:
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 1000
       containers:
         - name: blog-content
           image: ghcr.io/tomirgang/tomsblog/blog-content:sha-abc1234
           ports:
             - containerPort: 8080
+          securityContext:
+            runAsUser: 1000
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:postgresql://postgres:5432/blogcontent"
@@ -356,3 +384,47 @@ Ein manueller Eingriff ist nicht erforderlich.
 
 OIDC-Gruppen aus dem `groups`-Claim werden automatisch an den User Management Service
 weitergeleitet. Die Zuordnung zu plattforminternen Rollen kann dort konfiguriert werden.
+
+## Sicherheitshinweise
+
+### Container-Hardening
+
+Alle Deployments müssen mit restriktivem Security Context betrieben werden:
+
+- `runAsNonRoot: true` (Pod und Container)
+- `readOnlyRootFilesystem: true`
+- `allowPrivilegeEscalation: false`
+- `capabilities: drop: [ALL]`
+
+Das Beispiel-Deployment-Manifest oben zeigt die empfohlene Konfiguration.
+
+### Rate Limiting
+
+Der blog-content Service enthält einen integrierten Login-Rate-Limiter:
+maximal 10 Anmeldeversuche pro IP-Adresse innerhalb von 5 Minuten.
+Bei Überschreitung wird HTTP 429 zurückgegeben.
+
+Für produktive Umgebungen wird zusätzlich ein Ingress-Level Rate Limiting empfohlen
+(z.B. via Traefik Middleware oder nginx `limit_req_zone`).
+
+### Service-zu-Service-Kommunikation
+
+Die Kommunikation zwischen blog-content und user-management erfolgt über gRPC.
+Die Verbindung ist im Cluster als Plaintext konfiguriert, da Linkerd (Service Mesh)
+automatisch mTLS zwischen den Pods bereitstellt (ADR-0021).
+
+### Swagger/OpenAPI
+
+Die API-Dokumentation (Swagger UI und OpenAPI-Spec) ist im Profil `k8s` deaktiviert.
+Für lokale Entwicklung bleibt sie unter `/swagger-ui.html` zugänglich.
+
+### Secrets-Rotation
+
+Folgende Secrets sollten regelmäßig rotiert werden:
+
+| Secret                | Betroffene Services          | Hinweis                                    |
+| --------------------- | ---------------------------- | ------------------------------------------ |
+| `BLOG_ADMIN_PASSWORD` | blog-content                 | Restart erforderlich                       |
+| `SERVICE_API_KEY`     | blog-content, user-management| Beide Services gleichzeitig aktualisieren  |
+| `OIDC_CLIENT_SECRET`  | blog-content                 | Im OIDC Provider gleichzeitig ändern       |
+| DB-Passwörter         | Alle Services                | Restart erforderlich                       |

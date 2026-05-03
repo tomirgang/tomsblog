@@ -979,10 +979,10 @@ Die Admin-Credentials werden über Spring-Properties konfiguriert:
 blog:
   admin:
     username: admin
-    password: ${BLOG_ADMIN_PASSWORD:admin}
+    password: ${BLOG_ADMIN_PASSWORD}
 ----
 
-In der lokalen Entwicklung wird ein Default-Passwort gesetzt. Im Produktionsbetrieb wird das Passwort über eine Umgebungsvariable injiziert.
+Das Admin-Passwort ist eine Pflichtangabe ohne Default-Wert. Der Service bricht den Start ab, wenn `BLOG_ADMIN_PASSWORD` nicht gesetzt oder leer ist. In der lokalen Entwicklung muss die Variable explizit gesetzt werden (z.B. über `.env` oder die IDE-Konfiguration).
 
 == Admin-Oberfläche (SWR-051, SWR-052, SWR-053)
 

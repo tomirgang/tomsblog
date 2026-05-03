@@ -62,8 +62,7 @@ public class SecurityConfiguration {
                         .permitAll())
                 .logout(logout -> logout.logoutUrl("/admin/logout")
                         .logoutSuccessUrl("/posts")
-                        .permitAll())
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"));
+                        .permitAll());
 
         return http.build();
     }
@@ -85,9 +84,20 @@ public class SecurityConfiguration {
                         // Public: actuator health
                         .requestMatchers("/actuator/health", "/actuator/health/**")
                         .permitAll()
-                        // Public: Swagger UI and API docs
+                        // Public: Swagger UI and API docs (disabled in production via profile)
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**")
                         .permitAll()
+                        // API: role-based access control
+                        .requestMatchers(HttpMethod.GET, "/api/**")
+                        .authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/**")
+                        .hasAnyRole("AUTHOR", "ADMIN", "SUPERADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/**")
+                        .hasAnyRole("AUTHOR", "ADMIN", "SUPERADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/**")
+                        .hasAnyRole("AUTHOR", "ADMIN", "SUPERADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/**")
+                        .hasAnyRole("ADMIN", "SUPERADMIN")
                         // Protected: admin-only paths (evaluated before public slug pattern)
                         .requestMatchers("/posts/new", "/posts/*/edit")
                         .authenticated()
@@ -109,7 +119,17 @@ public class SecurityConfiguration {
                         .permitAll())
                 .logout(logout -> logout.logoutSuccessUrl("/posts").permitAll())
                 .httpBasic(basic -> {})
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"));
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+                .headers(headers -> headers.contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; "
+                                + "script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; "
+                                + "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://unpkg.com; "
+                                + "img-src 'self' data: https:; "
+                                + "font-src 'self'; "
+                                + "connect-src 'self'; "
+                                + "frame-ancestors 'none'"))
+                        .frameOptions(frame -> frame.deny())
+                        .httpStrictTransportSecurity(
+                                hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000)));
 
         return http.build();
     }

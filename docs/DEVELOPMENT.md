@@ -189,12 +189,19 @@ docker compose -f infra/docker/docker-compose.yml up -d
 # 3. Build prüfen
 ./mvnw verify
 
-# 4. Blog Content Service starten
-./mvnw spring-boot:run -pl services/blog-content -Dspring-boot.run.profiles=local
+# 4. Blog Content Service starten (BLOG_ADMIN_PASSWORD ist Pflicht)
+BLOG_ADMIN_PASSWORD=dev-password ./mvnw spring-boot:run -pl services/blog-content -Dspring-boot.run.profiles=local
 
 # 5. (Optional) Dokumentation generieren
 npx antora antora-playbook.yml
 ```
+
+### Pflicht-Umgebungsvariablen
+
+| Variable              | Service        | Beschreibung                           | Empfehlung lokal     |
+| --------------------- | -------------- | -------------------------------------- | -------------------- |
+| `BLOG_ADMIN_PASSWORD` | blog-content   | SuperAdmin-Passwort (kein Default)     | `dev-password`       |
+| `SERVICE_API_KEY`     | user-management| API-Key für Service-Authentifizierung  | `dev-api-key`        |
 
 ## Lokale Services (Docker Compose)
 

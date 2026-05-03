@@ -33,8 +33,9 @@ blog:
   default-author-id: "00000000-0000-0000-0000-000000000001"
   admin:
     username: admin
-    password: ${BLOG_ADMIN_PASSWORD:admin}
+    password: ${BLOG_ADMIN_PASSWORD}
 
+# gRPC: plaintext is acceptable because Linkerd service mesh provides mTLS (ADR-0021)
 grpc:
   client:
     user-management:

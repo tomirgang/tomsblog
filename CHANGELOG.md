@@ -8,6 +8,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- OWASP Security Review Agent und initialer Security-Audit-Bericht (`docs/audits/2026-05-03_security-review.md`)
+- Login-Rate-Limiting: `LoginRateLimitFilter` begrenzt POST-Anfragen auf Login-Endpunkte (10 Versuche/5 Min pro IP)
+- HTML-Sanitisierung: OWASP Java HTML Sanitizer für Markdown-Ausgabe (`FlexmarkMarkdownRenderer`)
+- JPA-Auditing: `@CreatedBy`/`@LastModifiedBy` in `PostJpaEntity` via `SecurityAuditorAware`
+- API-Key-Authentifizierung für User-Management-Service (`ApiKeyAuthenticationFilter`, `SecurityConfiguration`)
+- gRPC-Exception-Interceptor: `GrpcExceptionInterceptor` verhindert Stack-Trace-Leaks
+- Globale Fehlerbehandlung: `MethodArgumentNotValidException`, `HttpMessageNotReadableException`, Catch-All-Handler
+- Eingabegrößenbeschränkungen: `@Size`-Annotationen auf `CreatePostRequest` und `AddSourceRequest`
+- URL-Validierung in `Source` Domain-Modell (nur http/https, URI-Syntaxprüfung)
+- UUID-Validierung in `DefaultTenantFilter` für `X-Tenant-Id` Header
+- Security-Header: CSP, `X-Frame-Options: DENY`, HSTS in `SecurityConfiguration`
+- Kubernetes-Hardening: Pod Security Context (non-root, read-only FS, drop ALL capabilities)
+- `PodDisruptionBudget` für blog-content Deployment
+- Swagger/OpenAPI in Produktion deaktiviert (`application-k8s.yml`)
+- OWASP Dependency-Check Maven-Plugin (failBuildOnCVSS=7) in Parent-POM
 - Stakeholder Requirements STK040/STK041/STK042: Tenant-Branding, Admin-Benutzerverwaltung UI, Admin-Einstellungen UI
 - Software Requirements SWR050-053: Tenant-Branding-Header, Admin-Benutzerliste, Admin-Einstellungen, SuperAdmin-Tenant-Umschaltung
 - Tenant-Branding: dynamischer Tenant-Name und Tagline im Header (SWR-050)
@@ -23,9 +38,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ### Changed
 
 - `TenantSettings` Domain-Modell: erweitert um `displayName` und `tagline`
-- `DefaultTenantFilter`: berücksichtigt Session-basierte Tenant-Überschreibung (SuperAdmin)
-- `SecurityConfiguration`: Admin-Endpunkte erfordern ADMIN/SUPERADMIN, Tenant-Umschaltung erfordert SUPERADMIN
+- `DefaultTenantFilter`: berücksichtigt Session-basierte Tenant-Überschreibung (SuperAdmin), UUID-Validierung
+- `SecurityConfiguration`: Admin-Endpunkte erfordern ADMIN/SUPERADMIN, Tenant-Umschaltung erfordert SUPERADMIN, rollenbasierte API-Zugriffskontrolle
 - Header-Fragment: dynamischer Tenant-Name, optionaler Tagline, Admin-Link, Tenant-Dropdown
+- `docker-compose.yml`: Credentials über Umgebungsvariablen statt Hardcoded, kafka-ui Version gepinnt
+- `AdminProperties`: wirft `IllegalStateException` wenn Passwort nicht konfiguriert
+- `application.yml` (blog-content): Admin-Passwort ohne Default-Wert (erzwingt Konfiguration)
+- highlight.js CDN-Einbindungen mit `crossorigin="anonymous"` und `referrerpolicy="no-referrer"`
+
+### Security
+
+- OWASP Security Review durchgeführt: 16 Findings identifiziert und behoben
+- XSS-Schutz: HTML-Sanitisierung für nutzergenerierte Markdown-Inhalte
+- Brute-Force-Schutz: Rate-Limiting auf Login-Endpunkten
+- Eingabevalidierung: Größenbeschränkungen, URL-Protokoll-Validierung, UUID-Format-Validierung
+- Container-Hardening: non-root User, read-only Filesystem, keine Capabilities
+- Service-zu-Service-Authentifizierung: API-Key für User-Management-Service
+- Fehlerbehandlung: keine Stack-Traces in API-Antworten (REST und gRPC)
 
 ## [0.7.3] - 2026-05-03
 

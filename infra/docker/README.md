@@ -45,6 +45,10 @@ Database per Service (ADR-0019): Jeder Service erhält eine eigene Datenbank-Ins
 
 Weitere Service-Datenbanken werden bei Bedarf hinzugefügt (eigene Container, eigene Ports).
 
+Die Zugangsdaten sind über Umgebungsvariablen konfigurierbar (z.B. `BLOG_CONTENT_DB_USER`,
+`BLOG_CONTENT_DB_PASSWORD`, `RABBITMQ_USER`, `RABBITMQ_PASSWORD`). Ohne gesetzte Variablen
+gelten die oben angegebenen Defaults.
+
 ## Spring-Profil
 
 Die Services verwenden das Profil `local` für die Verbindung zu den Docker-Containern:
