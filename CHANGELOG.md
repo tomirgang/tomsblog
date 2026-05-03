@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.5.4] - 2026-05-03
+
 ### Added
 
 - Landing Page: nur die neuesten 3 Posts anzeigen (STK-017, SWR-033)
