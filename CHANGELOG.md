@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.8.3] - 2026-05-03
+
 ### Changed
 
 - Flux Image-Automation auf SemVer-basierte Tags umgestellt (zuvor SHA-basiert)
