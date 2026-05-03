@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+
+- cert-manager Duplikat entfernt: k3s-HelmChart deaktiviert (`enable_cert_manager = false`), nur Flux-verwaltete Installation bleibt
+- Infra-Dokumentation aktualisiert: cert-manager jetzt als Flux-verwaltet dokumentiert, Netzwerk-Diagramm Control-Plane auf CX33 korrigiert
+- Deployment Image-Tag von `latest` auf versionierten Commit-SHA (`sha-<hash>`) umgestellt (INF-008)
+
+### Added
+
+- Flux Image Automation: ImageRepository, ImagePolicy und ImageUpdateAutomation für automatische Deployment-Manifest-Updates bei neuen Container-Images
+
 ## [0.5.2] - 2026-05-03
 
 ### Changed

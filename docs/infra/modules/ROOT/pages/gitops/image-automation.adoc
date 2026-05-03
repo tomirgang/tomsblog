@@ -1,13 +1,9 @@
 = Image-Automation
 :sectnums:
 
-== Problem: `latest`-Tag
+== Versionierte Image-Tags (INF-008)
 
-Aktuell verwendet das Deployment den Image-Tag `latest` (INF-008). Dies führt dazu, dass Flux keinen Drift erkennt, wenn ein neues Image gepusht wird, da sich der Manifest-Inhalt nicht ändert.
-
-== Zielzustand: Versionierte Tags
-
-Die CI-Pipeline soll jedes Image mit einem eindeutigen, versionierten Tag versehen. Flux erkennt dann die Manifest-Änderung und löst ein Rollout aus.
+Das Deployment verwendet versionierte Commit-SHA-Tags statt `latest`. Flux Image Automation überwacht die Container Registry und aktualisiert das Deployment-Manifest im Git-Repository automatisch.
 
 === Tag-Schema
 
@@ -15,13 +11,11 @@ Die CI-Pipeline soll jedes Image mit einem eindeutigen, versionierten Tag verseh
 |===
 | Variante | Format | Beispiel
 
-| Commit-SHA (empfohlen) | `sha-<7-stelliger-hash>` | `sha-abc1234`
-| Semver + Build | `<version>-<sha>` | `0.5.1-abc1234`
+| Commit-SHA | `sha-<7-stelliger-hash>` | `sha-abc1234`
+| Semver (bei Tags) | `<version>` | `0.5.2`
 |===
 
-=== CI-Workflow (GitHub Actions)
-
-Der CI-Workflow baut das Image, taggt es und aktualisiert das Deployment-Manifest:
+=== Ablauf
 
 [mermaid]
 ----
@@ -29,33 +23,40 @@ sequenceDiagram
     participant Dev as Entwickler
     participant GH as GitHub Actions
     participant GHCR as Container Registry
+    participant FLUX as Flux Image Automation
     participant REPO as Git Repository
-    participant FLUX as Flux
+    participant K8S as Kubernetes
 
     Dev->>GH: Push auf main
     GH->>GH: Build & Test
-    GH->>GHCR: docker push :sha-abc1234
-    GH->>REPO: Update deployment.yaml (neuer Tag)
-    GH->>REPO: git push (automated commit)
-    FLUX->>REPO: Poll erkennt neuen Commit
-    FLUX->>FLUX: Reconcile (neuer Image-Tag)
-    Note over FLUX: Rolling Update
+    GH->>GHCR: docker push :sha-b015522
+    FLUX->>GHCR: Poll (alle 5 Min)
+    FLUX->>FLUX: ImagePolicy: neuer sha-Tag erkannt
+    FLUX->>REPO: git commit (deployment.yaml aktualisiert)
+    FLUX->>K8S: Reconcile → Rolling Update
 ----
 
-=== Deployment-Manifest (Ziel)
+=== Deployment-Manifest
+
+Das Deployment enthält einen Flux-Marker-Kommentar, der dem Image Automation Controller anzeigt, welches Feld aktualisiert werden soll:
 
 [source,yaml]
 ----
 containers:
   - name: blog-content
-    image: ghcr.io/tomirgang/tomsblog/blog-content:sha-abc1234  # <-- versioniert
+    image: ghcr.io/tomirgang/tomsblog/blog-content:sha-b015522 # {"$imagepolicy": "flux-system:blog-content"}
 ----
 
-== Alternative: Flux Image Automation Controller
+=== Flux-Ressourcen (kubernetes-playground)
 
-Für die Zukunft kann der Flux Image Automation Controller eingesetzt werden, der die Container Registry direkt überwacht und Tags automatisch im Git-Repository aktualisiert. Dies erfordert zusätzliche Controller im Cluster:
+Die Image-Automation wird über drei Ressourcen konfiguriert:
 
-* Image Reflector Controller
-* Image Automation Controller
+* **ImageRepository** (`blog-content-image.yaml`) -- überwacht `ghcr.io/tomirgang/tomsblog/blog-content`
+* **ImagePolicy** (`blog-content-image.yaml`) -- filtert Tags mit Muster `^sha-[a-f0-9]\{7}$`
+* **ImageUpdateAutomation** (`blog-content-image-automation.yaml`) -- schreibt neue Tags in `infra/k8s/` zurück
 
-Für Phase 4 wird zunächst der einfachere CI-basierte Ansatz umgesetzt.
+=== Voraussetzungen
+
+* Flux Image Reflector Controller und Image Automation Controller installiert (gotk-components)
+* Git-Credentials-Secret `tomsblog-git-credentials` im Namespace `flux-system` (GitHub PAT mit `contents:write`)
+* CI-Workflow taggt Images mit `type=sha` (docker/metadata-action)

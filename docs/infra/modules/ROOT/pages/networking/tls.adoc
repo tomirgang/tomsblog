@@ -59,6 +59,6 @@ sequenceDiagram
 
 == Voraussetzungen
 
-* cert-manager CRDs und Controller installiert (IaC-Repository)
+* cert-manager CRDs und Controller installiert (Flux-HelmRelease)
 * DNS A-Record zeigt auf Hetzner LB IP
 * Port 80 am Load Balancer offen (ACME HTTP-01 Challenge-Validierung)

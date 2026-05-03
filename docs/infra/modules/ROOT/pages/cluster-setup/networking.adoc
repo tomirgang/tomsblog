@@ -9,7 +9,7 @@ Das Cluster-Netzwerk nutzt WireGuard für die Node-zu-Node-Verschlüsselung (ber
 ----
 graph TB
     DNS[DNS: blog.tomirgang.de] --> LB[Hetzner LB11<br/>Port 80, 443]
-    LB --> N1[Control Plane<br/>CX23]
+    LB --> N1[Control Plane<br/>CX33]
     LB --> N2[Worker 1<br/>CX23]
     LB --> N3[Worker 2<br/>CX23]
     N1 ---|WireGuard| N2

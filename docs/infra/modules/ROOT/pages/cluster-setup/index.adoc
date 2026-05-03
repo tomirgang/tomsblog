@@ -49,7 +49,7 @@ graph LR
 
 | `kube-system` | k3s / IaC | Traefik, CoreDNS, Metrics Server
 | `flux-system` | IaC | Flux Controller (Source, Kustomize, Helm)
-| `cert-manager` | IaC (CRDs) + App (Issuer) | cert-manager Operator, ClusterIssuer
+| `cert-manager` | Flux (Operator) + App (Issuer) | cert-manager Operator, ClusterIssuer
 | `linkerd` | IaC | Linkerd Control Plane
 | `postgres` | App (infra/k8s/postgres/) | CloudNativePG Cluster
 | `tomsblog` | App (infra/k8s/blog-content/) | Application Workloads

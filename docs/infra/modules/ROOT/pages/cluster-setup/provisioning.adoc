@@ -7,7 +7,7 @@ Die Cluster-Provisionierung erfolgt im Repository `kubernetes-playground/K8nClus
 
 * OpenTofu-Konfiguration für Hetzner Cloud Ressourcen
 * kube-hetzner Modul-Konfiguration (Nodes, Netzwerk, Load Balancer)
-* Basis-Operatoren (CloudNativePG, cert-manager CRDs, Linkerd)
+* Basis-Operatoren (CloudNativePG, Linkerd)
 * Flux-Bootstrap-Konfiguration
 
 === Provisionierungs-Workflow
@@ -62,8 +62,9 @@ Alle Nodes verwenden Ubuntu 22.04 mit automatischen Security-Updates. k3s wird i
 Die folgenden Operatoren werden im IaC-Repository via Helm installiert:
 
 * **CloudNativePG** -- PostgreSQL-Operator (CRDs + Controller)
-* **cert-manager** -- Zertifikats-Management (CRDs + Controller)
 * **Linkerd** -- Service Mesh (CRDs + Control Plane)
 * **Reflector** -- Cross-Namespace Secret-Synchronisation
+
+cert-manager wird über Flux verwaltet (siehe `flux/cert-manager-release.yaml`).
 
 Die applikationsspezifischen Custom Resources (z.B. PostgreSQL-Cluster-Definition, ClusterIssuer) liegen im App-Repository unter `infra/k8s/`.
