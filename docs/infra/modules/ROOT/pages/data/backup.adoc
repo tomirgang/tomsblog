@@ -104,6 +104,31 @@ docker compose exec garage /garage bucket allow --read --write --owner postgres-
 Die Ausgabe von `garage key info postgres-backup-key` enthält Access Key und Secret Key
 für das Kubernetes Secret.
 
+=== Voraussetzungen an Garage
+
+* **Version**: mindestens v1.3.0 (STREAMING-AWS4-HMAC-SHA256-PAYLOAD Support, benötigt von barman-cloud)
+* **S3-Region**: muss in `garage.toml` auf `us-east-1` gesetzt sein, da barman-cloud diese Region als Default verwendet und CloudNativePG kein Region-Feld unterstützt:
++
+[source,toml]
+----
+[s3_api]
+s3_region = "us-east-1"
+----
+
+=== Deployment via Kustomize
+
+Damit Flux die Backup-Ressourcen deployed, müssen sie in der Kustomization referenziert sein:
+
+[source,yaml]
+----
+# infra/k8s/kustomization.yaml
+resources:
+  - postgres/namespace.yaml
+  - postgres/backup-s3-credentials.yaml
+  - postgres/cluster.yaml
+  - postgres/scheduled-backup.yaml
+----
+
 == Disaster Recovery
 
 === Restore aus dem letzten Backup
@@ -185,3 +210,23 @@ der auslöst, wenn das letzte erfolgreiche Backup älter als 26 Stunden ist.
 
 * Automatisierte Restore-Tests (z.B. wöchentlicher Test-Restore in separaten Namespace)
 * Alerting bei fehlgeschlagenen Backups (nach Phase 9: Observability)
+
+== Troubleshooting
+
+=== AuthorizationHeaderMalformed / Bad Request auf HeadBucket
+
+Garage erwartet die korrekte Region in der S3v4-Signatur. Prüfen:
+
+[source,bash]
+----
+grep s3_region /path/to/garage.toml
+# Muss "us-east-1" sein
+----
+
+=== Invalid content sha256 hash (STREAMING-AWS4-HMAC-SHA256-PAYLOAD)
+
+Garage v1.0.x unterstützt kein Chunked Transfer Encoding mit SHA256. Upgrade auf mindestens v1.3.0.
+
+=== Secret "backup-s3-credentials" not found
+
+Das Secret muss in der Kustomization referenziert sein und vor dem Cluster-Manifest deployed werden.

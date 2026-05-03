@@ -5,7 +5,9 @@ resources:
   - cert-manager
   - linkerd
   - postgres/namespace.yaml
+  - postgres/backup-s3-credentials.yaml
   - postgres/cluster.yaml
+  - postgres/scheduled-backup.yaml
   - pvc.yaml
   - blog-content
   - user-management

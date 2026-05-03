@@ -21,6 +21,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - ADMINS.md: Health-Check-Dokumentation aktualisiert (liveness/readiness Probe-Gruppen)
 - ADMINS.md: gRPC-Verbindungskonfiguration statt REST-URL für User Management
 
+### Fixed
+
+- S3 Backup: backup-s3-credentials Secret und ScheduledBackup in Kustomization aufgenommen (waren nicht deployed)
+- S3 Backup: Garage s3_region von "garage" auf "us-east-1" korrigiert (AuthorizationHeaderMalformed)
+- S3 Backup: Garage von v1.0.1 auf v1.3.1 aktualisiert (fehlende STREAMING-AWS4-HMAC-SHA256-PAYLOAD Unterstützung)
+
 ## [0.8.4] - 2026-05-03
 
 ## [0.8.3] - 2026-05-03
