@@ -23,16 +23,16 @@ Die zentralen Architekturentscheidungen setzen die Stakeholder-Anforderungen an 
 |===
 | Bereich | Wahl | Siehe ADR
 
-| Sprache/Build | Java 25 + Maven | link:../09_decisions/index.adoc[ADR-0002]
-| Architektur | Hexagonal | link:../09_decisions/index.adoc[ADR-0001]
-| Repository | Monorepo | link:../09_decisions/index.adoc[ADR-0003]
-| API (Blog) | REST | link:../09_decisions/index.adoc[ADR-0004]
-| API (Podcast/Video) | GraphQL | link:../09_decisions/index.adoc[ADR-0004]
-| UI-Strategie | Thymeleaf → Angular + React | link:../09_decisions/index.adoc[ADR-0005]
-| Messaging | Apache Kafka + RabbitMQ | link:../09_decisions/index.adoc[ADR-0018]
-| Datenbank | Database per Service (PostgreSQL / MongoDB) | link:../09_decisions/index.adoc[ADR-0019]
+| Sprache/Build | Java 25 + Maven | link:../../../adrs/0002-java-und-maven.html[ADR-0002]
+| Architektur | Hexagonal | link:../../../adrs/0001-hexagonale-architektur.html[ADR-0001]
+| Repository | Monorepo | link:../../../adrs/0003-monorepo-struktur.html[ADR-0003]
+| API (Blog) | REST | link:../../../adrs/0004-rest-und-graphql.html[ADR-0004]
+| API (Podcast/Video) | GraphQL | link:../../../adrs/0004-rest-und-graphql.html[ADR-0004]
+| UI-Strategie | Thymeleaf → Angular + React | link:../../../adrs/0005-ui-strategie.html[ADR-0005]
+| Messaging | Apache Kafka + RabbitMQ | link:../../../adrs/0018-dual-broker-kafka-rabbitmq.html[ADR-0018]
+| Datenbank | Database per Service (PostgreSQL / MongoDB) | link:../../../adrs/0019-database-per-service.html[ADR-0019]
 | Sync. Service-Komm. | gRPC | --
-| Requirements | Doorstop | link:../09_decisions/index.adoc[ADR-0007]
+| Requirements | Doorstop | link:../../../adrs/0007-doorstop-requirement-tracing.html[ADR-0007]
 |===
 
 == Qualitätsstrategien
