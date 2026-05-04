@@ -1,0 +1,27 @@
+active: true
+derived: false
+header: |
+  Audit-Logging für alle relevanten Aktionen
+level: 56.0
+links:
+- STK004: JJO6mCJFnnR-Sd365V2Uo4kcRGSoNH6TGS2OaQ7TIV0=
+normative: true
+ref: ''
+reviewed: s4pOiRKO_0v_EjY2c-hD-RatNksSt8GQwhVREPZjwv8=
+text: |
+  Alle schreibenden Aktionen werden in einem unveränderlichen Audit-Log
+  protokolliert. Jeder Eintrag enthält: Zeitstempel (wann), Akteur (wer),
+  Aktion (was), betroffene Entität (Typ und ID), Tenant-ID und optionale
+  Details (JSON). Die Audit-Log-Tabelle ist append-only (kein UPDATE/DELETE).
+
+  Blog Content Service auditierte Aktionen:
+  - Post: erstellt, aktualisiert, veröffentlicht, gelöscht
+  - Tag: erstellt, umbenannt, gelöscht
+  - Translation: erstellt, aktualisiert, freigegeben, abgelehnt, gelöscht
+  - Source: hinzugefügt, entfernt
+
+  User Management Service auditierte Aktionen:
+  - User: synchronisiert (OIDC/intern), freigegeben, abgelehnt
+  - Globale Rolle: zugewiesen, entfernt
+  - Tenant-Mitgliedschaft: hinzugefügt, entfernt
+  - Tenant-Einstellungen: aktualisiert

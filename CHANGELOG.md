@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+
+- ADR-Rendering auf pandoc umgestellt (ersetzt selbstgeschriebenen Python-Markdown-Konverter)
+- ADRs unterstuetzen jetzt Code-Syntax-Highlighting (pandoc, Tango-Theme), Mermaid-Diagramme (client-seitig via mermaid.js) und PlantUML-Diagramme (via plantuml CLI)
+
 ### Fixed
 
 - AdminController: GET /admin/users lieferte JSON-Fehler (500 ProblemDetail) statt HTML, wenn der User-Management-Service nicht erreichbar war. Jetzt mit Fallback auf leere Liste und Log-Warnung

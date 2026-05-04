@@ -9,7 +9,8 @@
 | Git                     | 2.x     | Versionierung                                    |
 | Python + pip            | 3.10+   | Doorstop (Requirement Management)                |
 | Node.js                 | 20+     | Antora (Doku-Generierung), spaeter Angular/React |
-| PlantUML (via Docker)   |         | UML-Diagramme in arc42                           |
+| pandoc                  | 3.x     | ADR-Rendering (Markdown zu HTML)                 |
+| PlantUML (via Docker)   |         | UML-Diagramme in arc42 und ADRs                  |
 | Graphviz                |         | Layout-Engine fuer PlantUML                      |
 
 ### Empfohlene Version-Manager
@@ -131,7 +132,28 @@ doorstop --version
 Das venv muss vor jeder Nutzung von `doorstop` aktiviert werden.
 Alternativ kann man `.venv/bin/doorstop` direkt aufrufen.
 
-### 4. PlantUML und Graphviz (Diagramme)
+### 4. pandoc (ADR-Rendering)
+
+pandoc wird fuer die Konvertierung der ADR-Markdown-Dateien zu HTML verwendet.
+Es bietet vollstaendiges GFM-Markdown-Rendering mit Syntax-Highlighting,
+Tabellen, verschachtelten Listen und Inline-Formatierung.
+
+Mermaid-Diagramme werden client-seitig via mermaid.js gerendert.
+PlantUML-Diagramme werden ueber die `plantuml` CLI in SVG konvertiert
+(Fallback: Quelltext-Anzeige, wenn plantuml nicht installiert ist).
+
+```bash
+# Ubuntu/Debian
+sudo apt install pandoc
+
+# macOS
+brew install pandoc
+
+# ADRs rendern
+bash docs/scripts/render-adrs.sh
+```
+
+### 5. PlantUML und Graphviz (Diagramme)
 
 Die arc42-Dokumentation nutzt PlantUML-Diagramme. Fuer die lokale Vorschau
 gibt es mehrere Optionen:
@@ -162,7 +184,7 @@ sudo apt install graphviz plantuml
 brew install graphviz plantuml
 ```
 
-### 5. VS Code Extensions
+### 6. VS Code Extensions
 
 Empfohlene Extensions sind in `.vscode/extensions.json` definiert.
 VS Code bietet beim Oeffnen des Projekts automatisch die Installation an.

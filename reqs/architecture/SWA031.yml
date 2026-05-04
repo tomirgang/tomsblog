@@ -1,0 +1,30 @@
+active: true
+derived: false
+header: |
+  Audit-Logging-Architektur
+level: 31.0
+links:
+- SWR056: s4pOiRKO_0v_EjY2c-hD-RatNksSt8GQwhVREPZjwv8=
+normative: true
+ref: ''
+reviewed: GGbI0rvdDQwxSAZYA2IeOx1F1Q5R2OufkT3hDr0kRYs=
+text: |
+  Audit-Logging wird als Cross-Cutting Concern über den Shared Kernel
+  bereitgestellt und in jedem Service lokal persistiert.
+
+  Shared Kernel stellt bereit:
+  - AuditLogEntry: Framework-freies Record mit id, timestamp, tenantId,
+    actor, action, entityType, entityId, details
+  - AuditLogger: Interface (Outbound Port) mit log(AuditLogEntry)
+
+  Jeder Service implementiert:
+  - JpaAuditLogEntity: JPA-Entity für die audit_log Tabelle
+  - JpaAuditLogger: Adapter der AuditLogger implementiert
+  - Flyway-Migration für die audit_log Tabelle
+
+  Die audit_log Tabelle ist append-only. Es gibt keine UPDATE- oder
+  DELETE-Operationen auf dieser Tabelle. Die Application Services
+  rufen AuditLogger.log() nach erfolgreichen schreibenden Operationen auf.
+
+  Der actor wird über den SecurityContext ermittelt
+  (SecurityAuditorAware-Pattern analog zur JPA-Auditing-Konfiguration).
