@@ -97,6 +97,7 @@
 - [x] Fix ADR Markdown rendering
 - [x] Audit-Logging für alle relevanten Aktionen
 - [ ] Thymeleaf: Drop-down für vorherigen und nächsten Post
+- [ ] Infra: Redis Deployment
 - [ ] 2 Blog Deployments und Shared Session über Redis
 - [ ] Kafka-Cluster-Konfiguration definieren
 - [ ] RabbitMQ-Cluster-Konfiguration definieren
@@ -112,6 +113,7 @@
 - [ ] Migration auf deklarative Database CRD für alle Service-Datenbanken (INF-013, SWA-030)
 - [ ] Dedizierte Rollen pro Service evaluieren (nach Verfügbarkeit DatabaseRole CRD)
 - [ ] Security-Reviews (OWASP)
+- [ ] Architecture Review
 
 > **MVP nach Phase 5:** Asynchrone Verarbeitung aktiv, Events fließen zwischen Services.
 
@@ -126,6 +128,7 @@
 - [ ] Thymeleaf: WYSIWYG-Editor für Autoren (ersetzt einfaches Formular)
 - [ ] Thymeleaf: Übersetzungs-UI (Review/Approve-Workflow)
 - [ ] Security-Reviews (OWASP)
+- [ ] Architecture Review
 
 > **MVP nach Phase 6:** Autoren schreiben mit WYSIWYG-Editor und nutzen KI-Übersetzung mit Review-Schritt.
 
@@ -135,12 +138,8 @@
 - [ ] Tag-basierte Feeds
 - [ ] Single Content Type Feeds
 - [ ] Thymeleaf: Tag-basierte Navigation und Filteransicht
-- [ ] Chaos Testing: Resilience-Szenarien definieren (Netzwerkausfälle, Pod-Crashes, Latenz)
-- [ ] Chaos Testing: Chaos Mesh oder Litmus auf K8s einrichten
-- [ ] Chaos Testing: Steady-State-Hypothesen und Experimente formulieren
-- [ ] Chaos Testing: Automatisierte Chaos-Experimente in CI/CD integrieren
-- [ ] Chaos Testing: Ergebnisse auswerten und Resilience-Verbesserungen umsetzen
 - [ ] Security-Reviews (OWASP)
+- [ ] Architecture Review
 
 > **MVP nach Phase 7:** Blog mit RSS-Feeds, navigierbaren Tag-Seiten und nachgewiesener Resilience durch Chaos Testing.
 
@@ -152,6 +151,7 @@
 - [ ] Thymeleaf: Attachment-Upload im Editor (Drag & Drop)
 - [ ] Thymeleaf: Quellen-Verwaltung mit Vorschau archivierter Seiten
 - [ ] Security-Reviews (OWASP)
+- [ ] Architecture Review
 
 > **MVP nach Phase 8:** Vollständiges Content-Management mit Dateianhängen und Quellenarchiv.
 
@@ -162,7 +162,13 @@
 - [ ] Tempo für Distributed Tracing
 - [ ] Dashboards und Alerting
 - [ ] Health-Checks und Readiness/Liveness Probes
-- [ ] Infra: Redis Deployment
+- [ ] Chaos Testing: Resilience-Szenarien definieren (Netzwerkausfälle, Pod-Crashes, Latenz)
+- [ ] Chaos Testing: Chaos Mesh oder Litmus auf K8s einrichten
+- [ ] Chaos Testing: Steady-State-Hypothesen und Experimente formulieren
+- [ ] Chaos Testing: Automatisierte Chaos-Experimente in CI/CD integrieren
+- [ ] Chaos Testing: Ergebnisse auswerten und Resilience-Verbesserungen umsetzen
+- [ ] Security-Reviews (OWASP)
+- [ ] Architecture Review
 
 > **MVP nach Phase 9:** Produktionsreife Observability mit Monitoring, Logging und Tracing.
 
