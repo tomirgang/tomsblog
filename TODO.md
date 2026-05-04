@@ -96,9 +96,9 @@
 - [x] Fix Admin UI
 - [x] Fix ADR Markdown rendering
 - [x] Audit-Logging für alle relevanten Aktionen
-- [ ] Thymeleaf: Drop-down für vorherigen und nächsten Post
-- [ ] Infra: Redis Deployment
-- [ ] 2 Blog Deployments und Shared Session über Redis
+- [x] Thymeleaf: Drop-down für vorherigen und nächsten Post
+- [x] Infra: Redis Deployment
+- [x] 2 Blog Deployments und Shared Session über Redis
 - [ ] Kafka-Cluster-Konfiguration definieren
 - [ ] RabbitMQ-Cluster-Konfiguration definieren
 - [ ] Event-Schema-Design (Avro/Protobuf oder JSON Schema)
