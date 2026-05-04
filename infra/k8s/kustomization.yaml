@@ -8,6 +8,7 @@ resources:
   - postgres/backup-s3-credentials.yaml
   - postgres/cluster.yaml
   - postgres/scheduled-backup.yaml
+  - redis
   - pvc.yaml
   - blog-content
   - user-management

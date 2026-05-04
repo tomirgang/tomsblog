@@ -26,6 +26,14 @@ spec:
       ports:
         - protocol: TCP
           port: 5432
+    # Redis (session store in redis namespace)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: redis
+      ports:
+        - protocol: TCP
+          port: 6379
     # Linkerd control plane (identity, destination, policy)
     - to:
         - namespaceSelector:

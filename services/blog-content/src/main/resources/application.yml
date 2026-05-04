@@ -2,6 +2,9 @@ spring:
   application:
     name: blog-content
 
+  session:
+    store-type: redis
+
   jpa:
     open-in-view: false
     hibernate:

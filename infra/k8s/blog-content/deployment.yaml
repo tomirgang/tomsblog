@@ -6,7 +6,7 @@ metadata:
   labels:
     app: blog-content
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -64,6 +64,15 @@ spec:
               value: "user-management.tomsblog.svc.cluster.local"
             - name: USER_MANAGEMENT_GRPC_PORT
               value: "9090"
+            - name: SPRING_REDIS_HOST
+              value: "redis.redis.svc.cluster.local"
+            - name: SPRING_REDIS_PORT
+              value: "6379"
+            - name: SPRING_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-password
+                  key: password
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness

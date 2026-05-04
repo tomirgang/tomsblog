@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Redis als externer Session-Store für horizontale Skalierung des Blog Content Service (ADR-0030, STK-045, SWR-057, SWR-058, SWA-032, INF-014)
+- Spring Session Data Redis Integration im Blog Content Service (spring-session-data-redis, spring-boot-starter-data-redis)
+- Kubernetes-Manifeste für Redis Deployment im Namespace redis (Deployment, Service, NetworkPolicy, Secret)
+- Network Policy: Egress vom tomsblog Namespace zu Redis erlaubt
+- Infrastruktur-Dokumentation für Redis (docs/infra/modules/ROOT/pages/data/redis.adoc)
+- Arc42 Querschnittliche Konzepte: Abschnitt Session Management
+- Arc42 Verteilungssicht: Abschnitt Redis als Session-Store
+- Software Detail Design: Session Management Abschnitt mit Sequenzdiagramm im Blog Content Service
+
+### Changed
+
+- Blog Content Service Deployment auf 2 Replicas erhöht (horizontale Skalierung)
+
 ### Fixed
 
 - CI: pandoc als Abhängigkeit in docs- und release-Jobs installieren (fehlte nach ADR-Rendering-Umstellung)
