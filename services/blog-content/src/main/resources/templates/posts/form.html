@@ -56,13 +56,21 @@
             <details>
                 <summary>Serien-Navigation (optional)</summary>
 
-                <label for="seriesPreviousPostId">Vorheriger Post in der Serie (UUID)</label>
-                <input type="text" id="seriesPreviousPostId" th:field="*{seriesPreviousPostId}"
-                       placeholder="UUID des vorherigen Posts" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}">
+                <label for="seriesPreviousPostId">Vorheriger Post in der Serie</label>
+                <select id="seriesPreviousPostId" th:field="*{seriesPreviousPostId}">
+                    <option value="">-- Kein vorheriger Post --</option>
+                    <option th:each="p : ${availablePosts}"
+                            th:value="${p.id.value}"
+                            th:text="${p.title}">Post</option>
+                </select>
 
-                <label for="seriesNextPostId">Nächster Post in der Serie (UUID)</label>
-                <input type="text" id="seriesNextPostId" th:field="*{seriesNextPostId}"
-                       placeholder="UUID des nächsten Posts" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}">
+                <label for="seriesNextPostId">Nächster Post in der Serie</label>
+                <select id="seriesNextPostId" th:field="*{seriesNextPostId}">
+                    <option value="">-- Kein nächster Post --</option>
+                    <option th:each="p : ${availablePosts}"
+                            th:value="${p.id.value}"
+                            th:text="${p.title}">Post</option>
+                </select>
             </details>
 
             <details>

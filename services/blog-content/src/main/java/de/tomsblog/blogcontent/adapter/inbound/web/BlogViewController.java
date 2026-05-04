@@ -133,9 +133,10 @@ public class BlogViewController {
 
     /** @req SWR-027 */
     @GetMapping("/posts/new")
-    public String newPostForm(Model model) {
+    public String newPostForm(@RequestHeader("X-Tenant-Id") UUID tenantId, Model model) {
         model.addAttribute("postForm", new PostFormData());
         model.addAttribute("editMode", false);
+        model.addAttribute("availablePosts", postUseCase.listPosts(new TenantId(tenantId)));
         return "posts/form";
     }
 
@@ -149,6 +150,7 @@ public class BlogViewController {
             Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("editMode", false);
+            model.addAttribute("availablePosts", postUseCase.listPosts(new TenantId(tenantId)));
             return "posts/form";
         }
         CreatePostCommand command = new CreatePostCommand(
@@ -190,6 +192,7 @@ public class BlogViewController {
         model.addAttribute("postForm", form);
         model.addAttribute("editMode", true);
         model.addAttribute("postId", id);
+        model.addAttribute("availablePosts", postUseCase.listPosts(new TenantId(tenantId)));
         return "posts/form";
     }
 
@@ -204,6 +207,7 @@ public class BlogViewController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("editMode", true);
             model.addAttribute("postId", id);
+            model.addAttribute("availablePosts", postUseCase.listPosts(new TenantId(tenantId)));
             return "posts/form";
         }
         UpdatePostCommand command = new UpdatePostCommand(

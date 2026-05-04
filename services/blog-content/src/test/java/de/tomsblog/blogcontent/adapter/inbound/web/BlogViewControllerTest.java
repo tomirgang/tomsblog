@@ -52,6 +52,7 @@ class BlogViewControllerTest {
     void setUp() {
         when(postUseCase.listFeaturedPosts(any(TenantId.class), any(LocalDate.class)))
                 .thenReturn(List.of());
+        when(postUseCase.listPosts(any(TenantId.class))).thenReturn(List.of());
     }
 
     @Test
@@ -288,10 +289,11 @@ class BlogViewControllerTest {
     @DisplayName("SWR-027: GET /posts/new returns empty form")
     @WithMockUser(username = "admin", roles = "ADMIN")
     void newPostForm_returnsEmptyForm() throws Exception {
-        mockMvc.perform(get("/posts/new"))
+        mockMvc.perform(get("/posts/new").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/form"))
                 .andExpect(model().attributeExists("postForm"))
+                .andExpect(model().attributeExists("availablePosts"))
                 .andExpect(model().attribute("editMode", false));
     }
 
@@ -333,7 +335,7 @@ class BlogViewControllerTest {
                 .andExpect(model().attributeHasFieldErrors("postForm", "title"))
                 .andExpect(model().attribute("editMode", false));
 
-        verifyNoInteractions(postUseCase);
+        verify(postUseCase, never()).createPost(any(CreatePostCommand.class));
     }
 
     @Test
@@ -352,7 +354,7 @@ class BlogViewControllerTest {
                 .andExpect(view().name("posts/form"))
                 .andExpect(model().attributeHasFieldErrors("postForm", "content"));
 
-        verifyNoInteractions(postUseCase);
+        verify(postUseCase, never()).createPost(any(CreatePostCommand.class));
     }
 
     @Test
@@ -371,7 +373,7 @@ class BlogViewControllerTest {
                 .andExpect(view().name("posts/form"))
                 .andExpect(model().attributeHasFieldErrors("postForm", "locale"));
 
-        verifyNoInteractions(postUseCase);
+        verify(postUseCase, never()).createPost(any(CreatePostCommand.class));
     }
 
     @Test
@@ -432,7 +434,7 @@ class BlogViewControllerTest {
                 .andExpect(model().attribute("editMode", true))
                 .andExpect(model().attribute("postId", postId));
 
-        verifyNoInteractions(postUseCase);
+        verify(postUseCase, never()).updatePost(any(UpdatePostCommand.class));
     }
 
     @Test

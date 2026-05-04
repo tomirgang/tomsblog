@@ -47,7 +47,7 @@ public class UserProfileService implements UserProfileUseCase {
             profile.syncFromOidc(command.email(), command.displayName());
             UserProfile saved = repository.save(profile);
             auditLogger.log(AuditLogEntry.create(
-                    command.tenantId() != null ? command.tenantId().toString() : null,
+                    command.tenantId().toString(),
                     "system",
                     "USER_SYNCED_OIDC",
                     "UserProfile",
@@ -59,7 +59,7 @@ public class UserProfileService implements UserProfileUseCase {
         applyAutoApproval(profile, command.tenantId(), AuthSource.OIDC, command.email());
         UserProfile saved = repository.save(profile);
         auditLogger.log(AuditLogEntry.create(
-                command.tenantId() != null ? command.tenantId().toString() : null,
+                command.tenantId().toString(),
                 "system",
                 "USER_SYNCED_OIDC",
                 "UserProfile",
@@ -77,7 +77,7 @@ public class UserProfileService implements UserProfileUseCase {
             profile.updatePasswordHash(command.passwordHash());
             UserProfile saved = repository.save(profile);
             auditLogger.log(AuditLogEntry.create(
-                    command.tenantId() != null ? command.tenantId().toString() : null,
+                    command.tenantId().toString(),
                     "system",
                     "USER_SYNCED_INTERNAL",
                     "UserProfile",
@@ -90,7 +90,7 @@ public class UserProfileService implements UserProfileUseCase {
         applyAutoApproval(profile, command.tenantId(), AuthSource.INTERNAL, command.email());
         UserProfile saved = repository.save(profile);
         auditLogger.log(AuditLogEntry.create(
-                command.tenantId() != null ? command.tenantId().toString() : null,
+                command.tenantId().toString(),
                 "system",
                 "USER_SYNCED_INTERNAL",
                 "UserProfile",
