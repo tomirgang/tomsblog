@@ -117,45 +117,7 @@
 
 > **MVP nach Phase 5:** Asynchrone Verarbeitung aktiv, Events fließen zwischen Services.
 
-### Phase 6: KI-Integration (Text-Blog)
-
-- [ ] OpenRouter-Adapter implementieren
-- [ ] KI-gestützte Übersetzung (Author-getriggert via UI, Ergebnis muss geprüft werden)
-- [ ] Schreibassistenz-API
-- [ ] Titelbild-Generierung (optional, Author-getriggert)
-- [ ] User-Kontext-Propagierung: KI-Endpoints nur mit Rolle AUTHOR/ADMIN (SWR-030)
-- [ ] AuthorizationPolicy: nur blog-content darf ai-service aufrufen
-- [ ] Thymeleaf: WYSIWYG-Editor für Autoren (ersetzt einfaches Formular)
-- [ ] Thymeleaf: Übersetzungs-UI (Review/Approve-Workflow)
-- [ ] Security-Reviews (OWASP)
-- [ ] Architecture Review
-
-> **MVP nach Phase 6:** Autoren schreiben mit WYSIWYG-Editor und nutzen KI-Übersetzung mit Review-Schritt.
-
-### Phase 7: Feed-Service & Chaos Testing
-
-- [ ] RSS/Atom Feed-Generierung
-- [ ] Tag-basierte Feeds
-- [ ] Single Content Type Feeds
-- [ ] Thymeleaf: Tag-basierte Navigation und Filteransicht
-- [ ] Security-Reviews (OWASP)
-- [ ] Architecture Review
-
-> **MVP nach Phase 7:** Blog mit RSS-Feeds, navigierbaren Tag-Seiten und nachgewiesener Resilience durch Chaos Testing.
-
-### Phase 8: Web-Snapshots & Attachments
-
-- [ ] Automatische Archivierung referenzierter Webseiten
-- [ ] Attachment-Upload und -Verwaltung
-- [ ] Storage-Backend (S3/Garage)
-- [ ] Thymeleaf: Attachment-Upload im Editor (Drag & Drop)
-- [ ] Thymeleaf: Quellen-Verwaltung mit Vorschau archivierter Seiten
-- [ ] Security-Reviews (OWASP)
-- [ ] Architecture Review
-
-> **MVP nach Phase 8:** Vollständiges Content-Management mit Dateianhängen und Quellenarchiv.
-
-### Phase 9: Observability
+### Phase 6: Observability
 
 - [ ] Prometheus + Grafana aufsetzen
 - [ ] Loki für Log-Aggregation
@@ -170,7 +132,45 @@
 - [ ] Security-Reviews (OWASP)
 - [ ] Architecture Review
 
-> **MVP nach Phase 9:** Produktionsreife Observability mit Monitoring, Logging und Tracing.
+> **MVP nach Phase 6:** Produktionsreife Observability mit Monitoring, Logging und Tracing.
+
+### Phase 7: KI-Integration (Text-Blog)
+
+- [ ] OpenRouter-Adapter implementieren
+- [ ] KI-gestützte Übersetzung (Author-getriggert via UI, Ergebnis muss geprüft werden)
+- [ ] Schreibassistenz-API
+- [ ] Titelbild-Generierung (optional, Author-getriggert)
+- [ ] User-Kontext-Propagierung: KI-Endpoints nur mit Rolle AUTHOR/ADMIN (SWR-030)
+- [ ] AuthorizationPolicy: nur blog-content darf ai-service aufrufen
+- [ ] Thymeleaf: WYSIWYG-Editor für Autoren (ersetzt einfaches Formular)
+- [ ] Thymeleaf: Übersetzungs-UI (Review/Approve-Workflow)
+- [ ] Security-Reviews (OWASP)
+- [ ] Architecture Review
+
+> **MVP nach Phase 7:** Autoren schreiben mit WYSIWYG-Editor und nutzen KI-Übersetzung mit Review-Schritt.
+
+### Phase 8: Feed-Service & Chaos Testing
+
+- [ ] RSS/Atom Feed-Generierung
+- [ ] Tag-basierte Feeds
+- [ ] Single Content Type Feeds
+- [ ] Thymeleaf: Tag-basierte Navigation und Filteransicht
+- [ ] Security-Reviews (OWASP)
+- [ ] Architecture Review
+
+> **MVP nach Phase 8:** Blog mit RSS-Feeds, navigierbaren Tag-Seiten und nachgewiesener Resilience durch Chaos Testing.
+
+### Phase 9: Web-Snapshots & Attachments
+
+- [ ] Automatische Archivierung referenzierter Webseiten
+- [ ] Attachment-Upload und -Verwaltung
+- [ ] Storage-Backend (S3/Garage)
+- [ ] Thymeleaf: Attachment-Upload im Editor (Drag & Drop)
+- [ ] Thymeleaf: Quellen-Verwaltung mit Vorschau archivierter Seiten
+- [ ] Security-Reviews (OWASP)
+- [ ] Architecture Review
+
+> **MVP nach Phase 9:** Vollständiges Content-Management mit Dateianhängen und Quellenarchiv.
 
 ---
 
