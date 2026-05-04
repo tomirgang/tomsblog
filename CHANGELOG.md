@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed
+
+- CI: pandoc als Abhängigkeit in docs- und release-Jobs installieren (fehlte nach ADR-Rendering-Umstellung)
+
 ## [0.8.7] - 2026-05-04
 
 ### Added

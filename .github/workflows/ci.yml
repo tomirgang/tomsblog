@@ -115,6 +115,9 @@ jobs:
       - name: Install Antora and extensions
         run: npm install && npm install -g @antora/cli @antora/site-generator
 
+      - name: Install pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+
       - name: Generate Antora documentation
         run: antora antora-playbook.yml
 
@@ -261,6 +264,9 @@ jobs:
 
       - name: Install Antora and extensions
         run: npm install && npm install -g @antora/cli @antora/site-generator
+
+      - name: Install pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
 
       - name: Generate Antora documentation
         run: antora antora-playbook.yml
