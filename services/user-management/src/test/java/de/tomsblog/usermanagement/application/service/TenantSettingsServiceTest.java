@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.outbound.TenantSettingsRepository;
 import de.tomsblog.usermanagement.domain.model.LoginMode;
@@ -25,13 +26,16 @@ class TenantSettingsServiceTest {
     @Mock
     private TenantSettingsRepository repository;
 
+    @Mock
+    private AuditLogger auditLogger;
+
     private TenantSettingsService service;
 
     private static final TenantId TENANT_ID = TenantId.generate();
 
     @BeforeEach
     void setUp() {
-        service = new TenantSettingsService(repository);
+        service = new TenantSettingsService(repository, auditLogger);
     }
 
     @Nested

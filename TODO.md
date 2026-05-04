@@ -78,7 +78,6 @@
 - [x] Thymeleaf: Login-/Registrierungsseiten
 - [x] Thymeleaf: Multi-Tenant-Navigation (Tenant-Branding, Umschaltung)
 - [x] Thymeleaf: Admin-Oberfläche (Benutzer, Tenants, Einstellungen)
-- [x] Thymeleaf: Drop-down für vorherigen und nächsten Post
 - [x] Infra: Authentik-Anbindung konfigurieren (OIDC Application unter auth.do9ita.de)
 - [x] OIDC Konfiguration über Infrastruktur Config oder Admin UI (STK033)
 - [x] Administrationsdokumentation für generisches Kubernetes in docs/ADMINS.md (STK034)
@@ -95,6 +94,10 @@
 ### Phase 5: Messaging & Event-Driven Architecture
 
 - [x] Fix Admin UI
+- [x] Fix ADR Markdown rendering
+- [x] Audit-Logging für alle relevanten Aktionen
+- [ ] Thymeleaf: Drop-down für vorherigen und nächsten Post
+- [ ] 2 Blog Deployments und Shared Session über Redis
 - [ ] Kafka-Cluster-Konfiguration definieren
 - [ ] RabbitMQ-Cluster-Konfiguration definieren
 - [ ] Event-Schema-Design (Avro/Protobuf oder JSON Schema)
@@ -108,9 +111,6 @@
 - [ ] CloudNativePG auf ≥ 1.25 upgraden (Voraussetzung für Database CRD, ADR-0029)
 - [ ] Migration auf deklarative Database CRD für alle Service-Datenbanken (INF-013, SWA-030)
 - [ ] Dedizierte Rollen pro Service evaluieren (nach Verfügbarkeit DatabaseRole CRD)
-- [ ] 2 Blog Deployments und Shared Session über Redis
-- [ ] Fix ADR Markdown rendering
-- [ ] Audit-Logging für alle relevanten Aktionen
 - [ ] Security-Reviews (OWASP)
 
 > **MVP nach Phase 5:** Asynchrone Verarbeitung aktiv, Events fließen zwischen Services.

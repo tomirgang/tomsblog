@@ -6,6 +6,8 @@ import de.tomsblog.blogcontent.application.port.inbound.TagUseCase;
 import de.tomsblog.blogcontent.application.port.outbound.TagRepository;
 import de.tomsblog.blogcontent.domain.model.Tag;
 import de.tomsblog.blogcontent.domain.model.TagId;
+import de.tomsblog.shared.audit.AuditLogEntry;
+import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
 
@@ -13,13 +15,16 @@ import java.util.List;
  * Application service orchestrating tag use cases.
  *
  * @req SWR-020
+ * @req SWR-056
  */
 public class TagService implements TagUseCase {
 
     private final TagRepository tagRepository;
+    private final AuditLogger auditLogger;
 
-    public TagService(TagRepository tagRepository) {
+    public TagService(TagRepository tagRepository, AuditLogger auditLogger) {
         this.tagRepository = tagRepository;
+        this.auditLogger = auditLogger;
     }
 
     @Override
@@ -28,20 +33,37 @@ public class TagService implements TagUseCase {
             throw new IllegalArgumentException("Tag with name '" + command.name() + "' already exists");
         });
         Tag tag = Tag.create(command.tenantId(), command.name());
-        return tagRepository.save(tag);
+        Tag saved = tagRepository.save(tag);
+        auditLogger.log(AuditLogEntry.create(
+                command.tenantId().toString(),
+                "system",
+                "TAG_CREATED",
+                "Tag",
+                saved.getId().asString(),
+                command.name()));
+        return saved;
     }
 
     @Override
     public Tag renameTag(RenameTagCommand command) {
         Tag tag = findOrThrow(command.tagId(), command.tenantId());
         tag.rename(command.newName());
-        return tagRepository.save(tag);
+        Tag saved = tagRepository.save(tag);
+        auditLogger.log(AuditLogEntry.create(
+                command.tenantId().toString(),
+                "system",
+                "TAG_RENAMED",
+                "Tag",
+                command.tagId().asString(),
+                command.newName()));
+        return saved;
     }
 
     @Override
     public void deleteTag(TagId tagId, TenantId tenantId) {
         findOrThrow(tagId, tenantId);
         tagRepository.deleteByIdAndTenantId(tagId, tenantId);
+        auditLogger.log(AuditLogEntry.create(tenantId.toString(), "system", "TAG_DELETED", "Tag", tagId.asString()));
     }
 
     @Override

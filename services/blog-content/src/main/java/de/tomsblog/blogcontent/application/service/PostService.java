@@ -14,6 +14,8 @@ import de.tomsblog.blogcontent.domain.model.PostLocale;
 import de.tomsblog.blogcontent.domain.model.PostStatus;
 import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.blogcontent.domain.model.Source;
+import de.tomsblog.shared.audit.AuditLogEntry;
+import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.shared.tenant.TenantId;
 import java.time.LocalDate;
 import java.util.List;
@@ -30,15 +32,18 @@ import java.util.Optional;
  * @req SWR-039
  * @req SWR-040
  * @req SWR-042
+ * @req SWR-056
  */
 public class PostService implements PostUseCase {
 
     private final PostRepository postRepository;
     private final EventPublisher eventPublisher;
+    private final AuditLogger auditLogger;
 
-    public PostService(PostRepository postRepository, EventPublisher eventPublisher) {
+    public PostService(PostRepository postRepository, EventPublisher eventPublisher, AuditLogger auditLogger) {
         this.postRepository = postRepository;
         this.eventPublisher = eventPublisher;
+        this.auditLogger = auditLogger;
     }
 
     @Override
@@ -56,6 +61,12 @@ public class PostService implements PostUseCase {
         Post saved = postRepository.save(post);
         eventPublisher.publish(post.getDomainEvents());
         post.clearDomainEvents();
+        auditLogger.log(AuditLogEntry.create(
+                saved.getTenantId().toString(),
+                command.authorId().toString(),
+                "POST_CREATED",
+                "Post",
+                saved.getId().asString()));
         return saved;
     }
 
@@ -68,7 +79,14 @@ public class PostService implements PostUseCase {
                 command.seriesPreviousPostId() != null ? PostId.of(command.seriesPreviousPostId()) : null,
                 command.seriesNextPostId() != null ? PostId.of(command.seriesNextPostId()) : null);
         post.updateFeatured(command.featuredFrom(), command.featuredUntil());
-        return postRepository.save(post);
+        Post saved = postRepository.save(post);
+        auditLogger.log(AuditLogEntry.create(
+                command.tenantId().toString(),
+                post.getAuthorId().toString(),
+                "POST_UPDATED",
+                "Post",
+                command.postId().asString()));
+        return saved;
     }
 
     @Override
@@ -78,11 +96,16 @@ public class PostService implements PostUseCase {
         postRepository.save(post);
         eventPublisher.publish(post.getDomainEvents());
         post.clearDomainEvents();
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(), post.getAuthorId().toString(), "POST_PUBLISHED", "Post", postId.asString()));
     }
 
     @Override
     public void deletePost(PostId postId, TenantId tenantId) {
+        Post post = findOrThrow(postId, tenantId);
         postRepository.deleteByIdAndTenantId(postId, tenantId);
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(), post.getAuthorId().toString(), "POST_DELETED", "Post", postId.asString()));
     }
 
     @Override
@@ -124,7 +147,15 @@ public class PostService implements PostUseCase {
         Post post = findOrThrow(command.postId(), command.tenantId());
         Source source = new Source(command.url(), command.title());
         post.addSource(source);
-        return postRepository.save(post);
+        Post saved = postRepository.save(post);
+        auditLogger.log(AuditLogEntry.create(
+                command.tenantId().toString(),
+                post.getAuthorId().toString(),
+                "SOURCE_ADDED",
+                "Post",
+                command.postId().asString(),
+                command.url()));
+        return saved;
     }
 
     /** @req SWR-012 */
@@ -133,7 +164,15 @@ public class PostService implements PostUseCase {
         Post post = findOrThrow(command.postId(), command.tenantId());
         Source source = new Source(command.url(), command.title());
         post.removeSource(source);
-        return postRepository.save(post);
+        Post saved = postRepository.save(post);
+        auditLogger.log(AuditLogEntry.create(
+                command.tenantId().toString(),
+                post.getAuthorId().toString(),
+                "SOURCE_REMOVED",
+                "Post",
+                command.postId().asString(),
+                command.url()));
+        return saved;
     }
 
     /** @req SWR-012 */

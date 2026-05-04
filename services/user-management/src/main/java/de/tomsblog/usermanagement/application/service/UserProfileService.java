@@ -1,5 +1,7 @@
 package de.tomsblog.usermanagement.application.service;
 
+import de.tomsblog.shared.audit.AuditLogEntry;
+import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.inbound.SyncInternalUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncOidcUserCommand;
@@ -19,15 +21,21 @@ import java.util.List;
  * @req SWR-043
  * @req SWR-007
  * @req SWR-045
+ * @req SWR-056
  */
 public class UserProfileService implements UserProfileUseCase {
 
     private final UserProfileRepository repository;
     private final TenantSettingsRepository tenantSettingsRepository;
+    private final AuditLogger auditLogger;
 
-    public UserProfileService(UserProfileRepository repository, TenantSettingsRepository tenantSettingsRepository) {
+    public UserProfileService(
+            UserProfileRepository repository,
+            TenantSettingsRepository tenantSettingsRepository,
+            AuditLogger auditLogger) {
         this.repository = repository;
         this.tenantSettingsRepository = tenantSettingsRepository;
+        this.auditLogger = auditLogger;
     }
 
     @Override
@@ -37,12 +45,26 @@ public class UserProfileService implements UserProfileUseCase {
         if (existing.isPresent()) {
             var profile = existing.get();
             profile.syncFromOidc(command.email(), command.displayName());
-            return repository.save(profile);
+            UserProfile saved = repository.save(profile);
+            auditLogger.log(AuditLogEntry.create(
+                    command.tenantId() != null ? command.tenantId().toString() : null,
+                    "system",
+                    "USER_SYNCED_OIDC",
+                    "UserProfile",
+                    saved.getId().asString()));
+            return saved;
         }
 
         var profile = UserProfile.createFromOidc(command.oidcSubject(), command.email(), command.displayName());
         applyAutoApproval(profile, command.tenantId(), AuthSource.OIDC, command.email());
-        return repository.save(profile);
+        UserProfile saved = repository.save(profile);
+        auditLogger.log(AuditLogEntry.create(
+                command.tenantId() != null ? command.tenantId().toString() : null,
+                "system",
+                "USER_SYNCED_OIDC",
+                "UserProfile",
+                saved.getId().asString()));
+        return saved;
     }
 
     @Override
@@ -53,13 +75,27 @@ public class UserProfileService implements UserProfileUseCase {
             var profile = existing.get();
             profile.syncFromInternal(command.email(), command.displayName());
             profile.updatePasswordHash(command.passwordHash());
-            return repository.save(profile);
+            UserProfile saved = repository.save(profile);
+            auditLogger.log(AuditLogEntry.create(
+                    command.tenantId() != null ? command.tenantId().toString() : null,
+                    "system",
+                    "USER_SYNCED_INTERNAL",
+                    "UserProfile",
+                    saved.getId().asString()));
+            return saved;
         }
 
         var profile = UserProfile.createInternal(
                 command.username(), command.passwordHash(), command.email(), command.displayName());
         applyAutoApproval(profile, command.tenantId(), AuthSource.INTERNAL, command.email());
-        return repository.save(profile);
+        UserProfile saved = repository.save(profile);
+        auditLogger.log(AuditLogEntry.create(
+                command.tenantId() != null ? command.tenantId().toString() : null,
+                "system",
+                "USER_SYNCED_INTERNAL",
+                "UserProfile",
+                saved.getId().asString()));
+        return saved;
     }
 
     private void applyAutoApproval(UserProfile profile, TenantId tenantId, AuthSource authSource, String email) {
@@ -87,6 +123,8 @@ public class UserProfileService implements UserProfileUseCase {
         var profile = findProfile(identifier);
         profile.approve();
         repository.save(profile);
+        auditLogger.log(AuditLogEntry.create(
+                null, "system", "USER_APPROVED", "UserProfile", profile.getId().asString()));
     }
 
     @Override
@@ -94,6 +132,8 @@ public class UserProfileService implements UserProfileUseCase {
         var profile = findProfile(identifier);
         profile.reject();
         repository.save(profile);
+        auditLogger.log(AuditLogEntry.create(
+                null, "system", "USER_REJECTED", "UserProfile", profile.getId().asString()));
     }
 
     @Override
@@ -101,6 +141,13 @@ public class UserProfileService implements UserProfileUseCase {
         var profile = findProfile(identifier);
         profile.assignGlobalRole(role);
         repository.save(profile);
+        auditLogger.log(AuditLogEntry.create(
+                null,
+                "system",
+                "GLOBAL_ROLE_ASSIGNED",
+                "UserProfile",
+                profile.getId().asString(),
+                role.name()));
     }
 
     @Override
@@ -108,6 +155,13 @@ public class UserProfileService implements UserProfileUseCase {
         var profile = findProfile(identifier);
         profile.removeGlobalRole(role);
         repository.save(profile);
+        auditLogger.log(AuditLogEntry.create(
+                null,
+                "system",
+                "GLOBAL_ROLE_REMOVED",
+                "UserProfile",
+                profile.getId().asString(),
+                role.name()));
     }
 
     @Override
@@ -115,6 +169,13 @@ public class UserProfileService implements UserProfileUseCase {
         var profile = findProfile(identifier);
         profile.addTenantMembership(new TenantMembership(tenantId, role));
         repository.save(profile);
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(),
+                "system",
+                "TENANT_MEMBERSHIP_ADDED",
+                "UserProfile",
+                profile.getId().asString(),
+                role.name()));
     }
 
     @Override
@@ -122,6 +183,12 @@ public class UserProfileService implements UserProfileUseCase {
         var profile = findProfile(identifier);
         profile.removeTenantMembership(tenantId);
         repository.save(profile);
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(),
+                "system",
+                "TENANT_MEMBERSHIP_REMOVED",
+                "UserProfile",
+                profile.getId().asString()));
     }
 
     @Override

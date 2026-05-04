@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.inbound.SyncInternalUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncOidcUserCommand;
@@ -31,13 +32,16 @@ class UserProfileServiceTest {
     @Mock
     private TenantSettingsRepository tenantSettingsRepository;
 
+    @Mock
+    private AuditLogger auditLogger;
+
     private UserProfileService service;
 
     private static final TenantId TENANT_ID = TenantId.generate();
 
     @BeforeEach
     void setUp() {
-        service = new UserProfileService(repository, tenantSettingsRepository);
+        service = new UserProfileService(repository, tenantSettingsRepository, auditLogger);
     }
 
     @Nested

@@ -355,6 +355,29 @@ erDiagram
     tenant_settings ||--o{ tenant_auto_approve_domains : "has"
 ----
 
+Zusätzlich existiert die `audit_log`-Tabelle (SWR-056) zur Protokollierung aller fachlich relevanten Aktionen:
+
+[source,sql]
+----
+CREATE TABLE audit_log (
+    id         UUID PRIMARY KEY,
+    timestamp  TIMESTAMP NOT NULL,
+    tenant_id  VARCHAR(255),
+    actor      VARCHAR(255) NOT NULL,
+    action     VARCHAR(255) NOT NULL,
+    entity_type VARCHAR(255) NOT NULL,
+    entity_id  VARCHAR(255) NOT NULL,
+    details    TEXT
+);
+----
+
+=== Outbound: Audit Logging (SWR-056, SWA-031)
+
+Der `JpaAuditLogger` implementiert den `AuditLogger`-Port aus dem Shared Kernel und persistiert alle Audit-Einträge in der `audit_log`-Tabelle.
+Er wird als `@Component` registriert und in die Application Services (`UserProfileService`, `TenantSettingsService`) injiziert.
+
+Auditierte Aktionen umfassen Benutzer-Synchronisation (OIDC und intern), Freigabe/Ablehnung, Rollenzuweisung, Tenant-Mitgliedschaftsverwaltung und Änderungen an Tenant-Einstellungen.
+
 == Integration mit Blog Content Service
 
 Der Blog Content Service nutzt den User Management Service für beide Login-Methoden (SWR-016, SWR-044):
@@ -401,4 +424,6 @@ Das Break-Glass Admin-Formular unter `/admin/login` zeigt immer ein Username/Pas
 | SWA-001 | Hexagonale Architektur | Ports & Adapters Struktur
 | SWA-010 | Authentik OIDC und leichtgewichtiger User-Management-Service | Gesamtarchitektur
 | SWA-029 | User-Management-Service Architektur (hexagonal) | Alle Layer
+| SWR-056 | Audit-Logging für alle relevanten Aktionen | JpaAuditLogger, AuditLogEntry, UserProfileService/TenantSettingsService Audit-Aufrufe, V5 Migration
+| SWA-031 | Audit-Logging-Architektur | AuditLogger (Port im Shared Kernel), JpaAuditLogger (Outbound Adapter), audit_log-Tabelle
 |===

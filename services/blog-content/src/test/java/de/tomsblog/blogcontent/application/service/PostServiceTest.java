@@ -13,6 +13,7 @@ import de.tomsblog.blogcontent.application.port.outbound.PostRepository;
 import de.tomsblog.blogcontent.domain.event.PostCreatedEvent;
 import de.tomsblog.blogcontent.domain.event.PostPublishedEvent;
 import de.tomsblog.blogcontent.domain.model.*;
+import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.domain.DomainEvent;
 import de.tomsblog.shared.tenant.TenantId;
@@ -37,6 +38,9 @@ class PostServiceTest {
     @Mock
     private EventPublisher eventPublisher;
 
+    @Mock
+    private AuditLogger auditLogger;
+
     private PostService postService;
 
     private final TenantId tenantId = TenantId.generate();
@@ -44,7 +48,7 @@ class PostServiceTest {
 
     @BeforeEach
     void setUp() {
-        postService = new PostService(postRepository, eventPublisher);
+        postService = new PostService(postRepository, eventPublisher, auditLogger);
     }
 
     @Test
@@ -161,11 +165,13 @@ class PostServiceTest {
     @Test
     @DisplayName("SWR-001: deletePost delegates to repository")
     void deletePost_delegatesToRepository() {
-        PostId postId = PostId.generate();
+        Post post = Post.create(tenantId, authorId, "Post", "Content", PostLocale.german());
+        post.clearDomainEvents();
+        when(postRepository.findByIdAndTenantId(post.getId(), tenantId)).thenReturn(Optional.of(post));
 
-        postService.deletePost(postId, tenantId);
+        postService.deletePost(post.getId(), tenantId);
 
-        verify(postRepository).deleteByIdAndTenantId(postId, tenantId);
+        verify(postRepository).deleteByIdAndTenantId(post.getId(), tenantId);
     }
 
     @Test

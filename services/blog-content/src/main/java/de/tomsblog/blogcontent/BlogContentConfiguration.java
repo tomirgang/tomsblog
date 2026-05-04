@@ -10,6 +10,7 @@ import de.tomsblog.blogcontent.application.port.outbound.TranslationRepository;
 import de.tomsblog.blogcontent.application.service.PostService;
 import de.tomsblog.blogcontent.application.service.TagService;
 import de.tomsblog.blogcontent.application.service.TranslationService;
+import de.tomsblog.shared.audit.AuditLogger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,18 +18,19 @@ import org.springframework.context.annotation.Configuration;
 public class BlogContentConfiguration {
 
     @Bean
-    public PostUseCase postUseCase(PostRepository postRepository, EventPublisher eventPublisher) {
-        return new PostService(postRepository, eventPublisher);
+    public PostUseCase postUseCase(
+            PostRepository postRepository, EventPublisher eventPublisher, AuditLogger auditLogger) {
+        return new PostService(postRepository, eventPublisher, auditLogger);
     }
 
     @Bean
-    public TagUseCase tagUseCase(TagRepository tagRepository) {
-        return new TagService(tagRepository);
+    public TagUseCase tagUseCase(TagRepository tagRepository, AuditLogger auditLogger) {
+        return new TagService(tagRepository, auditLogger);
     }
 
     @Bean
     public TranslationUseCase translationUseCase(
-            TranslationRepository translationRepository, EventPublisher eventPublisher) {
-        return new TranslationService(translationRepository, eventPublisher);
+            TranslationRepository translationRepository, EventPublisher eventPublisher, AuditLogger auditLogger) {
+        return new TranslationService(translationRepository, eventPublisher, auditLogger);
     }
 }

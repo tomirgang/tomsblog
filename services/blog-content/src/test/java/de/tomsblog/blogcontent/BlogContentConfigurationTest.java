@@ -10,6 +10,7 @@ import de.tomsblog.blogcontent.application.port.outbound.EventPublisher;
 import de.tomsblog.blogcontent.application.port.outbound.PostRepository;
 import de.tomsblog.blogcontent.application.port.outbound.TagRepository;
 import de.tomsblog.blogcontent.application.port.outbound.TranslationRepository;
+import de.tomsblog.shared.audit.AuditLogger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,8 +22,9 @@ class BlogContentConfigurationTest {
         BlogContentConfiguration config = new BlogContentConfiguration();
         PostRepository postRepository = mock(PostRepository.class);
         EventPublisher eventPublisher = mock(EventPublisher.class);
+        AuditLogger auditLogger = mock(AuditLogger.class);
 
-        PostUseCase result = config.postUseCase(postRepository, eventPublisher);
+        PostUseCase result = config.postUseCase(postRepository, eventPublisher, auditLogger);
 
         assertThat(result).isNotNull();
     }
@@ -32,8 +34,9 @@ class BlogContentConfigurationTest {
     void createsTagUseCase() {
         BlogContentConfiguration config = new BlogContentConfiguration();
         TagRepository tagRepository = mock(TagRepository.class);
+        AuditLogger auditLogger = mock(AuditLogger.class);
 
-        TagUseCase result = config.tagUseCase(tagRepository);
+        TagUseCase result = config.tagUseCase(tagRepository, auditLogger);
 
         assertThat(result).isNotNull();
     }
@@ -44,8 +47,9 @@ class BlogContentConfigurationTest {
         BlogContentConfiguration config = new BlogContentConfiguration();
         TranslationRepository translationRepository = mock(TranslationRepository.class);
         EventPublisher eventPublisher = mock(EventPublisher.class);
+        AuditLogger auditLogger = mock(AuditLogger.class);
 
-        TranslationUseCase result = config.translationUseCase(translationRepository, eventPublisher);
+        TranslationUseCase result = config.translationUseCase(translationRepository, eventPublisher, auditLogger);
 
         assertThat(result).isNotNull();
     }

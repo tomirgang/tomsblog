@@ -1,5 +1,6 @@
 package de.tomsblog.usermanagement;
 
+import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.usermanagement.application.port.inbound.TenantSettingsUseCase;
 import de.tomsblog.usermanagement.application.port.inbound.UserProfileUseCase;
 import de.tomsblog.usermanagement.application.port.outbound.TenantSettingsRepository;
@@ -14,12 +15,15 @@ public class UserManagementConfiguration {
 
     @Bean
     public UserProfileUseCase userProfileUseCase(
-            UserProfileRepository userProfileRepository, TenantSettingsRepository tenantSettingsRepository) {
-        return new UserProfileService(userProfileRepository, tenantSettingsRepository);
+            UserProfileRepository userProfileRepository,
+            TenantSettingsRepository tenantSettingsRepository,
+            AuditLogger auditLogger) {
+        return new UserProfileService(userProfileRepository, tenantSettingsRepository, auditLogger);
     }
 
     @Bean
-    public TenantSettingsUseCase tenantSettingsUseCase(TenantSettingsRepository tenantSettingsRepository) {
-        return new TenantSettingsService(tenantSettingsRepository);
+    public TenantSettingsUseCase tenantSettingsUseCase(
+            TenantSettingsRepository tenantSettingsRepository, AuditLogger auditLogger) {
+        return new TenantSettingsService(tenantSettingsRepository, auditLogger);
     }
 }

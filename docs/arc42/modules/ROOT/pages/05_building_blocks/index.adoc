@@ -93,6 +93,9 @@ NOTE: `AuthorId` liegt im `shared-kernel` (SWA-002). Der blog-content Service ha
 | `TranslationMapper` | Bidirektionales Mapping zwischen Domain-Translation und TranslationJpaEntity
 | `FlexmarkMarkdownRenderer` | Outbound Adapter: Markdown-Rendering mit flexmark-java (SWR-035, SWA-024)
 | `LoggingEventPublisher` | Interim Event Adapter (wird durch Kafka ersetzt)
+| `JpaAuditLogger` | Outbound Adapter: Persistiert Audit-Einträge in audit_log-Tabelle (SWR-056, SWA-031)
+| `AuditLogJpaEntity` | JPA-Entity fuer Audit-Log-Einträge
+| `SpringDataAuditLogRepository` | Spring Data JPA Interface fuer Audit-Log CRUD
 | `BlogContentConfiguration` | Spring-Konfiguration: Wiring der Adapter an die Ports
 |===
 
@@ -111,6 +114,7 @@ Die Datenbank-Schema-Verwaltung erfolgt über Flyway (SWA-013). Alle Migrationen
 | `V5__add_fulltext_search_index.sql` | GIN-Index fuer Volltextsuche ueber title und content mit tsvector (SWR-038)
 | `V6__add_series_navigation.sql` | Optionale Serien-Navigationsfelder series_previous_post_id und series_next_post_id (SWR-040)
 | `V7__add_featured_fields.sql` | Optionale Featured-Felder featured_from und featured_until (SWR-041)
+| `V8__create_audit_log.sql` | Audit-Log-Tabelle mit Indizes auf tenant_id und timestamp (SWR-056, SWA-031)
 |===
 
 NOTE: Weitere Services werden analog strukturiert. Details werden ergänzt, sobald sie implementiert sind.
@@ -175,4 +179,22 @@ Der User Management Service verwaltet plattformspezifische Benutzerprofile, Roll
 | `TenantMembershipEmbeddable` | JPA Embeddable fuer Tenant-Zuordnungen
 | `UserProfileMapper` | Bidirektionales Mapping zwischen Domain und JPA
 | `TenantSettingsMapper` | Bidirektionales Mapping zwischen Domain und JPA
+| `JpaAuditLogger` | Outbound Adapter: Persistiert Audit-Einträge in audit_log-Tabelle (SWR-056, SWA-031)
+| `AuditLogJpaEntity` | JPA-Entity fuer Audit-Log-Einträge
+| `SpringDataAuditLogRepository` | Spring Data JPA Interface fuer Audit-Log CRUD
+|===
+
+=== Datenbank-Migrationen (Flyway)
+
+Die Datenbank-Schema-Verwaltung des User Management Service erfolgt analog zum Blog Content Service ueber Flyway (SWA-013).
+
+[cols="1,2"]
+|===
+| Migration | Beschreibung
+
+| `V1__create_user_profiles.sql` | user_profiles Grundschema mit OIDC-Subject, Username, Auth-Source
+| `V2__create_tenant_settings.sql` | tenant_settings mit Login-Mode und Auto-Approval-Konfiguration
+| `V3__create_user_roles_and_memberships.sql` | user_global_roles und user_tenant_memberships
+| `V4__add_branding_fields.sql` | Branding-Felder (display_name, tagline, impressum, privacy_policy) fuer TenantSettings
+| `V5__create_audit_log.sql` | Audit-Log-Tabelle mit Indizes auf tenant_id und timestamp (SWR-056, SWA-031)
 |===

@@ -9,6 +9,7 @@ import de.tomsblog.blogcontent.application.port.inbound.UpdateTranslationCommand
 import de.tomsblog.blogcontent.application.port.outbound.EventPublisher;
 import de.tomsblog.blogcontent.application.port.outbound.TranslationRepository;
 import de.tomsblog.blogcontent.domain.model.*;
+import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.shared.domain.DomainEvent;
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ class TranslationServiceTest {
     @Mock
     private EventPublisher eventPublisher;
 
+    @Mock
+    private AuditLogger auditLogger;
+
     private TranslationService translationService;
 
     private final TenantId tenantId = TenantId.generate();
@@ -37,7 +41,7 @@ class TranslationServiceTest {
 
     @BeforeEach
     void setUp() {
-        translationService = new TranslationService(translationRepository, eventPublisher);
+        translationService = new TranslationService(translationRepository, eventPublisher, auditLogger);
     }
 
     @Test

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Audit-Logging für alle relevanten Aktionen (SWR-056, SWA-031): `AuditLogEntry` und `AuditLogger`-Port im Shared Kernel, `JpaAuditLogger`-Adapter in Blog Content und User Management Service, Flyway-Migrationen (V8 bzw. V5) für `audit_log`-Tabelle
+- Doorstop-Anforderungen SWR-056 (Audit-Logging) und SWA-031 (Audit-Logging-Architektur)
+
 ### Changed
 
 - ADR-Rendering auf pandoc umgestellt (ersetzt selbstgeschriebenen Python-Markdown-Konverter)

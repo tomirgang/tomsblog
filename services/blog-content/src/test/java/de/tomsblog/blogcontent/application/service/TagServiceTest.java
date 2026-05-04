@@ -9,6 +9,7 @@ import de.tomsblog.blogcontent.application.port.inbound.RenameTagCommand;
 import de.tomsblog.blogcontent.application.port.outbound.TagRepository;
 import de.tomsblog.blogcontent.domain.model.Tag;
 import de.tomsblog.blogcontent.domain.model.TagId;
+import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
 import java.util.Optional;
@@ -25,13 +26,16 @@ class TagServiceTest {
     @Mock
     private TagRepository tagRepository;
 
+    @Mock
+    private AuditLogger auditLogger;
+
     private TagService tagService;
 
     private final TenantId tenantId = TenantId.generate();
 
     @BeforeEach
     void setUp() {
-        tagService = new TagService(tagRepository);
+        tagService = new TagService(tagRepository, auditLogger);
     }
 
     @Test

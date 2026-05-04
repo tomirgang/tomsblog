@@ -684,6 +684,14 @@ Status und Source werden als Strings persistiert und im `TranslationMapper` übe
 Der `LoggingEventPublisher` ist ein Interim-Adapter, der Domain Events zunächst nur loggt.
 Er wird in einer späteren Phase durch einen Kafka-Producer ersetzt (SWA-005), der die Events an den zentralen Event-Broker sendet (SWR-009).
 
+=== Outbound Adapter: Audit Logging (SWR-056, SWA-031)
+
+Der `JpaAuditLogger` implementiert den `AuditLogger`-Port aus dem Shared Kernel und persistiert alle Audit-Einträge in der `audit_log`-Tabelle.
+Er wird als `@Component` registriert und in die Application Services (`PostService`, `TagService`, `TranslationService`) injiziert.
+
+Jede fachlich relevante Aktion wird als `AuditLogEntry` protokolliert, wobei Tenant-ID, Akteur, Aktionstyp, Entitätstyp und Entitäts-ID erfasst werden.
+Die Audit-Einträge werden synchron im selben Transaktionskontext wie die Geschäftslogik gespeichert.
+
 === Outbound Adapter: Markdown Rendering (SWA-024)
 
 Der `FlexmarkMarkdownRenderer` implementiert den `MarkdownRenderer`-Port (SWR-035) mit flexmark-java 0.64.8.
@@ -785,6 +793,22 @@ erDiagram
     posts ||--o{ translations : "wird uebersetzt"
 ----
 
+Zusätzlich existiert die `audit_log`-Tabelle (SWR-056) zur Protokollierung aller fachlich relevanten Aktionen:
+
+[source,sql]
+----
+CREATE TABLE audit_log (
+    id         UUID PRIMARY KEY,
+    timestamp  TIMESTAMP NOT NULL,
+    tenant_id  VARCHAR(255),
+    actor      VARCHAR(255) NOT NULL,
+    action     VARCHAR(255) NOT NULL,
+    entity_type VARCHAR(255) NOT NULL,
+    entity_id  VARCHAR(255) NOT NULL,
+    details    TEXT
+);
+----
+
 Die Migrationen liegen unter `src/main/resources/db/migration/` und werden beim Service-Start automatisch ausgeführt.
 
 [cols="1,3"]
@@ -798,6 +822,7 @@ Die Migrationen liegen unter `src/main/resources/db/migration/` und werden beim 
 | V5 | GIN-Index für Volltextsuche über title und content mit tsvector (SWR-038)
 | V6 | Optionale Serien-Navigationsfelder series_previous_post_id und series_next_post_id (SWR-040)
 | V7 | Optionale Featured-Felder featured_from und featured_until (SWR-041)
+| V8 | Audit-Log-Tabelle mit Indizes auf tenant_id und timestamp (SWR-056, SWA-031)
 |===
 
 == Ablauf: Post erstellen und veröffentlichen
@@ -893,6 +918,8 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWR-051 | Admin-UI Benutzerliste und -verwaltung | AdminController.listUsers/approveUser/rejectUser/changeRole, admin/users.html
 | SWR-052 | Admin-UI Tenant-Einstellungen | AdminController.showSettings/updateSettings, admin/settings.html
 | SWR-053 | SuperAdmin Tenant-Umschaltung | AdminController.switchTenant, TenantBrandingAdvice.tenants(), DefaultTenantFilter Session-Override
+| SWR-056 | Audit-Logging für alle relevanten Aktionen | JpaAuditLogger, AuditLogEntry, PostService/TagService/TranslationService Audit-Aufrufe, V8 Migration
+| SWA-031 | Audit-Logging-Architektur | AuditLogger (Port im Shared Kernel), JpaAuditLogger (Outbound Adapter), audit_log-Tabelle
 |===
 
 == Sicherheit: Admin-Login (SWR-028)

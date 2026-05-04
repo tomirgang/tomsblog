@@ -9,6 +9,8 @@ import de.tomsblog.blogcontent.domain.model.PostId;
 import de.tomsblog.blogcontent.domain.model.PostLocale;
 import de.tomsblog.blogcontent.domain.model.Translation;
 import de.tomsblog.blogcontent.domain.model.TranslationId;
+import de.tomsblog.shared.audit.AuditLogEntry;
+import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
 
@@ -19,15 +21,19 @@ import java.util.List;
  * @req SWR-004
  * @req SWR-005
  * @req SWR-009
+ * @req SWR-056
  */
 public class TranslationService implements TranslationUseCase {
 
     private final TranslationRepository translationRepository;
     private final EventPublisher eventPublisher;
+    private final AuditLogger auditLogger;
 
-    public TranslationService(TranslationRepository translationRepository, EventPublisher eventPublisher) {
+    public TranslationService(
+            TranslationRepository translationRepository, EventPublisher eventPublisher, AuditLogger auditLogger) {
         this.translationRepository = translationRepository;
         this.eventPublisher = eventPublisher;
+        this.auditLogger = auditLogger;
     }
 
     @Override
@@ -38,6 +44,12 @@ public class TranslationService implements TranslationUseCase {
         Translation saved = translationRepository.save(translation);
         eventPublisher.publish(translation.getDomainEvents());
         translation.clearDomainEvents();
+        auditLogger.log(AuditLogEntry.create(
+                command.tenantId().toString(),
+                "system",
+                "TRANSLATION_CREATED",
+                "Translation",
+                saved.getId().asString()));
         return saved;
     }
 
@@ -49,6 +61,12 @@ public class TranslationService implements TranslationUseCase {
         Translation saved = translationRepository.save(translation);
         eventPublisher.publish(translation.getDomainEvents());
         translation.clearDomainEvents();
+        auditLogger.log(AuditLogEntry.create(
+                command.tenantId().toString(),
+                "system",
+                "TRANSLATION_CREATED",
+                "Translation",
+                saved.getId().asString()));
         return saved;
     }
 
@@ -56,7 +74,14 @@ public class TranslationService implements TranslationUseCase {
     public Translation updateTranslation(UpdateTranslationCommand command) {
         Translation translation = findOrThrow(command.translationId(), command.tenantId());
         translation.updateContent(command.title(), command.content());
-        return translationRepository.save(translation);
+        Translation saved = translationRepository.save(translation);
+        auditLogger.log(AuditLogEntry.create(
+                command.tenantId().toString(),
+                "system",
+                "TRANSLATION_UPDATED",
+                "Translation",
+                command.translationId().asString()));
+        return saved;
     }
 
     @Override
@@ -66,6 +91,8 @@ public class TranslationService implements TranslationUseCase {
         translationRepository.save(translation);
         eventPublisher.publish(translation.getDomainEvents());
         translation.clearDomainEvents();
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(), "system", "TRANSLATION_APPROVED", "Translation", translationId.asString()));
     }
 
     @Override
@@ -73,12 +100,16 @@ public class TranslationService implements TranslationUseCase {
         Translation translation = findOrThrow(translationId, tenantId);
         translation.reject();
         translationRepository.save(translation);
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(), "system", "TRANSLATION_REJECTED", "Translation", translationId.asString()));
     }
 
     @Override
     public void deleteTranslation(TranslationId translationId, TenantId tenantId) {
         findOrThrow(translationId, tenantId);
         translationRepository.deleteByIdAndTenantId(translationId, tenantId);
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(), "system", "TRANSLATION_DELETED", "Translation", translationId.asString()));
     }
 
     @Override

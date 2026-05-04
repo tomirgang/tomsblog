@@ -1,5 +1,7 @@
 package de.tomsblog.usermanagement.application.service;
 
+import de.tomsblog.shared.audit.AuditLogEntry;
+import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.inbound.TenantSettingsUseCase;
 import de.tomsblog.usermanagement.application.port.outbound.TenantSettingsRepository;
@@ -16,13 +18,16 @@ import java.util.Set;
  * @req SWR-050
  * @req SWR-052
  * @req SWR-053
+ * @req SWR-056
  */
 public class TenantSettingsService implements TenantSettingsUseCase {
 
     private final TenantSettingsRepository repository;
+    private final AuditLogger auditLogger;
 
-    public TenantSettingsService(TenantSettingsRepository repository) {
+    public TenantSettingsService(TenantSettingsRepository repository, AuditLogger auditLogger) {
         this.repository = repository;
+        this.auditLogger = auditLogger;
     }
 
     @Override
@@ -34,7 +39,15 @@ public class TenantSettingsService implements TenantSettingsUseCase {
     public TenantSettings updateLoginMode(TenantId tenantId, LoginMode loginMode) {
         var settings = getOrCreate(tenantId);
         settings.updateLoginMode(loginMode);
-        return repository.save(settings);
+        TenantSettings saved = repository.save(settings);
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(),
+                "system",
+                "TENANT_SETTINGS_UPDATED",
+                "TenantSettings",
+                tenantId.toString(),
+                "loginMode=" + loginMode));
+        return saved;
     }
 
     @Override
@@ -43,7 +56,10 @@ public class TenantSettingsService implements TenantSettingsUseCase {
         var settings = getOrCreate(tenantId);
         settings.updateAutoApproveOidc(autoApproveOidc);
         settings.setAutoApproveEmailDomains(autoApproveEmailDomains);
-        return repository.save(settings);
+        TenantSettings saved = repository.save(settings);
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(), "system", "TENANT_SETTINGS_UPDATED", "TenantSettings", tenantId.toString()));
+        return saved;
     }
 
     @Override
@@ -64,7 +80,10 @@ public class TenantSettingsService implements TenantSettingsUseCase {
         settings.updateTagline(tagline);
         settings.updateImpressumContent(impressumContent);
         settings.updatePrivacyPolicyContent(privacyPolicyContent);
-        return repository.save(settings);
+        TenantSettings saved = repository.save(settings);
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(), "system", "TENANT_SETTINGS_UPDATED", "TenantSettings", tenantId.toString()));
+        return saved;
     }
 
     @Override
