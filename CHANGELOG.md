@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.8.7] - 2026-05-04
+
 ### Added
 
 - Audit-Logging für alle relevanten Aktionen (SWR-056, SWA-031): `AuditLogEntry` und `AuditLogger`-Port im Shared Kernel, `JpaAuditLogger`-Adapter in Blog Content und User Management Service, Flyway-Migrationen (V8 bzw. V5) für `audit_log`-Tabelle
