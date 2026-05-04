@@ -12,6 +12,7 @@ package "Blog Content Service" {
     [PostLocale] <<Value Object>>
     [Source] <<Value Object>>
     [Attachment] <<Value Object>>
+    [ContentType] <<Enum>>
     [PostStatus] <<Enum>>
     [TranslationStatus] <<Enum>>
     [TranslationSource] <<Enum>>
@@ -27,8 +28,16 @@ package "Blog Content Service" {
 
   package "application/port/inbound" {
     [PostUseCase] <<Port>>
+    [TagUseCase] <<Port>>
+    [TranslationUseCase] <<Port>>
     [CreatePostCommand]
     [UpdatePostCommand]
+    [AddSourceCommand]
+    [RemoveSourceCommand]
+    [CreateTagCommand]
+    [RenameTagCommand]
+    [CreateTranslationCommand]
+    [UpdateTranslationCommand]
   }
 
   package "application/port/outbound" {
@@ -36,24 +45,64 @@ package "Blog Content Service" {
     [TagRepository] <<Port>>
     [TranslationRepository] <<Port>>
     [EventPublisher] <<Port>>
+    [MarkdownRenderer] <<Port>>
   }
 
   package "application/service" {
     [PostService]
+    [TagService]
+    [TranslationService]
     [PostNotFoundException]
+    [TagNotFoundException]
+    [TranslationNotFoundException]
   }
 
   package "adapter/inbound/rest" {
     [PostController]
+    [TagController]
+    [TranslationController]
+    [SourceController]
     [GlobalExceptionHandler]
+    [OpenApiConfiguration]
+  }
+
+  package "adapter/inbound/web" {
+    [BlogViewController]
+    [AdminController]
+    [LoginController]
+    [LegalController]
+    [SecurityConfiguration]
+    [DefaultTenantFilter]
+    [LoginRateLimitFilter]
+    [SyncingOidcUserService]
+    [AdminProperties]
+    [TenantBrandingAdvice]
+    [VersionModelAdvice]
+    [PostFormData]
   }
 
   package "adapter/outbound/persistence" {
     [JpaPostRepository]
+    [JpaTagRepository]
+    [JpaTranslationRepository]
     [SpringDataPostRepository]
+    [SpringDataTagRepository]
+    [SpringDataTranslationRepository]
     [PostJpaEntity]
+    [TagJpaEntity]
+    [TranslationJpaEntity]
     [PostMapper]
+    [TagMapper]
+    [TranslationMapper]
     [LoggingEventPublisher]
+  }
+
+  package "adapter/outbound/markdown" {
+    [FlexmarkMarkdownRenderer]
+  }
+
+  package "adapter/outbound/usermanagement" {
+    [UserManagementGrpcClient]
   }
 }
 
@@ -69,15 +118,31 @@ note right of [Attachment]
 end note
 
 [PostController] --> [PostUseCase]
+[TagController] --> [TagUseCase]
+[TranslationController] --> [TranslationUseCase]
+[SourceController] --> [PostUseCase]
+[BlogViewController] --> [PostUseCase]
+[BlogViewController] --> [MarkdownRenderer]
+[AdminController] --> [UserManagementGrpcClient]
 [PostService] ..|> [PostUseCase]
+[TagService] ..|> [TagUseCase]
+[TranslationService] ..|> [TranslationUseCase]
 [PostService] --> [PostRepository]
 [PostService] --> [EventPublisher]
 [PostService] --> [Post]
+[TagService] --> [TagRepository]
+[TranslationService] --> [TranslationRepository]
+[TranslationService] --> [EventPublisher]
 [JpaPostRepository] ..|> [PostRepository]
+[JpaTagRepository] ..|> [TagRepository]
+[JpaTranslationRepository] ..|> [TranslationRepository]
 [LoggingEventPublisher] ..|> [EventPublisher]
+[FlexmarkMarkdownRenderer] ..|> [MarkdownRenderer]
 [Post] --> [PostCreatedEvent]
 [Post] --> [PostPublishedEvent]
 [Post] --> [PostUpdatedEvent]
+[Translation] --> [TranslationCreatedEvent]
+[Translation] --> [TranslationApprovedEvent]
 [Translation] --> [TranslationCreatedEvent]
 [Translation] --> [TranslationApprovedEvent]
 @enduml

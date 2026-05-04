@@ -2,14 +2,21 @@
 node "Hetzner K8s Cluster (3 Nodes)" {
   node "Namespace: tomsblog" {
     [Blog Content Service] as blog
+    [User Management Service] as usermgmt
     [Feed Service] as feed
     [AI Service] as ai
   }
 
   node "Namespace: data" {
-    database "PostgreSQL\n(CloudNativePG)" as db
+    database "PostgreSQL\n(blog-content,\nCloudNativePG)" as db_blog
+    database "PostgreSQL\n(user-mgmt,\nCloudNativePG)" as db_user
     [Redis] as redis
     queue "Kafka\n(Strimzi)" as kafka
+    queue "RabbitMQ" as rabbitmq
+  }
+
+  node "Namespace: auth" {
+    [Authentik\n(OIDC Provider)] as authentik
   }
 
   node "Namespace: observability" {
@@ -26,12 +33,17 @@ node "Netcup VM" {
 
 cloud "OpenRouter" as openrouter
 
-blog --> db
+blog --> db_blog
+usermgmt --> db_user
+blog --> usermgmt : gRPC
+blog --> authentik : OIDC
 blog --> kafka
 blog --> redis
 feed --> kafka
 ai --> kafka
+ai --> rabbitmq
 ai --> openrouter
 blog --> s3 : Attachments
-db --> s3 : Backups
+db_blog --> s3 : Backups
+db_user --> s3 : Backups
 @enduml

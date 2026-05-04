@@ -11,19 +11,25 @@ package "Toms Blog Platform" {
 cloud "Authentik\n(OIDC Provider)" as authentik
 database "PostgreSQL\n(blog-content)" as db_blog
 database "PostgreSQL\n(user-mgmt)" as db_user
+database "PostgreSQL\n(podcast)" as db_podcast
+database "PostgreSQL\n(video)" as db_video
 queue "Apache Kafka" as kafka
+queue "RabbitMQ" as rabbitmq
 cloud "OpenRouter" as openrouter
+cloud "Garage (S3)" as s3
 
 blog --> db_blog
 blog --> authentik : OIDC Login\n(OAuth2 Client)
-blog --> usermgmt : Sync User Profile\n+ Fetch Roles
+blog --> usermgmt : Sync User Profile\n+ Fetch Roles (gRPC)
 usermgmt --> db_user
 usermgmt --> authentik : Validate Tokens
 blog --> kafka : Events
+blog --> s3 : Attachments
 feed --> kafka : Consumes
 ai --> kafka : Consumes
+ai --> rabbitmq : Task-Queues
 ai --> openrouter
 podcast --> kafka : Consumes
-podcast --> db_blog
-video --> db_blog
+podcast --> db_podcast
+video --> db_video
 @enduml

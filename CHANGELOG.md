@@ -12,6 +12,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - GlobalExceptionHandler: Scope auf REST-Controller-Package eingeschränkt (`basePackages`), damit Thymeleaf-Controller nicht fälschlich JSON-Fehlerseiten erhalten
 - WebExceptionHandler: Erweitert auf AdminController und generischen 500-Fehler-Handler mit HTML-Fehlerseite
 - Dedizierte ServiceAccounts für blog-content und user-management Deployments, damit Linkerd mTLS-Identity korrekt zur AuthorizationPolicy passt (gRPC-Calls schlugen mit PERMISSION_DENIED fehl, weil Pods mit `default` SA liefen)
+- arc42 Kontextdiagramm: Authentik (OIDC Provider), Garage (S3) und Administrator als fehlende externe Akteure ergänzt
+- arc42 Bausteinsicht L1: RabbitMQ, Garage (S3) ergänzt, Database-per-Service-Verletzung bei Podcast/Video korrigiert, gRPC-Protokoll an blog-usermgmt-Verbindung annotiert
+- arc42 Bausteinsicht L2: Fehlende Klassen ergänzt (TagUseCase, TranslationUseCase, TagService, TranslationService, MarkdownRenderer, alle Web-Adapter, alle Tag/Translation-Persistence-Adapter, FlexmarkMarkdownRenderer, UserManagementGrpcClient, ContentType Enum)
+- arc42 Deployment-Diagramm: User Management Service, eigene PostgreSQL-Instanz, RabbitMQ und Authentik ergänzt
+- arc42 Quality-Tree: Fehlende Äste Sicherheit und Skalierbarkeit ergänzt
+- arc42 Runtime-Create: Falschen Interface-Namen `CreatePostUseCase` zu `PostUseCase` korrigiert, `Kafka` durch `EventPublisher` ersetzt
+- arc42 Bausteinsicht Text: Flyway-Migrationen V5-V7 ergänzt, User Management Adapter-Tabelle um TenantSettings-Zweig, gRPC-Adapter, Security und alle fehlenden Persistence-Klassen erweitert
+- arc42 Technischer Kontext: Authentik, gRPC, RabbitMQ und Garage als fehlende Schnittstellen ergänzt
+- Blog Content Design Doc: Fehlende Enums ContentType und TranslationSource im Domain-Modell-Diagramm ergänzt
+- User Management Design Doc: TenantSettingsUseCase, TenantSettingsRepository, TenantSettingsService und UserProfileNotFoundException im Application-Layer-Diagramm ergänzt, SyncUserCommand zu SyncOidcUserCommand korrigiert, gRPC-Adapter-Abschnitt hinzugefügt
 
 ### Added
 

@@ -1,15 +1,15 @@
 @startuml runtime-create
 actor Author
 participant "REST API" as api
-participant "CreatePostUseCase" as uc
+participant "PostUseCase" as uc
 participant "PostRepository" as repo
-participant "Kafka" as kafka
+participant "EventPublisher" as events
 
 Author -> api : POST /api/posts
-api -> uc : execute(command)
+api -> uc : createPost(command)
 uc -> repo : save(post)
 repo --> uc : Post
-uc -> kafka : PostCreatedEvent
+uc -> events : publish(PostCreatedEvent)
 uc --> api : Post
 api --> Author : 201 Created
 @enduml

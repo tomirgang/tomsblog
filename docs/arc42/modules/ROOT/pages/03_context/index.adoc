@@ -16,7 +16,11 @@ plantuml::partial$plantuml/context-diagram.puml[format=svg]
 | Blog REST API | HTTP/JSON | CRUD für Posts, Tags, Autoren (Thymeleaf + Angular)
 | Podcast GraphQL API | HTTP/GraphQL | Queries/Mutations für Podcast-Episoden (React)
 | Video GraphQL API | HTTP/GraphQL | Queries/Mutations für Video-Episoden (React)
-| OpenRouter | HTTPS/JSON | KI-Funktionen (Übersetzung, TTS, Bildgenerierung)
+| Authentik OIDC | HTTPS/OAuth2 | Authentifizierung (Login, MFA) ueber OIDC Provider (ADR-0027)
+| User Management gRPC | HTTP/2 Protobuf | Profil-Synchronisation, Rollen, Tenant-Einstellungen
+| OpenRouter | HTTPS/JSON | KI-Funktionen (Uebersetzung, TTS, Bildgenerierung)
 | Kafka Events | Kafka Protocol | Asynchrone Service-Kommunikation
-| RSS/Atom Feeds | HTTP/XML | Öffentliche Feeds für Reader
+| RabbitMQ Tasks | AMQP | Task-Queues (Uebersetzung, TTS, Snapshots)
+| Garage (S3) | HTTPS/S3 | Objekt-Storage fuer Attachments und Backups
+| RSS/Atom Feeds | HTTP/XML | Oeffentliche Feeds fuer Reader
 |===

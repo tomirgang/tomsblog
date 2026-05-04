@@ -96,12 +96,26 @@ classDiagram
         REJECTED
     }
 
+    class ContentType {
+        <<enumeration>>
+        HTML
+        MARKDOWN
+    }
+
+    class TranslationSource {
+        <<enumeration>>
+        MANUAL
+        AI_GENERATED
+    }
+
     Post "1" *-- "*" Source : sources
     Post "1" *-- "*" Attachment : attachments
     Post "1" o-- "*" TagId : tagIds
     Post "1" -- "*" Translation : postId
     Post -- PostStatus
+    Post -- ContentType
     Translation -- TranslationStatus
+    Translation -- TranslationSource
 ----
 
 === Post Aggregate

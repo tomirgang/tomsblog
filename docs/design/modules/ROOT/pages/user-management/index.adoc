@@ -188,7 +188,14 @@ classDiagram
         +removeTenantMembership(oidcSubject, tenantId) void
     }
 
-    class SyncUserCommand {
+    class TenantSettingsUseCase {
+        <<interface>>
+        +getSettings(tenantId) TenantSettings
+        +updateSettings(tenantId, settings) TenantSettings
+        +listTenants() List~TenantSettings~
+    }
+
+    class SyncOidcUserCommand {
         <<record>>
         String oidcSubject
         String email
@@ -207,17 +214,39 @@ classDiagram
         <<interface>>
         +save(userProfile) UserProfile
         +findByOidcSubject(oidcSubject) Optional~UserProfile~
+        +findByUsername(username) Optional~UserProfile~
         +existsByOidcSubject(oidcSubject) boolean
+    }
+
+    class TenantSettingsRepository {
+        <<interface>>
+        +save(tenantSettings) TenantSettings
+        +findByTenantId(tenantId) Optional~TenantSettings~
+        +findAll() List~TenantSettings~
     }
 
     class UserProfileService {
         -UserProfileRepository repository
+        -TenantSettingsRepository tenantSettingsRepository
         +syncFromOidc(command) UserProfile
         +findByOidcSubject(oidcSubject) UserProfile
     }
 
+    class TenantSettingsService {
+        -TenantSettingsRepository repository
+        +getSettings(tenantId) TenantSettings
+        +updateSettings(tenantId, settings) TenantSettings
+    }
+
+    class UserProfileNotFoundException {
+        <<exception>>
+    }
+
     UserProfileService ..|> UserProfileUseCase
     UserProfileService --> UserProfileRepository
+    UserProfileService --> TenantSettingsRepository
+    TenantSettingsService ..|> TenantSettingsUseCase
+    TenantSettingsService --> TenantSettingsRepository
 ----
 
 === Inbound Port: UserProfileUseCase
@@ -240,12 +269,28 @@ Das Interface `UserProfileRepository` abstrahiert die Persistenz:
 * `findByOidcSubject(String)`: Sucht nach OIDC Subject (für OIDC-Benutzer).
 * `findByUsername(String)`: Sucht nach Username (für interne Benutzer).
 
+=== Inbound Port: TenantSettingsUseCase
+
+Das Interface `TenantSettingsUseCase` kapselt die Verwaltung der Tenant-Einstellungen:
+
+* `getSettings(TenantId)`: Gibt die Einstellungen des Tenants zurück.
+* `updateSettings(TenantId, TenantSettings)`: Aktualisiert die Einstellungen.
+* `listTenants()`: Gibt alle konfigurierten Tenants zurück (für SuperAdmin Tenant-Umschaltung).
+
+=== Outbound Port: TenantSettingsRepository
+
+Das Interface `TenantSettingsRepository` abstrahiert die Persistenz der Tenant-Einstellungen:
+
+* `save(TenantSettings)`: Speichert oder aktualisiert TenantSettings.
+* `findByTenantId(TenantId)`: Sucht nach Tenant-ID.
+* `findAll()`: Gibt alle TenantSettings zurück.
+
 == Adapter Layer
 
 === Inbound: REST API
 
-Der `UserController` stellt die REST-API unter `/api/users` bereit.
-Diese API ist nur für interne Service-Kommunikation vorgesehen und wird durch Linkerd mTLS (SWA-023) geschützt.
+Der `UserController` stellt die REST-API unter `/api/users` bereit, der `TenantSettingsController` die Tenant-Einstellungen unter `/api/tenant-settings`.
+Diese APIs sind nur für interne Service-Kommunikation vorgesehen und werden durch API-Key-Authentifizierung (`ApiKeyAuthenticationFilter`) und Linkerd mTLS (SWA-023) geschützt.
 
 [cols="1,1,2"]
 |===
@@ -256,6 +301,11 @@ Diese API ist nur für interne Service-Kommunikation vorgesehen und wird durch L
 | POST | /api/users/{oidcSubject}/approve | Gibt einen Benutzer frei (setzt ApprovalStatus auf APPROVED). Nur durch ADMIN (STK028).
 | POST | /api/users/{oidcSubject}/reject | Lehnt einen Benutzer ab (setzt ApprovalStatus auf REJECTED). Nur durch ADMIN.
 |===
+
+=== Inbound: gRPC API
+
+Der `UserManagementGrpcService` und `TenantSettingsGrpcService` stellen die gRPC-APIs bereit, die vom Blog Content Service für die Profil-Synchronisation und Tenant-Einstellungen genutzt werden.
+Der `GrpcExceptionInterceptor` sorgt für einheitliche Fehlerbehandlung aller gRPC-Aufrufe.
 
 === Outbound: PostgreSQL (JPA)
 

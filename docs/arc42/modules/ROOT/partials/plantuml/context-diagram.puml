@@ -3,16 +3,22 @@
 
 Person(author, "Blog-Autor", "Verfasst und verwaltet Inhalte")
 Person(reader, "Blog-Leser", "Liest Blog-Posts, hoert Podcasts")
+Person(admin, "Administrator", "Verwaltet Benutzer und Tenants")
 
 System(tomsblog, "Toms Blog Platform", "Multi-Tenant Blog & Podcast")
 
+System_Ext(authentik, "Authentik", "OIDC Provider (Login, MFA)")
 System_Ext(openrouter, "OpenRouter", "KI-APIs (Uebersetzung, TTS, Bilder)")
 System_Ext(feedreader, "Feed-Reader", "RSS/Atom Clients")
 System_Ext(podcastclient, "Podcast-Client", "Apple Podcasts, Spotify etc.")
+System_Ext(garage, "Garage (S3)", "Objekt-Storage (Attachments, Backups)")
 
 Rel(author, tomsblog, "Erstellt/verwaltet Inhalte")
 Rel(reader, tomsblog, "Liest Blog, hoert Podcasts")
+Rel(admin, tomsblog, "Verwaltet Benutzer, Tenants")
+Rel(tomsblog, authentik, "OIDC Login (OAuth2)")
 Rel(tomsblog, openrouter, "KI-Anfragen (REST)")
+Rel(tomsblog, garage, "Attachments, Backups (S3)")
 Rel(feedreader, tomsblog, "Abonniert Feeds (RSS/Atom)")
 Rel(podcastclient, tomsblog, "Abonniert Podcast-Feed")
 @enduml

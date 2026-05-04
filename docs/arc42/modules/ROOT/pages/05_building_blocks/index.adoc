@@ -108,6 +108,9 @@ Die Datenbank-Schema-Verwaltung erfolgt über Flyway (SWA-013). Alle Migrationen
 | `V2__create_tags_schema.sql` | tags mit Unique-Index auf (tenant_id, name) und (tenant_id, slug)
 | `V3__create_translations_schema.sql` | translations mit FK auf posts, Unique auf (post_id, locale)
 | `V4__add_content_type_to_posts.sql` | content_type VARCHAR(20) NOT NULL DEFAULT 'HTML' (SWR-035, SWA-027)
+| `V5__add_fulltext_search_index.sql` | GIN-Index fuer Volltextsuche ueber title und content mit tsvector (SWR-038)
+| `V6__add_series_navigation.sql` | Optionale Serien-Navigationsfelder series_previous_post_id und series_next_post_id (SWR-040)
+| `V7__add_featured_fields.sql` | Optionale Featured-Felder featured_from und featured_until (SWR-041)
 |===
 
 NOTE: Weitere Services werden analog strukturiert. Details werden ergänzt, sobald sie implementiert sind.
@@ -122,8 +125,12 @@ Der User Management Service verwaltet plattformspezifische Benutzerprofile, Roll
 |===
 | Baustein | Typ | Beschreibung
 
-| `UserProfile` | Aggregate Root | OidcSubject (eindeutige OIDC-Kennung), E-Mail, DisplayName, ApprovalStatus (PENDING/APPROVED/REJECTED), Rollen, TenantMemberships. Synchronisiert sich aus OIDC-Claims.
+| `UserProfile` | Aggregate Root | OidcSubject (eindeutige OIDC-Kennung), Username, PasswordHash, AuthSource, E-Mail, DisplayName, ApprovalStatus (PENDING/APPROVED/REJECTED), Rollen, TenantMemberships. Synchronisiert sich aus OIDC-Claims oder internem Login.
+| `TenantSettings` | Entity | TenantId, LoginMode, autoApproveOidc, autoApproveEmailDomains. Konfiguriert Login-Verhalten und Auto-Approval pro Tenant (SWR-044, SWR-045).
 | `Role` | Enum | SUPERADMIN, ADMIN, AUTHOR, REVIEWER, READER (SWR-007). SUPERADMIN wird ueber Infrastruktur-Konfiguration angelegt.
+| `AuthSource` | Enum | INTERNAL, OIDC. Gibt an, ob der Benutzer ueber internes Konto oder OIDC authentifiziert wird.
+| `ApprovalStatus` | Enum | PENDING, APPROVED, REJECTED. Status der Benutzerfreigabe (STK028).
+| `LoginMode` | Enum | INTERNAL, OIDC, BOTH. Konfigurierbare Login-Methode pro Tenant (SWR-044).
 | `TenantMembership` | Value Object | TenantId + Role. Ein Benutzer kann in verschiedenen Tenants unterschiedliche Rollen haben.
 | `UserProfileId` | Value Object | Typsichere ID (Record)
 |===
@@ -134,9 +141,15 @@ Der User Management Service verwaltet plattformspezifische Benutzerprofile, Roll
 |===
 | Baustein | Beschreibung
 
-| `UserProfileUseCase` | Inbound Port: syncFromOidc, findByOidcSubject, approveUser, rejectUser, assignRole, removeRole, addTenantMembership, removeTenantMembership
-| `UserProfileRepository` | Outbound Port: Persistence-Abstraktion für UserProfiles
+| `UserProfileUseCase` | Inbound Port: syncFromOidc, syncFromInternal, findByOidcSubject, findByUsername, approveUser, rejectUser, assignRole, removeRole, addTenantMembership, removeTenantMembership
+| `TenantSettingsUseCase` | Inbound Port: getSettings, updateSettings, listTenants (SWR-044, SWR-052)
+| `SyncOidcUserCommand` | Command Record fuer OIDC-Synchronisation
+| `SyncInternalUserCommand` | Command Record fuer internen Login
+| `UserProfileRepository` | Outbound Port: Persistence-Abstraktion fuer UserProfiles
+| `TenantSettingsRepository` | Outbound Port: Persistence-Abstraktion fuer TenantSettings
 | `UserProfileService` | Implementiert UserProfileUseCase, orchestriert Domain und Ports
+| `TenantSettingsService` | Implementiert TenantSettingsUseCase
+| `UserProfileNotFoundException` | Fachliche Exception
 |===
 
 === Adapter Layer (adapter/)
@@ -146,7 +159,20 @@ Der User Management Service verwaltet plattformspezifische Benutzerprofile, Roll
 | Baustein | Beschreibung
 
 | `UserController` | REST Inbound Adapter: POST /api/users/sync, GET /api/users/{oidcSubject}, POST /api/users/{oidcSubject}/approve, POST /api/users/{oidcSubject}/reject
+| `TenantSettingsController` | REST Inbound Adapter: GET/PUT /api/tenant-settings/{tenantId}
+| `UserManagementGrpcService` | gRPC Inbound Adapter: Profil-Synchronisation und -Abfragen fuer den Blog Content Service
+| `TenantSettingsGrpcService` | gRPC Inbound Adapter: Tenant-Einstellungen fuer den Blog Content Service
+| `GrpcExceptionInterceptor` | Globaler gRPC-Interceptor fuer einheitliche Fehlerbehandlung
+| `SecurityConfiguration` | Spring Security Konfiguration: API-Key-Authentifizierung fuer REST-Endpunkte
+| `ApiKeyAuthenticationFilter` | X-API-Key-basierte Authentifizierung fuer Service-zu-Service-Kommunikation
+| `GlobalExceptionHandler` | Problem Details (RFC 9457) Fehlerbehandlung fuer REST
 | `JpaUserProfileRepository` | JPA Outbound Adapter: Implementiert UserProfileRepository
-| `UserProfileJpaEntity` | JPA-Entity für Benutzerprofile
+| `JpaTenantSettingsRepository` | JPA Outbound Adapter: Implementiert TenantSettingsRepository
+| `SpringDataUserProfileRepository` | Spring Data JPA Interface fuer UserProfile CRUD
+| `SpringDataTenantSettingsRepository` | Spring Data JPA Interface fuer TenantSettings CRUD
+| `UserProfileJpaEntity` | JPA-Entity fuer Benutzerprofile
+| `TenantSettingsJpaEntity` | JPA-Entity fuer Tenant-Einstellungen
+| `TenantMembershipEmbeddable` | JPA Embeddable fuer Tenant-Zuordnungen
 | `UserProfileMapper` | Bidirektionales Mapping zwischen Domain und JPA
+| `TenantSettingsMapper` | Bidirektionales Mapping zwischen Domain und JPA
 |===

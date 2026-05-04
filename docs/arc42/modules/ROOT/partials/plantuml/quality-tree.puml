@@ -12,7 +12,16 @@
 *** Graceful Degradation
 *** Health Checks
 *** Backup & Recovery
+** Sicherheit
+*** Input-Validierung (SWR-015)
+*** OIDC-Authentifizierung (ADR-0027)
+*** Zero-Trust / mTLS (ADR-0021)
+*** Rate-Limiting (Login)
 ** Performance
 *** Antwortzeiten < 500ms (P95)
 *** Feed-Generierung < 5s
+** Skalierbarkeit
+*** Multi-Tenant (STK-002)
+*** Database per Service (ADR-0019)
+*** Horizontal Scaling (K8s)
 @endmindmap
