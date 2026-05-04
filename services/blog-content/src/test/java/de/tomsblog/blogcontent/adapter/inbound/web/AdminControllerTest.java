@@ -57,6 +57,18 @@ class AdminControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
+    @DisplayName("SWR-051: GET /admin/users uses empty list when client fails")
+    void listUsersFallback() throws Exception {
+        when(userManagementClient.listUsersByTenant(TENANT_ID)).thenThrow(new RuntimeException("gRPC down"));
+
+        mockMvc.perform(get("/admin/users").header("X-Tenant-Id", TENANT_ID.toString()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/users"))
+                .andExpect(model().attribute("users", List.of()));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
     @DisplayName("SWR-051: POST /admin/users/{id}/approve approves user")
     void approveUser() throws Exception {
         mockMvc.perform(post("/admin/users/sub-1/approve").with(csrf()).header("X-Tenant-Id", TENANT_ID.toString()))

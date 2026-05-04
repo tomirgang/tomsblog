@@ -43,8 +43,13 @@ public class AdminController {
     @GetMapping("/users")
     public String listUsers(@RequestHeader("X-Tenant-Id") UUID tenantId, HttpSession session, Model model) {
         UUID activeTenant = resolveActiveTenant(tenantId, session);
-        List<UserProfileDto> users = userManagementClient.listUsersByTenant(activeTenant);
-        model.addAttribute("users", users);
+        try {
+            List<UserProfileDto> users = userManagementClient.listUsersByTenant(activeTenant);
+            model.addAttribute("users", users);
+        } catch (Exception e) {
+            LOG.warn("Failed to load users for tenant '{}'.", activeTenant, e);
+            model.addAttribute("users", List.of());
+        }
         return "admin/users";
     }
 

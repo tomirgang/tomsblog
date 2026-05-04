@@ -94,6 +94,7 @@
 
 ### Phase 5: Messaging & Event-Driven Architecture
 
+- [x] Fix Admin UI
 - [ ] Kafka-Cluster-Konfiguration definieren
 - [ ] RabbitMQ-Cluster-Konfiguration definieren
 - [ ] Event-Schema-Design (Avro/Protobuf oder JSON Schema)

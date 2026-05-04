@@ -19,7 +19,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
  *
  * @req SWR-015
  */
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "de.tomsblog.blogcontent.adapter.inbound.rest")
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);

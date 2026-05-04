@@ -20,6 +20,7 @@ spec:
       labels:
         app: user-management
     spec:
+      serviceAccountName: user-management
       securityContext:
         runAsNonRoot: true
         fsGroup: 1000

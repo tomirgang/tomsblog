@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed
+
+- AdminController: GET /admin/users lieferte JSON-Fehler (500 ProblemDetail) statt HTML, wenn der User-Management-Service nicht erreichbar war. Jetzt mit Fallback auf leere Liste und Log-Warnung
+- GlobalExceptionHandler: Scope auf REST-Controller-Package eingeschränkt (`basePackages`), damit Thymeleaf-Controller nicht fälschlich JSON-Fehlerseiten erhalten
+- WebExceptionHandler: Erweitert auf AdminController und generischen 500-Fehler-Handler mit HTML-Fehlerseite
+- Dedizierte ServiceAccounts für blog-content und user-management Deployments, damit Linkerd mTLS-Identity korrekt zur AuthorizationPolicy passt (gRPC-Calls schlugen mit PERMISSION_DENIED fehl, weil Pods mit `default` SA liefen)
+
 ### Added
 
 - ADR-0029: Deklarative Datenbankverwaltung mit CloudNativePG Database CRD (Migration von postInitApplicationSQL auf Database CRD, geplant für Phase 5)

@@ -11,12 +11,18 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  *
  * @req SWR-026
  */
-@ControllerAdvice(assignableTypes = BlogViewController.class)
+@ControllerAdvice(assignableTypes = {BlogViewController.class, AdminController.class})
 public class WebExceptionHandler {
 
     @ExceptionHandler(PostNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handlePostNotFound() {
         return "error/404";
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handleUnexpected() {
+        return "error/500";
     }
 }
