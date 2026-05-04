@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.8.8] - 2026-05-04
+
 ### Added
 
 - Redis als externer Session-Store für horizontale Skalierung des Blog Content Service (ADR-0030, STK-045, SWR-057, SWR-058, SWA-032, INF-014)
