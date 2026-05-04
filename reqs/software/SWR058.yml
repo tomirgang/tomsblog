@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Mehrere Replicas für Blog Content Service
+level: 58.0
+links:
+- STK045: DSNjXUf-_OP_IjIyLx2fbF8-TrCpGkKUaCFCTKQG0bw=
+normative: true
+ref: ''
+reviewed: jRzUJWelC8vAYV8xKD3cwqqOwp_MUcXaVsrc_xPjGHk=
+text: |
+  Der Blog Content Service muss mit mindestens 2 Replicas auf Kubernetes
+  betrieben werden. Die Rolling-Update-Strategie stellt sicher, dass
+  mindestens eine Instanz immer verfügbar ist. Benutzer-Sessions bleiben
+  über Pod-Wechsel erhalten (abhängig von SWR-057).

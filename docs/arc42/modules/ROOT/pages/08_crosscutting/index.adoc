@@ -79,3 +79,16 @@ Die Sicherheitsanforderungen leiten sich aus STK-012 (Sicherheit) und STK-005 (B
 * JWT-basierte Token-Validierung in allen Services (Public Key lokal)
 * OWASP Top 10 wird bei Code-Reviews geprüft (SWR-015)
 * Input-Validierung an den Systemgrenzen (SWR-015)
+
+== Session Management
+
+Für die horizontale Skalierbarkeit des Blog Content Service (STK-045) werden HTTP-Sessions extern in Redis gespeichert (SWR-057, SWA-032, ADR-0030). Dies ermöglicht den Betrieb mehrerer Replicas (SWR-058) und unterbrechungsfreie Rolling Updates.
+
+* Spring Session Data Redis als Implementierung (Auto-Configuration über Dependency und YAML)
+* Redis als Single-Instance Deployment im Namespace `redis` (INF-014)
+* Session-Daten: Spring Security Authentication (OIDC/formbasiert), Benutzerrollen, SuperAdmin Tenant-Auswahl (SWR-053)
+* Session-Timeout: 30 Minuten (Spring Default)
+* Keine Redis-Persistenz (Sessions sind kurzlebig und reproduzierbar)
+* Passwort-Authentifizierung über Kubernetes Secret
+* Linkerd mTLS zwischen Blog-Pod und Redis (ADR-0021)
+* Network Policy beschränkt Redis-Zugriff auf den `tomsblog` Namespace

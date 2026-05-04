@@ -1,0 +1,19 @@
+active: true
+derived: false
+header: |
+  Redis als externer Session-Store
+level: 32.0
+links:
+- SWR057: 7wfo9rnJMpuqNX_euUXh2ZJ7NrRNRmbONwEnKgKgIqg=
+normative: true
+ref: ''
+reviewed: 05kJ02ySs_mgWXpk-cHYLta6egC6ndtK8CyRvy_qIYg=
+text: |
+  HTTP-Sessions werden über Spring Session Data Redis in einer externen
+  Redis-Instanz gespeichert (ADR-0030). Redis läuft als Single-Instance
+  Deployment im eigenen Kubernetes-Namespace (redis). Die Verbindung
+  zwischen Blog-Pod und Redis ist durch Linkerd mTLS gesichert. Redis
+  wird ohne Persistenz (kein RDB/AOF) betrieben, da Sessions kurzlebig
+  und reproduzierbar sind. Passwort-Authentifizierung ist über ein
+  Kubernetes-Secret konfiguriert. Network Policies beschränken den
+  Zugriff auf Redis auf den tomsblog Namespace.

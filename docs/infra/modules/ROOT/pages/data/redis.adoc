@@ -1,0 +1,56 @@
+= Redis
+:sectnums:
+
+== Zweck
+
+Redis dient als externer Session-Store für den Blog Content Service (SWR-057, SWA-032, ADR-0030). Durch die Auslagerung der HTTP-Sessions aus dem Servlet-Container wird die horizontale Skalierung des Blog Content Service ermöglicht (STK-045, SWR-058).
+
+== Deployment
+
+Redis wird als Single-Instance Deployment im eigenen Kubernetes-Namespace `redis` betrieben (INF-014). Die Kustomize-Manifeste liegen in `infra/k8s/redis/`.
+
+=== Konfiguration
+
+[cols="1,2"]
+|===
+| Parameter | Wert
+
+| Image | redis:7-alpine
+| Namespace | redis
+| Instanzen | 1 (Single Instance)
+| Port | 6379
+| Persistenz | Keine (RDB/AOF deaktiviert)
+| Authentifizierung | Passwort via Kubernetes Secret
+| Memory Limit | 128 Mi
+|===
+
+=== Sicherheit
+
+Die Absicherung von Redis erfolgt auf mehreren Ebenen:
+
+* **Passwort-Authentifizierung:** `requirepass` über Kubernetes Secret konfiguriert
+* **Network Policy:** Ingress nur aus dem `tomsblog` Namespace erlaubt
+* **mTLS:** Linkerd verschlüsselt die Verbindung zwischen Blog-Pod und Redis (ADR-0021)
+* **Security Context:** non-root User, read-only Filesystem, keine Privilege Escalation
+
+=== Warum kein Sentinel/Cluster?
+
+Session-Daten sind kurzlebig und reproduzierbar. Bei einem Redis-Ausfall loggen sich Benutzer erneut ein. Der Aufwand für Sentinel oder Cluster steht in keinem Verhältnis zum Nutzen. Ein Upgrade auf Sentinel kann bei Bedarf nachgerüstet werden.
+
+=== Warum keine Persistenz?
+
+Sessions haben eine TTL (30 Minuten) und werden automatisch gelöscht. Bei einem Redis-Neustart müssen sich Benutzer nur neu einloggen. Der Verzicht auf RDB/AOF-Snapshots spart Disk-I/O und vereinfacht das Deployment (kein PersistentVolume nötig).
+
+== Lokale Entwicklung
+
+Für die lokale Entwicklung steht ein Redis-Container in `infra/docker/docker-compose.yml` bereit:
+
+[source,yaml]
+----
+redis:
+  image: redis:7-alpine
+  ports:
+    - "6379:6379"
+----
+
+Die Verbindung wird über das Spring-Profil `local` konfiguriert (`application-local.yml`).

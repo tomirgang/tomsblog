@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Redis Deployment auf Kubernetes
+level: 14.0
+links:
+- STK045: DSNjXUf-_OP_IjIyLx2fbF8-TrCpGkKUaCFCTKQG0bw=
+normative: true
+ref: ''
+reviewed: Ys158fXkLuNRbdT095QL3WibOB1tZadk5I4FdN5gStk=
+text: |
+  Redis muss als Single-Instance Deployment im Namespace redis auf
+  Kubernetes betrieben werden. Das Deployment umfasst: Deployment mit
+  Security Context (non-root, read-only Filesystem), ClusterIP Service
+  auf Port 6379, Network Policy die Ingress nur aus dem tomsblog
+  Namespace erlaubt, Passwort-Authentifizierung über Kubernetes Secret.
+  Die Kustomize-Manifeste liegen in infra/k8s/redis/. Redis wird ohne
+  Persistenz betrieben (keine RDB/AOF-Snapshots).

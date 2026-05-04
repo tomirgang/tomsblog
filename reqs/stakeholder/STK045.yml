@@ -1,0 +1,13 @@
+active: true
+derived: false
+header: |
+  Horizontale Skalierbarkeit und unterbrechungsfreie Updates
+level: 45.0
+links: []
+normative: true
+ref: ''
+reviewed: DSNjXUf-_OP_IjIyLx2fbF8-TrCpGkKUaCFCTKQG0bw=
+text: |
+  Als Betreiber möchte ich den Blog Content Service mit mehreren Instanzen
+  betreiben können, damit Benutzer bei Rolling Updates oder Pod-Ausfällen
+  nicht ausgeloggt werden und die Verfügbarkeit steigt.

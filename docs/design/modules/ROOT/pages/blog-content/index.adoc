@@ -867,6 +867,57 @@ Dieser Ablauf erfüllt die Anforderungen SWR-001 (Post erstellen) und SWR-002 (P
 Die `BlogContentConfiguration` ist die zentrale Spring-Konfiguration, die das Wiring der Adapter an die Ports vornimmt.
 Sie stellt sicher, dass die hexagonale Architektur (SWA-001) eingehalten wird: Der `PostService` erhält seine Abhängigkeiten ausschließlich über Constructor Injection der Port-Interfaces.
 
+== Session Management (SWR-057, SWA-032)
+
+Für die horizontale Skalierbarkeit des Blog Content Service (STK-045) werden HTTP-Sessions über Spring Session Data Redis in einer externen Redis-Instanz gespeichert (ADR-0030). Dies ermöglicht den Betrieb mit mehreren Replicas (SWR-058) und unterbrechungsfreie Rolling Updates.
+
+=== Session-Inhalte
+
+Die HTTP-Session speichert folgende Daten:
+
+* Spring Security Authentication (OIDC oder formbasierter Login)
+* Benutzerrollen als Spring Security Authorities
+* SuperAdmin Tenant-Auswahl (SWR-053)
+
+=== Technische Umsetzung
+
+Das folgende Diagramm zeigt die Interaktion zwischen Blog-Replicas und Redis:
+
+[mermaid]
+----
+sequenceDiagram
+    participant User
+    participant LB as Load Balancer
+    participant Pod1 as Blog Pod 1
+    participant Pod2 as Blog Pod 2
+    participant Redis as Redis
+
+    User->>LB: Request (Session-Cookie)
+    LB->>Pod1: Route zu Pod 1
+    Pod1->>Redis: Session laden (Session-ID)
+    Redis-->>Pod1: Session-Daten
+    Pod1-->>User: Response
+
+    Note over User,Redis: Nächster Request wird zu anderem Pod geroutet
+
+    User->>LB: Request (Session-Cookie)
+    LB->>Pod2: Route zu Pod 2
+    Pod2->>Redis: Session laden (Session-ID)
+    Redis-->>Pod2: Session-Daten (gleiche Session)
+    Pod2-->>User: Response
+----
+
+Dieses Sequenzdiagramm zeigt, wie beide Replicas auf dieselbe Session zugreifen können, da die Session-Daten zentral in Redis gespeichert werden statt im Servlet-Container des jeweiligen Pods.
+
+=== Konfiguration
+
+Spring Session Data Redis wird über Auto-Configuration aktiviert. Die einzigen Anpassungen sind:
+
+* Dependency `spring-session-data-redis` und `spring-boot-starter-data-redis` im `pom.xml`
+* `spring.session.store-type: redis` in `application.yml`
+* Redis-Verbindungsdaten in `application-k8s.yml` (Host, Port, Passwort über Env-Variablen)
+* Redis-Verbindungsdaten in `application-local.yml` (localhost:6379, bereits vorhanden)
+
 == Anforderungsabdeckung
 
 Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt werden:
@@ -920,6 +971,9 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWR-053 | SuperAdmin Tenant-Umschaltung | AdminController.switchTenant, TenantBrandingAdvice.tenants(), DefaultTenantFilter Session-Override
 | SWR-056 | Audit-Logging für alle relevanten Aktionen | JpaAuditLogger, AuditLogEntry, PostService/TagService/TranslationService Audit-Aufrufe, V8 Migration
 | SWA-031 | Audit-Logging-Architektur | AuditLogger (Port im Shared Kernel), JpaAuditLogger (Outbound Adapter), audit_log-Tabelle
+| SWR-057 | Externer Session-Store | Spring Session Data Redis, application.yml (spring.session.store-type: redis)
+| SWR-058 | Mehrere Replicas | Deployment mit replicas: 2, Rolling-Update-Strategie
+| SWA-032 | Redis als externer Session-Store | Spring Session Auto-Configuration, Redis-Verbindung in application-k8s.yml
 |===
 
 == Sicherheit: Admin-Login (SWR-028)

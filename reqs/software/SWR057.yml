@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Externer Session-Store für Blog Content Service
+level: 57.0
+links:
+- STK045: DSNjXUf-_OP_IjIyLx2fbF8-TrCpGkKUaCFCTKQG0bw=
+normative: true
+ref: ''
+reviewed: fTS7kSSOH-Pi4fytoJ-58qel1SO47gicvA1WKLW2UHY=
+text: |
+  HTTP-Sessions des Blog Content Service müssen in einem externen
+  Session-Store (Redis) statt im Servlet-Container gespeichert werden.
+  Alle Session-Daten (Spring Security Authentication, Rollen, Tenant-
+  Auswahl) müssen über alle Replicas des Services hinweg verfügbar sein.
+  Spring Session Data Redis wird als Implementierung verwendet.

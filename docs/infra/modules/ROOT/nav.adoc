@@ -15,6 +15,7 @@
 ** xref:networking/network-policies.adoc[Network Policies]
 * xref:data/index.adoc[Datenhaltung]
 ** xref:data/cloudnativepg.adoc[CloudNativePG]
+** xref:data/redis.adoc[Redis]
 ** xref:data/backup.adoc[Backup & Recovery]
 * xref:operations/index.adoc[Operations]
 ** xref:operations/rollback.adoc[Rollback-Verfahren]

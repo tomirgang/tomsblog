@@ -3,7 +3,7 @@
 
 == Überblick
 
-Die Plattform folgt dem Database-per-Service-Pattern (ADR-0019). Aktuell wird PostgreSQL als einzige Datenbank eingesetzt, verwaltet durch den CloudNativePG Operator (INF-005).
+Die Plattform folgt dem Database-per-Service-Pattern (ADR-0019). Aktuell wird PostgreSQL als primäre Datenbank eingesetzt, verwaltet durch den CloudNativePG Operator (INF-005). Für das Session Management wird Redis als externer Session-Store betrieben (ADR-0030, INF-014).
 
 === Strategie
 
@@ -13,11 +13,13 @@ Die Plattform folgt dem Database-per-Service-Pattern (ADR-0019). Aktuell wird Po
 
 | Database per Service | Jeder Service bekommt eigene DB-Instanz
 | Operator-managed | CloudNativePG verwaltet Lifecycle, Failover, Backup
-| GitOps | Cluster-Definition als YAML in `infra/k8s/postgres/`
-| Verschlüsselung | mTLS zwischen App und DB (Linkerd)
+| Session-Store | Redis für horizontale Skalierung (Spring Session)
+| GitOps | Cluster-Definition als YAML in `infra/k8s/postgres/` und `infra/k8s/redis/`
+| Verschlüsselung | mTLS zwischen App und DB/Redis (Linkerd)
 |===
 
 == Weiterführend
 
 * xref:data/cloudnativepg.adoc[CloudNativePG] -- Cluster-Definition, Failover, Credentials
 * xref:data/backup.adoc[Backup & Recovery] -- Backup-Strategie, RPO/RTO
+* xref:data/redis.adoc[Redis] -- Session-Store, Deployment, Konfiguration

@@ -100,6 +100,23 @@ Das Continuous Deployment erfolgt über Flux (ADR-0020). Flux ist im IaC-Reposit
 
 Änderungen an `infra/k8s/` im tomsblog-Repository werden automatisch innerhalb von 10 Minuten auf den Cluster synchronisiert. Flux prüft dabei den Health-Status des PostgreSQL-Clusters.
 
+== Redis als Session-Store
+
+Redis wird als externer Session-Store für den Blog Content Service eingesetzt (ADR-0030, INF-014). Die HTTP-Sessions werden über Spring Session Data Redis (SWR-057, SWA-032) zentral gespeichert, sodass der Blog Content Service horizontal mit mehreren Replicas betrieben werden kann (STK-045, SWR-058).
+
+[cols="1,2"]
+|===
+| Parameter | Wert
+
+| Image | redis:7-alpine
+| Namespace | redis
+| Instanzen | 1 (Single Instance)
+| Port | 6379
+| Persistenz | Keine (RDB/AOF deaktiviert)
+| Memory | 64 Mi Request / 128 Mi Limit
+| Manifeste | infra/k8s/redis/
+|===
+
 == Lokale Entwicklung
 
 Für die lokale Entwicklung werden externe Abhängigkeiten via Docker Compose bereitgestellt:
