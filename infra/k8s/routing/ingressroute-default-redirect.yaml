@@ -15,4 +15,5 @@ spec:
       services:
         - kind: TraefikService
           name: noop@internal
-  tls: {}
+  tls:
+    secretName: cluster-redirect-tls
