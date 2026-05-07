@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.8.9] - 2026-05-07
+
 ### Fixed
 
 - Markdown-Tabellen werden jetzt korrekt als HTML-Tabellen gerendert (flexmark-ext-tables Extension hinzugefügt, SWR-035)
