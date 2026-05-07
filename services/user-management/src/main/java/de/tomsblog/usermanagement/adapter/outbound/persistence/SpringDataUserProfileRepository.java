@@ -16,6 +16,10 @@ public interface SpringDataUserProfileRepository extends JpaRepository<UserProfi
 
     Optional<UserProfileJpaEntity> findByUsername(String username);
 
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
+
     @Query("SELECT DISTINCT u FROM UserProfileJpaEntity u JOIN u.tenantMemberships m WHERE m.tenantId = :tenantId")
     List<UserProfileJpaEntity> findByTenantId(@Param("tenantId") UUID tenantId);
 }

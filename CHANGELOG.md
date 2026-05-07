@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Lokale Benutzerregistrierung mit Benutzername und Passwort (STK-046, SWR-059, SWR-060)
+- REST-Endpunkt POST /api/users/register im User Management Service mit BCrypt-Passwort-Hashing
+- gRPC RegisterUser-Operation im UserManagementService
+- Thymeleaf-Registrierungsseite unter /register im Blog Content Service
+- Registrierungslink auf der Login-Seite (sichtbar bei LoginMode INTERNAL oder BOTH)
+- Erfolgsseite nach erfolgreicher Registrierung mit Hinweis auf Admin-Freigabe
+- Doorstop-Anforderungen: STK-046, SWR-059, SWR-060
+- Software Detail Design Dokumentation für lokale Registrierung
+
 ## [0.8.9] - 2026-05-07
 
 ### Fixed

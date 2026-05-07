@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.shared.tenant.TenantId;
+import de.tomsblog.usermanagement.application.port.inbound.RegisterUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncInternalUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncOidcUserCommand;
 import de.tomsblog.usermanagement.application.port.outbound.TenantSettingsRepository;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class UserProfileServiceTest {
@@ -35,13 +37,16 @@ class UserProfileServiceTest {
     @Mock
     private AuditLogger auditLogger;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     private UserProfileService service;
 
     private static final TenantId TENANT_ID = TenantId.generate();
 
     @BeforeEach
     void setUp() {
-        service = new UserProfileService(repository, tenantSettingsRepository, auditLogger);
+        service = new UserProfileService(repository, tenantSettingsRepository, auditLogger, passwordEncoder);
     }
 
     @Nested
@@ -346,6 +351,81 @@ class UserProfileServiceTest {
             var result = service.listByTenantId(TENANT_ID);
 
             assertThat(result).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("register")
+    class Register {
+
+        @Test
+        @DisplayName("SWR-059: registers new user with hashed password")
+        void registersNewUser() {
+            when(repository.existsByUsername("newuser")).thenReturn(false);
+            when(repository.existsByEmail("new@example.com")).thenReturn(false);
+            when(passwordEncoder.encode("securePassword1")).thenReturn("$2a$hashed");
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+            when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.empty());
+
+            var command = new RegisterUserCommand("newuser", "securePassword1", "new@example.com", "New", TENANT_ID);
+            var result = service.register(command);
+
+            assertThat(result.getUsername()).isEqualTo("newuser");
+            assertThat(result.getPasswordHash()).isEqualTo("$2a$hashed");
+            assertThat(result.getApprovalStatus()).isEqualTo(ApprovalStatus.PENDING);
+            verify(passwordEncoder).encode("securePassword1");
+            verify(repository).save(any(UserProfile.class));
+            verify(auditLogger).log(any());
+        }
+
+        @Test
+        @DisplayName("SWR-059: throws when username already exists")
+        void throwsWhenUsernameExists() {
+            when(repository.existsByUsername("existing")).thenReturn(true);
+
+            var command = new RegisterUserCommand("existing", "securePassword1", "new@example.com", "User", TENANT_ID);
+
+            assertThatThrownBy(() -> service.register(command))
+                    .isInstanceOf(UserAlreadyExistsException.class)
+                    .hasMessageContaining("Username already taken");
+        }
+
+        @Test
+        @DisplayName("SWR-059: throws when email already exists")
+        void throwsWhenEmailExists() {
+            when(repository.existsByUsername("newuser")).thenReturn(false);
+            when(repository.existsByEmail("existing@example.com")).thenReturn(true);
+
+            var command =
+                    new RegisterUserCommand("newuser", "securePassword1", "existing@example.com", "User", TENANT_ID);
+
+            assertThatThrownBy(() -> service.register(command))
+                    .isInstanceOf(UserAlreadyExistsException.class)
+                    .hasMessageContaining("Email already registered");
+        }
+
+        @Test
+        @DisplayName("SWR-059: applies auto-approval when email domain matches")
+        void appliesAutoApproval() {
+            when(repository.existsByUsername("newuser")).thenReturn(false);
+            when(repository.existsByEmail("user@company.com")).thenReturn(false);
+            when(passwordEncoder.encode("securePassword1")).thenReturn("$2a$hashed");
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+            var settings = de.tomsblog.usermanagement.domain.model.TenantSettings.reconstitute(
+                    TENANT_ID,
+                    de.tomsblog.usermanagement.domain.model.LoginMode.BOTH,
+                    false,
+                    java.util.Set.of("company.com"),
+                    "Toms Blog",
+                    null,
+                    null,
+                    null);
+            when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+
+            var command = new RegisterUserCommand("newuser", "securePassword1", "user@company.com", "User", TENANT_ID);
+            var result = service.register(command);
+
+            assertThat(result.getApprovalStatus()).isEqualTo(ApprovalStatus.APPROVED);
         }
     }
 }

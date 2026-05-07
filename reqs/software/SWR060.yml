@@ -1,0 +1,34 @@
+active: true
+derived: false
+header: |
+  Thymeleaf-Registrierungsseite fuer lokale Benutzer
+level: 60.0
+links:
+- STK046: Y2k7QwHGfWltslimY8Up42M-AKu2HLMiytQ4r_kvqyI=
+- SWR059: TZK79mJI_iy4rG1vs9etnfhFgDvJKaHdaVNP7r5AQ7c=
+normative: true
+ref: ''
+reviewed: XilpTz2PNu-vNWowUyf1X5-7FOBe8hR5hupnudQSkYA=
+text: |
+  Der Blog Content Service muss eine Thymeleaf-basierte Registrierungsseite
+  bereitstellen:
+  - Unter /register wird ein Registrierungsformular mit den Feldern
+    Username, E-Mail, Anzeigename und Passwort (mit Bestaetigungsfeld)
+    angezeigt.
+  - Die Registrierungsseite ist nur verfuegbar, wenn der LoginMode des
+    Tenants INTERNAL oder BOTH ist (SWR-044). Bei LoginMode OIDC wird
+    auf die Login-Seite weitergeleitet.
+  - Auf der Login-Seite wird ein Link "Registrieren" angezeigt, wenn
+    lokale Registrierung fuer den Tenant erlaubt ist.
+  - Clientseitige Validierung: Passwort und Passwort-Bestaetigung muessen
+    uebereinstimmen, alle Pflichtfelder muessen ausgefuellt sein.
+  - Serverseitige Validierung: Bei Fehlern wird das Formular mit
+    Fehlermeldungen und den eingegebenen Werten (ausser Passwort) erneut
+    angezeigt.
+  - Nach erfolgreicher Registrierung wird eine Bestaetigungsseite
+    angezeigt, die den Benutzer darueber informiert, dass sein Account
+    auf Freigabe durch den Tenant-Administrator wartet (STK028).
+  - Der Controller ruft den User-Management-Service ueber gRPC auf, um
+    die Registrierung durchzufuehren.
+  - Die View nutzt das bestehende Layout-Grundgeruest (SWR-025) via
+    Thymeleaf Layout Dialect.

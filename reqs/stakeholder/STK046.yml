@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Lokale Benutzerregistrierung
+level: 46.0
+links: []
+normative: true
+ref: ''
+reviewed: Y2k7QwHGfWltslimY8Up42M-AKu2HLMiytQ4r_kvqyI=
+text: |
+  Als Besucher möchte ich mich auf der Plattform mit E-Mail-Adresse und
+  Passwort registrieren können (lokaler Account), damit ich ohne einen
+  externen Identity-Provider ein Benutzerkonto anlegen kann. Nach der
+  Registrierung erhalte ich zunächst die Rolle Reader. Weitergehende
+  Rechte werden erst nach Freigabe durch den Tenant-Administrator
+  erteilt (siehe STK028).

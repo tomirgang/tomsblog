@@ -178,6 +178,7 @@ classDiagram
         <<interface>>
         +syncFromOidc(command) UserProfile
         +syncFromInternal(command) UserProfile
+        +register(command) UserProfile
         +findByOidcSubject(oidcSubject) UserProfile
         +findByUsername(username) UserProfile
         +approveUser(oidcSubject) void
@@ -210,12 +211,23 @@ classDiagram
         String displayName
     }
 
+    class RegisterUserCommand {
+        <<record>>
+        String username
+        String password
+        String email
+        String displayName
+        TenantId tenantId
+    }
+
     class UserProfileRepository {
         <<interface>>
         +save(userProfile) UserProfile
         +findByOidcSubject(oidcSubject) Optional~UserProfile~
         +findByUsername(username) Optional~UserProfile~
         +existsByOidcSubject(oidcSubject) boolean
+        +existsByUsername(username) boolean
+        +existsByEmail(email) boolean
     }
 
     class TenantSettingsRepository {
@@ -255,6 +267,7 @@ Das Interface `UserProfileUseCase` bietet folgende Operationen:
 
 * `syncFromOidc(SyncUserCommand)`: Erstellt oder aktualisiert ein Benutzerprofil anhand der OIDC-Claims. Idempotent (Upsert-Semantik). Aktualisiert `lastLoginAt`. Übernimmt optional OIDC-Gruppen und mappt sie auf Rollen. Prüft Auto-Approval-Regeln bei neuen Profilen (SWR-045).
 * `syncFromInternal(SyncInternalUserCommand)`: Erstellt oder aktualisiert ein internes Benutzerprofil (formbasierter Login). Prüft Auto-Approval anhand der E-Mail-Domain.
+* `register(RegisterUserCommand)`: Registriert einen neuen lokalen Benutzer (SWR-059, STK046). Validiert Eindeutigkeit von Username und E-Mail. Hasht das Passwort mit BCrypt. Setzt AuthSource auf INTERNAL, Rolle auf READER und ApprovalStatus auf PENDING (mit Auto-Approval-Prüfung). Wirft eine Exception bei Duplikaten.
 * `findByOidcSubject(String)`: Gibt das Profil mit Rollen und Tenant-Zuordnungen zurück (für OIDC-Benutzer).
 * `findByUsername(String)`: Gibt das Profil mit Rollen zurück (für interne Benutzer).
 * `approveUser` / `rejectUser`: Ändert den ApprovalStatus (nur durch ADMIN, STK028).
@@ -268,6 +281,8 @@ Das Interface `UserProfileRepository` abstrahiert die Persistenz:
 * `save(UserProfile)`: Speichert oder aktualisiert ein UserProfile.
 * `findByOidcSubject(String)`: Sucht nach OIDC Subject (für OIDC-Benutzer).
 * `findByUsername(String)`: Sucht nach Username (für interne Benutzer).
+* `existsByUsername(String)`: Prüft, ob ein Username bereits vergeben ist (für Registrierung, SWR-059).
+* `existsByEmail(String)`: Prüft, ob eine E-Mail-Adresse bereits vergeben ist (für Registrierung, SWR-059).
 
 === Inbound Port: TenantSettingsUseCase
 
@@ -300,6 +315,7 @@ Diese APIs sind nur für interne Service-Kommunikation vorgesehen und werden dur
 | GET | /api/users/{oidcSubject} | Gibt das Benutzerprofil mit Rollen und Tenant-Zuordnungen zurück.
 | POST | /api/users/{oidcSubject}/approve | Gibt einen Benutzer frei (setzt ApprovalStatus auf APPROVED). Nur durch ADMIN (STK028).
 | POST | /api/users/{oidcSubject}/reject | Lehnt einen Benutzer ab (setzt ApprovalStatus auf REJECTED). Nur durch ADMIN.
+| POST | /api/users/register | Registriert einen neuen lokalen Benutzer (SWR-059). Erwartet username, password, email, displayName. Gibt HTTP 201 mit Profil zurück. Bei Duplikat HTTP 409.
 |===
 
 === Inbound: gRPC API
@@ -406,6 +422,82 @@ Die Login-Seite wertet den `LoginMode` des aktuellen Tenants aus:
 
 Das Break-Glass Admin-Formular unter `/admin/login` zeigt immer ein Username/Passwort-Formular, unabhängig vom LoginMode. Nur der SUPERADMIN kann sich dort anmelden. Die Credentials werden über die Infrastruktur (Umgebungsvariable/Secret) gesetzt und beim Service-Start automatisch angelegt oder aktualisiert.
 
+=== Lokale Benutzerregistrierung (SWR-059, SWR-060, STK046)
+
+Besucher können sich ohne externen Identity-Provider mit E-Mail-Adresse und Passwort auf der Plattform registrieren.
+Die Registrierung ist nur verfügbar, wenn der LoginMode des Tenants `INTERNAL` oder `BOTH` ist (SWR-044).
+Das folgende Sequenzdiagramm zeigt den Registrierungsablauf:
+
+[mermaid]
+----
+sequenceDiagram
+    actor User as Besucher
+    participant BCS as Blog Content Service
+    participant UMS as User Management Service
+    participant DB as PostgreSQL
+
+    User->>BCS: GET /register
+    BCS->>UMS: gRPC: GetTenantSettings
+    UMS-->>BCS: TenantSettings (loginMode)
+    alt loginMode == OIDC
+        BCS-->>User: Redirect /login
+    else loginMode == INTERNAL oder BOTH
+        BCS-->>User: Registrierungsformular
+    end
+
+    User->>BCS: POST /register (username, email, displayName, password, passwordConfirm)
+    BCS->>BCS: Validierung (Pflichtfelder, Passwort-Match, Passwort-Länge ≥ 12)
+    alt Validierungsfehler
+        BCS-->>User: Formular mit Fehlermeldungen
+    else Validierung OK
+        BCS->>UMS: gRPC: RegisterUser (username, passwordHash, email, displayName, tenantId)
+        UMS->>UMS: Prüfe Eindeutigkeit (username, email)
+        alt Duplikat
+            UMS-->>BCS: ALREADY_EXISTS
+            BCS-->>User: Formular mit Fehlermeldung
+        else Eindeutig
+            UMS->>UMS: Auto-Approval prüfen (SWR-045)
+            UMS->>DB: INSERT user_profiles
+            UMS->>DB: INSERT audit_log (USER_REGISTERED)
+            UMS-->>BCS: UserProfile (PENDING oder APPROVED)
+            BCS-->>User: Bestätigungsseite
+        end
+    end
+----
+
+==== REST-API (SWR-059)
+
+Der User-Management-Service stellt einen öffentlichen REST-Endpunkt bereit:
+
+[cols="1,1,2"]
+|===
+| Methode | Pfad | Beschreibung
+
+| POST | /api/users/register | Registriert einen neuen lokalen Benutzer. Erwartet username, password, email und displayName. Gibt HTTP 201 mit Benutzerprofil (ohne Passwort-Hash) zurück. Bei Duplikat HTTP 409.
+|===
+
+Validierungsregeln:
+
+* `username`: Pflichtfeld, muss eindeutig sein
+* `email`: Pflichtfeld, gültiges E-Mail-Format, muss eindeutig sein
+* `password`: Pflichtfeld, mindestens 12 Zeichen, wird serverseitig mit BCrypt gehasht (salted hash, BCrypt erzeugt automatisch ein zufälliges Salt pro Passwort)
+* `displayName`: optional
+
+Der neue Benutzer erhält `AuthSource.INTERNAL`, die Rolle `READER` und den `ApprovalStatus.PENDING` (SWR-007, STK028).
+Auto-Approval-Regeln (SWR-045) werden bei der Registrierung geprüft: Wenn die E-Mail-Domain auf der Whitelist des Tenants steht, wird der Status direkt auf `APPROVED` gesetzt.
+
+==== Thymeleaf-Registrierungsseite (SWR-060)
+
+Der Blog Content Service stellt eine Registrierungsseite unter `/register` bereit:
+
+* Das Formular enthält Felder für Username, E-Mail, Anzeigename, Passwort und Passwort-Bestätigung.
+* Die Seite ist nur erreichbar, wenn der LoginMode des Tenants `INTERNAL` oder `BOTH` ist. Bei `OIDC` wird auf `/login` weitergeleitet.
+* Die Login-Seite zeigt einen Link „Registrieren" an, wenn lokale Registrierung erlaubt ist.
+* Bei Validierungsfehlern wird das Formular mit Fehlermeldungen und den eingegebenen Werten (außer Passwort) erneut angezeigt.
+* Nach erfolgreicher Registrierung wird eine Bestätigungsseite angezeigt, die den Benutzer darüber informiert, dass sein Account auf Freigabe durch den Tenant-Administrator wartet (STK028).
+* Der Controller ruft den User-Management-Service über gRPC auf.
+* Die View nutzt das bestehende Layout-Grundgerüst (SWR-025) via Thymeleaf Layout Dialect.
+
 == Anforderungsabdeckung
 
 [cols="1,3,1"]
@@ -426,4 +518,7 @@ Das Break-Glass Admin-Formular unter `/admin/login` zeigt immer ein Username/Pas
 | SWA-029 | User-Management-Service Architektur (hexagonal) | Alle Layer
 | SWR-056 | Audit-Logging für alle relevanten Aktionen | JpaAuditLogger, AuditLogEntry, UserProfileService/TenantSettingsService Audit-Aufrufe, V5 Migration
 | SWA-031 | Audit-Logging-Architektur | AuditLogger (Port im Shared Kernel), JpaAuditLogger (Outbound Adapter), audit_log-Tabelle
+| STK046 | Lokale Benutzerregistrierung | SWR-059 (REST-API), SWR-060 (Thymeleaf-Seite)
+| SWR-059 | REST-API für lokale Benutzerregistrierung | REST: POST /api/users/register, gRPC: RegisterUser, Application: UserProfileService
+| SWR-060 | Thymeleaf-Registrierungsseite | Blog Content Service: /register Controller, Thymeleaf-Formular
 |===

@@ -6,6 +6,7 @@ import de.tomsblog.grpc.usermanagement.FindByUsernameRequest;
 import de.tomsblog.grpc.usermanagement.GetTenantSettingsRequest;
 import de.tomsblog.grpc.usermanagement.ListTenantsRequest;
 import de.tomsblog.grpc.usermanagement.ListUsersByTenantRequest;
+import de.tomsblog.grpc.usermanagement.RegisterUserRequest;
 import de.tomsblog.grpc.usermanagement.RejectUserRequest;
 import de.tomsblog.grpc.usermanagement.SyncOidcUserRequest;
 import de.tomsblog.grpc.usermanagement.TenantSettingsServiceGrpc;
@@ -153,6 +154,20 @@ public class UserManagementGrpcClient implements UserManagementClient {
         return response.getTenantsList().stream()
                 .map(t -> new TenantInfoDto(UUID.fromString(t.getTenantId()), t.getDisplayName()))
                 .toList();
+    }
+
+    @Override
+    public UserProfileDto registerUser(
+            String username, String password, String email, String displayName, UUID tenantId) {
+        var request = RegisterUserRequest.newBuilder()
+                .setUsername(username)
+                .setPassword(password)
+                .setEmail(email != null ? email : "")
+                .setDisplayName(displayName != null ? displayName : "")
+                .setTenantId(tenantId.toString())
+                .build();
+        var response = userManagementStub.registerUser(request);
+        return toUserProfileDto(response);
     }
 
     private UserProfileDto toUserProfileDto(UserProfileResponse response) {

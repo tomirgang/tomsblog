@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
  * @req SWR-028
  * @req SWR-044
  */
-@WebMvcTest({BlogViewController.class, LoginController.class})
+@WebMvcTest({BlogViewController.class, LoginController.class, RegistrationController.class})
 @Import(SecurityConfiguration.class)
 class SecurityConfigurationTest {
 
@@ -86,6 +86,16 @@ class SecurityConfigurationTest {
         @DisplayName("GET /login is publicly accessible")
         void login_isPublic() throws Exception {
             mockMvc.perform(get("/login")).andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("SWR-060: GET /register is publicly accessible")
+        void register_isPublic() throws Exception {
+            when(userManagementClient.getTenantSettings(any())).thenReturn(null);
+
+            mockMvc.perform(get("/register")
+                            .header("X-Tenant-Id", java.util.UUID.randomUUID().toString()))
+                    .andExpect(status().isOk());
         }
     }
 

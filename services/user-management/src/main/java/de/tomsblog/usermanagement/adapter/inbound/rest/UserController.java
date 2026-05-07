@@ -1,10 +1,12 @@
 package de.tomsblog.usermanagement.adapter.inbound.rest;
 
 import de.tomsblog.shared.tenant.TenantId;
+import de.tomsblog.usermanagement.application.port.inbound.RegisterUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncInternalUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncOidcUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.UserProfileUseCase;
 import jakarta.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  * REST controller for user profile management.
  *
  * @req SWR-043
+ * @req SWR-059
  */
 @RestController
 @RequestMapping("/api/users")
@@ -75,5 +78,19 @@ public class UserController {
     public ResponseEntity<Void> rejectUser(@PathVariable String identifier) {
         userProfileUseCase.rejectUser(identifier);
         return ResponseEntity.noContent().build();
+    }
+
+    /** @req SWR-059 */
+    @PostMapping("/register")
+    public ResponseEntity<UserProfileResponse> register(@Valid @RequestBody RegisterUserRequest request) {
+        var command = new RegisterUserCommand(
+                request.username(),
+                request.password(),
+                request.email(),
+                request.displayName(),
+                TenantId.of(request.tenantId()));
+        var profile = userProfileUseCase.register(command);
+        return ResponseEntity.created(URI.create("/api/users/by-username/" + profile.getUsername()))
+                .body(UserProfileResponse.from(profile));
     }
 }

@@ -9,6 +9,8 @@ import de.tomsblog.usermanagement.application.service.TenantSettingsService;
 import de.tomsblog.usermanagement.application.service.UserProfileService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class UserManagementConfiguration {
@@ -17,13 +19,19 @@ public class UserManagementConfiguration {
     public UserProfileUseCase userProfileUseCase(
             UserProfileRepository userProfileRepository,
             TenantSettingsRepository tenantSettingsRepository,
-            AuditLogger auditLogger) {
-        return new UserProfileService(userProfileRepository, tenantSettingsRepository, auditLogger);
+            AuditLogger auditLogger,
+            PasswordEncoder passwordEncoder) {
+        return new UserProfileService(userProfileRepository, tenantSettingsRepository, auditLogger, passwordEncoder);
     }
 
     @Bean
     public TenantSettingsUseCase tenantSettingsUseCase(
             TenantSettingsRepository tenantSettingsRepository, AuditLogger auditLogger) {
         return new TenantSettingsService(tenantSettingsRepository, auditLogger);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

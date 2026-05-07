@@ -69,4 +69,9 @@ public interface UserManagementClient {
      * Lists all tenants.
      */
     List<TenantInfoDto> listTenants();
+
+    /**
+     * Registers a new local user (SWR-059).
+     */
+    UserProfileDto registerUser(String username, String password, String email, String displayName, UUID tenantId);
 }

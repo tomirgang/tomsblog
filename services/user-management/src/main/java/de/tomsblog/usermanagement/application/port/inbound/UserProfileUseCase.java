@@ -10,12 +10,16 @@ import java.util.List;
  *
  * @req SWR-043
  * @req SWR-051
+ * @req SWR-059
  */
 public interface UserProfileUseCase {
 
     UserProfile syncFromOidc(SyncOidcUserCommand command);
 
     UserProfile syncFromInternal(SyncInternalUserCommand command);
+
+    /** @req SWR-059 */
+    UserProfile register(RegisterUserCommand command);
 
     UserProfile findByOidcSubject(String oidcSubject);
 

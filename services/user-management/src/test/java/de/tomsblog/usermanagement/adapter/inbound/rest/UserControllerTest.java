@@ -9,9 +9,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.tomsblog.usermanagement.application.port.inbound.RegisterUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncInternalUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncOidcUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.UserProfileUseCase;
+import de.tomsblog.usermanagement.application.service.UserAlreadyExistsException;
 import de.tomsblog.usermanagement.application.service.UserProfileNotFoundException;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
 import java.util.List;
@@ -166,5 +168,110 @@ class UserControllerTest {
     void requestWithWrongApiKeyReturns401() throws Exception {
         mockMvc.perform(get("/api/users/by-username/admin").header("X-API-Key", "wrong-key"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("SWR-059: POST /api/users/register creates local user")
+    void register_createsLocalUser() throws Exception {
+        var profile = UserProfile.createInternal("newuser", "hashed", "new@test.com", "New User");
+        when(userProfileUseCase.register(any(RegisterUserCommand.class))).thenReturn(profile);
+
+        var body = new java.util.HashMap<String, Object>();
+        body.put("username", "newuser");
+        body.put("password", "securePassw0rd");
+        body.put("email", "new@test.com");
+        body.put("displayName", "New User");
+        body.put("tenantId", TENANT_ID);
+
+        mockMvc.perform(post("/api/users/register")
+                        .header("X-API-Key", API_KEY)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.username").value("newuser"))
+                .andExpect(jsonPath("$.email").value("new@test.com"));
+    }
+
+    @Test
+    @DisplayName("SWR-059: POST /api/users/register returns 409 when user exists")
+    void register_returns409WhenUserExists() throws Exception {
+        when(userProfileUseCase.register(any(RegisterUserCommand.class)))
+                .thenThrow(new UserAlreadyExistsException("Username already taken"));
+
+        var body = new java.util.HashMap<String, Object>();
+        body.put("username", "existing");
+        body.put("password", "securePassw0rd");
+        body.put("email", "ex@test.com");
+        body.put("tenantId", TENANT_ID);
+
+        mockMvc.perform(post("/api/users/register")
+                        .header("X-API-Key", API_KEY)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("SWR-059: POST /api/users/register returns 400 for invalid input")
+    void register_returns400ForInvalidInput() throws Exception {
+        var body = new java.util.HashMap<String, Object>();
+        body.put("username", "");
+        body.put("password", "short");
+        body.put("email", "bad");
+        body.put("tenantId", TENANT_ID);
+
+        mockMvc.perform(post("/api/users/register")
+                        .header("X-API-Key", API_KEY)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("SWR-043: Malformed JSON returns 400")
+    void malformedJson_returns400() throws Exception {
+        mockMvc.perform(post("/api/users/register")
+                        .header("X-API-Key", API_KEY)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{invalid"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("SWR-043: IllegalArgumentException returns 400")
+    void illegalArgument_returns400() throws Exception {
+        when(userProfileUseCase.register(any(RegisterUserCommand.class)))
+                .thenThrow(new IllegalArgumentException("Invalid data"));
+
+        var body = new java.util.HashMap<String, Object>();
+        body.put("username", "newuser");
+        body.put("password", "securePassw0rd");
+        body.put("email", "new@test.com");
+        body.put("tenantId", TENANT_ID);
+
+        mockMvc.perform(post("/api/users/register")
+                        .header("X-API-Key", API_KEY)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("SWR-043: Unexpected exception returns 500")
+    void unexpectedException_returns500() throws Exception {
+        when(userProfileUseCase.register(any(RegisterUserCommand.class)))
+                .thenThrow(new RuntimeException("Unexpected error"));
+
+        var body = new java.util.HashMap<String, Object>();
+        body.put("username", "newuser");
+        body.put("password", "securePassw0rd");
+        body.put("email", "new@test.com");
+        body.put("tenantId", TENANT_ID);
+
+        mockMvc.perform(post("/api/users/register")
+                        .header("X-API-Key", API_KEY)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isInternalServerError());
     }
 }

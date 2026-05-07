@@ -14,6 +14,7 @@ import de.tomsblog.grpc.usermanagement.ListTenantsRequest;
 import de.tomsblog.grpc.usermanagement.ListTenantsResponse;
 import de.tomsblog.grpc.usermanagement.ListUsersByTenantRequest;
 import de.tomsblog.grpc.usermanagement.ListUsersResponse;
+import de.tomsblog.grpc.usermanagement.RegisterUserRequest;
 import de.tomsblog.grpc.usermanagement.RejectUserRequest;
 import de.tomsblog.grpc.usermanagement.SyncOidcUserRequest;
 import de.tomsblog.grpc.usermanagement.TenantInfoResponse;
@@ -304,5 +305,60 @@ class UserManagementClientTest {
 
         assertThat(result.displayName()).isEqualTo("My Blog");
         assertThat(result.tagline()).isNull();
+    }
+
+    @Test
+    @DisplayName("SWR-059: registerUser sends gRPC request and returns user profile")
+    void registerUser_sendsGrpcAndReturnsProfile() {
+        UUID id = UUID.randomUUID();
+        var response = UserProfileResponse.newBuilder()
+                .setId(id.toString())
+                .setUsername("newuser")
+                .setAuthSource("INTERNAL")
+                .setEmail("new@test.com")
+                .setDisplayName("New User")
+                .setApprovalStatus("PENDING")
+                .addGlobalRoles("READER")
+                .build();
+
+        when(userManagementStub.registerUser(any(RegisterUserRequest.class))).thenReturn(response);
+
+        UserProfileDto result = client.registerUser("newuser", "securePassw0rd", "new@test.com", "New User", TENANT_ID);
+
+        assertThat(result).isNotNull();
+        assertThat(result.username()).isEqualTo("newuser");
+        assertThat(result.approvalStatus()).isEqualTo("PENDING");
+        verify(userManagementStub).registerUser(any(RegisterUserRequest.class));
+    }
+
+    @Test
+    @DisplayName("SWR-059: registerUser handles null email and displayName")
+    void registerUser_handlesNullFields() {
+        UUID id = UUID.randomUUID();
+        var response = UserProfileResponse.newBuilder()
+                .setId(id.toString())
+                .setUsername("newuser")
+                .setAuthSource("INTERNAL")
+                .setApprovalStatus("PENDING")
+                .addGlobalRoles("READER")
+                .build();
+
+        when(userManagementStub.registerUser(any(RegisterUserRequest.class))).thenReturn(response);
+
+        UserProfileDto result = client.registerUser("newuser", "securePassw0rd", null, null, TENANT_ID);
+
+        assertThat(result).isNotNull();
+        assertThat(result.email()).isNull();
+        assertThat(result.displayName()).isNull();
+    }
+
+    @Test
+    @DisplayName("SWR-059: registerUser propagates ALREADY_EXISTS errors")
+    void registerUser_propagatesAlreadyExistsError() {
+        when(userManagementStub.registerUser(any(RegisterUserRequest.class)))
+                .thenThrow(new StatusRuntimeException(Status.ALREADY_EXISTS.withDescription("Username already taken")));
+
+        assertThatThrownBy(() -> client.registerUser("existing", "securePassw0rd", "a@b.com", "User", TENANT_ID))
+                .isInstanceOf(StatusRuntimeException.class);
     }
 }

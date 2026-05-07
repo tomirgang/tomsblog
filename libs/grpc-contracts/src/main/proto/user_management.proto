@@ -30,6 +30,9 @@ service UserManagementService {
 
   // Change a user's role in a tenant (SWR-051).
   rpc ChangeUserRole (ChangeUserRoleRequest) returns (UserProfileResponse);
+
+  // Register a new local user (SWR-059).
+  rpc RegisterUser (RegisterUserRequest) returns (UserProfileResponse);
 }
 
 // Service for tenant settings queries.
@@ -112,6 +115,14 @@ message ChangeUserRoleRequest {
   string identifier = 1;
   string tenant_id = 2;
   string role = 3;
+}
+
+message RegisterUserRequest {
+  string username = 1;
+  string password = 2;
+  string email = 3;
+  string display_name = 4;
+  string tenant_id = 5;
 }
 
 message UpdateTenantSettingsRequest {

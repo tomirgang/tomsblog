@@ -1,5 +1,6 @@
 package de.tomsblog.usermanagement.adapter.inbound.rest;
 
+import de.tomsblog.usermanagement.application.service.UserAlreadyExistsException;
 import de.tomsblog.usermanagement.application.service.UserProfileNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * Global exception handler for REST controllers.
  *
  * @req SWR-043
+ * @req SWR-059
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -24,6 +26,13 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleUserProfileNotFound(UserProfileNotFoundException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setTitle("User Profile Not Found");
+        return problem;
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ProblemDetail handleUserAlreadyExists(UserAlreadyExistsException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("User Already Exists");
         return problem;
     }
 

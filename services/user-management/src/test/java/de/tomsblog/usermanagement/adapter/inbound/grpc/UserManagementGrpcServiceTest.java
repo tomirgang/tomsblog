@@ -12,12 +12,15 @@ import de.tomsblog.grpc.usermanagement.FindByOidcSubjectRequest;
 import de.tomsblog.grpc.usermanagement.FindByUsernameRequest;
 import de.tomsblog.grpc.usermanagement.ListUsersByTenantRequest;
 import de.tomsblog.grpc.usermanagement.ListUsersResponse;
+import de.tomsblog.grpc.usermanagement.RegisterUserRequest;
 import de.tomsblog.grpc.usermanagement.RejectUserRequest;
 import de.tomsblog.grpc.usermanagement.SyncOidcUserRequest;
 import de.tomsblog.grpc.usermanagement.UserProfileResponse;
 import de.tomsblog.shared.tenant.TenantId;
+import de.tomsblog.usermanagement.application.port.inbound.RegisterUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncOidcUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.UserProfileUseCase;
+import de.tomsblog.usermanagement.application.service.UserAlreadyExistsException;
 import de.tomsblog.usermanagement.application.service.UserProfileNotFoundException;
 import de.tomsblog.usermanagement.domain.model.Role;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
@@ -548,5 +551,116 @@ class UserManagementGrpcServiceTest {
         assertThat(result.get().getOidcSubject()).isEqualTo("sub-null");
         assertThat(result.get().getEmail()).isEmpty();
         assertThat(result.get().getDisplayName()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("SWR-059: registerUser returns profile via gRPC")
+    void registerUser_returnsProfile() {
+        var profile = UserProfile.createInternal("newuser", "hashed", "new@test.com", "New User");
+        when(userProfileUseCase.register(any(RegisterUserCommand.class))).thenReturn(profile);
+
+        var request = RegisterUserRequest.newBuilder()
+                .setUsername("newuser")
+                .setPassword("securePassw0rd")
+                .setEmail("new@test.com")
+                .setDisplayName("New User")
+                .setTenantId(TENANT_ID.toString())
+                .build();
+
+        var result = new AtomicReference<UserProfileResponse>();
+        var observer = createObserver(result);
+
+        grpcService.registerUser(request, observer);
+
+        assertThat(result.get()).isNotNull();
+        assertThat(result.get().getUsername()).isEqualTo("newuser");
+        assertThat(result.get().getEmail()).isEqualTo("new@test.com");
+    }
+
+    @Test
+    @DisplayName("SWR-059: registerUser with empty displayName passes null")
+    void registerUser_emptyDisplayNamePassesNull() {
+        var profile = UserProfile.createInternal("newuser", "hashed", "new@test.com", null);
+        when(userProfileUseCase.register(any(RegisterUserCommand.class))).thenReturn(profile);
+
+        var request = RegisterUserRequest.newBuilder()
+                .setUsername("newuser")
+                .setPassword("securePassw0rd")
+                .setEmail("new@test.com")
+                .setTenantId(TENANT_ID.toString())
+                .build();
+
+        var result = new AtomicReference<UserProfileResponse>();
+        var observer = createObserver(result);
+
+        grpcService.registerUser(request, observer);
+
+        assertThat(result.get()).isNotNull();
+        assertThat(result.get().getDisplayName()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("SWR-059: registerUser returns ALREADY_EXISTS when user exists")
+    void registerUser_alreadyExists() {
+        when(userProfileUseCase.register(any(RegisterUserCommand.class)))
+                .thenThrow(new UserAlreadyExistsException("Username already taken"));
+
+        var request = RegisterUserRequest.newBuilder()
+                .setUsername("existing")
+                .setPassword("securePassw0rd")
+                .setEmail("ex@test.com")
+                .setTenantId(TENANT_ID.toString())
+                .build();
+
+        var error = new AtomicReference<Throwable>();
+        var observer = new StreamObserver<UserProfileResponse>() {
+            @Override
+            public void onNext(UserProfileResponse value) {}
+
+            @Override
+            public void onError(Throwable t) {
+                error.set(t);
+            }
+
+            @Override
+            public void onCompleted() {}
+        };
+
+        grpcService.registerUser(request, observer);
+
+        assertThat(error.get()).isInstanceOf(StatusRuntimeException.class);
+        assertThat(((StatusRuntimeException) error.get()).getStatus().getCode())
+                .isEqualTo(Status.ALREADY_EXISTS.getCode());
+    }
+
+    @Test
+    @DisplayName("SWR-059: registerUser returns INVALID_ARGUMENT on invalid input")
+    void registerUser_invalidArgument() {
+        var request = RegisterUserRequest.newBuilder()
+                .setUsername("")
+                .setPassword("securePassw0rd")
+                .setEmail("a@b.com")
+                .setTenantId(TENANT_ID.toString())
+                .build();
+
+        var error = new AtomicReference<Throwable>();
+        var observer = new StreamObserver<UserProfileResponse>() {
+            @Override
+            public void onNext(UserProfileResponse value) {}
+
+            @Override
+            public void onError(Throwable t) {
+                error.set(t);
+            }
+
+            @Override
+            public void onCompleted() {}
+        };
+
+        grpcService.registerUser(request, observer);
+
+        assertThat(error.get()).isInstanceOf(StatusRuntimeException.class);
+        assertThat(((StatusRuntimeException) error.get()).getStatus().getCode())
+                .isEqualTo(Status.INVALID_ARGUMENT.getCode());
     }
 }

@@ -78,8 +78,8 @@ public class SecurityConfiguration {
                         // Public: static resources
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico")
                         .permitAll()
-                        // Public: login/logout
-                        .requestMatchers("/login", "/logout")
+                        // Public: login/logout/register
+                        .requestMatchers("/login", "/logout", "/register")
                         .permitAll()
                         // Public: actuator health
                         .requestMatchers("/actuator/health", "/actuator/health/**")

@@ -55,6 +55,11 @@
                 </form>
             </div>
         </div>
+
+        <!-- Registration link: shown for INTERNAL and BOTH modes (SWR-060) -->
+        <p th:if="${loginMode == 'INTERNAL' or loginMode == 'BOTH'}">
+            Noch kein Konto? <a th:href="@{/register}">Registrieren</a>
+        </p>
     </section>
 </body>
 </html>

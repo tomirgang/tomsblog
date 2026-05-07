@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title>Registrierung erfolgreich</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1>Registrierung erfolgreich</h1>
+
+        <article aria-label="Info">
+            <p>Ihr Konto wurde erfolgreich erstellt.</p>
+            <p>Ihr Account muss noch durch den Tenant-Administrator freigegeben werden,
+               bevor Sie erweiterte Rechte erhalten. Bis dahin haben Sie Lesezugriff.</p>
+        </article>
+
+        <p><a th:href="@{/login}" role="button">Zur Anmeldeseite</a></p>
+    </section>
+</body>
+</html>

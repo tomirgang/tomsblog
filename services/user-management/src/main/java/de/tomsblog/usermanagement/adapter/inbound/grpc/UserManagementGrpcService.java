@@ -6,14 +6,17 @@ import de.tomsblog.grpc.usermanagement.FindByOidcSubjectRequest;
 import de.tomsblog.grpc.usermanagement.FindByUsernameRequest;
 import de.tomsblog.grpc.usermanagement.ListUsersByTenantRequest;
 import de.tomsblog.grpc.usermanagement.ListUsersResponse;
+import de.tomsblog.grpc.usermanagement.RegisterUserRequest;
 import de.tomsblog.grpc.usermanagement.RejectUserRequest;
 import de.tomsblog.grpc.usermanagement.SyncOidcUserRequest;
 import de.tomsblog.grpc.usermanagement.TenantMembership;
 import de.tomsblog.grpc.usermanagement.UserManagementServiceGrpc;
 import de.tomsblog.grpc.usermanagement.UserProfileResponse;
 import de.tomsblog.shared.tenant.TenantId;
+import de.tomsblog.usermanagement.application.port.inbound.RegisterUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncOidcUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.UserProfileUseCase;
+import de.tomsblog.usermanagement.application.service.UserAlreadyExistsException;
 import de.tomsblog.usermanagement.application.service.UserProfileNotFoundException;
 import de.tomsblog.usermanagement.domain.model.Role;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
@@ -29,6 +32,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
  * @req SWR-046
  * @req SWR-043
  * @req SWR-051
+ * @req SWR-059
  */
 @GrpcService
 public class UserManagementGrpcService extends UserManagementServiceGrpc.UserManagementServiceImplBase {
@@ -143,6 +147,27 @@ public class UserManagementGrpcService extends UserManagementServiceGrpc.UserMan
         } catch (UserProfileNotFoundException e) {
             responseObserver.onError(
                     Status.NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
+        } catch (IllegalArgumentException e) {
+            responseObserver.onError(
+                    Status.INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
+    }
+
+    @Override
+    public void registerUser(RegisterUserRequest request, StreamObserver<UserProfileResponse> responseObserver) {
+        try {
+            var command = new RegisterUserCommand(
+                    request.getUsername(),
+                    request.getPassword(),
+                    request.getEmail(),
+                    request.getDisplayName().isEmpty() ? null : request.getDisplayName(),
+                    TenantId.of(UUID.fromString(request.getTenantId())));
+            var profile = userProfileUseCase.register(command);
+            responseObserver.onNext(toResponse(profile));
+            responseObserver.onCompleted();
+        } catch (UserAlreadyExistsException e) {
+            responseObserver.onError(
+                    Status.ALREADY_EXISTS.withDescription(e.getMessage()).asRuntimeException());
         } catch (IllegalArgumentException e) {
             responseObserver.onError(
                     Status.INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());

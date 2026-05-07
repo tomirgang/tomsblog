@@ -3,6 +3,7 @@ package de.tomsblog.usermanagement.application.service;
 import de.tomsblog.shared.audit.AuditLogEntry;
 import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.shared.tenant.TenantId;
+import de.tomsblog.usermanagement.application.port.inbound.RegisterUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncInternalUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.SyncOidcUserCommand;
 import de.tomsblog.usermanagement.application.port.inbound.UserProfileUseCase;
@@ -14,6 +15,7 @@ import de.tomsblog.usermanagement.domain.model.TenantMembership;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
 import java.util.List;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Application service implementing user profile use cases.
@@ -22,20 +24,24 @@ import java.util.List;
  * @req SWR-007
  * @req SWR-045
  * @req SWR-056
+ * @req SWR-059
  */
 public class UserProfileService implements UserProfileUseCase {
 
     private final UserProfileRepository repository;
     private final TenantSettingsRepository tenantSettingsRepository;
     private final AuditLogger auditLogger;
+    private final PasswordEncoder passwordEncoder;
 
     public UserProfileService(
             UserProfileRepository repository,
             TenantSettingsRepository tenantSettingsRepository,
-            AuditLogger auditLogger) {
+            AuditLogger auditLogger,
+            PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.tenantSettingsRepository = tenantSettingsRepository;
         this.auditLogger = auditLogger;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -93,6 +99,29 @@ public class UserProfileService implements UserProfileUseCase {
                 command.tenantId().toString(),
                 "system",
                 "USER_SYNCED_INTERNAL",
+                "UserProfile",
+                saved.getId().asString()));
+        return saved;
+    }
+
+    @Override
+    public UserProfile register(RegisterUserCommand command) {
+        if (repository.existsByUsername(command.username())) {
+            throw new UserAlreadyExistsException("Username already taken: " + command.username());
+        }
+        if (repository.existsByEmail(command.email())) {
+            throw new UserAlreadyExistsException("Email already registered: " + command.email());
+        }
+
+        String hashedPassword = passwordEncoder.encode(command.password());
+        var profile =
+                UserProfile.createInternal(command.username(), hashedPassword, command.email(), command.displayName());
+        applyAutoApproval(profile, command.tenantId(), AuthSource.INTERNAL, command.email());
+        UserProfile saved = repository.save(profile);
+        auditLogger.log(AuditLogEntry.create(
+                command.tenantId().toString(),
+                command.username(),
+                "USER_REGISTERED",
                 "UserProfile",
                 saved.getId().asString()));
         return saved;

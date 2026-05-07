@@ -10,6 +10,7 @@ import java.util.Optional;
  *
  * @req SWR-043
  * @req SWR-051
+ * @req SWR-059
  */
 public interface UserProfileRepository {
 
@@ -20,4 +21,10 @@ public interface UserProfileRepository {
     Optional<UserProfile> findByUsername(String username);
 
     List<UserProfile> findByTenantId(TenantId tenantId);
+
+    /** @req SWR-059 */
+    boolean existsByUsername(String username);
+
+    /** @req SWR-059 */
+    boolean existsByEmail(String email);
 }

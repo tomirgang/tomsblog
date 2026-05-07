@@ -1,0 +1,32 @@
+active: true
+derived: false
+header: |
+  REST-API fuer lokale Benutzerregistrierung
+level: 59.0
+links:
+- STK046: Y2k7QwHGfWltslimY8Up42M-AKu2HLMiytQ4r_kvqyI=
+normative: true
+ref: ''
+reviewed: YgBnilU7SpUHahc5XdUjtgqLYeEukLEgX1CRM1zC__E=
+text: |
+  Der User-Management-Service muss einen oeffentlichen REST-Endpunkt fuer
+  die lokale Benutzerregistrierung bereitstellen:
+  - POST /api/users/register nimmt username, password, email und
+    displayName entgegen.
+  - Das Passwort wird serverseitig mit BCrypt gehasht (salted hash).
+    BCrypt erzeugt automatisch ein zufaelliges Salt pro Passwort.
+    Das Klartext-Passwort wird niemals persistiert oder geloggt.
+  - Validierungen: username darf nicht leer und muss eindeutig sein,
+    E-Mail darf nicht leer und muss ein gueltiges Format haben,
+    Passwort muss mindestens 12 Zeichen lang sein.
+  - Bei Duplikat (username oder E-Mail bereits vergeben) wird HTTP 409
+    Conflict zurueckgegeben.
+  - Der neue Benutzer erhaelt AuthSource INTERNAL, die Rolle READER und
+    den ApprovalStatus PENDING (SWR-007, STK028).
+  - Auto-Approval-Regeln werden geprueft (SWR-045): Wenn die E-Mail-Domain
+    auf der Whitelist des Tenants steht, wird der Status direkt auf
+    APPROVED gesetzt.
+  - Die TenantId wird aus dem Request-Kontext (Host-Header) ermittelt.
+  - Bei erfolgreicher Registrierung wird HTTP 201 Created mit dem
+    Benutzerprofil (ohne Passwort-Hash) zurueckgegeben.
+  - Die Registrierung wird im Audit-Log protokolliert (SWR-056).

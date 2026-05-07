@@ -50,4 +50,16 @@ public class JpaUserProfileRepository implements UserProfileRepository {
                 .map(UserProfileMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByUsername(String username) {
+        return springDataRepository.existsByUsername(username);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByEmail(String email) {
+        return springDataRepository.existsByEmail(email);
+    }
 }
