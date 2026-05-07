@@ -99,9 +99,9 @@
 - [x] Thymeleaf: Drop-down für vorherigen und nächsten Post
 - [x] Infra: Redis Deployment
 - [x] 2 Blog Deployments und Shared Session über Redis
-- [ ] Fix: Table Rendering
-- [ ] Fix: Ändern zwischen Markdown und HTML
-- [ ] Fix: Post Navigation sollen direkte Links sein
+- [x] Fix: Table Rendering
+- [x] Fix: Ändern zwischen Markdown und HTML
+- [x] Fix: Post Navigation sollen direkte Links sein
 - [ ] Benutzer Registrierung
 - [ ] Vorschau für Posts
 - [ ] Kafka-Cluster-Konfiguration definieren

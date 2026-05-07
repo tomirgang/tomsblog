@@ -14,6 +14,7 @@ reviewed: v4I3RyPGSjLQ2yqozwktkTbdkJVyMKUymLdO3gMzpuc=
 text: |
   Testfälle für den Markdown-Renderer:
   - Rendert Markdown-Überschriften und Absätze zu HTML
+  - Rendert Markdown-Tabellen als HTML-Tabellen (TablesExtension)
   - Null-Eingabe ergibt leeren String
   - Blank-Eingabe ergibt leeren String
   - Code-Blöcke werden mit language-class gerendert

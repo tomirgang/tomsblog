@@ -38,26 +38,12 @@
         <nav th:if="${previousPost != null or nextPost != null}" aria-label="Chronologische Navigation">
             <ul>
                 <li th:if="${previousPost != null}">
-                    <details>
-                        <summary th:text="'&larr; ' + ${previousPost.title}">&larr; Vorheriger Post</summary>
-                        <small>
-                            <time th:datetime="${previousPost.publishedAt}"
-                                  th:text="${#temporals.format(previousPost.publishedAt, 'dd.MM.yyyy')}">01.01.2026</time>
-                        </small>
-                        <div th:utext="${previousPostExcerpt}">Vorschau...</div>
-                        <a th:href="@{/posts/{slug}(slug=${previousPost.slug.value})}">Zum Beitrag</a>
-                    </details>
+                    <a th:href="@{/posts/{slug}(slug=${previousPost.slug.value})}"
+                       th:text="'&larr; ' + ${previousPost.title}">&larr; Vorheriger Post</a>
                 </li>
                 <li th:if="${nextPost != null}">
-                    <details>
-                        <summary th:text="${nextPost.title} + ' &rarr;'">Nächster Post &rarr;</summary>
-                        <small>
-                            <time th:datetime="${nextPost.publishedAt}"
-                                  th:text="${#temporals.format(nextPost.publishedAt, 'dd.MM.yyyy')}">01.01.2026</time>
-                        </small>
-                        <div th:utext="${nextPostExcerpt}">Vorschau...</div>
-                        <a th:href="@{/posts/{slug}(slug=${nextPost.slug.value})}">Zum Beitrag</a>
-                    </details>
+                    <a th:href="@{/posts/{slug}(slug=${nextPost.slug.value})}"
+                       th:text="${nextPost.title} + ' &rarr;'">Nächster Post &rarr;</a>
                 </li>
             </ul>
         </nav>

@@ -122,13 +122,14 @@ public class Post extends AggregateRoot {
         this.status = PostStatus.ARCHIVED;
     }
 
-    public void updateContent(String title, String content) {
+    public void updateContent(String title, String content, ContentType contentType) {
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Title must not be blank");
         }
         this.title = title;
         this.slug = Slug.fromTitle(title);
         this.content = content;
+        this.contentType = contentType;
         registerEvent(PostUpdatedEvent.of(this.id, this.tenantId));
     }
 

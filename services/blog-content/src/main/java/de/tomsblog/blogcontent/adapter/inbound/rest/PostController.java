@@ -109,6 +109,7 @@ public class PostController {
                 TenantId.of(tenantId),
                 request.title(),
                 request.content(),
+                request.contentType(),
                 request.socialMediaTitle(),
                 request.socialMediaSummary(),
                 request.seriesPreviousPostId(),

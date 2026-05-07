@@ -1,10 +1,12 @@
 package de.tomsblog.blogcontent.adapter.outbound.markdown;
 
+import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import de.tomsblog.blogcontent.application.port.outbound.MarkdownRenderer;
+import java.util.List;
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 import org.springframework.stereotype.Component;
@@ -60,6 +62,7 @@ public class FlexmarkMarkdownRenderer implements MarkdownRenderer {
 
     public FlexmarkMarkdownRenderer() {
         MutableDataSet options = new MutableDataSet();
+        options.set(Parser.EXTENSIONS, List.of(TablesExtension.create()));
         this.parser = Parser.builder(options).build();
         this.renderer = HtmlRenderer.builder(options).build();
     }

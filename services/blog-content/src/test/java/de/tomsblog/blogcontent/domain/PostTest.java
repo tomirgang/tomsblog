@@ -69,7 +69,7 @@ class PostTest {
     void updateContentChangesFields() {
         Post post = Post.create(tenantId, authorId, "Old Title", "Old content", PostLocale.german());
 
-        post.updateContent("New Title", "New content");
+        post.updateContent("New Title", "New content", ContentType.HTML);
 
         assertThat(post.getTitle()).isEqualTo("New Title");
         assertThat(post.getSlug().value()).isEqualTo("new-title");
@@ -222,7 +222,8 @@ class PostTest {
     void updateContentBlankTitleThrows() {
         Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
 
-        assertThatThrownBy(() -> post.updateContent("", "New content")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> post.updateContent("", "New content", ContentType.HTML))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -230,7 +231,8 @@ class PostTest {
     void updateContentNullTitleThrows() {
         Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
 
-        assertThatThrownBy(() -> post.updateContent(null, "New content")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> post.updateContent(null, "New content", ContentType.HTML))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

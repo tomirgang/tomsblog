@@ -74,4 +74,15 @@ class FlexmarkMarkdownRendererTest {
         assertThat(html).doesNotContain("onmouseover");
         assertThat(html).contains("hover me");
     }
+
+    @Test
+    @DisplayName("SWR-035: Renders Markdown tables as HTML tables")
+    void rendersMarkdownTables() {
+        String markdown = "| Header 1 | Header 2 |\n| --- | --- |\n| Cell 1 | Cell 2 |";
+        String html = renderer.renderToHtml(markdown);
+        assertThat(html).contains("<table>");
+        assertThat(html).contains("<thead>");
+        assertThat(html).contains("<th>Header 1</th>");
+        assertThat(html).contains("<td>Cell 1</td>");
+    }
 }

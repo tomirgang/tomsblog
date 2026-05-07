@@ -215,6 +215,7 @@ public class BlogViewController {
                 new TenantId(tenantId),
                 form.getTitle(),
                 form.getContent(),
+                form.getContentType(),
                 form.getSocialMediaTitle(),
                 form.getSocialMediaSummary(),
                 parseUuid(form.getSeriesPreviousPostId()),

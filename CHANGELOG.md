@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Markdown-Tabellen werden jetzt korrekt als HTML-Tabellen gerendert (flexmark-ext-tables Extension hinzugefügt, SWR-035)
+- Ändern des Content-Types (HTML/Markdown) beim Bearbeiten eines Posts wird jetzt korrekt gespeichert (contentType-Feld in UpdatePostCommand ergänzt, SWR-035)
+- Chronologische Post-Navigation zeigt direkte Links statt aufklappbare Details-Elemente (STK-025, SWR-039)
+
 ## [0.8.8] - 2026-05-04
 
 ### Added

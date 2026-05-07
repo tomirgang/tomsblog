@@ -11,6 +11,7 @@ public record UpdatePostCommand(
         TenantId tenantId,
         String title,
         String content,
+        String contentType,
         String socialMediaTitle,
         String socialMediaSummary,
         UUID seriesPreviousPostId,

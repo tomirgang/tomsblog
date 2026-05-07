@@ -101,6 +101,7 @@ class PostServiceTest {
                 tenantId,
                 "Updated Title",
                 "Updated content",
+                "HTML",
                 "SM Title",
                 "SM Summary",
                 null,
@@ -487,7 +488,7 @@ class PostServiceTest {
         UUID prevId = UUID.randomUUID();
 
         UpdatePostCommand command = new UpdatePostCommand(
-                existing.getId(), tenantId, "Updated", "Content", null, null, prevId, null, null, null);
+                existing.getId(), tenantId, "Updated", "Content", "HTML", null, null, prevId, null, null, null);
 
         Post result = postService.updatePost(command);
 
@@ -506,7 +507,7 @@ class PostServiceTest {
         UUID nextId = UUID.randomUUID();
 
         UpdatePostCommand command = new UpdatePostCommand(
-                existing.getId(), tenantId, "Updated", "Content", null, null, null, nextId, null, null);
+                existing.getId(), tenantId, "Updated", "Content", "HTML", null, null, null, nextId, null, null);
 
         Post result = postService.updatePost(command);
 
@@ -556,7 +557,7 @@ class PostServiceTest {
         LocalDate until = LocalDate.of(2026, 6, 30);
 
         UpdatePostCommand command = new UpdatePostCommand(
-                existing.getId(), tenantId, "Updated", "Content", null, null, null, null, from, until);
+                existing.getId(), tenantId, "Updated", "Content", "HTML", null, null, null, null, from, until);
 
         Post result = postService.updatePost(command);
 

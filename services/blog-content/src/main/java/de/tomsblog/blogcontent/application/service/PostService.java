@@ -73,7 +73,7 @@ public class PostService implements PostUseCase {
     @Override
     public Post updatePost(UpdatePostCommand command) {
         Post post = findOrThrow(command.postId(), command.tenantId());
-        post.updateContent(command.title(), command.content());
+        post.updateContent(command.title(), command.content(), ContentType.valueOf(command.contentType()));
         post.updateSocialMedia(command.socialMediaTitle(), command.socialMediaSummary());
         post.updateSeriesNavigation(
                 command.seriesPreviousPostId() != null ? PostId.of(command.seriesPreviousPostId()) : null,

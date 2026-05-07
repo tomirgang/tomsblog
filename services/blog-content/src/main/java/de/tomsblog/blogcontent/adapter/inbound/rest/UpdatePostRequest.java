@@ -8,6 +8,7 @@ import java.util.UUID;
 public record UpdatePostRequest(
         @NotBlank String title,
         @NotBlank String content,
+        String contentType,
         String socialMediaTitle,
         String socialMediaSummary,
         UUID seriesPreviousPostId,
