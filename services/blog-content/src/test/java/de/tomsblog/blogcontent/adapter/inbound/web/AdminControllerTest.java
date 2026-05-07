@@ -107,7 +107,8 @@ class AdminControllerTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("SWR-052: GET /admin/settings shows tenant settings")
     void showSettings() throws Exception {
-        var settings = new TenantSettingsDto(TENANT_ID, "BOTH", false, Set.of(), "My Blog", "A tagline", null, null);
+        var settings = new TenantSettingsDto(
+                TENANT_ID, "BOTH", false, Set.of(), "My Blog", "A tagline", null, null, null, null, null);
         when(userManagementClient.getTenantSettings(TENANT_ID)).thenReturn(settings);
 
         mockMvc.perform(get("/admin/settings").header("X-Tenant-Id", TENANT_ID.toString()))
@@ -152,6 +153,9 @@ class AdminControllerTest {
                         "My Blog",
                         "A cool blog",
                         null,
+                        null,
+                        null,
+                        null,
                         null);
     }
 
@@ -168,7 +172,41 @@ class AdminControllerTest {
                         .param("tagline", ""))
                 .andExpect(status().is3xxRedirection());
 
-        verify(userManagementClient).updateTenantSettings(TENANT_ID, "BOTH", false, Set.of(), "Blog", "", null, null);
+        verify(userManagementClient)
+                .updateTenantSettings(TENANT_ID, "BOTH", false, Set.of(), "Blog", "", null, null, null, null, null);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("SWR-061: POST /admin/settings passes OIDC parameters")
+    void updateSettingsWithOidcParams() throws Exception {
+        mockMvc.perform(post("/admin/settings")
+                        .with(csrf())
+                        .header("X-Tenant-Id", TENANT_ID.toString())
+                        .param("loginMode", "OIDC")
+                        .param("autoApproveOidc", "false")
+                        .param("autoApproveEmailDomains", "")
+                        .param("displayName", "Blog")
+                        .param("tagline", "")
+                        .param("oidcIssuerUrl", "https://auth.example.com")
+                        .param("oidcClientId", "my-client-id")
+                        .param("oidcClientSecret", "my-secret"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/settings"));
+
+        verify(userManagementClient)
+                .updateTenantSettings(
+                        TENANT_ID,
+                        "OIDC",
+                        false,
+                        Set.of(),
+                        "Blog",
+                        "",
+                        null,
+                        null,
+                        "https://auth.example.com",
+                        "my-client-id",
+                        "my-secret");
     }
 
     @Test

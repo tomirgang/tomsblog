@@ -246,7 +246,7 @@ class UserManagementClientTest {
                 .thenReturn(response);
 
         TenantSettingsDto result = client.updateTenantSettings(
-                TENANT_ID, "OIDC", true, Set.of("test.com"), "My Blog", "Cool blog", null, null);
+                TENANT_ID, "OIDC", true, Set.of("test.com"), "My Blog", "Cool blog", null, null, null, null, null);
 
         assertThat(result.loginMode()).isEqualTo("OIDC");
         assertThat(result.displayName()).isEqualTo("My Blog");
@@ -265,8 +265,8 @@ class UserManagementClientTest {
         when(tenantSettingsStub.updateTenantSettings(any(UpdateTenantSettingsRequest.class)))
                 .thenReturn(response);
 
-        TenantSettingsDto result =
-                client.updateTenantSettings(TENANT_ID, "BOTH", false, Set.of(), null, null, null, null);
+        TenantSettingsDto result = client.updateTenantSettings(
+                TENANT_ID, "BOTH", false, Set.of(), null, null, null, null, null, null, null);
 
         assertThat(result.tagline()).isNull();
     }
@@ -287,6 +287,38 @@ class UserManagementClientTest {
         assertThat(result).hasSize(1);
         assertThat(result.get(0).tenantId()).isEqualTo(TENANT_ID);
         assertThat(result.get(0).displayName()).isEqualTo("Blog A");
+    }
+
+    @Test
+    @DisplayName("SWR-061: updateTenantSettings passes OIDC fields and maps response")
+    void updateTenantSettings_withOidcFields() {
+        var response = TenantSettingsResponse.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .setLoginMode("OIDC")
+                .setDisplayName("Blog")
+                .setOidcIssuerUrl("https://auth.example.com")
+                .setOidcClientId("client-123")
+                .setOidcClientSecret("secret-456")
+                .build();
+        when(tenantSettingsStub.updateTenantSettings(any(UpdateTenantSettingsRequest.class)))
+                .thenReturn(response);
+
+        TenantSettingsDto result = client.updateTenantSettings(
+                TENANT_ID,
+                "OIDC",
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                "https://auth.example.com",
+                "client-123",
+                "secret-456");
+
+        assertThat(result.oidcIssuerUrl()).isEqualTo("https://auth.example.com");
+        assertThat(result.oidcClientId()).isEqualTo("client-123");
+        assertThat(result.oidcClientSecret()).isEqualTo("secret-456");
     }
 
     @Test

@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- OIDC-Konfiguration pro Tenant über Admin-Interface (STK-047, SWR-061)
+- Admin-UI-Felder für OIDC Issuer URL, Client ID und Client Secret in den Tenant-Einstellungen
+- gRPC-Felder oidcIssuerUrl, oidcClientId, oidcClientSecret im TenantSettings-Protokoll
+- Dynamische OAuth2-Client-Registrierung basierend auf Tenant-OIDC-Konfiguration (TenantAwareClientRegistrationRepository)
+- Passwort-Maskierung: bestehende Client Secrets werden bei Anzeige maskiert und bei Rückgabe von "***" beibehalten
+- Validierung: OIDC- und BOTH-Modus erfordern vollständige OIDC-Konfiguration (Issuer URL + Client ID)
 - Lokale Benutzerregistrierung mit Benutzername und Passwort (STK-046, SWR-059, SWR-060)
 - REST-Endpunkt POST /api/users/register im User Management Service mit BCrypt-Passwort-Hashing
 - gRPC RegisterUser-Operation im UserManagementService

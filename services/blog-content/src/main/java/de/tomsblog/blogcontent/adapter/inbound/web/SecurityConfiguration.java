@@ -1,6 +1,8 @@
 package de.tomsblog.blogcontent.adapter.inbound.web;
 
 import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +14,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -30,7 +34,10 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties({AdminProperties.class})
+@EnableConfigurationProperties({
+    AdminProperties.class,
+    org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties.class
+})
 public class SecurityConfiguration {
 
     private final AdminProperties adminProperties;
@@ -160,5 +167,35 @@ public class SecurityConfiguration {
             UserManagementClient userManagementClient, DefaultTenantFilter defaultTenantFilter) {
         return new SyncingOidcUserService(
                 userManagementClient, java.util.UUID.fromString(defaultTenantFilter.getDefaultTenantId()));
+    }
+
+    /**
+     * Tenant-aware client registration repository that loads OIDC config per tenant (SWR-063).
+     * Falls back to the global application.yml config when no tenant-specific config exists.
+     */
+    @Bean
+    @ConditionalOnProperty(prefix = "spring.security.oauth2.client.registration.authentik", name = "client-id")
+    @ConditionalOnBean({UserManagementClient.class, DefaultTenantFilter.class})
+    public ClientRegistrationRepository clientRegistrationRepository(
+            UserManagementClient userManagementClient,
+            DefaultTenantFilter defaultTenantFilter,
+            org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties
+                    oAuth2ClientProperties) {
+        var authentikReg = oAuth2ClientProperties.getRegistration().get("authentik");
+        var authentikProvider = oAuth2ClientProperties.getProvider().get("authentik");
+        ClientRegistration fallback = ClientRegistration.withRegistrationId("authentik")
+                .clientId(authentikReg.getClientId())
+                .clientSecret(authentikReg.getClientSecret())
+                .authorizationGrantType(new org.springframework.security.oauth2.core.AuthorizationGrantType(
+                        authentikReg.getAuthorizationGrantType()))
+                .redirectUri(authentikReg.getRedirectUri())
+                .scope(authentikReg.getScope())
+                .authorizationUri(authentikProvider.getAuthorizationUri())
+                .tokenUri(authentikProvider.getTokenUri())
+                .userInfoUri(authentikProvider.getUserInfoUri())
+                .jwkSetUri(authentikProvider.getJwkSetUri())
+                .build();
+        return new TenantAwareClientRegistrationRepository(
+                userManagementClient, fallback, defaultTenantFilter.getDefaultTenantId());
     }
 }

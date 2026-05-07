@@ -13,6 +13,7 @@ import java.util.Set;
  * @req SWR-044
  * @req SWR-045
  * @req SWR-050
+ * @req SWR-061
  */
 public class TenantSettings {
 
@@ -24,6 +25,9 @@ public class TenantSettings {
     private String tagline;
     private String impressumContent;
     private String privacyPolicyContent;
+    private String oidcIssuerUrl;
+    private String oidcClientId;
+    private String oidcClientSecret;
 
     private TenantSettings(
             TenantId tenantId,
@@ -33,7 +37,10 @@ public class TenantSettings {
             String displayName,
             String tagline,
             String impressumContent,
-            String privacyPolicyContent) {
+            String privacyPolicyContent,
+            String oidcIssuerUrl,
+            String oidcClientId,
+            String oidcClientSecret) {
         this.tenantId = Objects.requireNonNull(tenantId, "tenantId must not be null");
         this.loginMode = Objects.requireNonNull(loginMode, "loginMode must not be null");
         this.autoApproveOidc = autoApproveOidc;
@@ -42,10 +49,14 @@ public class TenantSettings {
         this.tagline = tagline;
         this.impressumContent = impressumContent;
         this.privacyPolicyContent = privacyPolicyContent;
+        this.oidcIssuerUrl = oidcIssuerUrl;
+        this.oidcClientId = oidcClientId;
+        this.oidcClientSecret = oidcClientSecret;
     }
 
     public static TenantSettings create(TenantId tenantId) {
-        return new TenantSettings(tenantId, LoginMode.BOTH, false, Set.of(), "Toms Blog", null, null, null);
+        return new TenantSettings(
+                tenantId, LoginMode.BOTH, false, Set.of(), "Toms Blog", null, null, null, null, null, null);
     }
 
     public static TenantSettings reconstitute(
@@ -56,7 +67,10 @@ public class TenantSettings {
             String displayName,
             String tagline,
             String impressumContent,
-            String privacyPolicyContent) {
+            String privacyPolicyContent,
+            String oidcIssuerUrl,
+            String oidcClientId,
+            String oidcClientSecret) {
         return new TenantSettings(
                 tenantId,
                 loginMode,
@@ -65,7 +79,10 @@ public class TenantSettings {
                 displayName,
                 tagline,
                 impressumContent,
-                privacyPolicyContent);
+                privacyPolicyContent,
+                oidcIssuerUrl,
+                oidcClientId,
+                oidcClientSecret);
     }
 
     public void updateLoginMode(LoginMode loginMode) {
@@ -160,5 +177,35 @@ public class TenantSettings {
 
     public void updatePrivacyPolicyContent(String privacyPolicyContent) {
         this.privacyPolicyContent = privacyPolicyContent;
+    }
+
+    /** @req SWR-061 */
+    public String getOidcIssuerUrl() {
+        return oidcIssuerUrl;
+    }
+
+    /** @req SWR-061 */
+    public void updateOidcIssuerUrl(String oidcIssuerUrl) {
+        this.oidcIssuerUrl = oidcIssuerUrl;
+    }
+
+    /** @req SWR-061 */
+    public String getOidcClientId() {
+        return oidcClientId;
+    }
+
+    /** @req SWR-061 */
+    public void updateOidcClientId(String oidcClientId) {
+        this.oidcClientId = oidcClientId;
+    }
+
+    /** @req SWR-061 */
+    public String getOidcClientSecret() {
+        return oidcClientSecret;
+    }
+
+    /** @req SWR-061 */
+    public void updateOidcClientSecret(String oidcClientSecret) {
+        this.oidcClientSecret = oidcClientSecret;
     }
 }

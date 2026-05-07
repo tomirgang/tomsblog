@@ -96,6 +96,9 @@ class UserProfileServiceTest {
                     "Toms Blog",
                     null,
                     null,
+                    null,
+                    null,
+                    null,
                     null);
             when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
 
@@ -116,6 +119,9 @@ class UserProfileServiceTest {
                     false,
                     java.util.Set.of("company.com"),
                     "Toms Blog",
+                    null,
+                    null,
+                    null,
                     null,
                     null,
                     null);
@@ -417,6 +423,9 @@ class UserProfileServiceTest {
                     false,
                     java.util.Set.of("company.com"),
                     "Toms Blog",
+                    null,
+                    null,
+                    null,
                     null,
                     null,
                     null);

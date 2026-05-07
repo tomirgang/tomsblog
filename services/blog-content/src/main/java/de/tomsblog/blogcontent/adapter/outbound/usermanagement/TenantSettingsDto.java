@@ -9,6 +9,7 @@ import java.util.UUID;
  * @req SWR-044
  * @req SWR-050
  * @req SWR-055
+ * @req SWR-061
  */
 public record TenantSettingsDto(
         UUID tenantId,
@@ -18,4 +19,15 @@ public record TenantSettingsDto(
         String displayName,
         String tagline,
         String impressumContent,
-        String privacyPolicyContent) {}
+        String privacyPolicyContent,
+        String oidcIssuerUrl,
+        String oidcClientId,
+        String oidcClientSecret) {
+
+    /**
+     * Returns whether an OIDC client secret is configured (for UI display).
+     */
+    public boolean hasOidcClientSecret() {
+        return oidcClientSecret != null && !oidcClientSecret.isEmpty();
+    }
+}

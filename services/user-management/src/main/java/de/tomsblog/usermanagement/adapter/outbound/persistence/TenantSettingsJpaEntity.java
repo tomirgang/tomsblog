@@ -20,6 +20,7 @@ import java.util.UUID;
  *
  * @req SWR-044
  * @req SWR-045
+ * @req SWR-061
  */
 @Entity
 @Table(name = "tenant_settings")
@@ -51,6 +52,15 @@ public class TenantSettingsJpaEntity {
 
     @Column(name = "privacy_policy_content", columnDefinition = "TEXT")
     private String privacyPolicyContent;
+
+    @Column(name = "oidc_issuer_url")
+    private String oidcIssuerUrl;
+
+    @Column(name = "oidc_client_id")
+    private String oidcClientId;
+
+    @Column(name = "oidc_client_secret")
+    private String oidcClientSecret;
 
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
@@ -139,5 +149,29 @@ public class TenantSettingsJpaEntity {
 
     public void setPrivacyPolicyContent(String privacyPolicyContent) {
         this.privacyPolicyContent = privacyPolicyContent;
+    }
+
+    public String getOidcIssuerUrl() {
+        return oidcIssuerUrl;
+    }
+
+    public void setOidcIssuerUrl(String oidcIssuerUrl) {
+        this.oidcIssuerUrl = oidcIssuerUrl;
+    }
+
+    public String getOidcClientId() {
+        return oidcClientId;
+    }
+
+    public void setOidcClientId(String oidcClientId) {
+        this.oidcClientId = oidcClientId;
+    }
+
+    public String getOidcClientSecret() {
+        return oidcClientSecret;
+    }
+
+    public void setOidcClientSecret(String oidcClientSecret) {
+        this.oidcClientSecret = oidcClientSecret;
     }
 }

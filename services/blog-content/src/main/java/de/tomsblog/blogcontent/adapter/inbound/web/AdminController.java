@@ -86,7 +86,8 @@ public class AdminController {
             LOG.warn("Failed to load tenant settings for '{}'.", activeTenant, e);
             model.addAttribute(
                     "settings",
-                    new TenantSettingsDto(activeTenant, "BOTH", false, Set.of(), "Toms Blog", null, null, null));
+                    new TenantSettingsDto(
+                            activeTenant, "BOTH", false, Set.of(), "Toms Blog", null, null, null, null, null, null));
         }
         return "admin/settings";
     }
@@ -101,7 +102,10 @@ public class AdminController {
             @RequestParam String displayName,
             @RequestParam(required = false) String tagline,
             @RequestParam(required = false) String impressumContent,
-            @RequestParam(required = false) String privacyPolicyContent) {
+            @RequestParam(required = false) String privacyPolicyContent,
+            @RequestParam(required = false) String oidcIssuerUrl,
+            @RequestParam(required = false) String oidcClientId,
+            @RequestParam(required = false) String oidcClientSecret) {
         UUID activeTenant = resolveActiveTenant(tenantId, session);
         Set<String> domains = new LinkedHashSet<>();
         if (!autoApproveEmailDomains.isBlank()) {
@@ -118,7 +122,10 @@ public class AdminController {
                 displayName,
                 tagline,
                 impressumContent,
-                privacyPolicyContent);
+                privacyPolicyContent,
+                oidcIssuerUrl,
+                oidcClientId,
+                oidcClientSecret);
         return "redirect:/admin/settings";
     }
 

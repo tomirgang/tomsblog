@@ -9,6 +9,7 @@ import de.tomsblog.grpc.usermanagement.ListUsersByTenantRequest;
 import de.tomsblog.grpc.usermanagement.RegisterUserRequest;
 import de.tomsblog.grpc.usermanagement.RejectUserRequest;
 import de.tomsblog.grpc.usermanagement.SyncOidcUserRequest;
+import de.tomsblog.grpc.usermanagement.TenantSettingsResponse;
 import de.tomsblog.grpc.usermanagement.TenantSettingsServiceGrpc;
 import de.tomsblog.grpc.usermanagement.UpdateTenantSettingsRequest;
 import de.tomsblog.grpc.usermanagement.UserManagementServiceGrpc;
@@ -74,15 +75,7 @@ public class UserManagementGrpcClient implements UserManagementClient {
                 .setTenantId(tenantId.toString())
                 .build();
         var response = tenantSettingsStub.getTenantSettings(request);
-        return new TenantSettingsDto(
-                UUID.fromString(response.getTenantId()),
-                response.getLoginMode(),
-                response.getAutoApproveOidc(),
-                new HashSet<>(response.getAutoApproveEmailDomainsList()),
-                response.getDisplayName(),
-                response.getTagline().isEmpty() ? null : response.getTagline(),
-                response.getImpressumContent().isEmpty() ? null : response.getImpressumContent(),
-                response.getPrivacyPolicyContent().isEmpty() ? null : response.getPrivacyPolicyContent());
+        return toTenantSettingsDto(response);
     }
 
     @Override
@@ -125,7 +118,10 @@ public class UserManagementGrpcClient implements UserManagementClient {
             String displayName,
             String tagline,
             String impressumContent,
-            String privacyPolicyContent) {
+            String privacyPolicyContent,
+            String oidcIssuerUrl,
+            String oidcClientId,
+            String oidcClientSecret) {
         var request = UpdateTenantSettingsRequest.newBuilder()
                 .setTenantId(tenantId.toString())
                 .setLoginMode(loginMode)
@@ -135,8 +131,15 @@ public class UserManagementGrpcClient implements UserManagementClient {
                 .setTagline(tagline != null ? tagline : "")
                 .setImpressumContent(impressumContent != null ? impressumContent : "")
                 .setPrivacyPolicyContent(privacyPolicyContent != null ? privacyPolicyContent : "")
+                .setOidcIssuerUrl(oidcIssuerUrl != null ? oidcIssuerUrl : "")
+                .setOidcClientId(oidcClientId != null ? oidcClientId : "")
+                .setOidcClientSecret(oidcClientSecret != null ? oidcClientSecret : "")
                 .build();
         var response = tenantSettingsStub.updateTenantSettings(request);
+        return toTenantSettingsDto(response);
+    }
+
+    private TenantSettingsDto toTenantSettingsDto(TenantSettingsResponse response) {
         return new TenantSettingsDto(
                 UUID.fromString(response.getTenantId()),
                 response.getLoginMode(),
@@ -145,7 +148,10 @@ public class UserManagementGrpcClient implements UserManagementClient {
                 response.getDisplayName(),
                 response.getTagline().isEmpty() ? null : response.getTagline(),
                 response.getImpressumContent().isEmpty() ? null : response.getImpressumContent(),
-                response.getPrivacyPolicyContent().isEmpty() ? null : response.getPrivacyPolicyContent());
+                response.getPrivacyPolicyContent().isEmpty() ? null : response.getPrivacyPolicyContent(),
+                response.getOidcIssuerUrl().isEmpty() ? null : response.getOidcIssuerUrl(),
+                response.getOidcClientId().isEmpty() ? null : response.getOidcClientId(),
+                response.getOidcClientSecret().isEmpty() ? null : response.getOidcClientSecret());
     }
 
     @Override

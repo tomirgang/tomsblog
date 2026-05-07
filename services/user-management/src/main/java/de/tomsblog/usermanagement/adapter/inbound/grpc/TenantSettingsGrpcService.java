@@ -26,6 +26,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
  * @req SWR-050
  * @req SWR-052
  * @req SWR-053
+ * @req SWR-061
  */
 @GrpcService
 public class TenantSettingsGrpcService extends TenantSettingsServiceGrpc.TenantSettingsServiceImplBase {
@@ -64,7 +65,10 @@ public class TenantSettingsGrpcService extends TenantSettingsServiceGrpc.TenantS
                     request.getDisplayName(),
                     request.getTagline().isEmpty() ? null : request.getTagline(),
                     request.getImpressumContent().isEmpty() ? null : request.getImpressumContent(),
-                    request.getPrivacyPolicyContent().isEmpty() ? null : request.getPrivacyPolicyContent());
+                    request.getPrivacyPolicyContent().isEmpty() ? null : request.getPrivacyPolicyContent(),
+                    request.getOidcIssuerUrl().isEmpty() ? null : request.getOidcIssuerUrl(),
+                    request.getOidcClientId().isEmpty() ? null : request.getOidcClientId(),
+                    request.getOidcClientSecret().isEmpty() ? null : request.getOidcClientSecret());
             responseObserver.onNext(toResponse(settings));
             responseObserver.onCompleted();
         } catch (IllegalArgumentException e) {
@@ -96,7 +100,10 @@ public class TenantSettingsGrpcService extends TenantSettingsServiceGrpc.TenantS
                 .setTagline(settings.getTagline() != null ? settings.getTagline() : "")
                 .setImpressumContent(settings.getImpressumContent() != null ? settings.getImpressumContent() : "")
                 .setPrivacyPolicyContent(
-                        settings.getPrivacyPolicyContent() != null ? settings.getPrivacyPolicyContent() : "");
+                        settings.getPrivacyPolicyContent() != null ? settings.getPrivacyPolicyContent() : "")
+                .setOidcIssuerUrl(settings.getOidcIssuerUrl() != null ? settings.getOidcIssuerUrl() : "")
+                .setOidcClientId(settings.getOidcClientId() != null ? settings.getOidcClientId() : "")
+                .setOidcClientSecret(settings.getOidcClientSecret() != null ? settings.getOidcClientSecret() : "");
 
         settings.getAutoApproveEmailDomains().forEach(builder::addAutoApproveEmailDomains);
 

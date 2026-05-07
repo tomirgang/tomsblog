@@ -1,0 +1,28 @@
+active: true
+derived: false
+header: |
+  OIDC-Konfiguration in der Admin-Oberfläche (Thymeleaf)
+level: 62.0
+links:
+- STK047: m7NB5LwdQJQ8g51mRnMLwz2GH-8cbj1s_NCKyq2j1ho=
+- SWR061: cRwnfFtspgEnWkQms5NJy3qQTjptkn5JJGAepXQbWq4=
+normative: true
+ref: ''
+reviewed: x6fWERaK36G2zR1nPPBDl66Svtflp4fY6IYhpPWb2yM=
+text: |
+  Die bestehende Admin-Einstellungsseite (/admin/settings) wird um eine
+  OIDC-Konfigurationssektion erweitert. Die Sektion ist nur sichtbar,
+  wenn die Login-Methode OIDC oder BOTH ist.
+
+  Formularfelder:
+  - Issuer-URL (text, Pflichtfeld bei OIDC/BOTH)
+  - Client-ID (text, Pflichtfeld bei OIDC/BOTH)
+  - Client-Secret (password, optional, Platzhalter "***" wenn bereits gesetzt)
+
+  Verhalten:
+  - Beim Laden der Seite werden die bestehenden Werte angezeigt
+    (Secret maskiert als "***").
+  - Beim Speichern wird das Secret nur aktualisiert, wenn ein neuer Wert
+    eingegeben wurde (leeres Feld = bestehender Wert bleibt erhalten).
+  - Validierungsfehler (z.B. fehlende Pflichtfelder bei OIDC-Login-Modus)
+    werden als Fehlermeldung auf der Seite angezeigt.

@@ -19,6 +19,7 @@ import java.util.Set;
  * @req SWR-052
  * @req SWR-053
  * @req SWR-056
+ * @req SWR-061
  */
 public class TenantSettingsService implements TenantSettingsUseCase {
 
@@ -71,7 +72,10 @@ public class TenantSettingsService implements TenantSettingsUseCase {
             String displayName,
             String tagline,
             String impressumContent,
-            String privacyPolicyContent) {
+            String privacyPolicyContent,
+            String oidcIssuerUrl,
+            String oidcClientId,
+            String oidcClientSecret) {
         var settings = getOrCreate(tenantId);
         settings.updateLoginMode(loginMode);
         settings.updateAutoApproveOidc(autoApproveOidc);
@@ -80,10 +84,30 @@ public class TenantSettingsService implements TenantSettingsUseCase {
         settings.updateTagline(tagline);
         settings.updateImpressumContent(impressumContent);
         settings.updatePrivacyPolicyContent(privacyPolicyContent);
+        settings.updateOidcIssuerUrl(oidcIssuerUrl);
+        settings.updateOidcClientId(oidcClientId);
+        if (oidcClientSecret != null && !oidcClientSecret.isEmpty() && !"***".equals(oidcClientSecret)) {
+            settings.updateOidcClientSecret(oidcClientSecret);
+        }
+        validateOidcConfig(settings);
         TenantSettings saved = repository.save(settings);
         auditLogger.log(AuditLogEntry.create(
                 tenantId.toString(), "system", "TENANT_SETTINGS_UPDATED", "TenantSettings", tenantId.toString()));
         return saved;
+    }
+
+    private void validateOidcConfig(TenantSettings settings) {
+        if (settings.getLoginMode() == LoginMode.OIDC || settings.getLoginMode() == LoginMode.BOTH) {
+            if (settings.getOidcIssuerUrl() == null
+                    || settings.getOidcIssuerUrl().isBlank()) {
+                throw new IllegalArgumentException(
+                        "oidcIssuerUrl is required when loginMode is " + settings.getLoginMode());
+            }
+            if (settings.getOidcClientId() == null || settings.getOidcClientId().isBlank()) {
+                throw new IllegalArgumentException(
+                        "oidcClientId is required when loginMode is " + settings.getLoginMode());
+            }
+        }
     }
 
     @Override

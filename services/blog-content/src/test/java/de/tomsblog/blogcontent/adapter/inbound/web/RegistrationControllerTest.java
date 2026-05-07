@@ -50,7 +50,7 @@ class RegistrationControllerTest {
     private static final UUID TENANT_ID = UUID.randomUUID();
 
     private TenantSettingsDto settingsWithMode(String mode) {
-        return new TenantSettingsDto(TENANT_ID, mode, false, Set.of(), "Test", null, null, null);
+        return new TenantSettingsDto(TENANT_ID, mode, false, Set.of(), "Test", null, null, null, null, null, null);
     }
 
     @Nested

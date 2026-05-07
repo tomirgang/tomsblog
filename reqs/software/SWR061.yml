@@ -1,0 +1,33 @@
+active: true
+derived: false
+header: |
+  Tenant-spezifische OIDC-Provider-Konfiguration im User Management Service
+level: 61.0
+links:
+- STK033: 7mYQktnOEVEw9mLUsQPhH2EmbjDt9GA3upK94dSi0oI=
+- STK047: m7NB5LwdQJQ8g51mRnMLwz2GH-8cbj1s_NCKyq2j1ho=
+normative: true
+ref: ''
+reviewed: sj012E-PbbHRj4wv8qrLAWsufO7a5xxc58mtSYDPZqY=
+text: |
+  Der User Management Service speichert pro Tenant die OIDC-Provider-Konfiguration
+  als Teil der TenantSettings. Folgende Felder werden unterstützt:
+
+  - oidcIssuerUrl (String, optional): Issuer-URL des OIDC-Providers
+    (z.B. https://auth.example.com/application/o/myapp/)
+  - oidcClientId (String, optional): Client-ID für die OIDC-Registrierung
+  - oidcClientSecret (String, optional): Client-Secret (verschlüsselt gespeichert)
+
+  Aus der Issuer-URL werden die Standard-OIDC-Endpunkte automatisch abgeleitet
+  (Authorization, Token, UserInfo, JWKS) per OpenID Connect Discovery
+  (.well-known/openid-configuration).
+
+  Die Felder sind über die bestehende gRPC-Schnittstelle (UpdateTenantSettingsRequest/
+  TenantSettingsResponse) und den REST-API-Endpunkt abrufbar und änderbar.
+
+  Validierung:
+  - Wenn loginMode OIDC oder BOTH ist, müssen oidcIssuerUrl und oidcClientId
+    gesetzt sein.
+  - oidcClientSecret darf in Responses nicht im Klartext zurückgegeben werden
+    (maskiert als "***" wenn gesetzt, leer wenn nicht gesetzt).
+  - oidcIssuerUrl muss ein gültiges HTTPS-URL-Format haben.

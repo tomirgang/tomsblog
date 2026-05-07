@@ -93,6 +93,11 @@ message TenantSettingsResponse {
   string tagline = 6;
   string impressum_content = 7;
   string privacy_policy_content = 8;
+  string oidc_issuer_url = 9;
+  string oidc_client_id = 10;
+  // Contains the actual secret for service-to-service use (mTLS protected).
+  // The UI layer is responsible for masking before displaying.
+  string oidc_client_secret = 11;
 }
 
 message ListUsersByTenantRequest {
@@ -134,6 +139,9 @@ message UpdateTenantSettingsRequest {
   string tagline = 6;
   string impressum_content = 7;
   string privacy_policy_content = 8;
+  string oidc_issuer_url = 9;
+  string oidc_client_id = 10;
+  string oidc_client_secret = 11;
 }
 
 message ListTenantsRequest {

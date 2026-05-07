@@ -1,0 +1,28 @@
+active: true
+derived: false
+header: |
+  Dynamische OIDC-Client-Registrierung pro Tenant
+level: 63.0
+links:
+- STK047: m7NB5LwdQJQ8g51mRnMLwz2GH-8cbj1s_NCKyq2j1ho=
+- SWR061: cRwnfFtspgEnWkQms5NJy3qQTjptkn5JJGAepXQbWq4=
+normative: true
+ref: ''
+reviewed: ZOGGU4ZaZpiWOfsLLs89qRrSorGJHsH7a4xCBW5sBdk=
+text: |
+  Der Blog Content Service nutzt die tenant-spezifische OIDC-Konfiguration
+  aus den TenantSettings, um den Spring Security OAuth2 Client dynamisch
+  zu konfigurieren. Dazu wird ein ClientRegistrationRepository implementiert,
+  das die OIDC-Konfiguration pro Tenant aus dem User Management Service
+  (via gRPC) abruft und als ClientRegistration bereitstellt.
+
+  Verhalten:
+  - Bei jedem OIDC-Login-Versuch wird die aktuelle Tenant-Konfiguration
+    aus den TenantSettings geladen (mit Caching, TTL 5 Minuten).
+  - Ist keine tenant-spezifische Konfiguration vorhanden, wird die globale
+    OIDC-Konfiguration aus application.yml als Fallback verwendet.
+  - Änderungen an der OIDC-Konfiguration werden nach Ablauf des Cache-TTL
+    wirksam (kein Neustart erforderlich).
+  - Die Issuer-URL wird für OpenID Connect Discovery verwendet, um die
+    konkreten Endpunkte (Authorization, Token, UserInfo, JWKS)
+    automatisch aufzulösen.

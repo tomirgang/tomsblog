@@ -138,6 +138,9 @@ classDiagram
         -LoginMode loginMode
         -boolean autoApproveOidc
         -Set~String~ autoApproveEmailDomains
+        -String oidcIssuerUrl
+        -String oidcClientId
+        -String oidcClientSecret
     }
 
     class LoginMode {
@@ -151,8 +154,8 @@ classDiagram
 ----
 
 * `INTERNAL`: Nur formbasierter Login mit internen Accounts (Username/Passwort).
-* `OIDC`: Nur Login über den konfigurierten OIDC Provider (Authentik). Die reguläre Login-Seite zeigt nur den OIDC-Button.
-* `BOTH`: Sowohl formbasierter als auch OIDC-Login stehen zur Verfügung.
+* `OIDC`: Nur Login über den konfigurierten OIDC Provider. Die reguläre Login-Seite zeigt nur den OIDC-Button. In diesem Modus müssen `oidcIssuerUrl` und `oidcClientId` gesetzt sein.
+* `BOTH`: Sowohl formbasierter als auch OIDC-Login stehen zur Verfügung. Auch hier müssen die OIDC-Felder konfiguriert sein.
 
 Unabhängig vom LoginMode ist unter `/admin/login` ein separates formbasiertes Admin-Login-Formular verfügbar (Break-Glass-Lösung).
 Nur Benutzer mit der Rolle ADMIN können sich dort anmelden.
@@ -165,6 +168,22 @@ Neue Benutzer können optional automatisch freigegeben werden (SWR-045, STK032),
 * `autoApproveEmailDomains`: Eine Liste von E-Mail-Domains (z.B. `example.com`). Benutzer, deren E-Mail-Adresse zu einer dieser Domains gehört, erhalten direkt den Status APPROVED.
 
 Die Prüfung erfolgt beim Erstellen eines neuen UserProfile im `syncFromOidc`- bzw. `syncFromInternal`-Flow.
+
+=== OIDC-Provider-Konfiguration pro Tenant (SWR-061, STK047)
+
+Die OIDC-Provider-Konfiguration wird pro Tenant in den `TenantSettings` gespeichert (SWR-061).
+Dadurch kann jeder Tenant seinen eigenen Identity-Provider nutzen.
+Folgende Felder stehen zur Verfügung:
+
+* `oidcIssuerUrl`: Die Issuer-URL des OIDC-Providers (z.B. `https://auth.example.com/application/o/myapp/`). Aus dieser URL werden die Standard-OIDC-Endpunkte per OpenID Connect Discovery (`.well-known/openid-configuration`) automatisch abgeleitet.
+* `oidcClientId`: Die Client-ID für die OIDC-Registrierung beim Provider.
+* `oidcClientSecret`: Das Client-Secret (verschlüsselt gespeichert). In API-Responses wird das Secret maskiert als `***` zurückgegeben, wenn ein Wert gesetzt ist.
+
+Beim Aktualisieren der Tenant-Einstellungen wird das `oidcClientSecret` nur geändert, wenn ein neuer Wert übermittelt wird.
+Ein leeres oder mit `***` gefülltes Secret-Feld bedeutet, dass der bestehende Wert beibehalten wird.
+
+Wenn der `loginMode` auf `OIDC` oder `BOTH` gesetzt wird, müssen `oidcIssuerUrl` und `oidcClientId` ausgefüllt sein.
+Bei `INTERNAL` sind die OIDC-Felder optional und werden ignoriert.
 
 == Application Layer
 
@@ -288,8 +307,8 @@ Das Interface `UserProfileRepository` abstrahiert die Persistenz:
 
 Das Interface `TenantSettingsUseCase` kapselt die Verwaltung der Tenant-Einstellungen:
 
-* `getSettings(TenantId)`: Gibt die Einstellungen des Tenants zurück.
-* `updateSettings(TenantId, TenantSettings)`: Aktualisiert die Einstellungen.
+* `getSettings(TenantId)`: Gibt die Einstellungen des Tenants zurück (inklusive OIDC-Konfiguration, Secret maskiert).
+* `updateSettings(TenantId, ...)`: Aktualisiert die Einstellungen inklusive OIDC-Provider-Konfiguration. Validiert, dass bei LoginMode `OIDC` oder `BOTH` die Felder `oidcIssuerUrl` und `oidcClientId` gesetzt sind (SWR-061).
 * `listTenants()`: Gibt alle konfigurierten Tenants zurück (für SuperAdmin Tenant-Umschaltung).
 
 === Outbound Port: TenantSettingsRepository
@@ -359,6 +378,9 @@ erDiagram
         uuid tenant_id PK
         varchar login_mode
         boolean auto_approve_oidc
+        varchar oidc_issuer_url
+        varchar oidc_client_id
+        varchar oidc_client_secret
     }
 
     tenant_auto_approve_domains {
@@ -400,11 +422,48 @@ Der Blog Content Service nutzt den User Management Service für beide Login-Meth
 
 === OIDC-Login-Flow
 
-1. Nach erfolgreicher OIDC-Authentifizierung bei Authentik ruft der Blog Content Service `POST /api/users/sync` auf.
+1. Nach erfolgreicher OIDC-Authentifizierung beim konfigurierten Provider ruft der Blog Content Service `POST /api/users/sync` auf.
 2. Der User Management Service erstellt oder aktualisiert das Profil (mit Auto-Approval-Prüfung) und gibt die Rollen zurück.
 3. Der Blog Content Service mappt die Rollen auf Spring Security `GrantedAuthority`-Objekte für die Session.
 
 Dies wird über einen custom `OAuth2UserService` im Blog Content Service implementiert, der die Standard-OIDC-User-Info mit den plattformspezifischen Rollen anreichert.
+
+=== Dynamische OIDC-Client-Registrierung (SWR-063, STK047)
+
+Der Blog Content Service verwendet ein `TenantAwareClientRegistrationRepository`, das die OIDC-Konfiguration pro Tenant aus dem User Management Service (via gRPC) abruft und als Spring Security `ClientRegistration` bereitstellt (SWR-063).
+Das folgende Sequenzdiagramm zeigt den Ablauf:
+
+[mermaid]
+----
+sequenceDiagram
+    actor User as Benutzer
+    participant BCS as Blog Content Service
+    participant Cache as ClientRegistration Cache
+    participant UMS as User Management Service
+    participant IDP as OIDC Provider
+
+    User->>BCS: Klick auf OIDC-Login
+    BCS->>Cache: getClientRegistration(tenantId)
+    alt Cache-Hit (TTL 5 min)
+        Cache-->>BCS: ClientRegistration
+    else Cache-Miss
+        BCS->>UMS: gRPC: GetTenantSettings(tenantId)
+        UMS-->>BCS: TenantSettings (oidcIssuerUrl, oidcClientId, oidcClientSecret)
+        alt Tenant-Konfiguration vorhanden
+            BCS->>BCS: ClientRegistration aus Tenant-Settings erstellen
+        else Keine Tenant-Konfiguration
+            BCS->>BCS: Fallback auf globale application.yml Konfiguration
+        end
+        BCS->>Cache: put(tenantId, ClientRegistration)
+        Cache-->>BCS: ClientRegistration
+    end
+    BCS->>IDP: Authorization Request
+    IDP-->>User: Login-Seite des Providers
+----
+
+* Die `ClientRegistration` wird mit OpenID Connect Discovery aufgelöst: Die Issuer-URL wird um `/.well-known/openid-configuration` ergänzt, um Authorization-, Token-, UserInfo- und JWKS-Endpunkte automatisch zu ermitteln.
+* Der Cache hat ein TTL von 5 Minuten. Änderungen an der OIDC-Konfiguration werden nach Ablauf des TTL wirksam (kein Neustart erforderlich, STK047).
+* Wenn keine tenant-spezifische Konfiguration existiert (alle OIDC-Felder leer), wird die globale Konfiguration aus `application.yml` als Fallback verwendet (Abwärtskompatibilität).
 
 === Interner Login-Flow
 
@@ -521,4 +580,8 @@ Der Blog Content Service stellt eine Registrierungsseite unter `/register` berei
 | STK046 | Lokale Benutzerregistrierung | SWR-059 (REST-API), SWR-060 (Thymeleaf-Seite)
 | SWR-059 | REST-API für lokale Benutzerregistrierung | REST: POST /api/users/register, gRPC: RegisterUser, Application: UserProfileService
 | SWR-060 | Thymeleaf-Registrierungsseite | Blog Content Service: /register Controller, Thymeleaf-Formular
+| STK047 | OIDC-Konfiguration pro Tenant über Admin-Interface | SWR-061 (Datenhaltung), SWR-062 (Admin-UI), SWR-063 (dynamische Registrierung)
+| SWR-061 | Tenant-spezifische OIDC-Provider-Konfiguration | Domain: TenantSettings (oidcIssuerUrl, oidcClientId, oidcClientSecret), gRPC, JPA
+| SWR-062 | OIDC-Konfiguration in der Admin-Oberfläche | Thymeleaf: admin/settings.html OIDC-Sektion
+| SWR-063 | Dynamische OIDC-Client-Registrierung pro Tenant | Blog Content Service: TenantAwareClientRegistrationRepository, Cache (TTL 5 min)
 |===

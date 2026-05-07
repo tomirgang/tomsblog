@@ -111,7 +111,17 @@ class TenantSettingsGrpcServiceTest {
     @DisplayName("SWR-052: updateTenantSettings updates and returns settings via gRPC")
     void updateTenantSettings_updatesAndReturns() {
         var settings = TenantSettings.reconstitute(
-                TenantId.of(TENANT_ID), LoginMode.OIDC, true, Set.of("test.com"), "My Blog", "A tagline", null, null);
+                TenantId.of(TENANT_ID),
+                LoginMode.OIDC,
+                true,
+                Set.of("test.com"),
+                "My Blog",
+                "A tagline",
+                null,
+                null,
+                null,
+                null,
+                null);
         when(tenantSettingsUseCase.updateSettings(
                         eq(TenantId.of(TENANT_ID)),
                         eq(LoginMode.OIDC),
@@ -119,6 +129,9 @@ class TenantSettingsGrpcServiceTest {
                         eq(Set.of("test.com")),
                         eq("My Blog"),
                         eq("A tagline"),
+                        eq(null),
+                        eq(null),
+                        eq(null),
                         eq(null),
                         eq(null)))
                 .thenReturn(settings);
@@ -188,7 +201,9 @@ class TenantSettingsGrpcServiceTest {
     @DisplayName("SWR-052: updateTenantSettings treats empty tagline as null")
     void updateTenantSettings_emptyTaglineAsNull() {
         var settings = TenantSettings.create(TenantId.of(TENANT_ID));
-        when(tenantSettingsUseCase.updateSettings(any(), any(), eq(false), any(), any(), eq(null), eq(null), eq(null)))
+        when(tenantSettingsUseCase.updateSettings(
+                        any(), any(), eq(false), any(), any(), eq(null), eq(null), eq(null), eq(null), eq(null),
+                        eq(null)))
                 .thenReturn(settings);
 
         var request = UpdateTenantSettingsRequest.newBuilder()
@@ -221,10 +236,10 @@ class TenantSettingsGrpcServiceTest {
     @DisplayName("SWR-053: listTenants returns all tenants via gRPC")
     void listTenants_returnsAll() {
         var s1 = TenantSettings.reconstitute(
-                TenantId.of(TENANT_ID), LoginMode.BOTH, false, Set.of(), "Blog A", null, null, null);
+                TenantId.of(TENANT_ID), LoginMode.BOTH, false, Set.of(), "Blog A", null, null, null, null, null, null);
         var id2 = UUID.fromString("00000000-0000-0000-0000-000000000002");
         var s2 = TenantSettings.reconstitute(
-                TenantId.of(id2), LoginMode.OIDC, false, Set.of(), "Blog B", "tagline", null, null);
+                TenantId.of(id2), LoginMode.OIDC, false, Set.of(), "Blog B", "tagline", null, null, null, null, null);
         when(tenantSettingsUseCase.listAllTenants()).thenReturn(List.of(s1, s2));
 
         var request = ListTenantsRequest.newBuilder().build();
@@ -287,9 +302,22 @@ class TenantSettingsGrpcServiceTest {
                 "Blog",
                 null,
                 "<p>Impressum</p>",
-                "<p>Privacy</p>");
+                "<p>Privacy</p>",
+                null,
+                null,
+                null);
         when(tenantSettingsUseCase.updateSettings(
-                        any(), any(), eq(false), any(), any(), eq(null), eq("<p>Impressum</p>"), eq("<p>Privacy</p>")))
+                        any(),
+                        any(),
+                        eq(false),
+                        any(),
+                        any(),
+                        eq(null),
+                        eq("<p>Impressum</p>"),
+                        eq("<p>Privacy</p>"),
+                        eq(null),
+                        eq(null),
+                        eq(null)))
                 .thenReturn(settings);
 
         var request = UpdateTenantSettingsRequest.newBuilder()
@@ -332,7 +360,10 @@ class TenantSettingsGrpcServiceTest {
                 "Blog",
                 null,
                 "<p>My Impressum</p>",
-                "<p>My Privacy</p>");
+                "<p>My Privacy</p>",
+                null,
+                null,
+                null);
         when(tenantSettingsUseCase.getSettings(TenantId.of(TENANT_ID))).thenReturn(settings);
 
         var request = GetTenantSettingsRequest.newBuilder()
@@ -357,5 +388,65 @@ class TenantSettingsGrpcServiceTest {
 
         assertThat(result.get().getImpressumContent()).isEqualTo("<p>My Impressum</p>");
         assertThat(result.get().getPrivacyPolicyContent()).isEqualTo("<p>My Privacy</p>");
+    }
+
+    @Test
+    @DisplayName("SWR-061: updateTenantSettings passes OIDC fields and maps response")
+    void updateTenantSettings_withOidcFields() {
+        var settings = TenantSettings.reconstitute(
+                TenantId.of(TENANT_ID),
+                LoginMode.OIDC,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                "https://auth.example.com",
+                "client-123",
+                "secret-456");
+        when(tenantSettingsUseCase.updateSettings(
+                        any(),
+                        any(),
+                        eq(false),
+                        any(),
+                        any(),
+                        eq(null),
+                        eq(null),
+                        eq(null),
+                        eq("https://auth.example.com"),
+                        eq("client-123"),
+                        eq("secret-456")))
+                .thenReturn(settings);
+
+        var request = UpdateTenantSettingsRequest.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .setLoginMode("OIDC")
+                .setDisplayName("Blog")
+                .setOidcIssuerUrl("https://auth.example.com")
+                .setOidcClientId("client-123")
+                .setOidcClientSecret("secret-456")
+                .build();
+
+        var result = new AtomicReference<TenantSettingsResponse>();
+        StreamObserver<TenantSettingsResponse> observer = new StreamObserver<>() {
+            @Override
+            public void onNext(TenantSettingsResponse value) {
+                result.set(value);
+            }
+
+            @Override
+            public void onError(Throwable t) {}
+
+            @Override
+            public void onCompleted() {}
+        };
+
+        grpcService.updateTenantSettings(request, observer);
+
+        assertThat(result.get()).isNotNull();
+        assertThat(result.get().getOidcIssuerUrl()).isEqualTo("https://auth.example.com");
+        assertThat(result.get().getOidcClientId()).isEqualTo("client-123");
+        assertThat(result.get().getOidcClientSecret()).isEqualTo("secret-456");
     }
 }

@@ -1,6 +1,7 @@
 package de.tomsblog.usermanagement.application.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -46,7 +47,17 @@ class TenantSettingsServiceTest {
         @DisplayName("SWR-044: returns existing settings when found")
         void returnsExistingSettings() {
             var settings = TenantSettings.reconstitute(
-                    TENANT_ID, LoginMode.OIDC, true, Set.of("test.com"), "Toms Blog", null, null, null);
+                    TENANT_ID,
+                    LoginMode.OIDC,
+                    true,
+                    Set.of("test.com"),
+                    "Toms Blog",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
             when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
 
             var result = service.getSettings(TENANT_ID);
@@ -143,7 +154,17 @@ class TenantSettingsServiceTest {
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
             var result = service.updateSettings(
-                    TENANT_ID, LoginMode.OIDC, true, Set.of("test.com"), "My Blog", "A tagline", null, null);
+                    TENANT_ID,
+                    LoginMode.OIDC,
+                    true,
+                    Set.of("test.com"),
+                    "My Blog",
+                    "A tagline",
+                    null,
+                    null,
+                    "https://auth.example.com",
+                    "my-client-id",
+                    "my-secret");
 
             assertThat(result.getLoginMode()).isEqualTo(LoginMode.OIDC);
             assertThat(result.isAutoApproveOidc()).isTrue();
@@ -160,12 +181,98 @@ class TenantSettingsServiceTest {
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
             var result = service.updateSettings(
-                    TENANT_ID, LoginMode.INTERNAL, false, Set.of(), "New Blog", null, null, null);
+                    TENANT_ID, LoginMode.INTERNAL, false, Set.of(), "New Blog", null, null, null, null, null, null);
 
             assertThat(result.getLoginMode()).isEqualTo(LoginMode.INTERNAL);
             assertThat(result.getDisplayName()).isEqualTo("New Blog");
             assertThat(result.getTagline()).isNull();
             verify(repository, times(2)).save(any(TenantSettings.class));
+        }
+
+        @Test
+        @DisplayName("SWR-061: preserves existing secret when input is masked")
+        void preservesSecretWhenMasked() {
+            var settings = TenantSettings.create(TENANT_ID);
+            settings.updateOidcClientSecret("existing-secret");
+            settings.updateOidcIssuerUrl("https://auth.example.com");
+            settings.updateOidcClientId("client-id");
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            var result = service.updateSettings(
+                    TENANT_ID,
+                    LoginMode.OIDC,
+                    false,
+                    Set.of(),
+                    "Blog",
+                    null,
+                    null,
+                    null,
+                    "https://auth.example.com",
+                    "client-id",
+                    "***");
+
+            assertThat(result.getOidcClientSecret()).isEqualTo("existing-secret");
+        }
+
+        @Test
+        @DisplayName("SWR-061: preserves existing secret when input is empty")
+        void preservesSecretWhenEmpty() {
+            var settings = TenantSettings.create(TENANT_ID);
+            settings.updateOidcClientSecret("existing-secret");
+            settings.updateOidcIssuerUrl("https://auth.example.com");
+            settings.updateOidcClientId("client-id");
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            var result = service.updateSettings(
+                    TENANT_ID,
+                    LoginMode.OIDC,
+                    false,
+                    Set.of(),
+                    "Blog",
+                    null,
+                    null,
+                    null,
+                    "https://auth.example.com",
+                    "client-id",
+                    "");
+
+            assertThat(result.getOidcClientSecret()).isEqualTo("existing-secret");
+        }
+
+        @Test
+        @DisplayName("SWR-061: validates OIDC config for BOTH mode")
+        void validatesOidcForBothMode() {
+            var settings = TenantSettings.create(TENANT_ID);
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+
+            assertThatThrownBy(() -> service.updateSettings(
+                            TENANT_ID, LoginMode.BOTH, false, Set.of(), "Blog", null, null, null, null, null, null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("oidcIssuerUrl is required");
+        }
+
+        @Test
+        @DisplayName("SWR-061: validates clientId for OIDC mode")
+        void validatesClientIdForOidcMode() {
+            var settings = TenantSettings.create(TENANT_ID);
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+
+            assertThatThrownBy(() -> service.updateSettings(
+                            TENANT_ID,
+                            LoginMode.OIDC,
+                            false,
+                            Set.of(),
+                            "Blog",
+                            null,
+                            null,
+                            null,
+                            "https://auth.example.com",
+                            null,
+                            null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("oidcClientId is required");
         }
     }
 

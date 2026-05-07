@@ -16,7 +16,17 @@ class TenantSettingsMapperTest {
     void toEntityMaps() {
         var tenantId = TenantId.generate();
         var settings = TenantSettings.reconstitute(
-                tenantId, LoginMode.OIDC, true, Set.of("example.com", "test.org"), "Toms Blog", null, null, null);
+                tenantId,
+                LoginMode.OIDC,
+                true,
+                Set.of("example.com", "test.org"),
+                "Toms Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
 
         var entity = TenantSettingsMapper.toEntity(settings);
 
@@ -49,7 +59,17 @@ class TenantSettingsMapperTest {
     void roundtripPreservesFields() {
         var tenantId = TenantId.generate();
         var original = TenantSettings.reconstitute(
-                tenantId, LoginMode.BOTH, true, Set.of("a.com", "b.com"), "Toms Blog", null, null, null);
+                tenantId,
+                LoginMode.BOTH,
+                true,
+                Set.of("a.com", "b.com"),
+                "Toms Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
 
         var entity = TenantSettingsMapper.toEntity(original);
         var restored = TenantSettingsMapper.toDomain(entity);
@@ -65,7 +85,7 @@ class TenantSettingsMapperTest {
     void toEntityMapsBranding() {
         var tenantId = TenantId.generate();
         var settings = TenantSettings.reconstitute(
-                tenantId, LoginMode.BOTH, false, Set.of(), "My Blog", "A tagline", null, null);
+                tenantId, LoginMode.BOTH, false, Set.of(), "My Blog", "A tagline", null, null, null, null, null);
 
         var entity = TenantSettingsMapper.toEntity(settings);
 
@@ -94,7 +114,8 @@ class TenantSettingsMapperTest {
     @DisplayName("SWR-050: toEntity defaults displayName when null")
     void toEntityDefaultsDisplayName() {
         var tenantId = TenantId.generate();
-        var settings = TenantSettings.reconstitute(tenantId, LoginMode.BOTH, false, Set.of(), null, null, null, null);
+        var settings = TenantSettings.reconstitute(
+                tenantId, LoginMode.BOTH, false, Set.of(), null, null, null, null, null, null, null);
 
         var entity = TenantSettingsMapper.toEntity(settings);
 
@@ -106,7 +127,7 @@ class TenantSettingsMapperTest {
     void roundtripPreservesBranding() {
         var tenantId = TenantId.generate();
         var original = TenantSettings.reconstitute(
-                tenantId, LoginMode.BOTH, false, Set.of(), "My Blog", "My tagline", null, null);
+                tenantId, LoginMode.BOTH, false, Set.of(), "My Blog", "My tagline", null, null, null, null, null);
 
         var entity = TenantSettingsMapper.toEntity(original);
         var restored = TenantSettingsMapper.toDomain(entity);

@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  OIDC-Konfiguration pro Tenant über Admin-Interface
+level: 47.0
+links: []
+normative: true
+ref: ''
+reviewed: m7NB5LwdQJQ8g51mRnMLwz2GH-8cbj1s_NCKyq2j1ho=
+text: |
+  Administratoren sollen die OIDC-Provider-Konfiguration (Client-ID,
+  Client-Secret, Issuer-URL) pro Tenant über die Admin-Oberfläche
+  verwalten können. Die bestehende globale OIDC-Konfiguration über
+  Umgebungsvariablen dient als Fallback, wenn keine tenant-spezifische
+  Konfiguration hinterlegt ist. Eine Änderung der OIDC-Konfiguration
+  darf keinen Neustart der Anwendung erfordern.

@@ -22,6 +22,9 @@ public final class TenantSettingsMapper {
         entity.setTagline(settings.getTagline());
         entity.setImpressumContent(settings.getImpressumContent());
         entity.setPrivacyPolicyContent(settings.getPrivacyPolicyContent());
+        entity.setOidcIssuerUrl(settings.getOidcIssuerUrl());
+        entity.setOidcClientId(settings.getOidcClientId());
+        entity.setOidcClientSecret(settings.getOidcClientSecret());
         return entity;
     }
 
@@ -34,6 +37,9 @@ public final class TenantSettingsMapper {
                 entity.getDisplayName(),
                 entity.getTagline(),
                 entity.getImpressumContent(),
-                entity.getPrivacyPolicyContent());
+                entity.getPrivacyPolicyContent(),
+                entity.getOidcIssuerUrl(),
+                entity.getOidcClientId(),
+                entity.getOidcClientSecret());
     }
 }

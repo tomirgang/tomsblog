@@ -63,7 +63,10 @@ public interface UserManagementClient {
             String displayName,
             String tagline,
             String impressumContent,
-            String privacyPolicyContent);
+            String privacyPolicyContent,
+            String oidcIssuerUrl,
+            String oidcClientId,
+            String oidcClientSecret);
 
     /**
      * Lists all tenants.

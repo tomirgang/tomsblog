@@ -14,6 +14,7 @@ import java.util.Set;
  * @req SWR-050
  * @req SWR-052
  * @req SWR-053
+ * @req SWR-061
  */
 public interface TenantSettingsUseCase {
 
@@ -31,7 +32,10 @@ public interface TenantSettingsUseCase {
             String displayName,
             String tagline,
             String impressumContent,
-            String privacyPolicyContent);
+            String privacyPolicyContent,
+            String oidcIssuerUrl,
+            String oidcClientId,
+            String oidcClientSecret);
 
     List<TenantSettings> listAllTenants();
 }

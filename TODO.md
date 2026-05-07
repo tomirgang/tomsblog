@@ -102,8 +102,9 @@
 - [x] Fix: Table Rendering
 - [x] Fix: Ändern zwischen Markdown und HTML
 - [x] Fix: Post Navigation sollen direkte Links sein
-- [ ] Benutzer Registrierung
-- [ ] OIDC Config pro Tennant über Admin Interface
+- [x] Benutzer Registrierung
+- [x] OIDC Config pro Tennant über Admin Interface
+- [ ] Bessere Architektur für User UI
 - [ ] Der Superadmin soll neue Tenants über die Admin UI anlegen können.
 - [ ] Vorschau für Posts
 - [ ] Kafka-Cluster-Konfiguration definieren
