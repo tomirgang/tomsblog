@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-05-07
+
 ### Added
 
 - ADR-0032: Eigenständige UI für Authentifizierung und Benutzerverwaltung im User Management Service
