@@ -105,6 +105,7 @@
 - [x] Benutzer Registrierung
 - [x] OIDC Config pro Tennant über Admin Interface
 - [ ] Bessere Architektur für User UI
+- [ ] Tenant Service
 - [ ] Der Superadmin soll neue Tenants über die Admin UI anlegen können.
 - [ ] Vorschau für Posts
 - [ ] Kafka-Cluster-Konfiguration definieren
