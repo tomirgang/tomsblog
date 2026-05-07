@@ -1,7 +1,10 @@
-package de.tomsblog.blogcontent.adapter.inbound.web;
+package de.tomsblog.usermanagement.adapter.inbound.web;
 
-import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
-import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserProfileDto;
+import de.tomsblog.shared.tenant.TenantId;
+import de.tomsblog.usermanagement.application.port.inbound.SyncOidcUserCommand;
+import de.tomsblog.usermanagement.application.port.inbound.UserProfileUseCase;
+import de.tomsblog.usermanagement.domain.model.Role;
+import de.tomsblog.usermanagement.domain.model.UserProfile;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -18,8 +21,10 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 /**
- * Custom OIDC user service that synchronizes the user profile with the User Management Service
- * and enriches the Spring Security principal with platform roles.
+ * Custom OIDC user service that synchronizes the user profile locally (ADR-0032).
+ *
+ * <p>Calls the local {@link UserProfileUseCase#syncFromOidc} directly instead of going through
+ * gRPC. This is possible because the auth UI now lives in the User Management Service.
  *
  * @req SWR-016
  * @req SWR-043
@@ -29,11 +34,11 @@ public class SyncingOidcUserService extends OidcUserService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SyncingOidcUserService.class);
 
-    private final UserManagementClient userManagementClient;
+    private final UserProfileUseCase userProfileUseCase;
     private final UUID defaultTenantId;
 
-    public SyncingOidcUserService(UserManagementClient userManagementClient, UUID defaultTenantId) {
-        this.userManagementClient = userManagementClient;
+    public SyncingOidcUserService(UserProfileUseCase userProfileUseCase, UUID defaultTenantId) {
+        this.userProfileUseCase = userProfileUseCase;
         this.defaultTenantId = defaultTenantId;
     }
 
@@ -53,8 +58,8 @@ public class SyncingOidcUserService extends OidcUserService {
                 oidcUser.getClaimAsStringList("groups") != null ? oidcUser.getClaimAsStringList("groups") : List.of();
 
         try {
-            UserProfileDto profile =
-                    userManagementClient.syncOidcUser(subject, email, displayName, groups, defaultTenantId);
+            UserProfile profile = userProfileUseCase.syncFromOidc(
+                    new SyncOidcUserCommand(subject, email, displayName, groups, new TenantId(defaultTenantId)));
             Set<GrantedAuthority> authorities = mapAuthorities(profile, oidcUser.getAuthorities());
             return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
         } catch (Exception e) {
@@ -64,11 +69,11 @@ public class SyncingOidcUserService extends OidcUserService {
     }
 
     private Set<GrantedAuthority> mapAuthorities(
-            UserProfileDto profile, Collection<? extends GrantedAuthority> defaultAuthorities) {
+            UserProfile profile, Collection<? extends GrantedAuthority> defaultAuthorities) {
         Set<GrantedAuthority> authorities = new HashSet<>(defaultAuthorities);
-        if (profile.globalRoles() != null) {
-            for (String role : profile.globalRoles()) {
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        if (profile.getGlobalRoles() != null) {
+            for (Role role : profile.getGlobalRoles()) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
             }
         }
         return authorities;

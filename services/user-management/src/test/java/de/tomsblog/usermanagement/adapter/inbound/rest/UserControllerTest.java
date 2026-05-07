@@ -21,15 +21,22 @@ import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(UserController.class)
-@Import(SecurityConfiguration.class)
-@org.springframework.test.context.TestPropertySource(properties = "service.api-key=test-api-key")
+@Import(UserControllerTest.TestSecurityConfig.class)
+@org.springframework.test.context.TestPropertySource(properties = {"service.api-key=test-api-key"})
 class UserControllerTest {
 
     private static final UUID TENANT_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
@@ -43,6 +50,26 @@ class UserControllerTest {
 
     @MockitoBean
     private UserProfileUseCase userProfileUseCase;
+
+    @TestConfiguration
+    static class TestSecurityConfig {
+        @Value("${service.api-key:#{null}}")
+        private String apiKey;
+
+        @Bean
+        SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+            http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                    .exceptionHandling(ex ->
+                            ex.authenticationEntryPoint((request, response, authException) -> response.sendError(401)))
+                    .csrf(csrf -> csrf.disable())
+                    .formLogin(form -> form.disable())
+                    .httpBasic(basic -> basic.disable())
+                    .addFilterBefore(
+                            new ApiKeyAuthenticationFilter(apiKey), UsernamePasswordAuthenticationFilter.class);
+            return http.build();
+        }
+    }
 
     @Test
     @DisplayName("SWR-043: POST /api/users/sync/oidc creates/syncs OIDC user")

@@ -13,7 +13,7 @@
             <p role="alert"><strong th:text="${error}">Fehlermeldung</strong></p>
         </article>
 
-        <form th:action="@{/register}" method="post">
+        <form th:action="@{/auth/register}" method="post">
             <label for="username">Benutzername *</label>
             <input type="text" id="username" name="username"
                    th:value="${username}" autocomplete="username" required>
@@ -37,7 +37,7 @@
             <button type="submit">Registrieren</button>
         </form>
 
-        <p>Bereits registriert? <a th:href="@{/login}">Anmelden</a></p>
+        <p>Bereits registriert? <a th:href="@{/auth/login}">Anmelden</a></p>
     </section>
 </body>
 </html>

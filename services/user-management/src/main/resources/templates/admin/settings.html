@@ -9,32 +9,32 @@
 <body>
     <section layout:fragment="content">
         <h2>Tenant-Einstellungen</h2>
-        <form th:action="@{/admin/settings}" method="post">
+        <form th:action="@{/auth/admin/settings}" method="post">
             <fieldset>
                 <legend>Branding</legend>
                 <label for="displayName">Blog-Name</label>
                 <input type="text" id="displayName" name="displayName"
-                       th:value="${settings.displayName()}" required>
+                       th:value="${settings.displayName}" required>
                 <label for="tagline">Tagline (optional)</label>
                 <input type="text" id="tagline" name="tagline"
-                       th:value="${settings.tagline()}">
+                       th:value="${settings.tagline}">
             </fieldset>
 
             <fieldset>
                 <legend>Login-Methode</legend>
                 <label>
                     <input type="radio" name="loginMode" value="INTERNAL"
-                           th:checked="${settings.loginMode() == 'INTERNAL'}">
+                           th:checked="${settings.loginMode.name() == 'INTERNAL'}">
                     Intern (formbasiert)
                 </label>
                 <label>
                     <input type="radio" name="loginMode" value="OIDC"
-                           th:checked="${settings.loginMode() == 'OIDC'}">
+                           th:checked="${settings.loginMode.name() == 'OIDC'}">
                     OIDC (Authentik)
                 </label>
                 <label>
                     <input type="radio" name="loginMode" value="BOTH"
-                           th:checked="${settings.loginMode() == 'BOTH'}">
+                           th:checked="${settings.loginMode.name() == 'BOTH'}">
                     Beides
                 </label>
             </fieldset>
@@ -43,12 +43,12 @@
                 <legend>Auto-Approval</legend>
                 <label>
                     <input type="checkbox" name="autoApproveOidc" value="true"
-                           th:checked="${settings.autoApproveOidc()}">
+                           th:checked="${settings.autoApproveOidc}">
                     OIDC-Benutzer automatisch freigeben
                 </label>
                 <label for="autoApproveEmailDomains">E-Mail-Domains (kommagetrennt)</label>
                 <input type="text" id="autoApproveEmailDomains" name="autoApproveEmailDomains"
-                       th:value="${settings.autoApproveEmailDomains() != null ? #strings.listJoin(settings.autoApproveEmailDomains(), ', ') : ''}"
+                       th:value="${settings.autoApproveEmailDomains != null ? #strings.listJoin(settings.autoApproveEmailDomains, ', ') : ''}"
                        placeholder="example.com, company.org">
             </fieldset>
 
@@ -56,32 +56,32 @@
                 <legend>Rechtliche Seiten</legend>
                 <label for="impressumContent">Impressum (HTML)</label>
                 <textarea id="impressumContent" name="impressumContent" rows="8"
-                          th:text="${settings.impressumContent()}"></textarea>
+                          th:text="${settings.impressumContent}"></textarea>
                 <label for="privacyPolicyContent">Datenschutzerklärung (HTML)</label>
                 <textarea id="privacyPolicyContent" name="privacyPolicyContent" rows="8"
-                          th:text="${settings.privacyPolicyContent()}"></textarea>
+                          th:text="${settings.privacyPolicyContent}"></textarea>
                 <small>Leer lassen für Standard-Platzhalter.</small>
             </fieldset>
 
-            <fieldset th:if="${settings.loginMode() == 'OIDC' or settings.loginMode() == 'BOTH'}">
+            <fieldset th:if="${settings.loginMode.name() == 'OIDC' or settings.loginMode.name() == 'BOTH'}">
                 <legend>OIDC-Provider-Konfiguration</legend>
                 <label for="oidcIssuerUrl">Issuer-URL</label>
                 <input type="url" id="oidcIssuerUrl" name="oidcIssuerUrl"
-                       th:value="${settings.oidcIssuerUrl()}"
+                       th:value="${settings.oidcIssuerUrl}"
                        placeholder="https://auth.example.com/application/o/myapp/" required>
                 <label for="oidcClientId">Client-ID</label>
                 <input type="text" id="oidcClientId" name="oidcClientId"
-                       th:value="${settings.oidcClientId()}" required>
+                       th:value="${settings.oidcClientId}" required>
                 <label for="oidcClientSecret">Client-Secret</label>
                 <input type="password" id="oidcClientSecret" name="oidcClientSecret"
-                       th:placeholder="${settings.hasOidcClientSecret() ? '***' : ''}">
+                       th:placeholder="${settings.oidcClientSecret != null ? '***' : ''}">
                 <small>Leer lassen, um den bestehenden Wert beizubehalten.</small>
             </fieldset>
 
             <button type="submit">Speichern</button>
         </form>
         <nav>
-            <a th:href="@{/admin/users}">Benutzerverwaltung</a>
+            <a th:href="@{/auth/admin/users}">Benutzerverwaltung</a>
         </nav>
     </section>
 </body>

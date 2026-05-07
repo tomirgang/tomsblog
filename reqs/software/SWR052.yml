@@ -8,12 +8,11 @@ links:
 - STK042: Ly_Lu-LYuD8bSFA7q-4nICdioXGenKbrOZaMKzL6E9U=
 normative: true
 ref: ''
-reviewed: yFHRqo8SA73uDBL0GpafMIxzAf8Ru4CccCpVUs4DBJ0=
+reviewed: czJT2r07vyYdKi3CK-mmIgQGQnrtGMtYZAvr_oX5Ds4=
 text: |
-  Unter /admin/settings wird eine Thymeleaf-Seite bereitgestellt, die
-  die Tenant-Einstellungen (Login-Mode, Auto-Approval-Regeln,
-  Branding mit displayName und tagline) anzeigt und bearbeitbar macht.
-  Zugriff nur für Benutzer mit Rolle ADMIN oder SUPERADMIN. Änderungen
-  werden über gRPC an den User-Management-Service propagiert. Der
-  User-Management-Service stellt dafür einen UpdateTenantSettings-RPC
-  bereit.
+  Der User-Management-Service stellt unter /auth/admin/settings eine
+  Thymeleaf-Seite bereit (ADR-0032), die die Tenant-Einstellungen
+  (Login-Mode, Auto-Approval-Regeln, Branding mit displayName und
+  tagline) anzeigt und bearbeitbar macht. Zugriff nur fuer Benutzer
+  mit Rolle ADMIN oder SUPERADMIN. Der Controller greift direkt auf
+  den lokalen TenantSettingsUseCase zu (kein gRPC-Umweg).

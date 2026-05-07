@@ -31,7 +31,7 @@
             <div th:if="${loginMode == 'BOTH'}">
                 <details>
                     <summary>Mit Benutzername und Passwort anmelden</summary>
-                    <form th:action="@{/login}" method="post">
+                    <form th:action="@{/auth/login}" method="post">
                         <label for="username">Benutzername</label>
                         <input type="text" id="username" name="username" autocomplete="username" required>
 
@@ -44,7 +44,7 @@
             </div>
             <div th:if="${loginMode == 'INTERNAL'}">
                 <h2>Anmelden</h2>
-                <form th:action="@{/login}" method="post">
+                <form th:action="@{/auth/login}" method="post">
                     <label for="username">Benutzername</label>
                     <input type="text" id="username" name="username" autocomplete="username" required>
 
@@ -58,7 +58,7 @@
 
         <!-- Registration link: shown for INTERNAL and BOTH modes (SWR-060) -->
         <p th:if="${loginMode == 'INTERNAL' or loginMode == 'BOTH'}">
-            Noch kein Konto? <a th:href="@{/register}">Registrieren</a>
+            Noch kein Konto? <a th:href="@{/auth/register}">Registrieren</a>
         </p>
     </section>
 </body>

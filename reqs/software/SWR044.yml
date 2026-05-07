@@ -7,20 +7,24 @@ links:
 - STK031: uZDNIW31JtuE8T5VVwHmiyiqjlwra-UNugogGKaPFs0=
 normative: true
 ref: ''
-reviewed: Uhuh9OFEkoDViHjmOTuyS-6OQmmFqmKIioIzohjrzOs=
+reviewed: GiPWuuN6DffWhRbbh2Vny6WwnYB5ZqazC-jb18rpEPQ=
 text: |
   Der User-Management-Service verwaltet pro Tenant die konfigurierte
-  Login-Methode (SWR-043):
+  Login-Methode (SWR-043) und stellt die zugehoerige Login-UI selbst
+  bereit (ADR-0032):
   - LoginMode Enum: INTERNAL (nur formbasiert), OIDC (nur OIDC-Provider),
     BOTH (formbasiert und OIDC).
-  - Die Login-Methode wird als Tenant-Einstellung gespeichert und ueber
-    die Tenant-Konfiguration abgefragt.
-  - Wenn LoginMode OIDC ist, zeigt die regulaere Login-Seite nur den
+  - Die Login-Methode wird als Tenant-Einstellung gespeichert und
+    direkt beim Rendern der Login-Seite ausgewertet (kein gRPC-Umweg).
+  - Die Login-Seite wird unter /auth/login vom User-Management-Service
+    bereitgestellt. Der Blog Content Service leitet unauthentifizierte
+    Benutzer per Redirect dorthin weiter.
+  - Wenn LoginMode OIDC ist, zeigt die Login-Seite nur den
     OIDC-Login-Button.
-  - Unabhaengig vom LoginMode steht unter /admin/login ein separates
-    formbasiertes Login-Formular bereit (Break-Glass-Loesung).
+  - Unabhaengig vom LoginMode steht unter /auth/admin/login ein
+    separates formbasiertes Login-Formular bereit (Break-Glass-Loesung).
     Nur der SUPERADMIN kann sich dort anmelden. Die Credentials werden
     ueber die Infrastruktur gesetzt (Umgebungsvariable/Secret).
-  - Der Blog Content Service wertet den LoginMode beim Rendern der
+  - Der User-Management-Service wertet den LoginMode beim Rendern der
     Login-Seite aus und zeigt entsprechend Formular, OIDC-Button oder
     beides an.

@@ -9,11 +9,11 @@ links:
 - STK041: 67LAqX2g83LVMlj9mRyFbLqex3iF1nTiUYScdzlyfg0=
 normative: true
 ref: ''
-reviewed: fL5VmaX68r5keEFvo3dVSMy_HRe4-oYLlTJf2odTMec=
+reviewed: QCmYPPJe6iINiql1vH_vNu0xw7VqC5hCQkJELCTQnZ4=
 text: |
-  Unter /admin/users wird eine Thymeleaf-Seite bereitgestellt, die alle
-  Benutzer des aktuellen Tenants auflistet (Name, E-Mail, Rolle,
-  Approval-Status). Verfügbare Aktionen: Approve, Reject, Rolle ändern.
-  Zugriff nur für Benutzer mit Rolle ADMIN oder SUPERADMIN. Daten
-  werden über gRPC vom User-Management-Service geladen. Der User-
-  Management-Service stellt dafür einen ListUsersByTenant-RPC bereit.
+  Der User-Management-Service stellt unter /auth/admin/users eine
+  Thymeleaf-Seite bereit (ADR-0032), die alle Benutzer des aktuellen
+  Tenants auflistet (Name, E-Mail, Rolle, Approval-Status). Verfuegbare
+  Aktionen: Approve, Reject, Rolle aendern. Zugriff nur fuer Benutzer
+  mit Rolle ADMIN oder SUPERADMIN. Der Controller greift direkt auf
+  den lokalen UserProfileUseCase zu (kein gRPC-Umweg).

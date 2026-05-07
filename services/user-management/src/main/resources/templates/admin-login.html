@@ -13,7 +13,7 @@
             <p role="alert"><strong>Anmeldung fehlgeschlagen.</strong> Benutzername oder Passwort falsch.</p>
         </article>
 
-        <form th:action="@{/admin/login}" method="post">
+        <form th:action="@{/auth/admin/login}" method="post">
             <label for="username">Benutzername</label>
             <input type="text" id="username" name="username" autocomplete="username" required autofocus>
 

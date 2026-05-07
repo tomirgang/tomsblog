@@ -8,21 +8,24 @@ links:
 - SWR061: cRwnfFtspgEnWkQms5NJy3qQTjptkn5JJGAepXQbWq4=
 normative: true
 ref: ''
-reviewed: ZOGGU4ZaZpiWOfsLLs89qRrSorGJHsH7a4xCBW5sBdk=
+reviewed: -JdzEtBqw7cyBAAhzxGY6ONVE9kfYRkIbagChpCzIJQ=
 text: |
-  Der Blog Content Service nutzt die tenant-spezifische OIDC-Konfiguration
-  aus den TenantSettings, um den Spring Security OAuth2 Client dynamisch
-  zu konfigurieren. Dazu wird ein ClientRegistrationRepository implementiert,
-  das die OIDC-Konfiguration pro Tenant aus dem User Management Service
-  (via gRPC) abruft und als ClientRegistration bereitstellt.
+  Der User-Management-Service nutzt die tenant-spezifische
+  OIDC-Konfiguration aus den eigenen TenantSettings, um den Spring
+  Security OAuth2 Client dynamisch zu konfigurieren (ADR-0032). Dazu
+  wird ein ClientRegistrationRepository implementiert, das die
+  OIDC-Konfiguration pro Tenant direkt aus der lokalen Datenbank laedt.
 
   Verhalten:
   - Bei jedem OIDC-Login-Versuch wird die aktuelle Tenant-Konfiguration
     aus den TenantSettings geladen (mit Caching, TTL 5 Minuten).
-  - Ist keine tenant-spezifische Konfiguration vorhanden, wird die globale
-    OIDC-Konfiguration aus application.yml als Fallback verwendet.
-  - Änderungen an der OIDC-Konfiguration werden nach Ablauf des Cache-TTL
-    wirksam (kein Neustart erforderlich).
-  - Die Issuer-URL wird für OpenID Connect Discovery verwendet, um die
-    konkreten Endpunkte (Authorization, Token, UserInfo, JWKS)
-    automatisch aufzulösen.
+  - Ist keine tenant-spezifische Konfiguration vorhanden, wird die
+    globale OIDC-Konfiguration aus application.yml als Fallback
+    verwendet.
+  - Aenderungen an der OIDC-Konfiguration werden nach Ablauf des
+    Cache-TTL wirksam (kein Neustart erforderlich).
+  - Die Issuer-URL wird fuer OpenID Connect Discovery verwendet, um
+    die konkreten Endpunkte (Authorization, Token, UserInfo, JWKS)
+    automatisch aufzuloesen.
+  - Da der OIDC-Flow vollstaendig im User-Management-Service ablaeuft,
+    entfaellt der gRPC-Umweg ueber den Blog Content Service.

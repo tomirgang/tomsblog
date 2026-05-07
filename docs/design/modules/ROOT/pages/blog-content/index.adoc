@@ -875,9 +875,9 @@ Für die horizontale Skalierbarkeit des Blog Content Service (STK-045) werden HT
 
 Die HTTP-Session speichert folgende Daten:
 
-* Spring Security Authentication (OIDC oder formbasierter Login)
+* Spring Security Authentication (OIDC oder formbasierter Login, erstellt vom User Management Service per ADR-0032)
 * Benutzerrollen als Spring Security Authorities
-* SuperAdmin Tenant-Auswahl (SWR-053)
+* SuperAdmin Tenant-Auswahl (SWR-053, verwaltet vom User Management Service)
 
 === Technische Umsetzung
 
@@ -949,7 +949,7 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWR-025 | Thymeleaf Layout-Grundgerüst | BlogViewController, layout/default.html, PicoCSS, custom.css
 | SWR-026 | Öffentliche Blog-Ansicht (Post-Liste, Einzelansicht) | BlogViewController.listPosts/showPost, posts/list.html, posts/show.html, PostRepository.findPublishedByTenantId/findBySlugAndTenantId
 | SWR-027 | Thymeleaf Post-Formular | BlogViewController.newPostForm/createPost/editPostForm/updatePost, posts/form.html
-| SWR-028 | Admin-Login zum Schutz der Schreiboperationen | SecurityConfiguration, login.html, HTTP Basic für REST API
+| SWR-028 | Admin-Login zum Schutz der Schreiboperationen | SecurityConfiguration (nur Session-Validierung), Redirect auf /auth/login (ADR-0032)
 | SWR-033 | Landing Page zeigt maximal drei neueste Posts | BlogViewController.index(), PostUseCase.listRecentPublishedPosts(), PostRepository.findRecentPublishedByTenantId()
 | SWR-034 | Versionsnummer im Footer | VersionModelAdvice, BuildProperties, fragments/footer.html
 | SWR-035 | HTML- und Markdown-Unterstützung mit Rendering | ContentType, MarkdownRenderer, FlexmarkMarkdownRenderer, BlogViewController.renderContent(), posts/show.html (highlight.js, mermaid.js)
@@ -966,20 +966,22 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWR-042 | Featured Posts auf der Landing Page | BlogViewController.index(), PostUseCase.listFeaturedPosts(), PostRepository.findFeaturedByTenantId(), posts/list.html
 | SWA-028 | Featured-Post-Abfrage im Persistence Adapter | PostRepository.findFeaturedByTenantId(), JPA Query mit Datumsfilterung
 | SWR-050 | Tenant-Branding im Header | TenantBrandingAdvice, UserManagementClient.getTenantSettings(), fragments/header.html
-| SWR-051 | Admin-UI Benutzerliste und -verwaltung | AdminController.listUsers/approveUser/rejectUser/changeRole, admin/users.html
-| SWR-052 | Admin-UI Tenant-Einstellungen | AdminController.showSettings/updateSettings, admin/settings.html
-| SWR-053 | SuperAdmin Tenant-Umschaltung | AdminController.switchTenant, TenantBrandingAdvice.tenants(), DefaultTenantFilter Session-Override
+| SWR-051 | Admin-UI Benutzerliste und -verwaltung | Verschoben zum User Management Service (ADR-0032): /auth/admin/users
+| SWR-052 | Admin-UI Tenant-Einstellungen | Verschoben zum User Management Service (ADR-0032): /auth/admin/settings
+| SWR-053 | SuperAdmin Tenant-Umschaltung | Verschoben zum User Management Service (ADR-0032): /auth/admin/switch-tenant
 | SWR-056 | Audit-Logging für alle relevanten Aktionen | JpaAuditLogger, AuditLogEntry, PostService/TagService/TranslationService Audit-Aufrufe, V8 Migration
 | SWA-031 | Audit-Logging-Architektur | AuditLogger (Port im Shared Kernel), JpaAuditLogger (Outbound Adapter), audit_log-Tabelle
 | SWR-057 | Externer Session-Store | Spring Session Data Redis, application.yml (spring.session.store-type: redis)
 | SWR-058 | Mehrere Replicas | Deployment mit replicas: 2, Rolling-Update-Strategie
+| SWR-064 | Shared Redis Session | Redis-Session wird vom User Management Service erstellt und vom Blog Content Service gelesen (ADR-0032)
 | SWA-032 | Redis als externer Session-Store | Spring Session Auto-Configuration, Redis-Verbindung in application-k8s.yml
 |===
 
 == Sicherheit: Admin-Login (SWR-028)
 
-Der Blog Content Service schützt alle Schreiboperationen über Spring Security mit einem einfachen formbasierten Login.
-Dies ist eine MVP-Lösung für Phase 2. In Phase 4 wird sie durch den Custom Identity Provider (SWR-016, SWA-010) ersetzt.
+NOTE: Mit ADR-0032 wird die Login-UI (Formulare, OIDC-Flows) vollständig in den User Management Service verschoben. Der Blog Content Service validiert nur noch bestehende Redis-Sessions (SWR-064) und leitet unauthentifizierte Benutzer per Redirect auf `/auth/login` weiter.
+
+Der Blog Content Service schützt alle Schreiboperationen über Spring Security.
 
 === Schutzkonzept
 
@@ -1080,6 +1082,8 @@ blog:
 Das Admin-Passwort ist eine Pflichtangabe ohne Default-Wert. Der Service bricht den Start ab, wenn `BLOG_ADMIN_PASSWORD` nicht gesetzt oder leer ist. In der lokalen Entwicklung muss die Variable explizit gesetzt werden (z.B. über `.env` oder die IDE-Konfiguration).
 
 == Admin-Oberfläche (SWR-051, SWR-052, SWR-053)
+
+NOTE: Mit ADR-0032 werden die Admin-Seiten für Benutzerverwaltung (SWR-051), Tenant-Einstellungen (SWR-052) und Tenant-Umschaltung (SWR-053) vollständig in den User Management Service verschoben. Die nachfolgende Dokumentation beschreibt den aktuellen Zustand vor der Migration. Die Zielarchitektur ist im link:../user-management/index.adoc[User Management Service Detail Design] dokumentiert.
 
 Die Admin-Oberfläche stellt Thymeleaf-basierte Verwaltungsseiten für Benutzerverwaltung und Tenant-Einstellungen bereit.
 Sie ist nur für Benutzer mit den Rollen ADMIN oder SUPERADMIN zugänglich.

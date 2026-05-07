@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- ADR-0032: Eigenständige UI für Authentifizierung und Benutzerverwaltung im User Management Service
+- SWR-064: Shared Redis Session zwischen Blog Content und User Management Service
 - OIDC-Konfiguration pro Tenant über Admin-Interface (STK-047, SWR-061)
 - Admin-UI-Felder für OIDC Issuer URL, Client ID und Client Secret in den Tenant-Einstellungen
 - gRPC-Felder oidcIssuerUrl, oidcClientId, oidcClientSecret im TenantSettings-Protokoll
@@ -22,6 +24,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - Erfolgsseite nach erfolgreicher Registrierung mit Hinweis auf Admin-Freigabe
 - Doorstop-Anforderungen: STK-046, SWR-059, SWR-060
 - Software Detail Design Dokumentation für lokale Registrierung
+- User Management Service: SecurityConfiguration mit 4 Filter Chains (API, Admin, Auth UI, Default)
+- User Management Service: AuthLoginController, AuthRegistrationController, AuthAdminController für Thymeleaf-UI
+- User Management Service: SyncingOidcUserService für lokale OIDC-Benutzersynchronisation (ohne gRPC-Umweg)
+- User Management Service: LoginRateLimitFilter zum Schutz gegen Brute-Force-Angriffe auf Login-Endpunkte
+- User Management Service: DefaultTenantFilter für automatische X-Tenant-Id-Injektion
+- User Management Service: AdminProperties für Break-Glass-SUPERADMIN-Konfiguration
+- User Management Service: Thymeleaf-Templates (login, admin-login, register, registration-success, admin/users, admin/settings)
+- Blog Content Service: Benutzerdefinierter AuthenticationEntryPoint (401 für API, Redirect für Web)
+
+### Changed
+
+- SWR-028, SWR-044, SWR-051, SWR-052, SWR-053, SWR-060, SWR-063: Zuständigkeit für Login-, Registrierungs- und Admin-UI vom Blog Content Service zum User Management Service verschoben (ADR-0032)
+- User Management Service Detail Design: Neuer Abschnitt "Inbound: Thymeleaf Web-UI" mit Login-, Registrierungs- und Admin-Seiten
+- Blog Content Service Detail Design: Anforderungsabdeckung und Sicherheitssektion aktualisiert (ADR-0032 Verweise)
+
+### Removed
+
+- Blog Content Service: LoginController, RegistrationController, AdminController (verschoben zum User Management Service)
+- Blog Content Service: SyncingOidcUserService, TenantAwareClientRegistrationRepository, LoginRateLimitFilter, AdminProperties
+- Blog Content Service: Alle Auth-Templates (login, register, admin-login, registration-success, admin/users, admin/settings)
+- Blog Content Service: OIDC-Konfiguration und Break-Glass-Admin-Properties (jetzt im User Management Service)
 
 ## [0.8.9] - 2026-05-07
 

@@ -8,13 +8,14 @@ links:
 - STK005: v8g_bEs32zgnwkF20CyrITDlYxQIKJo8g9z7cl9fpnA=
 normative: true
 ref: ''
-reviewed: 5cZG-LyH6vntiat1nf--7nXlzqee0PUuAckJTGHrrRs=
+reviewed: HfGpyeWxdc3qPyD2BOebuSTgyvvAFkBe64_EX5WwqLs=
 text: |
-  Der SuperAdmin kann über einen Tenant-Selector in der Admin-Navigation
-  den aktiven Tenant wechseln. Die Auswahl wird in der HTTP-Session
-  gespeichert und überschreibt den Standard-Tenant für alle nachfolgenden
-  Requests. Reguläre Admins sind an ihren Tenant gebunden und sehen
-  keinen Selector. Der Blog-Content-Service ruft die Liste aller Tenants
-  über gRPC vom User-Management-Service ab. POST /admin/switch-tenant
-  speichert die Auswahl in der Session und leitet auf die aktuelle Seite
-  zurück.
+  Der SuperAdmin kann ueber einen Tenant-Selector in der Admin-Navigation
+  des User-Management-Service den aktiven Tenant wechseln (ADR-0032).
+  Die Auswahl wird in der HTTP-Session (Redis, SWR-064) gespeichert
+  und ueberschreibt den Standard-Tenant fuer alle nachfolgenden Requests.
+  Regulaere Admins sind an ihren Tenant gebunden und sehen keinen
+  Selector. Der Controller greift direkt auf den lokalen
+  TenantSettingsUseCase zu (kein gRPC-Umweg). POST /auth/admin/switch-tenant
+  speichert die Auswahl in der Session und leitet auf die aktuelle
+  Seite zurueck.

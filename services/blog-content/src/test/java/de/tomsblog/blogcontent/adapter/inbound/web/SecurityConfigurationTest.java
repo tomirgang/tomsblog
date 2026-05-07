@@ -2,7 +2,6 @@ package de.tomsblog.blogcontent.adapter.inbound.web;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -27,13 +26,16 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * Tests verifying the security configuration for the blog content service.
+ * Tests verifying the security configuration for the blog content service (ADR-0032).
+ *
+ * <p>Authentication is now handled by the User Management Service. This service reads
+ * shared Redis sessions. Unauthenticated users are redirected to /auth/login.
  *
  * @req SWR-016
  * @req SWR-028
- * @req SWR-044
+ * @req SWR-064
  */
-@WebMvcTest({BlogViewController.class, LoginController.class, RegistrationController.class})
+@WebMvcTest(BlogViewController.class)
 @Import(SecurityConfiguration.class)
 class SecurityConfigurationTest {
 
@@ -81,69 +83,26 @@ class SecurityConfigurationTest {
 
             mockMvc.perform(get("/posts/some-slug")).andExpect(status().isOk());
         }
-
-        @Test
-        @DisplayName("GET /login is publicly accessible")
-        void login_isPublic() throws Exception {
-            mockMvc.perform(get("/login")).andExpect(status().isOk());
-        }
-
-        @Test
-        @DisplayName("SWR-060: GET /register is publicly accessible")
-        void register_isPublic() throws Exception {
-            when(userManagementClient.getTenantSettings(any())).thenReturn(null);
-
-            mockMvc.perform(get("/register")
-                            .header("X-Tenant-Id", java.util.UUID.randomUUID().toString()))
-                    .andExpect(status().isOk());
-        }
     }
 
     @Nested
-    @DisplayName("SWR-028: Protected web endpoints require authentication")
+    @DisplayName("SWR-028: Protected web endpoints redirect to auth service")
     class ProtectedWebEndpoints {
 
         @Test
-        @DisplayName("GET /posts/new redirects to login when not authenticated")
-        void newPost_redirectsToLogin() throws Exception {
+        @DisplayName("GET /posts/new redirects to /auth/login when not authenticated")
+        void newPost_redirectsToAuthLogin() throws Exception {
             mockMvc.perform(get("/posts/new").accept("text/html"))
                     .andExpect(status().is3xxRedirection())
-                    .andExpect(redirectedUrlPattern("**/login"));
+                    .andExpect(redirectedUrl("/auth/login"));
         }
 
         @Test
-        @DisplayName("GET /posts/{id}/edit redirects to login when not authenticated")
-        void editPost_redirectsToLogin() throws Exception {
-            mockMvc.perform(get("/posts/" + java.util.UUID.randomUUID() + "/edit")
-                            .accept("text/html"))
+        @DisplayName("GET /posts/{id}/edit redirects to /auth/login when not authenticated")
+        void editPost_redirectsToAuthLogin() throws Exception {
+            mockMvc.perform(get("/posts/" + UUID.randomUUID() + "/edit").accept("text/html"))
                     .andExpect(status().is3xxRedirection())
-                    .andExpect(redirectedUrlPattern("**/login"));
-        }
-
-        @Test
-        @DisplayName("POST /posts is denied when not authenticated (CSRF blocks)")
-        void createPost_redirectsToLogin() throws Exception {
-            mockMvc.perform(post("/posts").accept("text/html")).andExpect(status().isForbidden());
-        }
-
-        @Test
-        @DisplayName("POST /posts/{id} redirects to login when not authenticated")
-        void updatePost_redirectsToLogin() throws Exception {
-            mockMvc.perform(post("/posts/" + java.util.UUID.randomUUID())
-                            .with(csrf())
-                            .accept("text/html"))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(redirectedUrlPattern("**/login"));
-        }
-
-        @Test
-        @DisplayName("POST /posts/{id}/publish redirects to login when not authenticated")
-        void publishPost_redirectsToLogin() throws Exception {
-            mockMvc.perform(post("/posts/" + java.util.UUID.randomUUID() + "/publish")
-                            .with(csrf())
-                            .accept("text/html"))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(redirectedUrlPattern("**/login"));
+                    .andExpect(redirectedUrl("/auth/login"));
         }
     }
 
@@ -164,15 +123,6 @@ class SecurityConfigurationTest {
     class ProtectedApiEndpoints {
 
         @Test
-        @DisplayName("POST /api/posts returns 401 when not authenticated")
-        void createPostApi_returns401() throws Exception {
-            mockMvc.perform(post("/api/posts")
-                            .contentType("application/json")
-                            .content("{\"title\":\"test\",\"content\":\"test\"}"))
-                    .andExpect(status().isUnauthorized());
-        }
-
-        @Test
         @DisplayName("GET /api/posts returns 401 when not authenticated")
         void listPostsApi_returns401() throws Exception {
             mockMvc.perform(get("/api/posts")).andExpect(status().isUnauthorized());
@@ -181,18 +131,7 @@ class SecurityConfigurationTest {
         @Test
         @DisplayName("DELETE /api/posts/{id} returns 401 when not authenticated")
         void deletePostApi_returns401() throws Exception {
-            mockMvc.perform(delete("/api/posts/" + java.util.UUID.randomUUID())).andExpect(status().isUnauthorized());
-        }
-    }
-
-    @Nested
-    @DisplayName("SWR-044: Admin login endpoint")
-    class AdminLoginEndpoint {
-
-        @Test
-        @DisplayName("GET /admin/login is publicly accessible")
-        void adminLogin_isPublic() throws Exception {
-            mockMvc.perform(get("/admin/login")).andExpect(status().isOk());
+            mockMvc.perform(delete("/api/posts/" + UUID.randomUUID())).andExpect(status().isUnauthorized());
         }
     }
 }

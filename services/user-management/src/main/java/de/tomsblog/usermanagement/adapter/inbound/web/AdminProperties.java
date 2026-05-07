@@ -1,9 +1,9 @@
-package de.tomsblog.blogcontent.adapter.inbound.web;
+package de.tomsblog.usermanagement.adapter.inbound.web;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties for the admin user credentials.
+ * Configuration properties for the break-glass SUPERADMIN credentials (ADR-0032).
  *
  * <p>The password must be configured via the BLOG_ADMIN_PASSWORD environment variable. The
  * application will fail to start if no password is provided.

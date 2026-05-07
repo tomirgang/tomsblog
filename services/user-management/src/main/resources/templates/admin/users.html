@@ -21,29 +21,29 @@
             </thead>
             <tbody>
                 <tr th:each="user : ${users}">
-                    <td th:text="${user.displayName() ?: user.username() ?: user.oidcSubject()}">Name</td>
-                    <td th:text="${user.email()}">email@example.com</td>
+                    <td th:text="${user.displayName ?: user.username ?: user.oidcSubject}">Name</td>
+                    <td th:text="${user.email}">email@example.com</td>
                     <td>
-                        <span th:each="role : ${user.globalRoles()}" th:text="${role}" class="badge"></span>
+                        <span th:each="role : ${user.globalRoles}" th:text="${role}" class="badge"></span>
                     </td>
                     <td>
-                        <span th:text="${user.approvalStatus()}"
-                              th:classappend="${user.approvalStatus() == 'PENDING'} ? 'contrast' : (${user.approvalStatus() == 'APPROVED'} ? '' : 'secondary')">
+                        <span th:text="${user.approvalStatus}"
+                              th:classappend="${user.approvalStatus.name() == 'PENDING'} ? 'contrast' : (${user.approvalStatus.name() == 'APPROVED'} ? '' : 'secondary')">
                         </span>
                     </td>
                     <td>
                         <div style="display:flex;gap:0.5rem;align-items:center">
-                            <form th:if="${user.approvalStatus() == 'PENDING'}"
-                                  th:action="@{/admin/users/{id}/approve(id=${user.oidcSubject() ?: user.username()})}"
+                            <form th:if="${user.approvalStatus.name() == 'PENDING'}"
+                                  th:action="@{/auth/admin/users/{id}/approve(id=${user.oidcSubject ?: user.username})}"
                                   method="post" style="margin:0">
                                 <button type="submit" class="outline" style="padding:0.25rem 0.5rem;margin:0">Approve</button>
                             </form>
-                            <form th:if="${user.approvalStatus() == 'PENDING'}"
-                                  th:action="@{/admin/users/{id}/reject(id=${user.oidcSubject() ?: user.username()})}"
+                            <form th:if="${user.approvalStatus.name() == 'PENDING'}"
+                                  th:action="@{/auth/admin/users/{id}/reject(id=${user.oidcSubject ?: user.username})}"
                                   method="post" style="margin:0">
                                 <button type="submit" class="outline secondary" style="padding:0.25rem 0.5rem;margin:0">Reject</button>
                             </form>
-                            <form th:action="@{/admin/users/{id}/role(id=${user.oidcSubject() ?: user.username()})}"
+                            <form th:action="@{/auth/admin/users/{id}/role(id=${user.oidcSubject ?: user.username})}"
                                   method="post" style="margin:0;display:flex;gap:0.25rem;align-items:center">
                                 <select name="role" style="padding:0.25rem;margin:0">
                                     <option value="READER">READER</option>
@@ -60,7 +60,7 @@
         </table>
         <p th:if="${#lists.isEmpty(users)}">Keine Benutzer in diesem Tenant.</p>
         <nav>
-            <a th:href="@{/admin/settings}">Tenant-Einstellungen</a>
+            <a th:href="@{/auth/admin/settings}">Tenant-Einstellungen</a>
         </nav>
     </section>
 </body>

@@ -416,21 +416,96 @@ Er wird als `@Component` registriert und in die Application Services (`UserProfi
 
 Auditierte Aktionen umfassen Benutzer-Synchronisation (OIDC und intern), Freigabe/Ablehnung, Rollenzuweisung, Tenant-Mitgliedschaftsverwaltung und Änderungen an Tenant-Einstellungen.
 
-== Integration mit Blog Content Service
+== Inbound: Thymeleaf Web-UI (ADR-0032)
 
-Der Blog Content Service nutzt den User Management Service für beide Login-Methoden (SWR-016, SWR-044):
+Der User Management Service stellt eine eigene Thymeleaf-basierte Web-Oberfläche für Authentifizierung und Benutzerverwaltung bereit (ADR-0032).
+Damit entfällt die bisherige Kopplung, bei der der Blog Content Service diese UI hostete und per gRPC die benötigten Daten abfragte.
+Alle Auth- und Admin-Seiten laufen nun unter dem Pfadpräfix `/auth/` und werden über das API Gateway geroutet (ADR-0017).
 
-=== OIDC-Login-Flow
+=== Login-Seite (/auth/login, SWR-044)
 
-1. Nach erfolgreicher OIDC-Authentifizierung beim konfigurierten Provider ruft der Blog Content Service `POST /api/users/sync` auf.
-2. Der User Management Service erstellt oder aktualisiert das Profil (mit Auto-Approval-Prüfung) und gibt die Rollen zurück.
-3. Der Blog Content Service mappt die Rollen auf Spring Security `GrantedAuthority`-Objekte für die Session.
+Die Login-Seite wertet den `LoginMode` des aktuellen Tenants direkt aus der lokalen Datenbank aus:
 
-Dies wird über einen custom `OAuth2UserService` im Blog Content Service implementiert, der die Standard-OIDC-User-Info mit den plattformspezifischen Rollen anreichert.
+* `INTERNAL`: Zeigt nur das Username/Passwort-Formular.
+* `OIDC`: Zeigt nur den OIDC-Login-Button (Redirect zum konfigurierten Provider).
+* `BOTH`: Zeigt sowohl Formular als auch OIDC-Button.
 
-=== Dynamische OIDC-Client-Registrierung (SWR-063, STK047)
+Da der User Management Service die TenantSettings lokal hält, entfällt der bisherige gRPC-Roundtrip für jede Login-Seite.
 
-Der Blog Content Service verwendet ein `TenantAwareClientRegistrationRepository`, das die OIDC-Konfiguration pro Tenant aus dem User Management Service (via gRPC) abruft und als Spring Security `ClientRegistration` bereitstellt (SWR-063).
+=== Break-Glass Admin-Login (/auth/admin/login, SWR-028)
+
+Unter `/auth/admin/login` steht ein separates formbasiertes Login-Formular bereit.
+Nur der SUPERADMIN kann sich dort anmelden, unabhängig vom LoginMode.
+Die Credentials werden über die Infrastruktur (Umgebungsvariable/Secret) gesetzt.
+
+=== Registrierungsseite (/auth/register, SWR-060)
+
+Der User Management Service stellt eine Registrierungsseite unter `/auth/register` bereit:
+
+* Das Formular enthält Felder für Username, E-Mail, Anzeigename, Passwort und Passwort-Bestätigung.
+* Die Seite ist nur erreichbar, wenn der LoginMode des Tenants `INTERNAL` oder `BOTH` ist. Bei `OIDC` wird auf `/auth/login` weitergeleitet.
+* Die Login-Seite zeigt einen Link „Registrieren" an, wenn lokale Registrierung erlaubt ist.
+* Bei Validierungsfehlern wird das Formular mit Fehlermeldungen und den eingegebenen Werten (außer Passwort) erneut angezeigt.
+* Nach erfolgreicher Registrierung wird eine Bestätigungsseite angezeigt (STK028).
+* Der Controller greift direkt auf den lokalen `UserProfileUseCase` zu (kein gRPC-Umweg).
+
+Das folgende Sequenzdiagramm zeigt den Registrierungsablauf:
+
+[mermaid]
+----
+sequenceDiagram
+    actor User as Besucher
+    participant UMS as User Management Service
+    participant DB as PostgreSQL
+
+    User->>UMS: GET /auth/register
+    UMS->>DB: TenantSettings laden (loginMode)
+    alt loginMode == OIDC
+        UMS-->>User: Redirect /auth/login
+    else loginMode == INTERNAL oder BOTH
+        UMS-->>User: Registrierungsformular
+    end
+
+    User->>UMS: POST /auth/register (username, email, displayName, password, passwordConfirm)
+    UMS->>UMS: Validierung (Pflichtfelder, Passwort-Match, Passwort-Länge >= 12)
+    alt Validierungsfehler
+        UMS-->>User: Formular mit Fehlermeldungen
+    else Validierung OK
+        UMS->>UMS: Prüfe Eindeutigkeit (username, email)
+        alt Duplikat
+            UMS-->>User: Formular mit Fehlermeldung
+        else Eindeutig
+            UMS->>UMS: Auto-Approval prüfen (SWR-045)
+            UMS->>DB: INSERT user_profiles
+            UMS->>DB: INSERT audit_log (USER_REGISTERED)
+            UMS-->>User: Bestätigungsseite
+        end
+    end
+----
+
+=== Admin-UI: Benutzerverwaltung (/auth/admin/users, SWR-051)
+
+Unter `/auth/admin/users` wird eine Thymeleaf-Seite bereitgestellt, die alle Benutzer des aktuellen Tenants auflistet (Name, E-Mail, Rolle, Approval-Status).
+Verfügbare Aktionen: Approve, Reject, Rolle ändern.
+Zugriff nur für Benutzer mit Rolle ADMIN oder SUPERADMIN.
+Der Controller greift direkt auf den lokalen `UserProfileUseCase` zu.
+
+=== Admin-UI: Tenant-Einstellungen (/auth/admin/settings, SWR-052)
+
+Unter `/auth/admin/settings` wird eine Thymeleaf-Seite bereitgestellt, die die Tenant-Einstellungen (Login-Mode, Auto-Approval-Regeln, Branding, OIDC-Konfiguration) anzeigt und bearbeitbar macht.
+Zugriff nur für Benutzer mit Rolle ADMIN oder SUPERADMIN.
+Der Controller greift direkt auf den lokalen `TenantSettingsUseCase` zu.
+
+=== SuperAdmin Tenant-Umschaltung (SWR-053)
+
+Der SuperAdmin kann über einen Tenant-Selector in der Admin-Navigation den aktiven Tenant wechseln.
+Die Auswahl wird in der Redis-Session gespeichert (SWR-064).
+POST `/auth/admin/switch-tenant` speichert die Auswahl und leitet auf die aktuelle Seite zurück.
+
+=== OIDC-Login-Flow (SWR-016, SWR-063)
+
+Der OIDC-Flow läuft vollständig im User Management Service ab.
+Das `TenantAwareClientRegistrationRepository` lädt die OIDC-Konfiguration pro Tenant direkt aus der lokalen Datenbank (SWR-063, kein gRPC-Umweg).
 Das folgende Sequenzdiagramm zeigt den Ablauf:
 
 [mermaid]
@@ -438,91 +513,76 @@ Das folgende Sequenzdiagramm zeigt den Ablauf:
 sequenceDiagram
     actor User as Benutzer
     participant BCS as Blog Content Service
-    participant Cache as ClientRegistration Cache
     participant UMS as User Management Service
+    participant Cache as ClientRegistration Cache
     participant IDP as OIDC Provider
+    participant Redis as Redis Session Store
 
-    User->>BCS: Klick auf OIDC-Login
-    BCS->>Cache: getClientRegistration(tenantId)
+    User->>BCS: GET /posts/new (geschützt)
+    BCS->>Redis: Session prüfen
+    Redis-->>BCS: Keine Session
+    BCS-->>User: Redirect /auth/login
+
+    User->>UMS: GET /auth/login
+    UMS->>UMS: LoginMode laden (lokal)
+    UMS-->>User: Login-Seite mit OIDC-Button
+
+    User->>UMS: Klick auf OIDC-Login
+    UMS->>Cache: getClientRegistration(tenantId)
     alt Cache-Hit (TTL 5 min)
-        Cache-->>BCS: ClientRegistration
+        Cache-->>UMS: ClientRegistration
     else Cache-Miss
-        BCS->>UMS: gRPC: GetTenantSettings(tenantId)
-        UMS-->>BCS: TenantSettings (oidcIssuerUrl, oidcClientId, oidcClientSecret)
-        alt Tenant-Konfiguration vorhanden
-            BCS->>BCS: ClientRegistration aus Tenant-Settings erstellen
-        else Keine Tenant-Konfiguration
-            BCS->>BCS: Fallback auf globale application.yml Konfiguration
-        end
-        BCS->>Cache: put(tenantId, ClientRegistration)
-        Cache-->>BCS: ClientRegistration
+        UMS->>UMS: TenantSettings laden (lokal)
+        UMS->>Cache: put(tenantId, ClientRegistration)
     end
-    BCS->>IDP: Authorization Request
+    UMS->>IDP: Authorization Request
     IDP-->>User: Login-Seite des Providers
-----
 
-* Die `ClientRegistration` wird mit OpenID Connect Discovery aufgelöst: Die Issuer-URL wird um `/.well-known/openid-configuration` ergänzt, um Authorization-, Token-, UserInfo- und JWKS-Endpunkte automatisch zu ermitteln.
-* Der Cache hat ein TTL von 5 Minuten. Änderungen an der OIDC-Konfiguration werden nach Ablauf des TTL wirksam (kein Neustart erforderlich, STK047).
-* Wenn keine tenant-spezifische Konfiguration existiert (alle OIDC-Felder leer), wird die globale Konfiguration aus `application.yml` als Fallback verwendet (Abwärtskompatibilität).
+    User->>IDP: Credentials eingeben
+    IDP-->>UMS: Authorization Code
+    UMS->>IDP: Token Exchange
+    IDP-->>UMS: ID Token + Access Token
+    UMS->>UMS: syncFromOidc (Profil + Rollen)
+    UMS->>Redis: Session erstellen (Authorities)
+    UMS-->>User: Redirect /posts/new
+
+    User->>BCS: GET /posts/new
+    BCS->>Redis: Session lesen
+    Redis-->>BCS: Authorities (ROLE_AUTHOR)
+    BCS-->>User: Post-Formular
+----
 
 === Interner Login-Flow
 
-1. Der Benutzer gibt Username/Passwort auf der Login-Seite oder dem Break-Glass Admin-Formular (`/admin/login`) ein.
-2. Spring Security authentifiziert gegen den User Management Service (custom `UserDetailsService` mit REST-Call zu `GET /api/users/by-username/{username}`).
-3. Der Blog Content Service erstellt eine Session mit den Rollen des Benutzers.
+1. Der Benutzer gibt Username/Passwort auf `/auth/login` oder `/auth/admin/login` ein.
+2. Spring Security authentifiziert direkt gegen die lokale Datenbank.
+3. Der User Management Service erstellt eine Session in Redis mit den Rollen des Benutzers.
+4. Redirect zurück zum Blog Content Service, der die Redis-Session liest.
 
-=== Login-Seite (Thymeleaf)
+== Integration mit Blog Content Service
 
-Die Login-Seite wertet den `LoginMode` des aktuellen Tenants aus:
+Nach ADR-0032 ist die Integration zwischen den Services deutlich vereinfacht.
+Der Blog Content Service führt keine eigenen Login-Flows mehr durch, sondern nutzt die vom User Management Service in Redis erstellten Sessions (SWR-064).
 
-* `INTERNAL`: Zeigt nur das Username/Passwort-Formular.
-* `OIDC`: Zeigt nur den OIDC-Login-Button (Redirect zu Authentik).
-* `BOTH`: Zeigt sowohl Formular als auch OIDC-Button.
+=== Session-basierte Integration (SWR-064)
 
-Das Break-Glass Admin-Formular unter `/admin/login` zeigt immer ein Username/Passwort-Formular, unabhängig vom LoginMode. Nur der SUPERADMIN kann sich dort anmelden. Die Credentials werden über die Infrastruktur (Umgebungsvariable/Secret) gesetzt und beim Service-Start automatisch angelegt oder aktualisiert.
+Beide Services verwenden Spring Session Data Redis mit identischer Konfiguration:
 
-=== Lokale Benutzerregistrierung (SWR-059, SWR-060, STK046)
+* Gleicher Redis-Namespace und Cookie-Name
+* Gleiche Serialisierung (Spring Security `SecurityContext`)
+* Gleiche Session-TTL und Cookie-Konfiguration (Domain, Path, Secure, HttpOnly)
 
-Besucher können sich ohne externen Identity-Provider mit E-Mail-Adresse und Passwort auf der Plattform registrieren.
-Die Registrierung ist nur verfügbar, wenn der LoginMode des Tenants `INTERNAL` oder `BOTH` ist (SWR-044).
-Das folgende Sequenzdiagramm zeigt den Registrierungsablauf:
+Der Blog Content Service liest die bestehende Session aus Redis und nutzt die enthaltenen `GrantedAuthority`-Objekte für die Zugriffskontrolle.
+Unauthentifizierte Benutzer werden per Redirect auf `/auth/login` weitergeleitet.
 
-[mermaid]
-----
-sequenceDiagram
-    actor User as Besucher
-    participant BCS as Blog Content Service
-    participant UMS as User Management Service
-    participant DB as PostgreSQL
+=== gRPC-API (verbleibende Nutzung)
 
-    User->>BCS: GET /register
-    BCS->>UMS: gRPC: GetTenantSettings
-    UMS-->>BCS: TenantSettings (loginMode)
-    alt loginMode == OIDC
-        BCS-->>User: Redirect /login
-    else loginMode == INTERNAL oder BOTH
-        BCS-->>User: Registrierungsformular
-    end
+Die gRPC-API wird weiterhin für Operationen benötigt, die der Blog Content Service zur Laufzeit braucht:
 
-    User->>BCS: POST /register (username, email, displayName, password, passwordConfirm)
-    BCS->>BCS: Validierung (Pflichtfelder, Passwort-Match, Passwort-Länge ≥ 12)
-    alt Validierungsfehler
-        BCS-->>User: Formular mit Fehlermeldungen
-    else Validierung OK
-        BCS->>UMS: gRPC: RegisterUser (username, passwordHash, email, displayName, tenantId)
-        UMS->>UMS: Prüfe Eindeutigkeit (username, email)
-        alt Duplikat
-            UMS-->>BCS: ALREADY_EXISTS
-            BCS-->>User: Formular mit Fehlermeldung
-        else Eindeutig
-            UMS->>UMS: Auto-Approval prüfen (SWR-045)
-            UMS->>DB: INSERT user_profiles
-            UMS->>DB: INSERT audit_log (USER_REGISTERED)
-            UMS-->>BCS: UserProfile (PENDING oder APPROVED)
-            BCS-->>User: Bestätigungsseite
-        end
-    end
-----
+* Tenant-Branding (SWR-050): `GetTenantSettings` für displayName und tagline im Header
+* Tenant-Liste (SWR-053): `ListTenants` für den SuperAdmin Tenant-Selector (jetzt im User Management Service)
+
+Die bisherigen gRPC-Aufrufe für Login-Mode, OIDC-Konfiguration und Benutzeroperationen entfallen.
 
 ==== REST-API (SWR-059)
 
@@ -545,18 +605,6 @@ Validierungsregeln:
 Der neue Benutzer erhält `AuthSource.INTERNAL`, die Rolle `READER` und den `ApprovalStatus.PENDING` (SWR-007, STK028).
 Auto-Approval-Regeln (SWR-045) werden bei der Registrierung geprüft: Wenn die E-Mail-Domain auf der Whitelist des Tenants steht, wird der Status direkt auf `APPROVED` gesetzt.
 
-==== Thymeleaf-Registrierungsseite (SWR-060)
-
-Der Blog Content Service stellt eine Registrierungsseite unter `/register` bereit:
-
-* Das Formular enthält Felder für Username, E-Mail, Anzeigename, Passwort und Passwort-Bestätigung.
-* Die Seite ist nur erreichbar, wenn der LoginMode des Tenants `INTERNAL` oder `BOTH` ist. Bei `OIDC` wird auf `/login` weitergeleitet.
-* Die Login-Seite zeigt einen Link „Registrieren" an, wenn lokale Registrierung erlaubt ist.
-* Bei Validierungsfehlern wird das Formular mit Fehlermeldungen und den eingegebenen Werten (außer Passwort) erneut angezeigt.
-* Nach erfolgreicher Registrierung wird eine Bestätigungsseite angezeigt, die den Benutzer darüber informiert, dass sein Account auf Freigabe durch den Tenant-Administrator wartet (STK028).
-* Der Controller ruft den User-Management-Service über gRPC auf.
-* Die View nutzt das bestehende Layout-Grundgerüst (SWR-025) via Thymeleaf Layout Dialect.
-
 == Anforderungsabdeckung
 
 [cols="1,3,1"]
@@ -564,24 +612,29 @@ Der Blog Content Service stellt eine Registrierungsseite unter `/register` berei
 | Anforderung | Beschreibung | Abdeckung
 
 | SWR-007 | Rollenbasierte Zugriffskontrolle (SUPERADMIN, ADMIN, AUTHOR, REVIEWER, READER) | Domain: Role Enum, UserProfile.getEffectiveRoles()
-| SWR-016 | OIDC Login mit Authentik, optionales Gruppen-Mapping | Integration: OAuth2 Client im Blog Content Service, SyncUserCommand.oidcGroups
+| SWR-016 | OIDC Login mit Authentik, optionales Gruppen-Mapping | Web-UI: OIDC-Flow im User Management Service, SyncingOidcUserService
+| SWR-028 | Break-Glass Admin-Login | Web-UI: /auth/admin/login (formbasiert, nur SUPERADMIN)
 | SWR-043 | User-Management-Service für Profile, Rollen, Tenant-Zuordnung | Alle Layer
-| SWR-044 | Konfigurierbare Login-Methode und Break-Glass Admin-Login | Domain: TenantSettings.loginMode, Thymeleaf: /admin/login
+| SWR-044 | Konfigurierbare Login-Methode und Break-Glass Admin-Login | Domain: TenantSettings.loginMode, Web-UI: /auth/login, /auth/admin/login
 | SWR-045 | Auto-Approval bei OIDC-Login und E-Mail-Domain | Domain: TenantSettings, Application: syncFromOidc/syncFromInternal
+| SWR-051 | Admin-UI Benutzerliste und -verwaltung | Web-UI: /auth/admin/users (direkt auf lokalen UseCase)
+| SWR-052 | Admin-UI Tenant-Einstellungen | Web-UI: /auth/admin/settings (direkt auf lokalen UseCase)
+| SWR-053 | SuperAdmin Tenant-Umschaltung | Web-UI: /auth/admin/switch-tenant, Redis-Session
+| SWR-059 | REST-API für lokale Benutzerregistrierung | REST: POST /api/users/register, Application: UserProfileService
+| SWR-060 | Thymeleaf-Registrierungsseite | Web-UI: /auth/register (direkt auf lokalen UseCase)
+| SWR-063 | Dynamische OIDC-Client-Registrierung pro Tenant | Web-UI: TenantAwareClientRegistrationRepository (lokaler DB-Zugriff)
+| SWR-064 | Shared Redis Session | Web-UI: Session-Erstellung, Blog Content Service: Session-Validierung
 | STK028 | Benutzer-Freigabe durch Tenant-Admin | Domain: ApprovalStatus, Application: approveUser/rejectUser
 | STK029 | Nicht angemeldete Benutzer als Reader | Blog Content Service: anonyme Requests erhalten READER-Rechte
 | STK031 | Konfigurierbare Login-Methode pro Tenant | Domain: LoginMode, TenantSettings
 | STK032 | Auto-Approval neuer Benutzer | Domain: TenantSettings.autoApproveOidc, autoApproveEmailDomains
+| STK046 | Lokale Benutzerregistrierung | SWR-059 (REST-API), SWR-060 (Web-UI)
+| STK047 | OIDC-Konfiguration pro Tenant über Admin-Interface | SWR-061 (Datenhaltung), SWR-062 (Admin-UI), SWR-063 (dynamische Registrierung)
 | SWA-001 | Hexagonale Architektur | Ports & Adapters Struktur
 | SWA-010 | Authentik OIDC und leichtgewichtiger User-Management-Service | Gesamtarchitektur
 | SWA-029 | User-Management-Service Architektur (hexagonal) | Alle Layer
 | SWR-056 | Audit-Logging für alle relevanten Aktionen | JpaAuditLogger, AuditLogEntry, UserProfileService/TenantSettingsService Audit-Aufrufe, V5 Migration
 | SWA-031 | Audit-Logging-Architektur | AuditLogger (Port im Shared Kernel), JpaAuditLogger (Outbound Adapter), audit_log-Tabelle
-| STK046 | Lokale Benutzerregistrierung | SWR-059 (REST-API), SWR-060 (Thymeleaf-Seite)
-| SWR-059 | REST-API für lokale Benutzerregistrierung | REST: POST /api/users/register, gRPC: RegisterUser, Application: UserProfileService
-| SWR-060 | Thymeleaf-Registrierungsseite | Blog Content Service: /register Controller, Thymeleaf-Formular
-| STK047 | OIDC-Konfiguration pro Tenant über Admin-Interface | SWR-061 (Datenhaltung), SWR-062 (Admin-UI), SWR-063 (dynamische Registrierung)
-| SWR-061 | Tenant-spezifische OIDC-Provider-Konfiguration | Domain: TenantSettings (oidcIssuerUrl, oidcClientId, oidcClientSecret), gRPC, JPA
-| SWR-062 | OIDC-Konfiguration in der Admin-Oberfläche | Thymeleaf: admin/settings.html OIDC-Sektion
-| SWR-063 | Dynamische OIDC-Client-Registrierung pro Tenant | Blog Content Service: TenantAwareClientRegistrationRepository, Cache (TTL 5 min)
+| SWR-061 | Tenant-spezifische OIDC-Provider-Konfiguration | Domain: TenantSettings (oidcIssuerUrl, oidcClientId, oidcClientSecret), JPA
+| SWR-062 | OIDC-Konfiguration in der Admin-Oberfläche | Web-UI: /auth/admin/settings OIDC-Sektion
 |===

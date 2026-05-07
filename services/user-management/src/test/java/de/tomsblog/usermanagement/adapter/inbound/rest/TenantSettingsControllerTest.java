@@ -18,16 +18,23 @@ import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(TenantSettingsController.class)
-@Import(SecurityConfiguration.class)
-@TestPropertySource(properties = "service.api-key=test-api-key")
+@Import(TenantSettingsControllerTest.TestSecurityConfig.class)
+@TestPropertySource(properties = {"service.api-key=test-api-key"})
 class TenantSettingsControllerTest {
 
     private static final UUID TENANT_UUID = UUID.fromString("00000000-0000-0000-0000-000000000001");
@@ -42,6 +49,24 @@ class TenantSettingsControllerTest {
 
     @MockitoBean
     private TenantSettingsUseCase tenantSettingsUseCase;
+
+    @TestConfiguration
+    static class TestSecurityConfig {
+        @Value("${service.api-key:#{null}}")
+        private String apiKey;
+
+        @Bean
+        SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+            http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                    .csrf(csrf -> csrf.disable())
+                    .formLogin(form -> form.disable())
+                    .httpBasic(basic -> basic.disable())
+                    .addFilterBefore(
+                            new ApiKeyAuthenticationFilter(apiKey), UsernamePasswordAuthenticationFilter.class);
+            return http.build();
+        }
+    }
 
     @Test
     @DisplayName("SWR-044: GET /api/tenants/{tenantId}/settings returns settings")

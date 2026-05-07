@@ -104,7 +104,8 @@
 - [x] Fix: Post Navigation sollen direkte Links sein
 - [x] Benutzer Registrierung
 - [x] OIDC Config pro Tennant über Admin Interface
-- [ ] Bessere Architektur für User UI
+- [x] Bessere Architektur für User UI
+- [ ] UI Library
 - [ ] Tenant Service
 - [ ] Der Superadmin soll neue Tenants über die Admin UI anlegen können.
 - [ ] Vorschau für Posts
@@ -121,6 +122,8 @@
 - [ ] CloudNativePG auf ≥ 1.25 upgraden (Voraussetzung für Database CRD, ADR-0029)
 - [ ] Migration auf deklarative Database CRD für alle Service-Datenbanken (INF-013, SWA-030)
 - [ ] Dedizierte Rollen pro Service evaluieren (nach Verfügbarkeit DatabaseRole CRD)
+- [ ] Tags
+- [ ] Auditlog View
 - [ ] Security-Reviews (OWASP)
 - [ ] Architecture Review
 

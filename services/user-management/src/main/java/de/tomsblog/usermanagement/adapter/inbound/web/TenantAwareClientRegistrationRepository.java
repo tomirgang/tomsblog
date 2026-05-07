@@ -1,7 +1,8 @@
-package de.tomsblog.blogcontent.adapter.inbound.web;
+package de.tomsblog.usermanagement.adapter.inbound.web;
 
-import de.tomsblog.blogcontent.adapter.outbound.usermanagement.TenantSettingsDto;
-import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
+import de.tomsblog.shared.tenant.TenantId;
+import de.tomsblog.usermanagement.application.port.inbound.TenantSettingsUseCase;
+import de.tomsblog.usermanagement.domain.model.TenantSettings;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
@@ -14,30 +15,29 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
 /**
- * Tenant-aware client registration repository that dynamically resolves OIDC provider
- * configuration per tenant from the User Management Service.
+ * Tenant-aware client registration repository that resolves OIDC provider configuration
+ * per tenant from the local database (ADR-0032).
  *
  * <p>Falls back to a global registration (from application.yml) when no tenant-specific
  * OIDC configuration exists.
  *
  * @req SWR-063
- * @req STK047
  */
 public class TenantAwareClientRegistrationRepository implements ClientRegistrationRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(TenantAwareClientRegistrationRepository.class);
     private static final Duration CACHE_TTL = Duration.ofMinutes(5);
 
-    private final UserManagementClient userManagementClient;
+    private final TenantSettingsUseCase tenantSettingsUseCase;
     private final ClientRegistration fallbackRegistration;
     private final String defaultTenantId;
     private final Map<String, CachedRegistration> cache = new ConcurrentHashMap<>();
 
     public TenantAwareClientRegistrationRepository(
-            UserManagementClient userManagementClient,
+            TenantSettingsUseCase tenantSettingsUseCase,
             ClientRegistration fallbackRegistration,
             String defaultTenantId) {
-        this.userManagementClient = userManagementClient;
+        this.tenantSettingsUseCase = tenantSettingsUseCase;
         this.fallbackRegistration = fallbackRegistration;
         this.defaultTenantId = defaultTenantId;
     }
@@ -50,8 +50,8 @@ public class TenantAwareClientRegistrationRepository implements ClientRegistrati
         }
 
         try {
-            TenantSettingsDto settings = userManagementClient.getTenantSettings(UUID.fromString(defaultTenantId));
-            if (settings.oidcIssuerUrl() != null && settings.oidcClientId() != null) {
+            TenantSettings settings = tenantSettingsUseCase.getSettings(new TenantId(UUID.fromString(defaultTenantId)));
+            if (settings != null && settings.getOidcIssuerUrl() != null && settings.getOidcClientId() != null) {
                 ClientRegistration registration = buildRegistration(registrationId, settings);
                 cache.put(defaultTenantId, new CachedRegistration(registration, Instant.now()));
                 return registration;
@@ -63,14 +63,14 @@ public class TenantAwareClientRegistrationRepository implements ClientRegistrati
         return fallbackRegistration;
     }
 
-    private ClientRegistration buildRegistration(String registrationId, TenantSettingsDto settings) {
-        String issuerUrl =
-                settings.oidcIssuerUrl().endsWith("/") ? settings.oidcIssuerUrl() : settings.oidcIssuerUrl() + "/";
-        String wellKnown = issuerUrl + ".well-known/openid-configuration";
+    private ClientRegistration buildRegistration(String registrationId, TenantSettings settings) {
+        String issuerUrl = settings.getOidcIssuerUrl().endsWith("/")
+                ? settings.getOidcIssuerUrl()
+                : settings.getOidcIssuerUrl() + "/";
 
         return ClientRegistration.withRegistrationId(registrationId)
-                .clientId(settings.oidcClientId())
-                .clientSecret(settings.oidcClientSecret() != null ? settings.oidcClientSecret() : "")
+                .clientId(settings.getOidcClientId())
+                .clientSecret(settings.getOidcClientSecret() != null ? settings.getOidcClientSecret() : "")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
                 .scope("openid", "profile", "email")

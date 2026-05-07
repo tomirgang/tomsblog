@@ -2,6 +2,9 @@ spring:
   application:
     name: user-management
 
+  session:
+    store-type: redis
+
   datasource:
     url: jdbc:postgresql://localhost:5433/user_management
     username: ${POSTGRES_USER:postgres}
@@ -15,6 +18,29 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+
+  security:
+    oauth2:
+      client:
+        registration:
+          authentik:
+            client-id: ${OIDC_CLIENT_ID:user-management}
+            client-secret: ${OIDC_CLIENT_SECRET:}
+            scope: openid,profile,email
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          authentik:
+            authorization-uri: ${OIDC_AUTHORIZATION_URI:https://auth.do9ita.de/application/o/authorize/}
+            token-uri: ${OIDC_TOKEN_URI:https://auth.do9ita.de/application/o/tomsblog/token/}
+            user-info-uri: ${OIDC_USERINFO_URI:https://auth.do9ita.de/application/o/tomsblog/userinfo/}
+            jwk-set-uri: ${OIDC_JWKSET_URI:https://auth.do9ita.de/application/o/tomsblog/jwks/}
+
+blog:
+  default-tenant-id: "00000000-0000-0000-0000-000000000001"
+  admin:
+    username: admin
+    password: ${BLOG_ADMIN_PASSWORD}
 
 server:
   port: 8081

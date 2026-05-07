@@ -1,8 +1,12 @@
-package de.tomsblog.blogcontent.adapter.inbound.web;
+package de.tomsblog.usermanagement.adapter.inbound.web;
 
-import de.tomsblog.blogcontent.adapter.outbound.usermanagement.TenantSettingsDto;
-import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
-import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserProfileDto;
+import de.tomsblog.shared.tenant.TenantId;
+import de.tomsblog.usermanagement.application.port.inbound.TenantSettingsUseCase;
+import de.tomsblog.usermanagement.application.port.inbound.UserProfileUseCase;
+import de.tomsblog.usermanagement.domain.model.LoginMode;
+import de.tomsblog.usermanagement.domain.model.Role;
+import de.tomsblog.usermanagement.domain.model.TenantSettings;
+import de.tomsblog.usermanagement.domain.model.UserProfile;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.Arrays;
@@ -22,29 +26,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * Controller for the admin UI pages (user management and tenant settings).
+ * Controller for the admin UI pages (ADR-0032).
+ *
+ * <p>Accesses the local {@link UserProfileUseCase} and {@link TenantSettingsUseCase} directly.
  *
  * @req SWR-051
  * @req SWR-052
  * @req SWR-053
  */
 @Controller
-@RequestMapping("/admin")
-public class AdminController {
+@RequestMapping("/auth/admin")
+public class AuthAdminController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AdminController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AuthAdminController.class);
 
-    private final UserManagementClient userManagementClient;
+    private final UserProfileUseCase userProfileUseCase;
+    private final TenantSettingsUseCase tenantSettingsUseCase;
 
-    public AdminController(UserManagementClient userManagementClient) {
-        this.userManagementClient = userManagementClient;
+    public AuthAdminController(UserProfileUseCase userProfileUseCase, TenantSettingsUseCase tenantSettingsUseCase) {
+        this.userProfileUseCase = userProfileUseCase;
+        this.tenantSettingsUseCase = tenantSettingsUseCase;
     }
 
     @GetMapping("/users")
     public String listUsers(@RequestHeader("X-Tenant-Id") UUID tenantId, HttpSession session, Model model) {
         UUID activeTenant = resolveActiveTenant(tenantId, session);
         try {
-            List<UserProfileDto> users = userManagementClient.listUsersByTenant(activeTenant);
+            List<UserProfile> users = userProfileUseCase.listByTenantId(new TenantId(activeTenant));
             model.addAttribute("users", users);
         } catch (Exception e) {
             LOG.warn("Failed to load users for tenant '{}'.", activeTenant, e);
@@ -55,14 +63,14 @@ public class AdminController {
 
     @PostMapping("/users/{identifier}/approve")
     public String approveUser(@PathVariable String identifier) {
-        userManagementClient.approveUser(identifier);
-        return "redirect:/admin/users";
+        userProfileUseCase.approveUser(identifier);
+        return "redirect:/auth/admin/users";
     }
 
     @PostMapping("/users/{identifier}/reject")
     public String rejectUser(@PathVariable String identifier) {
-        userManagementClient.rejectUser(identifier);
-        return "redirect:/admin/users";
+        userProfileUseCase.rejectUser(identifier);
+        return "redirect:/auth/admin/users";
     }
 
     @PostMapping("/users/{identifier}/role")
@@ -72,22 +80,18 @@ public class AdminController {
             @RequestHeader("X-Tenant-Id") UUID tenantId,
             HttpSession session) {
         UUID activeTenant = resolveActiveTenant(tenantId, session);
-        userManagementClient.changeUserRole(identifier, activeTenant, role);
-        return "redirect:/admin/users";
+        userProfileUseCase.addTenantMembership(identifier, new TenantId(activeTenant), Role.valueOf(role));
+        return "redirect:/auth/admin/users";
     }
 
     @GetMapping("/settings")
     public String showSettings(@RequestHeader("X-Tenant-Id") UUID tenantId, HttpSession session, Model model) {
         UUID activeTenant = resolveActiveTenant(tenantId, session);
         try {
-            TenantSettingsDto settings = userManagementClient.getTenantSettings(activeTenant);
+            TenantSettings settings = tenantSettingsUseCase.getSettings(new TenantId(activeTenant));
             model.addAttribute("settings", settings);
         } catch (Exception e) {
             LOG.warn("Failed to load tenant settings for '{}'.", activeTenant, e);
-            model.addAttribute(
-                    "settings",
-                    new TenantSettingsDto(
-                            activeTenant, "BOTH", false, Set.of(), "Toms Blog", null, null, null, null, null, null));
         }
         return "admin/settings";
     }
@@ -114,9 +118,9 @@ public class AdminController {
                     .filter(s -> !s.isEmpty())
                     .forEach(domains::add);
         }
-        userManagementClient.updateTenantSettings(
-                activeTenant,
-                loginMode,
+        tenantSettingsUseCase.updateSettings(
+                new TenantId(activeTenant),
+                LoginMode.valueOf(loginMode),
                 autoApproveOidc,
                 domains,
                 displayName,
@@ -126,7 +130,7 @@ public class AdminController {
                 oidcIssuerUrl,
                 oidcClientId,
                 oidcClientSecret);
-        return "redirect:/admin/settings";
+        return "redirect:/auth/admin/settings";
     }
 
     @PostMapping("/switch-tenant")

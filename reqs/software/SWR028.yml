@@ -8,16 +8,30 @@ links:
 - SWR007: f4n3hc0g0KFHVMux65Is-gJ8nxQ_k6oMy8y_IeY9LtM=
 normative: true
 ref: ''
-reviewed: xyPuSIT8TH9IanJFlK9NN4eGcAhAG-zwbNnkJnQHOaU=
+reviewed: M8qfxwL4HW9a9BKSjRsSnMzEgryUlhjf2CKs5RB-BNg=
 text: |
-  Der Blog Content Service muss einen einfachen formbasierten Admin-Login bereitstellen, der alle Schreiboperationen schützt:
-  - Spring Security sichert alle schreibenden Endpunkte (POST, PUT, DELETE auf /api/** sowie POST /posts, GET /posts/new, GET /posts/{id}/edit).
-  - Die öffentliche Web-Ansicht (GET /posts, GET /posts/{slug}) zeigt nur veröffentlichte Posts (Status PUBLISHED) an.
-  - Nach Login zeigt die Web-Ansicht (GET /posts) alle Posts inklusive Drafts und archivierte Posts mit Status-Anzeige.
-  - Die REST-API (GET /api/posts/**) ist vollständig geschützt und zeigt alle Posts unabhängig vom Status.
-  - Die Authentifizierung erfolgt über ein HTML-Login-Formular unter /login.
-  - Es wird ein einzelner Admin-Benutzer unterstützt, dessen Credentials über Spring-Properties konfiguriert werden (blog.admin.username, blog.admin.password).
-  - Nach erfolgreichem Login wird der Benutzer auf die Post-Liste weitergeleitet.
-  - Ein Logout-Link ist im Header sichtbar, wenn der Benutzer eingeloggt ist.
-  - Die REST-API (/api/**) nutzt HTTP Basic Authentication als Alternative zum formbasierten Login.
-  - Dies ist eine MVP-Lösung für Phase 2. In Phase 4 wird sie durch den Custom Identity Provider (SWR-016) ersetzt.
+  Der Blog Content Service schuetzt alle Schreiboperationen ueber
+  Spring Security:
+  - Spring Security sichert alle schreibenden Endpunkte (POST, PUT,
+    DELETE auf /api/** sowie POST /posts, GET /posts/new,
+    GET /posts/{id}/edit).
+  - Die oeffentliche Web-Ansicht (GET /posts, GET /posts/{slug}) zeigt
+    nur veroeffentlichte Posts (Status PUBLISHED) an.
+  - Nach Login zeigt die Web-Ansicht (GET /posts) alle Posts inklusive
+    Drafts und archivierte Posts mit Status-Anzeige.
+  - Die REST-API (GET /api/posts/**) ist vollstaendig geschuetzt und
+    zeigt alle Posts unabhaengig vom Status.
+  - Die Authentifizierung erfolgt ueber den User-Management-Service
+    (ADR-0032). Unauthentifizierte Benutzer werden per Redirect auf
+    /auth/login weitergeleitet.
+  - Das Break-Glass Admin-Login (SUPERADMIN) ist unter /auth/admin/login
+    im User-Management-Service verfuegbar.
+  - Nach erfolgreichem Login wird der Benutzer auf die Post-Liste
+    weitergeleitet.
+  - Ein Logout-Link ist im Header sichtbar, wenn der Benutzer
+    eingeloggt ist.
+  - Die REST-API (/api/**) nutzt HTTP Basic Authentication als
+    Alternative zum formbasierten Login.
+  - Die Session wird ueber Redis geteilt (SWR-064), sodass der Blog
+    Content Service die vom User-Management-Service erstellte Session
+    direkt nutzen kann.

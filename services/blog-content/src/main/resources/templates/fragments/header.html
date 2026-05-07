@@ -12,9 +12,9 @@
             <ul>
                 <li><a th:href="@{/}" href="/">Home</a></li>
                 <li><a th:href="@{/posts}" href="/posts">Posts</a></li>
-                <li sec:authorize="hasAnyRole('ADMIN','SUPERADMIN')"><a th:href="@{/admin/users}">Admin</a></li>
+                <li sec:authorize="hasAnyRole('ADMIN','SUPERADMIN')"><a th:href="@{/auth/admin/users}">Admin</a></li>
                 <li th:if="${isSuperAdmin} and ${not #lists.isEmpty(tenants)}">
-                    <form th:action="@{/admin/switch-tenant}" method="post" style="margin:0;display:inline">
+                    <form th:action="@{/auth/admin/switch-tenant}" method="post" style="margin:0;display:inline">
                         <select name="tenantId" onchange="this.form.submit()" style="padding:0.25rem;margin:0">
                             <option th:each="t : ${tenants}"
                                     th:value="${t.tenantId()}"
@@ -25,13 +25,13 @@
                     </form>
                 </li>
                 <li sec:authorize="isAuthenticated()">
-                    <form th:action="@{/logout}" method="post" style="margin:0">
+                    <form th:action="@{/auth/logout}" method="post" style="margin:0">
                         <button type="submit" class="outline secondary" style="padding:0.25rem 0.5rem;margin:0">
                             Logout (<span sec:authentication="name">admin</span>)
                         </button>
                     </form>
                 </li>
-                <li sec:authorize="isAnonymous()"><a th:href="@{/login}" href="/login">Login</a></li>
+                <li sec:authorize="isAnonymous()"><a th:href="@{/auth/login}" href="/auth/login">Login</a></li>
             </ul>
         </nav>
     </div>

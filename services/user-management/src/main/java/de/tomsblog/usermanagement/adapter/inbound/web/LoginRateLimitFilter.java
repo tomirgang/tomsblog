@@ -1,4 +1,4 @@
-package de.tomsblog.blogcontent.adapter.inbound.web;
+package de.tomsblog.usermanagement.adapter.inbound.web;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,8 +13,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * Simple rate limiter for login endpoints to prevent brute-force attacks. Limits each IP to a
- * configurable number of login attempts per time window.
+ * Simple rate limiter for login endpoints to prevent brute-force attacks.
+ *
+ * <p>Limits each IP to a configurable number of login attempts per time window.
+ * Adapted for /auth/* paths (ADR-0032).
  */
 @Component
 public class LoginRateLimitFilter extends OncePerRequestFilter {
@@ -28,7 +30,7 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         String method = request.getMethod();
-        return !"POST".equals(method) || (!path.equals("/login") && !path.equals("/admin/login"));
+        return !"POST".equals(method) || (!path.equals("/auth/login") && !path.equals("/auth/admin/login"));
     }
 
     @Override
@@ -50,7 +52,7 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
         }
     }
 
-    private static String getClientIp(HttpServletRequest request) {
+    static String getClientIp(HttpServletRequest request) {
         String forwarded = request.getHeader("X-Forwarded-For");
         if (forwarded != null && !forwarded.isBlank()) {
             return forwarded.split(",")[0].trim();
@@ -58,7 +60,7 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
         return request.getRemoteAddr();
     }
 
-    private static class RateEntry {
+    static class RateEntry {
         private final Instant windowStart = Instant.now();
         private final AtomicInteger count = new AtomicInteger(0);
 

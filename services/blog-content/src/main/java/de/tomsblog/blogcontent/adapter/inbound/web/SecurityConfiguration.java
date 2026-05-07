@@ -1,92 +1,38 @@
 package de.tomsblog.blogcontent.adapter.inbound.web;
 
-import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * Spring Security configuration with OIDC login (Authentik) and break-glass admin form login.
+ * Spring Security configuration for the Blog Content Service (ADR-0032).
  *
- * <p>Two filter chains:
- * <ol>
- *   <li>{@code /admin/login} chain (Order 1): form-based login for SUPERADMIN (break-glass)</li>
- *   <li>Default chain (Order 2): OIDC login via Authentik + public read access</li>
- * </ol>
+ * <p>Authentication is handled by the User Management Service. This service reads
+ * shared Redis sessions. Unauthenticated users are redirected to the auth UI.
  *
  * @req SWR-016
  * @req SWR-028
- * @req SWR-044
+ * @req SWR-064
  */
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties({
-    AdminProperties.class,
-    org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties.class
-})
 public class SecurityConfiguration {
 
-    private final AdminProperties adminProperties;
-
-    public SecurityConfiguration(AdminProperties adminProperties) {
-        this.adminProperties = adminProperties;
-    }
+    @Value("${blog.auth-login-url:/auth/login}")
+    private String authLoginUrl;
 
     /**
-     * Break-glass admin filter chain: form-based login at /admin/login for SUPERADMIN.
-     * Admin pages (/admin/users, /admin/settings) accessible by ADMIN and SUPERADMIN.
-     * Tenant switching only for SUPERADMIN.
+     * Single filter chain: session-based auth from shared Redis, public read access.
      */
     @Bean
-    @Order(1)
-    public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/admin/**")
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/admin/login")
-                        .permitAll()
-                        .requestMatchers("/admin/switch-tenant")
-                        .hasRole("SUPERADMIN")
-                        .requestMatchers("/admin/users", "/admin/users/**", "/admin/settings")
-                        .hasAnyRole("SUPERADMIN", "ADMIN")
-                        .anyRequest()
-                        .hasRole("SUPERADMIN"))
-                .formLogin(form -> form.loginPage("/admin/login")
-                        .loginProcessingUrl("/admin/login")
-                        .defaultSuccessUrl("/posts", true)
-                        .permitAll())
-                .logout(logout -> logout.logoutUrl("/admin/logout")
-                        .logoutSuccessUrl("/posts")
-                        .permitAll());
-
-        return http.build();
-    }
-
-    /**
-     * Main filter chain: OIDC login via Authentik, form login as fallback, public read access.
-     */
-    @Bean
-    @Order(2)
-    public SecurityFilterChain defaultFilterChain(HttpSecurity http, SyncingOidcUserService oidcUserService)
-            throws Exception {
+    public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
                         // Public: static resources
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico")
-                        .permitAll()
-                        // Public: login/logout/register
-                        .requestMatchers("/login", "/logout", "/register")
                         .permitAll()
                         // Public: actuator health
                         .requestMatchers("/actuator/health", "/actuator/health/**")
@@ -121,12 +67,13 @@ public class SecurityConfiguration {
                         // Everything else requires authentication (default-deny)
                         .anyRequest()
                         .authenticated())
-                .oauth2Login(oauth2 -> oauth2.loginPage("/login")
-                        .defaultSuccessUrl("/posts", true)
-                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcUserService)))
-                .formLogin(form -> form.loginPage("/login")
-                        .defaultSuccessUrl("/posts", true)
-                        .permitAll())
+                .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> {
+                    if (request.getRequestURI().startsWith("/api/")) {
+                        response.sendError(401, "Unauthorized");
+                    } else {
+                        response.sendRedirect(authLoginUrl);
+                    }
+                }))
                 .logout(logout -> logout.logoutSuccessUrl("/posts").permitAll())
                 .httpBasic(basic -> {})
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
@@ -142,60 +89,5 @@ public class SecurityConfiguration {
                                 hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000)));
 
         return http.build();
-    }
-
-    /**
-     * In-memory user details for the SUPERADMIN break-glass login.
-     */
-    @Bean
-    public UserDetailsService userDetailsService() {
-        var admin = User.builder()
-                .username(adminProperties.username())
-                .password(passwordEncoder().encode(adminProperties.password()))
-                .roles("SUPERADMIN", "ADMIN")
-                .build();
-        return new InMemoryUserDetailsManager(admin);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public SyncingOidcUserService syncingOidcUserService(
-            UserManagementClient userManagementClient, DefaultTenantFilter defaultTenantFilter) {
-        return new SyncingOidcUserService(
-                userManagementClient, java.util.UUID.fromString(defaultTenantFilter.getDefaultTenantId()));
-    }
-
-    /**
-     * Tenant-aware client registration repository that loads OIDC config per tenant (SWR-063).
-     * Falls back to the global application.yml config when no tenant-specific config exists.
-     */
-    @Bean
-    @ConditionalOnProperty(prefix = "spring.security.oauth2.client.registration.authentik", name = "client-id")
-    @ConditionalOnBean({UserManagementClient.class, DefaultTenantFilter.class})
-    public ClientRegistrationRepository clientRegistrationRepository(
-            UserManagementClient userManagementClient,
-            DefaultTenantFilter defaultTenantFilter,
-            org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties
-                    oAuth2ClientProperties) {
-        var authentikReg = oAuth2ClientProperties.getRegistration().get("authentik");
-        var authentikProvider = oAuth2ClientProperties.getProvider().get("authentik");
-        ClientRegistration fallback = ClientRegistration.withRegistrationId("authentik")
-                .clientId(authentikReg.getClientId())
-                .clientSecret(authentikReg.getClientSecret())
-                .authorizationGrantType(new org.springframework.security.oauth2.core.AuthorizationGrantType(
-                        authentikReg.getAuthorizationGrantType()))
-                .redirectUri(authentikReg.getRedirectUri())
-                .scope(authentikReg.getScope())
-                .authorizationUri(authentikProvider.getAuthorizationUri())
-                .tokenUri(authentikProvider.getTokenUri())
-                .userInfoUri(authentikProvider.getUserInfoUri())
-                .jwkSetUri(authentikProvider.getJwkSetUri())
-                .build();
-        return new TenantAwareClientRegistrationRepository(
-                userManagementClient, fallback, defaultTenantFilter.getDefaultTenantId());
     }
 }

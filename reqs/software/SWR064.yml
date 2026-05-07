@@ -1,0 +1,31 @@
+active: true
+derived: false
+header: |
+  Shared Redis Session zwischen Blog Content und User Management Service
+level: 64.0
+links:
+- STK045: DSNjXUf-_OP_IjIyLx2fbF8-TrCpGkKUaCFCTKQG0bw=
+normative: true
+ref: ''
+reviewed: UkfjwDV1YIuDIIDXRDUU5aYAgy_sKfyfY8ySZIiSyyU=
+text: |
+  Die Authentifizierungs-UI (Login, Registrierung, Admin-UI) wird vom User
+  Management Service bereitgestellt (ADR-0032). Damit der Blog Content
+  Service die dort erstellten Sessions nutzen kann, verwenden beide Services
+  einen gemeinsamen Redis Session Store (ADR-0030):
+  - Beide Services nutzen Spring Session Data Redis mit identischer
+    Konfiguration (gleicher Redis-Namespace, gleicher Cookie-Name,
+    gleiche Serialisierung).
+  - Der User Management Service erstellt nach erfolgreichem Login
+    (OIDC oder formbasiert) eine Session in Redis mit den
+    Benutzerrollen als Spring Security Authorities.
+  - Der Blog Content Service liest die bestehende Session aus Redis
+    und nutzt die enthaltenen Authorities fuer die Zugriffskontrolle.
+  - Der Blog Content Service fuehrt keinen eigenen OIDC-Flow durch.
+    Er verweist unauthentifizierte Benutzer per Redirect auf
+    /auth/login (User Management Service).
+  - Nach dem Login leitet der User Management Service zurueck auf
+    die urspruenglich angeforderte Seite im Blog Content Service.
+  - Die Session-TTL und Cookie-Konfiguration (Name, Domain, Path,
+    Secure, HttpOnly) muessen zwischen beiden Services identisch sein.
+  - Setzt ADR-0030 (Redis Session Store) als Voraussetzung voraus.
