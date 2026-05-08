@@ -24,6 +24,13 @@ spec:
                 name: user-management
                 port:
                   name: http
+          - path: /oauth2/authorization
+            pathType: Prefix
+            backend:
+              service:
+                name: user-management
+                port:
+                  name: http
           - path: /login/oauth2/code
             pathType: Prefix
             backend:

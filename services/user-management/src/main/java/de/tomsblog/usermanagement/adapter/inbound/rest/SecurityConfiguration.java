@@ -111,7 +111,7 @@ public class SecurityConfiguration {
     @Order(3)
     public SecurityFilterChain authUiFilterChain(HttpSecurity http, SyncingOidcUserService oidcUserService)
             throws Exception {
-        http.securityMatcher("/auth/**")
+        http.securityMatcher("/auth/**", "/oauth2/authorization/**", "/login/oauth2/code/**")
                 .authorizeHttpRequests(
                         auth -> auth.requestMatchers("/auth/login", "/auth/register", "/auth/registration-success")
                                 .permitAll()
