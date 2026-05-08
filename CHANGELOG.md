@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ### Fixed
 
 - Neu registrierte Benutzer wurden im Admin-Backend nicht angezeigt: Bei der Registrierung (register, syncFromOidc, syncFromInternal) wurde keine Tenant-Membership angelegt, sodass der INNER JOIN in findByTenantId keine Ergebnisse lieferte
+- OIDC-Login-Button (Authentik) funktionslos: `/oauth2/authorization/**` fehlte im Ingress-Routing und im Security-Filter-Matcher, sodass der OAuth2-Autorisierungs-Request nicht zum user-management Service gelangte
 
 ### Removed
 

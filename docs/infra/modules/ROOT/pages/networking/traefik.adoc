@@ -75,6 +75,7 @@ Das Routing nutzt pfad-basiertes Routing auf der Domain `blog.tomirgang.de`. Tra
 | Pfad | Service | Funktion
 
 | `/auth/**` | user-management | Login, Registrierung, Admin-UI (ADR-0032)
+| `/oauth2/authorization/**` | user-management | OAuth2/OIDC Autorisierungs-Redirect (SWR-044)
 | `/login/oauth2/code/**` | user-management | OIDC Callback (SWR-063)
 | `/` (alles andere) | blog-content | Blog-Posts, statische Seiten, API
 |===
