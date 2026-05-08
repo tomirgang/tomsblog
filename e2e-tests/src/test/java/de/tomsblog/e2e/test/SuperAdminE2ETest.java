@@ -1,0 +1,141 @@
+package de.tomsblog.e2e.test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import de.tomsblog.e2e.config.ScreenshotOnFailureExtension;
+import de.tomsblog.e2e.config.WebDriverProvider;
+import de.tomsblog.e2e.page.admin.GlobalSettingsPage;
+import de.tomsblog.e2e.page.admin.TenantListPage;
+import de.tomsblog.e2e.page.auth.AdminLoginPage;
+import de.tomsblog.tenantmanagement.TenantManagementApplication;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.Testcontainers;
+import org.testcontainers.containers.BrowserWebDriverContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+
+/**
+ * E2E tests for SuperAdmin tenant management workflows.
+ *
+ * @req SWR-083
+ */
+@SpringBootTest(classes = TenantManagementApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@org.testcontainers.junit.jupiter.Testcontainers
+@ExtendWith(ScreenshotOnFailureExtension.class)
+class SuperAdminE2ETest implements WebDriverProvider {
+
+    @Container
+    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine");
+
+    @Container
+    static final BrowserWebDriverContainer<?> chrome =
+            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions());
+
+    @LocalServerPort
+    private int port;
+
+    private WebDriver driver;
+    private String baseUrl;
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
+        registry.add("spring.flyway.enabled", () -> "true");
+        registry.add("spring.session.store-type", () -> "none");
+        registry.add("spring.data.redis.repositories.enabled", () -> "false");
+        registry.add(
+                "spring.autoconfigure.exclude",
+                () -> "org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration,"
+                        + "org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration");
+        registry.add("grpc.server.port", () -> "0");
+        registry.add("blog.admin.password", () -> "e2e-test-admin-password-12345");
+    }
+
+    @BeforeEach
+    void setUp() {
+        Testcontainers.exposeHostPorts(port);
+        baseUrl = "http://host.testcontainers.internal:" + port;
+        driver = new RemoteWebDriver(chrome.getSeleniumAddress(), new ChromeOptions());
+    }
+
+    @Override
+    public WebDriver getWebDriver() {
+        return driver;
+    }
+
+    private void loginAsSuperAdmin() {
+        AdminLoginPage loginPage = new AdminLoginPage(driver, baseUrl, "/tenant/admin/login");
+        loginPage.open();
+        loginPage.login("superadmin", "e2e-test-admin-password-12345");
+    }
+
+    @Test
+    @DisplayName("SWR-083: SuperAdmin login page loads")
+    void superAdminLoginPageLoads() {
+        AdminLoginPage page = new AdminLoginPage(driver, baseUrl, "/tenant/admin/login").open();
+        assertThat(page.getHeading()).isEqualTo("Tenant Admin Login");
+    }
+
+    @Test
+    @DisplayName("SWR-083: SuperAdmin login with invalid credentials shows error")
+    void superAdminLoginWithInvalidCredentials() {
+        AdminLoginPage page = new AdminLoginPage(driver, baseUrl, "/tenant/admin/login").open();
+        page.login("invalid", "wrong");
+        assertThat(page.hasErrorMessage()).isTrue();
+    }
+
+    @Test
+    @DisplayName("SWR-083: Tenant list requires authentication")
+    void tenantListRequiresAuth() {
+        driver.get(baseUrl + "/tenant/admin/tenants");
+        assertThat(driver.getCurrentUrl()).contains("login");
+    }
+
+    @Test
+    @DisplayName("SWR-083: Tenant list loads after SuperAdmin login")
+    void tenantListLoadsAfterLogin() {
+        loginAsSuperAdmin();
+        TenantListPage page = new TenantListPage(driver, baseUrl).open();
+        assertThat(page.getHeading()).isEqualTo("Tenant-Verwaltung");
+    }
+
+    @Test
+    @DisplayName("SWR-083: Tenant list has settings link")
+    void tenantListHasSettingsLink() {
+        loginAsSuperAdmin();
+        TenantListPage page = new TenantListPage(driver, baseUrl).open();
+        assertThat(page.hasSettingsLink()).isTrue();
+    }
+
+    @Test
+    @DisplayName("SWR-083: Global settings page has all tabs")
+    void globalSettingsHasAllTabs() {
+        loginAsSuperAdmin();
+        GlobalSettingsPage page = new GlobalSettingsPage(driver, baseUrl).open();
+        assertThat(page.getHeading()).isEqualTo("Tenant-Einstellungen");
+        assertThat(page.hasGeneralTab()).isTrue();
+        assertThat(page.hasOidcTab()).isTrue();
+        assertThat(page.hasLegalTab()).isTrue();
+    }
+
+    @Test
+    @DisplayName("SWR-083: Global settings has link back to tenant list")
+    void globalSettingsHasTenantListLink() {
+        loginAsSuperAdmin();
+        GlobalSettingsPage page = new GlobalSettingsPage(driver, baseUrl).open();
+        assertThat(page.hasTenantListLink()).isTrue();
+    }
+}

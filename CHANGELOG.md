@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- E2E-Testing mit Selenium WebDriver (STK-052, SWR-078 bis SWR-083, SWA-035, ADR-0033)
+  - Separates Maven-Modul e2e-tests/ mit Profil 'e2e' (mvn verify -Pe2e)
+  - Testcontainers-Selenium (Chrome-Container, kein lokaler Browser nötig)
+  - Page Object Model mit 12 Page Objects für alle UI-Seiten
+  - 5 Testklassen: BlogPublicView, BlogAuthorWorkflow, Authentication, AdminWorkflow, SuperAdmin
+  - Screenshot-on-Failure JUnit 5 Extension (target/screenshots/)
+  - E2E-Tests als Pflichtschritt im Release-Script (scripts/release.sh)
+  - Lokale Ausführung: ./mvnw verify -Pe2e
 - Vollständige Vorschau für unveröffentlichte Posts (STK-051, SWR-076, SWR-077)
   - Neuer Endpoint GET /posts/{id}/preview zeigt DRAFT-Posts vollständig gerendert (Markdown, Syntax-Highlighting, Mermaid)
   - Vorschau-Button im Post-Bearbeitungsformular (öffnet in neuem Tab)

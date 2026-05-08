@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  E2E-Tests: Blog-Content öffentliche Ansichten
+level: 79.0
+links:
+- STK052: OC6mJ2er9P2n_9MNlMeTaWQu1zksyEvnVVU0enfgA58=
+normative: true
+ref: ''
+reviewed: nPtqUAuYs6kwzk_63VFQDzrt2b2reZpDK5e4TqjUqlg=
+text: |
+  Selenium-E2E-Tests verifizieren alle öffentlich zugänglichen
+  Blog-Content-Seiten im Browser:
+  - Landing Page: Featured Posts und Recent Posts werden angezeigt
+  - Post-Liste: Vollständige Liste mit Volltextsuche funktioniert
+  - Post-Detailansicht: Slug-basierter Zugriff, Markdown korrekt gerendert
+  - Legal Pages: Impressum und Datenschutzerklärung erreichbar
+  - Fehlerseiten: 404-Seite bei unbekanntem Slug

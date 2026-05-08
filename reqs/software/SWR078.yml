@@ -1,0 +1,20 @@
+active: true
+derived: false
+header: |
+  E2E-Test-Infrastruktur mit Selenium WebDriver
+level: 78.0
+links:
+- STK052: OC6mJ2er9P2n_9MNlMeTaWQu1zksyEvnVVU0enfgA58=
+normative: true
+ref: ''
+reviewed: b7KqUmvo8ntOwlqamKrxJYcMCkYAnsVOH49nXrNcCJk=
+text: |
+  Ein separates Maven-Modul e2e-tests/ stellt die E2E-Test-Infrastruktur
+  bereit. Es enthält:
+  - Selenium WebDriver mit Testcontainers-Selenium (Chrome-Container)
+  - JUnit 5 Basis-Testklasse mit WebDriver-Lifecycle-Management
+  - Page Object Model (POM) Basisklasse für alle Seiten-Abstraktionen
+  - Screenshot-on-Failure JUnit 5 Extension (target/screenshots/)
+  - Maven-Profil 'e2e' für gezielte Ausführung (mvn verify -Pe2e)
+  - Lokale Ausführung ohne externen Browser (Testcontainers-Chrome)
+  - Integration in das Release-Script (scripts/release.sh)

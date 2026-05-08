@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  E2E-Tests: SuperAdmin Tenant-Verwaltung
+level: 83.0
+links:
+- STK052: OC6mJ2er9P2n_9MNlMeTaWQu1zksyEvnVVU0enfgA58=
+normative: true
+ref: ''
+reviewed: lN16bAKGmKz_3wc6z9Ntf5RttwU9My8vqbasGow4rGA=
+text: |
+  Selenium-E2E-Tests verifizieren die SuperAdmin-Workflows im Browser:
+  - SuperAdmin-Login: Zugang über /tenant/admin/login
+  - Tenant-Liste: Alle Tenants werden angezeigt
+  - Neuen Tenant anlegen: Formular ausfüllen und speichern
+  - Globale Tenant-Settings: Tabs (General, OIDC, Legal) bearbeiten

@@ -1,0 +1,293 @@
+= E2E-Test-Modul
+:sectnums:
+:toc: left
+
+== Überblick
+
+Das `e2e-tests/`-Modul ist ein separates Maven-Modul auf Root-Ebene, das serviceübergreifende End-to-End-Tests mit Selenium WebDriver ausführt. Es verifiziert alle relevanten UI-Use-Cases der Plattform aus Benutzersicht im echten Browser (STK-052).
+
+Im Gegensatz zu den Unit-Tests (MockMvc) und Integrationstests (Testcontainers-PostgreSQL) in den einzelnen Services testen die E2E-Tests die vollständige Kette von Browser über Thymeleaf-Rendering, Spring MVC, Application Layer bis zur Datenbank.
+
+Die Architekturentscheidung für Selenium WebDriver ist in ADR-0033 dokumentiert. Die modulübergreifende Architektur ist in SWA-035 beschrieben.
+
+== Modulstruktur
+
+Das folgende Diagramm zeigt die Paketstruktur des E2E-Test-Moduls:
+
+[mermaid]
+----
+graph TD
+    subgraph "e2e-tests/ (Maven-Modul)"
+        subgraph "config/"
+            E2ETestBase["E2ETestBase<br/>WebDriver-Lifecycle<br/>Testcontainers-Setup"]
+            ScreenshotExt["ScreenshotOnFailureExtension<br/>JUnit 5 Extension"]
+        end
+        subgraph "page/"
+            subgraph "page/blog/"
+                LandingPage["LandingPage"]
+                PostListPage["PostListPage"]
+                PostDetailPage["PostDetailPage"]
+                PostFormPage["PostFormPage"]
+                LegalPage["LegalPage"]
+            end
+            subgraph "page/auth/"
+                LoginPage["LoginPage"]
+                RegisterPage["RegisterPage"]
+                AdminLoginPage["AdminLoginPage"]
+            end
+            subgraph "page/admin/"
+                UserMgmtPage["UserManagementPage"]
+                TenantSettingsPage["TenantSettingsPage"]
+                TenantListPage["TenantListPage"]
+                GlobalSettingsPage["GlobalSettingsPage"]
+            end
+        end
+        subgraph "test/"
+            BlogPublic["BlogPublicViewE2ETest"]
+            BlogAuthor["BlogAuthorWorkflowE2ETest"]
+            AuthTest["AuthenticationE2ETest"]
+            AdminTest["AdminWorkflowE2ETest"]
+            SuperAdmin["SuperAdminE2ETest"]
+        end
+    end
+
+    BlogPublic --> LandingPage
+    BlogPublic --> PostListPage
+    BlogPublic --> PostDetailPage
+    BlogPublic --> LegalPage
+    BlogAuthor --> PostFormPage
+    BlogAuthor --> LoginPage
+    AuthTest --> LoginPage
+    AuthTest --> RegisterPage
+    AuthTest --> AdminLoginPage
+    AdminTest --> UserMgmtPage
+    AdminTest --> TenantSettingsPage
+    SuperAdmin --> TenantListPage
+    SuperAdmin --> GlobalSettingsPage
+    SuperAdmin --> AdminLoginPage
+----
+
+== Technologie-Stack
+
+Die E2E-Test-Infrastruktur (SWR-078) basiert auf folgenden Technologien:
+
+[cols="1,2"]
+|===
+| Technologie | Zweck
+
+| Selenium WebDriver 4.x | Browser-Automatisierung
+| Testcontainers-Selenium | Chrome-Container (kein lokaler Browser nötig)
+| Testcontainers-PostgreSQL | Datenbank-Container pro Service
+| Spring Boot Test | Service-Start im Testkontext
+| JUnit 5 | Test-Framework mit Extensions
+| AssertJ | Fluent Assertions
+|===
+
+== Page Object Model
+
+Jede Thymeleaf-Seite wird durch ein Page Object abstrahiert. Das folgende Klassendiagramm zeigt die Vererbungshierarchie:
+
+[mermaid]
+----
+classDiagram
+    class BasePage {
+        #WebDriver driver
+        #WebDriverWait wait
+        +getTitle() String
+        +getCurrentUrl() String
+        #waitForElement(By) WebElement
+        #click(By) void
+        #type(By, String) void
+    }
+
+    class LandingPage {
+        +open() LandingPage
+        +getFeaturedPosts() List~String~
+        +getRecentPosts() List~String~
+        +clickPost(String) PostDetailPage
+    }
+
+    class PostListPage {
+        +open() PostListPage
+        +search(String) PostListPage
+        +getPostTitles() List~String~
+        +clickPost(String) PostDetailPage
+    }
+
+    class PostDetailPage {
+        +getTitle() String
+        +getContent() String
+        +isMarkdownRendered() boolean
+    }
+
+    class PostFormPage {
+        +open() PostFormPage
+        +fillTitle(String) PostFormPage
+        +fillContent(String) PostFormPage
+        +submit() PostDetailPage
+    }
+
+    class LoginPage {
+        +open() LoginPage
+        +login(String, String) void
+        +getErrorMessage() String
+        +isOidcButtonVisible() boolean
+    }
+
+    class RegisterPage {
+        +open() RegisterPage
+        +fillForm(String, String, String) RegisterPage
+        +submit() void
+        +getValidationErrors() List~String~
+    }
+
+    BasePage <|-- LandingPage
+    BasePage <|-- PostListPage
+    BasePage <|-- PostDetailPage
+    BasePage <|-- PostFormPage
+    BasePage <|-- LoginPage
+    BasePage <|-- RegisterPage
+----
+
+== Testausführung
+
+Das folgende Sequenzdiagramm zeigt den Ablauf eines E2E-Tests:
+
+[mermaid]
+----
+sequenceDiagram
+    participant JUnit as JUnit 5
+    participant TC as Testcontainers
+    participant Chrome as Chrome Container
+    participant App as Spring Boot App
+    participant DB as PostgreSQL Container
+
+    JUnit->>TC: Start PostgreSQL Container
+    TC-->>JUnit: PostgreSQL bereit
+    JUnit->>TC: Start Chrome Container
+    TC-->>JUnit: Chrome bereit
+    JUnit->>App: Start Spring Boot (Random Port)
+    App-->>JUnit: Application bereit
+
+    JUnit->>Chrome: WebDriver.get(baseUrl + "/")
+    Chrome->>App: HTTP GET /
+    App->>DB: Query Posts
+    DB-->>App: Post-Daten
+    App-->>Chrome: HTML Response
+    Chrome-->>JUnit: Page geladen
+
+    JUnit->>JUnit: Assertions (Page Object)
+    Note over JUnit: Bei Fehler: Screenshot -> target/screenshots/
+----
+
+== Ausführungsmodi
+
+Die E2E-Tests können auf drei Arten ausgeführt werden (SWR-078):
+
+=== Lokal (Entwickler)
+
+[source,bash]
+----
+./mvnw verify -Pe2e
+----
+
+Testcontainers startet automatisch PostgreSQL- und Chrome-Container. Voraussetzung ist eine laufende Docker-Installation.
+
+=== CI/CD (GitHub Actions)
+
+Ein separater GitHub Actions Job führt die E2E-Tests nach dem regulären Build aus. Screenshots und HTML-Reports werden als Artefakte archiviert.
+
+=== Release (Pflicht)
+
+Das Release-Script (`scripts/release.sh`) führt die E2E-Tests als Pflichtschritt vor dem Release aus. Ein Fehlschlag bricht den Release-Prozess ab.
+
+[source,bash]
+----
+# Im Release-Script:
+./mvnw clean verify --batch-mode --no-transfer-progress
+./mvnw verify -Pe2e --batch-mode --no-transfer-progress
+----
+
+== Testszenarien
+
+=== Blog-Content öffentliche Ansichten (SWR-079)
+
+Die `BlogPublicViewE2ETest`-Klasse verifiziert alle öffentlich zugänglichen Seiten:
+
+[cols="1,3,2"]
+|===
+| # | Szenario | Verifiziert
+
+| 1 | Landing Page zeigt Featured und Recent Posts | SWR-025, SWR-026
+| 2 | Post-Liste mit Volltextsuche | SWR-038
+| 3 | Post-Detailansicht via Slug mit Markdown-Rendering | SWR-039, SWR-040
+| 4 | Impressum und Datenschutz erreichbar | SWR-028
+| 5 | 404-Seite bei unbekanntem Slug | -
+|===
+
+=== Blog-Content Autoren-Workflows (SWR-080)
+
+Die `BlogAuthorWorkflowE2ETest`-Klasse verifiziert authentifizierte Autoren-Aktionen:
+
+[cols="1,3,2"]
+|===
+| # | Szenario | Verifiziert
+
+| 6 | Post erstellen (Login → Formular → Speichern → Sichtbar) | SWR-037, SWR-076
+| 7 | Post bearbeiten und aktualisieren | SWR-037, SWR-077
+|===
+
+=== Authentifizierung und Registrierung (SWR-081)
+
+Die `AuthenticationE2ETest`-Klasse verifiziert die Auth-Workflows:
+
+[cols="1,3,2"]
+|===
+| # | Szenario | Verifiziert
+
+| 8 | Login mit internem Account | SWR-016
+| 9 | Registrierung mit Validierung | SWR-060
+| 10 | Erfolgsseite nach Registrierung | SWR-060
+| 11 | Break-Glass Admin-Login | SWR-044
+|===
+
+=== Admin-Workflows (SWR-082)
+
+Die `AdminWorkflowE2ETest`-Klasse verifiziert die Admin-UI:
+
+[cols="1,3,2"]
+|===
+| # | Szenario | Verifiziert
+
+| 12 | Benutzerliste und Benutzer freigeben | SWR-051
+| 13 | Tenant-Einstellungen ändern (Login Mode) | SWR-052
+|===
+
+=== SuperAdmin Tenant-Verwaltung (SWR-083)
+
+Die `SuperAdminE2ETest`-Klasse verifiziert die SuperAdmin-Workflows:
+
+[cols="1,3,2"]
+|===
+| # | Szenario | Verifiziert
+
+| 14 | SuperAdmin-Login | SWR-072
+| 15 | Neuen Tenant anlegen | SWR-073
+| 16 | Globale Tenant-Settings bearbeiten (Tabs) | SWR-073
+|===
+
+== Anforderungsabdeckung
+
+[cols="1,3,1"]
+|===
+| Requirement | Beschreibung | Status
+
+| STK-052 | E2E-Selenium-Tests für alle relevanten UI-Use-Cases | Design
+| SWR-078 | E2E-Test-Infrastruktur mit Selenium WebDriver | Design
+| SWR-079 | E2E-Tests: Blog-Content öffentliche Ansichten | Design
+| SWR-080 | E2E-Tests: Blog-Content Autoren-Workflows | Design
+| SWR-081 | E2E-Tests: Authentifizierung und Registrierung | Design
+| SWR-082 | E2E-Tests: Admin-Workflows (User/Tenant) | Design
+| SWR-083 | E2E-Tests: SuperAdmin Tenant-Verwaltung | Design
+| SWA-035 | E2E-Test-Modul Architektur | Design
+|===

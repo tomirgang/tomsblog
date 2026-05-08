@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  E2E-Tests: Blog-Content Autoren-Workflows
+level: 80.0
+links:
+- STK052: OC6mJ2er9P2n_9MNlMeTaWQu1zksyEvnVVU0enfgA58=
+normative: true
+ref: ''
+reviewed: BAZ7OqvJaBowHRVoyoinN244lieNa1vlzlhusqektXA=
+text: |
+  Selenium-E2E-Tests verifizieren die authentifizierten
+  Autoren-Workflows im Browser:
+  - Post erstellen: Login, Formular ausfüllen, Speichern, Post in Liste sichtbar
+  - Post bearbeiten: Bestehenden Post öffnen, Änderungen vornehmen, Speichern
+  - Markdown-Vorschau: Formular-Vorschau zeigt gerendertes Markdown

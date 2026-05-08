@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  E2E-Tests: Admin-Workflows (User/Tenant)
+level: 82.0
+links:
+- STK052: OC6mJ2er9P2n_9MNlMeTaWQu1zksyEvnVVU0enfgA58=
+normative: true
+ref: ''
+reviewed: gtnrWGS549pQVWh2cGiNJRobY6YSK4hufai4kZAK0FQ=
+text: |
+  Selenium-E2E-Tests verifizieren die Admin-Workflows im Browser:
+  - Benutzerliste: Alle Benutzer des Tenants werden angezeigt
+  - Benutzer freigeben/ablehnen: Approve/Reject-Buttons funktionieren
+  - Rollenänderung: Benutzerrolle kann über UI geändert werden
+  - Tenant-Einstellungen: Login Mode, OIDC-Konfiguration, Branding ändern

@@ -92,3 +92,16 @@ Für die horizontale Skalierbarkeit des Blog Content Service (STK-045) werden HT
 * Passwort-Authentifizierung über Kubernetes Secret
 * Linkerd mTLS zwischen Blog-Pod und Redis (ADR-0021)
 * Network Policy beschränkt Redis-Zugriff auf den `tomsblog` Namespace
+
+== E2E-Testing
+
+Die End-to-End-Testing-Strategie setzt STK-052 um und stellt sicher, dass alle relevanten UI-Use-Cases durch Browser-basierte Selenium-Tests verifiziert werden. Die Architekturentscheidungen sind in ADR-0033 dokumentiert, die technische Umsetzung in SWA-035 beschrieben.
+
+* Separates Maven-Modul `e2e-tests/` mit eigenem Profil (`-Pe2e`)
+* Selenium WebDriver mit Testcontainers-Selenium (Chrome-Container)
+* Page Object Model (POM) für wartbare Seiten-Abstraktionen
+* JUnit 5 Extension für automatische Screenshots bei Fehlschlag
+* 16 Testszenarien über 5 Testklassen: öffentliche Blog-Ansichten (SWR-079), Autoren-Workflows (SWR-080), Authentifizierung (SWR-081), Admin-Workflows (SWR-082), SuperAdmin-Verwaltung (SWR-083)
+* Lokale Ausführung: `./mvnw verify -Pe2e` (Docker erforderlich)
+* CI/CD: separater GitHub Actions Job mit Screenshot-Artefakten
+* Release-Pflicht: E2E-Tests sind Voraussetzung für ein Release (SWR-078)

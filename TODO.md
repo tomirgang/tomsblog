@@ -110,6 +110,7 @@
 - [x] Tenant Service
 - [x] Der Superadmin soll neue Tenants über die Admin UI anlegen können.
 - [x] Vorschau für Posts
+- [ ] E2E-Selenium-Tests für alle UI-Use-Cases (STK-052, SWR-078 bis SWR-083, ADR-0033)
 - [ ] Tags
 - [ ] Auditlog View
 - [ ] Kafka-Cluster-Konfiguration definieren

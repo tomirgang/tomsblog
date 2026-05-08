@@ -1,0 +1,39 @@
+active: true
+derived: false
+header: |
+  E2E-Test-Modul Architektur
+level: 35.0
+links:
+- SWR078: 7ATJW8B4s5x_iAD8dzjZzy6VxKRIgsRPCNJoQMecEic=
+- SWR079: -Oa3EeU7OLqa7TBthOntg6DXMnjO-dJl1ijN8UaMyUo=
+- SWR080: oKWyEHjm9ubaKATtVyVX3Rmi79aLHil7dvS7JXpD4Jo=
+- SWR081: Ty-Jlj3_0ixpE3TaZ4ySVh2-44NSH4Zqo5D54CzP71o=
+- SWR082: kER5zyFspfs5qBTRHpAN7z01a0Yebh55qdYLZQmLphg=
+- SWR083: szFoMGMDR4BJtIQnxE9JfCOLIIHfAfxmkkeiJP1j82s=
+normative: true
+ref: ''
+reviewed: 2hKpdfri-AhO7R3Qh98YRuYGXViQerU_AjoMj0fg6zA=
+text: |
+  Das E2E-Test-Modul (e2e-tests/) ist ein separates Maven-Modul auf
+  Root-Ebene, das serviceubergreifende Browser-Tests mit Selenium
+  WebDriver ausfuehrt.
+
+  Architektur:
+  - Maven-Modul mit Profil 'e2e' (nicht im Default-Build)
+  - Testcontainers-Selenium fuer Chrome-Browser-Container
+  - Testcontainers-PostgreSQL fuer Datenbankinstanzen
+  - Spring Boot Test fuer das Starten der Services
+  - Page Object Model (POM) fuer Template-Abstraktion
+  - JUnit 5 Extension fuer Screenshot-on-Failure
+
+  Ausfuehrung:
+  - Lokal: ./mvnw verify -Pe2e
+  - CI: separater GitHub Actions Job
+  - Release: Pflichtschritt in scripts/release.sh
+
+  Abhaengigkeiten:
+  - blog-content (test scope)
+  - user-management (test scope)
+  - tenant-management (test scope)
+  - selenium-java
+  - testcontainers (selenium, postgresql)

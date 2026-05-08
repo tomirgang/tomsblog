@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  E2E-Tests: Authentifizierung und Registrierung
+level: 81.0
+links:
+- STK052: OC6mJ2er9P2n_9MNlMeTaWQu1zksyEvnVVU0enfgA58=
+normative: true
+ref: ''
+reviewed: bF_oAMTcEHm71miFs7hNWRtNYbrnWyYg2E6GixZkOkA=
+text: |
+  Selenium-E2E-Tests verifizieren die Authentifizierungs- und
+  Registrierungs-Workflows im Browser:
+  - Login mit internem Account (Formular, Credentials, Redirect)
+  - Registrierung: Formular mit Validierung (Client- und Server-seitig)
+  - Registrierung: Erfolgsseite nach erfolgreicher Absendung
+  - Break-Glass Admin-Login: SuperAdmin-Zugang unter /auth/admin/login

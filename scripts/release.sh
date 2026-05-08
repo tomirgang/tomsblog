@@ -50,6 +50,9 @@ if [[ "$REBUILD" == true ]]; then
     info "Rebuild mode: running clean build and verification..."
     ./mvnw clean verify --batch-mode --no-transfer-progress
     info "Build and verification successful."
+    info "Running E2E tests (Selenium)..."
+    ./mvnw verify -Pe2e --batch-mode --no-transfer-progress || die "E2E tests failed."
+    info "E2E tests passed."
     exit 0
 fi
 
@@ -100,6 +103,11 @@ read -rp "Proceed with release $NEW_VERSION? [y/N] " confirm
 info "Running clean build and verification with current SNAPSHOT version..."
 ./mvnw clean verify --batch-mode --no-transfer-progress
 info "Build and verification successful."
+
+# Run E2E tests (Selenium browser tests) as mandatory release gate
+info "Running E2E tests (Selenium)..."
+./mvnw verify -Pe2e --batch-mode --no-transfer-progress || die "E2E tests failed. Fix failures before releasing."
+info "E2E tests passed."
 
 # Update version in all pom.xml files
 info "Updating Maven version to $NEW_VERSION..."

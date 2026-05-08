@@ -1,0 +1,21 @@
+active: true
+derived: false
+header: |
+  E2E-Selenium-Tests für alle relevanten UI-Use-Cases
+level: 52.0
+links: []
+normative: true
+ref: ''
+reviewed: OC6mJ2er9P2n_9MNlMeTaWQu1zksyEvnVVU0enfgA58=
+text: |
+  Alle relevanten UI-Use-Cases der Plattform müssen durch End-to-End-Tests
+  mit Selenium im Browser abgedeckt sein. Die Tests simulieren echte
+  Benutzerinteraktionen (Navigation, Formulareingaben, Klicks, Validierungen)
+  und verifizieren das korrekte Verhalten der Anwendung aus Benutzersicht.
+
+  Die E2E-Tests müssen:
+  - in einer realistischen Browserumgebung (Chrome/Firefox headless) laufen
+  - die vollständige Kette von UI über Backend bis Datenbank durchlaufen
+  - unabhängig voneinander und wiederholbar ausführbar sein
+  - in die CI/CD-Pipeline integriert sein
+  - bei Fehlschlag aussagekräftige Fehlermeldungen und Screenshots liefern

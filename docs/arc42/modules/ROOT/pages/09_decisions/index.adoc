@@ -26,6 +26,7 @@ Alle Architekturentscheidungen sind als ADRs dokumentiert:
 | link:../../../adrs/0017-api-gateway.html[0017] | API Gateway (Spring Cloud Gateway) | Accepted
 | link:../../../adrs/0018-dual-broker-kafka-rabbitmq.html[0018] | Dual-Broker-Strategie (Kafka + RabbitMQ) | Accepted
 | link:../../../adrs/0019-database-per-service.html[0019] | Database per Service (PostgreSQL / MongoDB) | Accepted
+| link:../../../adrs/0033-e2e-testing-selenium.html[0033] | E2E-Testing-Strategie mit Selenium WebDriver | Proposed
 |===
 
 NOTE: ADRs werden als Markdown-Dateien in `docs/adr/` gepflegt. Dieses Kapitel dient als Index.
