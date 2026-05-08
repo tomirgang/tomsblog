@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-05-08
+
 ### Added
 
 - Kubernetes Ingress für User Management Service: Pfad-basiertes Routing von `/auth/**` und `/login/oauth2/code/**` zu user-management (ADR-0032)
