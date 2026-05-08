@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Vollständige Vorschau für unveröffentlichte Posts
+level: 51.0
+links: []
+normative: true
+ref: ''
+reviewed: MPfYrPbkqtm53b9bAofdG8D_vZehocVfCtHIcqgpGU4=
+text: |
+  Als Autor oder Admin möchte ich einen unveröffentlichten Post (Status DRAFT)
+  in einer vollständigen Vorschau betrachten können, die exakt der späteren
+  Darstellung nach Veröffentlichung entspricht (inklusive Markdown-Rendering,
+  Syntax-Highlighting und Mermaid-Diagramme), damit ich das Ergebnis vor der
+  Publikation prüfen kann.
+
+  Die Vorschau muss nur für authentifizierte Benutzer mit Schreibberechtigung
+  (AUTHOR, ADMIN, SUPERADMIN) zugänglich sein.

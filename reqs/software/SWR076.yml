@@ -1,0 +1,26 @@
+active: true
+derived: false
+header: |
+  Post-Vorschau-Endpoint für DRAFT-Posts
+level: 76.0
+links:
+- STK051: MPfYrPbkqtm53b9bAofdG8D_vZehocVfCtHIcqgpGU4=
+normative: true
+ref: ''
+reviewed: KWhve3_2BPWar_x9Ted7alWehPMjJv1GVNtGPxNR_ik=
+text: |
+  Der Blog-Content-Service stellt einen dedizierten Vorschau-Endpoint
+  GET /posts/{id}/preview bereit, der einen Post unabhängig von seinem
+  Status (insbesondere DRAFT) vollständig gerendert zurückgibt.
+
+  Anforderungen:
+  - Markdown-Posts werden zu HTML gerendert (Flexmark, inklusive
+    Syntax-Highlighting und Mermaid-Diagramme)
+  - HTML-Posts werden unverändert dargestellt
+  - Die Darstellung entspricht exakt der Detailansicht eines
+    veröffentlichten Posts (show.html Template)
+  - Der Endpoint ist nur für authentifizierte Benutzer mit Rolle
+    AUTHOR, ADMIN oder SUPERADMIN zugänglich
+  - Nicht-authentifizierte Benutzer erhalten HTTP 401/302 (Redirect
+    zum Login)
+  - Bei ungültiger Post-ID wird HTTP 404 zurückgegeben

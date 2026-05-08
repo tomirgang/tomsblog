@@ -108,8 +108,10 @@
 - [x] UI Library
 - [x] Tenant Einstellungen eigene Formulare pro Einstellungsgruppe, z.B. OIDC Settings, Impressum und Privacy, ... (STK-049, SWR-069, SWR-070, SWR-071)
 - [x] Tenant Service
-- [ ] Der Superadmin soll neue Tenants über die Admin UI anlegen können.
-- [ ] Vorschau für Posts
+- [x] Der Superadmin soll neue Tenants über die Admin UI anlegen können.
+- [x] Vorschau für Posts
+- [ ] Tags
+- [ ] Auditlog View
 - [ ] Kafka-Cluster-Konfiguration definieren
 - [ ] RabbitMQ-Cluster-Konfiguration definieren
 - [ ] Event-Schema-Design (Avro/Protobuf oder JSON Schema)
@@ -123,8 +125,6 @@
 - [ ] CloudNativePG auf ≥ 1.25 upgraden (Voraussetzung für Database CRD, ADR-0029)
 - [ ] Migration auf deklarative Database CRD für alle Service-Datenbanken (INF-013, SWA-030)
 - [ ] Dedizierte Rollen pro Service evaluieren (nach Verfügbarkeit DatabaseRole CRD)
-- [ ] Tags
-- [ ] Auditlog View
 - [ ] Security-Reviews (OWASP)
 - [ ] Architecture Review
 

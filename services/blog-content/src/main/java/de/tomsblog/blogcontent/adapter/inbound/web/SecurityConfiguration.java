@@ -52,7 +52,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.DELETE, "/api/**")
                         .hasAnyRole("ADMIN", "SUPERADMIN")
                         // Protected: admin-only paths (evaluated before public slug pattern)
-                        .requestMatchers("/posts/new", "/posts/*/edit")
+                        .requestMatchers("/posts/new", "/posts/*/edit", "/posts/*/preview")
                         .authenticated()
                         // Public: blog reading (GET only)
                         .requestMatchers(HttpMethod.GET, "/")

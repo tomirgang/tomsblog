@@ -810,4 +810,57 @@ class BlogViewControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("seriesNextPost"));
     }
+
+    @Test
+    @DisplayName("SWR-076: GET /posts/{id}/preview returns show view with preview flag for draft post")
+    @WithMockUser(username = "author", roles = "AUTHOR")
+    void previewPost_draftPost_returnsShowViewWithPreviewFlag() throws Exception {
+        UUID postId = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Draft Post", "Draft content", PostLocale.german());
+        when(postUseCase.getPost(any(PostId.class), any(TenantId.class))).thenReturn(post);
+
+        mockMvc.perform(get("/posts/{id}/preview", postId).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/show"))
+                .andExpect(model().attributeExists("post"))
+                .andExpect(model().attributeExists("renderedContent"))
+                .andExpect(model().attribute("preview", true));
+    }
+
+    @Test
+    @DisplayName("SWR-076: GET /posts/{id}/preview renders markdown content")
+    @WithMockUser(username = "author", roles = "AUTHOR")
+    void previewPost_markdownPost_rendersContent() throws Exception {
+        UUID postId = UUID.randomUUID();
+        Post post = Post.create(
+                TenantId.of(tenantId), authorId, "MD Post", "# Hello", ContentType.MARKDOWN, PostLocale.german());
+        when(postUseCase.getPost(any(PostId.class), any(TenantId.class))).thenReturn(post);
+        when(markdownRenderer.renderToHtml("# Hello")).thenReturn("<h1>Hello</h1>");
+
+        mockMvc.perform(get("/posts/{id}/preview", postId).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/show"))
+                .andExpect(model().attribute("renderedContent", "<h1>Hello</h1>"));
+    }
+
+    @Test
+    @DisplayName("SWR-076: GET /posts/{id}/preview returns 404 when post not found")
+    @WithMockUser(username = "author", roles = "AUTHOR")
+    void previewPost_notFound_returns404() throws Exception {
+        UUID postId = UUID.randomUUID();
+        when(postUseCase.getPost(any(PostId.class), any(TenantId.class)))
+                .thenThrow(new PostNotFoundException(new PostId(postId)));
+
+        mockMvc.perform(get("/posts/{id}/preview", postId).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("SWR-076: GET /posts/{id}/preview requires authentication")
+    void previewPost_unauthenticated_redirectsToLogin() throws Exception {
+        UUID postId = UUID.randomUUID();
+
+        mockMvc.perform(get("/posts/{id}/preview", postId).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().is3xxRedirection());
+    }
 }

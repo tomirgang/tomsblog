@@ -85,6 +85,8 @@
 
             <div role="group">
                 <button type="submit" th:text="${editMode} ? 'Speichern' : 'Erstellen'">Absenden</button>
+                <a th:if="${editMode}" th:href="@{/posts/{id}/preview(id=${postId})}" role="button"
+                   class="secondary" target="_blank">Vorschau</a>
                 <a th:href="@{/posts}" role="button" class="secondary">Abbrechen</a>
             </div>
         </form>

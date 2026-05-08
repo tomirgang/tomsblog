@@ -44,6 +44,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @req SWR-039
  * @req SWR-040
  * @req SWR-042
+ * @req SWR-076
+ * @req SWR-077
  */
 @Controller
 public class BlogViewController {
@@ -138,6 +140,16 @@ public class BlogViewController {
         model.addAttribute("editMode", false);
         model.addAttribute("availablePosts", postUseCase.listPosts(new TenantId(tenantId)));
         return "posts/form";
+    }
+
+    /** @req SWR-076 */
+    @GetMapping("/posts/{id}/preview")
+    public String previewPost(@PathVariable UUID id, @RequestHeader("X-Tenant-Id") UUID tenantId, Model model) {
+        Post post = postUseCase.getPost(new PostId(id), new TenantId(tenantId));
+        model.addAttribute("post", post);
+        model.addAttribute("renderedContent", renderContent(post));
+        model.addAttribute("preview", true);
+        return "posts/show";
     }
 
     /** @req SWR-027 */

@@ -620,6 +620,51 @@ sequenceDiagram
     end
 ----
 
+==== Vollständige Vorschau für unveröffentlichte Posts (SWR-076, SWR-077)
+
+Autoren und Admins können einen Post unabhängig von seinem Status (insbesondere DRAFT) in einer vollständigen Vorschau betrachten, die exakt der Darstellung nach Veröffentlichung entspricht. Dies ermöglicht eine Qualitätsprüfung vor der Publikation (STK-051).
+
+===== Vorschau-Endpoint
+
+Ein dedizierter Endpoint `GET /posts/{id}/preview` rendert den Post vollständig, unabhängig vom Status. Der Zugriff ist auf authentifizierte Benutzer mit Schreibberechtigung (AUTHOR, ADMIN, SUPERADMIN) beschränkt.
+
+[cols="1,1,2"]
+|===
+| HTTP-Methode | Pfad | Beschreibung
+
+| GET | /posts/{id}/preview | Vollständige Vorschau eines Posts (beliebiger Status)
+|===
+
+===== Ablauf: Post-Vorschau
+
+[mermaid]
+----
+sequenceDiagram
+    actor Author
+    participant Controller as BlogViewController
+    participant Service as PostService
+    participant MD as MarkdownRenderer
+
+    Author->>Controller: GET /posts/{id}/preview
+    Controller->>Service: getPost(postId, tenantId)
+    Service-->>Controller: Post (beliebiger Status)
+    alt ContentType == MARKDOWN
+        Controller->>MD: renderToHtml(post.content)
+        MD-->>Controller: HTML-String
+    end
+    Controller-->>Author: posts/show.html (Model: post, renderedContent, preview=true)
+----
+
+Die Vorschau nutzt dasselbe Template (`posts/show.html`) wie die öffentliche Einzelansicht. Das zusätzliche Model-Attribut `preview=true` ermöglicht die Anzeige eines visuellen Hinweises (z.B. Banner „Vorschau – noch nicht veröffentlicht"), um die Vorschau von der produktiven Ansicht zu unterscheiden.
+
+===== Vorschau-Button im Formular (SWR-077)
+
+Das Post-Bearbeitungsformular (`posts/form.html`) enthält einen Vorschau-Button, der den Post in einem neuen Browser-Tab öffnet (`target="_blank"`, Link zu `/posts/{id}/preview`). Der Button ist nur sichtbar, wenn der Post bereits gespeichert wurde (ID vorhanden). Für neue Posts ohne ID wird der Button ausgeblendet.
+
+===== Sicherheit
+
+Die SecurityConfiguration autorisiert den Pfad `/posts/*/preview` nur für authentifizierte Benutzer. Da der Endpoint über die bestehende AUTHOR/ADMIN/SUPERADMIN-Prüfung läuft, wird kein separater Zugriffspfad benötigt – er wird analog zu `/posts/*/edit` geschützt.
+
 ==== Template-Struktur
 
 Die Templates folgen einer hierarchischen Struktur mit dem Thymeleaf Layout Dialect:
@@ -960,6 +1005,8 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWA-026 | Landing Page mit Paginierung am Repository | PostRepository.findRecentPublishedByTenantId(TenantId, int), PageRequest
 | SWA-027 | ContentType im Domain-Modell und Persistenz | ContentType Enum, V4 Migration, PostJpaEntity.contentType
 | SWR-038 | Volltextsuche für Blog Posts | BlogViewController.listPosts(q), PostUseCase.searchPublishedPosts(), PostRepository.searchPublished(), V5 GIN-Index, posts/list.html Suchformular
+| SWR-076 | Post-Vorschau-Endpoint für DRAFT-Posts | BlogViewController.previewPost(), PostUseCase.getPost(), posts/show.html (preview=true)
+| SWR-077 | Vorschau-Button im Post-Formular | posts/form.html (Link zu /posts/{id}/preview, target=_blank)
 | SWR-039 | Chronologische Previous/Next-Navigation | BlogViewController.showPost(), PostUseCase.findPreviousPublishedPost/findNextPublishedPost(), PostRepository.findPreviousPublished/findNextPublished(), posts/show.html
 | SWR-040 | Serien-Navigation | Post.seriesPreviousPostId/seriesNextPostId, BlogViewController.addSeriesNavigation(), PostUseCase.getPostIfPublished(), V6 Migration, posts/show.html, posts/form.html
 | SWR-041 | Featured-Zeitraum im Domain-Modell | Post.featuredFrom/featuredUntil, Post.updateFeatured(), Post.isFeatured(), CreatePostCommand, UpdatePostCommand, PostResponse, V7 Migration

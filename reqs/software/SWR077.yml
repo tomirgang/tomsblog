@@ -1,0 +1,19 @@
+active: true
+derived: false
+header: |
+  Vorschau-Button im Post-Formular
+level: 77.0
+links:
+- STK051: MPfYrPbkqtm53b9bAofdG8D_vZehocVfCtHIcqgpGU4=
+normative: true
+ref: ''
+reviewed: NtLGcByv5tEt7RuLl1xku62dfbTQ0Nk1gufF1bUiRoc=
+text: |
+  Das Post-Bearbeitungsformular (form.html) enthält einen
+  Vorschau-Button, der den Post in einem neuen Browser-Tab als
+  vollständig gerenderte Vorschau öffnet (Link zu /posts/{id}/preview).
+
+  Der Button ist sowohl beim Erstellen (nach erstem Speichern) als auch
+  beim Bearbeiten eines bestehenden Posts sichtbar. Für neue Posts, die
+  noch nicht gespeichert wurden (kein ID vorhanden), ist der Button
+  deaktiviert oder ausgeblendet.

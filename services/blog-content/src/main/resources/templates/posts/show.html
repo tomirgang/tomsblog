@@ -9,10 +9,14 @@
 </head>
 <body>
     <section layout:fragment="content">
+        <div th:if="${preview}" role="alert">
+            Vorschau &ndash; dieser Post ist noch nicht veröffentlicht.
+        </div>
+
         <article>
             <header>
                 <h1 th:text="${post.title}">Post Title</h1>
-                <small>
+                <small th:unless="${preview}">
                     <time th:datetime="${post.publishedAt}"
                           th:text="${#temporals.format(post.publishedAt, 'dd.MM.yyyy')}">
                         01.01.2026

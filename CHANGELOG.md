@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- Vollständige Vorschau für unveröffentlichte Posts (STK-051, SWR-076, SWR-077)
+  - Neuer Endpoint GET /posts/{id}/preview zeigt DRAFT-Posts vollständig gerendert (Markdown, Syntax-Highlighting, Mermaid)
+  - Vorschau-Button im Post-Bearbeitungsformular (öffnet in neuem Tab)
+  - Vorschau-Banner in der Detailansicht zur Unterscheidung von veröffentlichten Posts
+  - Zugriff nur für authentifizierte Benutzer (AUTHOR, ADMIN, SUPERADMIN)
 - Tenant Management Service (services/tenant-management): Eigenständiger Microservice für die Verwaltung von Tenants mit eigener Admin UI (ADR-0031, STK-050, SWR-072, SWR-073, SWR-074, SWR-075, SWA-034)
   - Domain-Modell: Tenant-Aggregate mit Lifecycle (ACTIVE, SUSPENDED, DEACTIVATED), Login-Modi (INTERNAL, OIDC, BOTH), OIDC-Konfiguration, Auto-Approve-Regeln, Impressum/Datenschutz
   - gRPC-API (Port 9090) für Service-zu-Service-Kommunikation: GetTenant, CreateTenant, UpdateGeneralSettings, UpdateOidcSettings, UpdateLegalSettings, ListTenants
