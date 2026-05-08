@@ -4,10 +4,10 @@ header: |
   Gemeinsame CSS-Styles in der Shared UI Library
 level: 67.0
 links:
-- STK048: null
+- STK048: y-CJHXDa0JVwPsPMt_KyQMK-SYB8BeQeKgG-s-nl4aw=
 normative: true
 ref: ''
-reviewed: null
+reviewed: 27B6QjYh80fhO5sOirUbJtflyS_0RHGjkUdsTvpc1Wk=
 text: |
   Die Shared UI Library muss die gemeinsamen CSS-Styles
   (static/css/custom.css) bereitstellen, die das Basisdesign der

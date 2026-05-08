@@ -4,10 +4,10 @@ header: |
   Shared UI Library als Maven-Modul
 level: 65.0
 links:
-- STK048: null
+- STK048: y-CJHXDa0JVwPsPMt_KyQMK-SYB8BeQeKgG-s-nl4aw=
 normative: true
 ref: ''
-reviewed: null
+reviewed: VE594T20VAM8c_Ke1P3w8Kc6e7gbD7En1DGpKpnVm3U=
 text: |
   Es muss ein Maven-Modul libs/shared-ui bereitgestellt werden, das
   gemeinsame Thymeleaf-Templates, Fragmente und CSS-Styles als

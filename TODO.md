@@ -106,7 +106,7 @@
 - [x] OIDC Config pro Tennant über Admin Interface
 - [x] Bessere Architektur für User UI
 - [x] UI Library
-- [ ] Tenant Einstellungen eigene Formulare pro Einstellungsgruppe, z.B. OIDC Settings, Impressum und Privacy, ...
+- [ ] Tenant Einstellungen eigene Formulare pro Einstellungsgruppe, z.B. OIDC Settings, Impressum und Privacy, ... (STK-049, SWR-069, SWR-070, SWR-071)
 - [ ] Tenant Service
 - [ ] Der Superadmin soll neue Tenants über die Admin UI anlegen können.
 - [ ] Vorschau für Posts

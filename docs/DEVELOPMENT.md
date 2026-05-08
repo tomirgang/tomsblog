@@ -211,19 +211,22 @@ docker compose -f infra/docker/docker-compose.yml up -d
 # 3. Build prüfen
 ./mvnw verify
 
-# 4. Blog Content Service starten (BLOG_ADMIN_PASSWORD ist Pflicht)
+# 4. Blog Content Service starten
 BLOG_ADMIN_PASSWORD=dev-password ./mvnw spring-boot:run -pl services/blog-content -Dspring-boot.run.profiles=local
 
-# 5. (Optional) Dokumentation generieren
+# 5. User Management Service starten (BLOG_ADMIN_PASSWORD + SERVICE_API_KEY sind Pflicht)
+BLOG_ADMIN_PASSWORD=dev-password SERVICE_API_KEY=dev-api-key ./mvnw spring-boot:run -pl services/user-management -Dspring-boot.run.profiles=local
+
+# 6. (Optional) Dokumentation generieren
 npx antora antora-playbook.yml
 ```
 
 ### Pflicht-Umgebungsvariablen
 
-| Variable              | Service        | Beschreibung                           | Empfehlung lokal     |
-| --------------------- | -------------- | -------------------------------------- | -------------------- |
-| `BLOG_ADMIN_PASSWORD` | blog-content   | SuperAdmin-Passwort (kein Default)     | `dev-password`       |
-| `SERVICE_API_KEY`     | user-management| API-Key für Service-Authentifizierung  | `dev-api-key`        |
+| Variable              | Service           | Beschreibung                           | Empfehlung lokal     |
+| --------------------- | ----------------- | -------------------------------------- | -------------------- |
+| `BLOG_ADMIN_PASSWORD` | blog-content, user-management | SuperAdmin-Passwort (kein Default)     | `dev-password`       |
+| `SERVICE_API_KEY`     | user-management   | API-Key für Service-Authentifizierung  | `dev-api-key`        |
 
 ## Lokale Services (Docker Compose)
 
@@ -251,8 +254,10 @@ docker compose -f infra/docker/docker-compose.yml down -v
 ## Maven-Befehle
 
 ```bash
-./mvnw verify                    # Build + alle Tests
-./mvnw test                      # Nur Tests
+./mvnw verify                    # Build + alle Tests (ohne Fuzz)
+./mvnw test                      # Nur Tests (ohne Fuzz)
+./mvnw verify -Pfuzz             # Build + alle Tests inkl. Fuzz
+./mvnw test -Pfuzz -pl services/blog-content  # Nur Fuzz-Tests (blog-content)
 ./mvnw spotless:apply            # Code formatieren
 ./mvnw spotless:check            # Format prüfen (CI)
 ./mvnw spring-boot:run -pl services/blog-content -Dspring-boot.run.profiles=local
@@ -310,9 +315,11 @@ ls docs/adr/
 ```
 tomsblog/
 ├── services/           # Microservices (Maven-Module)
-│   └── blog-content/   # Erster Service
+│   ├── blog-content/   # Blog-Posts, Tags, Übersetzungen
+│   └── user-management/# Login, Registrierung, Admin-UI, OIDC
 ├── libs/               # Shared Libraries
 │   ├── shared-kernel/  # Domain Primitives (framework-frei)
+│   ├── shared-ui/      # Gemeinsame Thymeleaf-Fragmente
 │   └── event-contracts/# Kafka Event Records
 ├── infra/
 │   ├── docker/         # Docker Compose (lokale Deps)

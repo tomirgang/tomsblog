@@ -101,10 +101,11 @@ class AuthAdminControllerTest {
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         Model model = new ConcurrentModel();
-        String view = controller.showSettings(TENANT_UUID, new MockHttpSession(), model);
+        String view = controller.showSettings(TENANT_UUID, new MockHttpSession(), "general", model);
 
         assertThat(view).isEqualTo("admin/settings");
         assertThat(model.getAttribute("settings")).isNotNull();
+        assertThat(model.getAttribute("activeTab")).isEqualTo("general");
     }
 
     @Test
@@ -113,66 +114,61 @@ class AuthAdminControllerTest {
         when(tenantSettingsUseCase.getSettings(any())).thenThrow(new RuntimeException("fail"));
 
         Model model = new ConcurrentModel();
-        String view = controller.showSettings(TENANT_UUID, new MockHttpSession(), model);
+        String view = controller.showSettings(TENANT_UUID, new MockHttpSession(), "general", model);
 
         assertThat(view).isEqualTo("admin/settings");
         assertThat(model.getAttribute("settings")).isNull();
     }
 
     @Test
-    @DisplayName("updateSettings delegates and redirects")
-    void updateSettings() {
+    @DisplayName("updateGeneralSettings delegates and redirects")
+    void updateGeneralSettings() {
         MockHttpSession session = new MockHttpSession();
-        String view = controller.updateSettings(
-                TENANT_UUID,
-                session,
-                "BOTH",
-                true,
-                "example.com, test.org",
-                "My Blog",
-                "Tagline",
-                "Impressum",
-                "Privacy",
-                "https://auth.example.com",
-                "client-id",
-                "client-secret");
+        String view = controller.updateGeneralSettings(
+                TENANT_UUID, session, "BOTH", true, "example.com, test.org", "My Blog", "Tagline");
 
         verify(tenantSettingsUseCase)
-                .updateSettings(
+                .updateGeneralSettings(
                         eq(TENANT_ID),
-                        eq(LoginMode.BOTH),
-                        eq(true),
-                        eq(Set.of("example.com", "test.org")),
                         eq("My Blog"),
                         eq("Tagline"),
-                        eq("Impressum"),
-                        eq("Privacy"),
-                        eq("https://auth.example.com"),
-                        eq("client-id"),
-                        eq("client-secret"));
-        assertThat(view).isEqualTo("redirect:/auth/admin/settings");
+                        eq(LoginMode.BOTH),
+                        eq(true),
+                        eq(Set.of("example.com", "test.org")));
+        assertThat(view).isEqualTo("redirect:/auth/admin/settings?tab=general");
     }
 
     @Test
-    @DisplayName("updateSettings with blank domains creates empty set")
-    void updateSettingsEmptyDomains() {
+    @DisplayName("updateGeneralSettings with blank domains creates empty set")
+    void updateGeneralSettingsEmptyDomains() {
         MockHttpSession session = new MockHttpSession();
-        controller.updateSettings(
-                TENANT_UUID, session, "OIDC", false, "  ", "Blog", null, null, null, null, null, null);
+        controller.updateGeneralSettings(TENANT_UUID, session, "OIDC", false, "  ", "Blog", null);
 
         verify(tenantSettingsUseCase)
-                .updateSettings(
-                        eq(TENANT_ID),
-                        eq(LoginMode.OIDC),
-                        eq(false),
-                        eq(Set.of()),
-                        any(),
-                        any(),
-                        any(),
-                        any(),
-                        any(),
-                        any(),
-                        any());
+                .updateGeneralSettings(eq(TENANT_ID), eq("Blog"), any(), eq(LoginMode.OIDC), eq(false), eq(Set.of()));
+    }
+
+    @Test
+    @DisplayName("updateOidcSettings delegates and redirects")
+    void updateOidcSettings() {
+        MockHttpSession session = new MockHttpSession();
+        String view = controller.updateOidcSettings(
+                TENANT_UUID, session, "https://auth.example.com", "client-id", "client-secret");
+
+        verify(tenantSettingsUseCase)
+                .updateOidcSettings(
+                        eq(TENANT_ID), eq("https://auth.example.com"), eq("client-id"), eq("client-secret"));
+        assertThat(view).isEqualTo("redirect:/auth/admin/settings?tab=oidc");
+    }
+
+    @Test
+    @DisplayName("updateLegalSettings delegates and redirects")
+    void updateLegalSettings() {
+        MockHttpSession session = new MockHttpSession();
+        String view = controller.updateLegalSettings(TENANT_UUID, session, "Impressum text", "Privacy text");
+
+        verify(tenantSettingsUseCase).updateLegalSettings(eq(TENANT_ID), eq("Impressum text"), eq("Privacy text"));
+        assertThat(view).isEqualTo("redirect:/auth/admin/settings?tab=legal");
     }
 
     @Test

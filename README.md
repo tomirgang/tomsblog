@@ -12,6 +12,13 @@ Das System folgt einer **hexagonalen Architektur** (Ports & Adapters) und ist al
 
 **Backend:** Spring Boot (Java/Kotlin)
 
+### Services
+
+| Service            | Funktion                                              | Pfad             |
+| ------------------ | ----------------------------------------------------- | ---------------- |
+| blog-content       | Blog-Posts, Tags, Übersetzungen, Thymeleaf-UI         | `/`, `/posts/**` |
+| user-management    | Login, Registrierung, Admin-UI, OIDC, Benutzerverwaltung | `/auth/**`       |
+
 ### Infrastruktur
 
 | Komponente     | Technologie                                          |
@@ -20,7 +27,7 @@ Das System folgt einer **hexagonalen Architektur** (Ports & Adapters) und ist al
 | Messaging      | Apache Kafka (Event-Streaming), RabbitMQ (Task-Queues) |
 | Relationale DB | PostgreSQL (CloudNativePG Operator) - Database per Service   |
 | Dokument-DB    | MongoDB (per Service, wo passend)                            |
-| Caching        | Redis                                                |
+| Session-Store  | Redis (Shared Sessions zwischen Services)             |
 | Observability  | Prometheus, Grafana, Loki, Tempo                     |
 | GitOps         | Flux (ADR-0020)                                      |
 | Backup-Storage | Netcup VM mit Garage (S3-kompatibel)                 |
@@ -61,6 +68,8 @@ Das Deployment erfolgt vollständig über GitOps-Prinzipien. Infrastruktur- und 
 
 - **Multi-User** – Mehrere Autoren und Rollen
 - **Multi-Tenant** – Mandantenfähigkeit für getrennte Blog-Instanzen
+- **OIDC-Login** – Externe Authentifizierung via Authentik (pro Tenant konfigurierbar)
+- **Lokale Registrierung** – Benutzername/Passwort-Registrierung mit Admin-Freigabe
 - **Admin-UI** – Administrationsoberfläche zur Verwaltung der Plattform
 - **Kommentare** – Kommentarfunktion für Leser
 

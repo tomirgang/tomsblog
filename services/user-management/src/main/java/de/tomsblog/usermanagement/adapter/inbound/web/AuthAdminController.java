@@ -33,6 +33,9 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @req SWR-051
  * @req SWR-052
  * @req SWR-053
+ * @req SWR-069
+ * @req SWR-070
+ * @req SWR-071
  */
 @Controller
 @RequestMapping("/auth/admin")
@@ -85,7 +88,11 @@ public class AuthAdminController {
     }
 
     @GetMapping("/settings")
-    public String showSettings(@RequestHeader("X-Tenant-Id") UUID tenantId, HttpSession session, Model model) {
+    public String showSettings(
+            @RequestHeader("X-Tenant-Id") UUID tenantId,
+            HttpSession session,
+            @RequestParam(defaultValue = "general") String tab,
+            Model model) {
         UUID activeTenant = resolveActiveTenant(tenantId, session);
         try {
             TenantSettings settings = tenantSettingsUseCase.getSettings(new TenantId(activeTenant));
@@ -93,44 +100,53 @@ public class AuthAdminController {
         } catch (Exception e) {
             LOG.warn("Failed to load tenant settings for '{}'.", activeTenant, e);
         }
+        model.addAttribute("activeTab", tab);
         return "admin/settings";
     }
 
-    @PostMapping("/settings")
-    public String updateSettings(
+    @PostMapping("/settings/general")
+    public String updateGeneralSettings(
             @RequestHeader("X-Tenant-Id") UUID tenantId,
             HttpSession session,
             @RequestParam String loginMode,
             @RequestParam(defaultValue = "false") boolean autoApproveOidc,
             @RequestParam(defaultValue = "") String autoApproveEmailDomains,
             @RequestParam String displayName,
-            @RequestParam(required = false) String tagline,
-            @RequestParam(required = false) String impressumContent,
-            @RequestParam(required = false) String privacyPolicyContent,
+            @RequestParam(required = false) String tagline) {
+        UUID activeTenant = resolveActiveTenant(tenantId, session);
+        Set<String> domains = parseDomains(autoApproveEmailDomains);
+        tenantSettingsUseCase.updateGeneralSettings(
+                new TenantId(activeTenant),
+                displayName,
+                tagline,
+                LoginMode.valueOf(loginMode),
+                autoApproveOidc,
+                domains);
+        return "redirect:/auth/admin/settings?tab=general";
+    }
+
+    @PostMapping("/settings/oidc")
+    public String updateOidcSettings(
+            @RequestHeader("X-Tenant-Id") UUID tenantId,
+            HttpSession session,
             @RequestParam(required = false) String oidcIssuerUrl,
             @RequestParam(required = false) String oidcClientId,
             @RequestParam(required = false) String oidcClientSecret) {
         UUID activeTenant = resolveActiveTenant(tenantId, session);
-        Set<String> domains = new LinkedHashSet<>();
-        if (!autoApproveEmailDomains.isBlank()) {
-            Arrays.stream(autoApproveEmailDomains.split(","))
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .forEach(domains::add);
-        }
-        tenantSettingsUseCase.updateSettings(
-                new TenantId(activeTenant),
-                LoginMode.valueOf(loginMode),
-                autoApproveOidc,
-                domains,
-                displayName,
-                tagline,
-                impressumContent,
-                privacyPolicyContent,
-                oidcIssuerUrl,
-                oidcClientId,
-                oidcClientSecret);
-        return "redirect:/auth/admin/settings";
+        tenantSettingsUseCase.updateOidcSettings(
+                new TenantId(activeTenant), oidcIssuerUrl, oidcClientId, oidcClientSecret);
+        return "redirect:/auth/admin/settings?tab=oidc";
+    }
+
+    @PostMapping("/settings/legal")
+    public String updateLegalSettings(
+            @RequestHeader("X-Tenant-Id") UUID tenantId,
+            HttpSession session,
+            @RequestParam(required = false) String impressumContent,
+            @RequestParam(required = false) String privacyPolicyContent) {
+        UUID activeTenant = resolveActiveTenant(tenantId, session);
+        tenantSettingsUseCase.updateLegalSettings(new TenantId(activeTenant), impressumContent, privacyPolicyContent);
+        return "redirect:/auth/admin/settings?tab=legal";
     }
 
     @PostMapping("/switch-tenant")
@@ -150,5 +166,16 @@ public class AuthAdminController {
             }
         }
         return headerTenantId;
+    }
+
+    private Set<String> parseDomains(String autoApproveEmailDomains) {
+        Set<String> domains = new LinkedHashSet<>();
+        if (!autoApproveEmailDomains.isBlank()) {
+            Arrays.stream(autoApproveEmailDomains.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .forEach(domains::add);
+        }
+        return domains;
     }
 }

@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Separate Formulare für Tenant-Einstellungsgruppen
+level: 69.0
+links:
+- STK049: fguE2gU1syFoDW_B73_cEpIHujZ1YDVpXisS6x18dq4=
+normative: true
+ref: ''
+reviewed: p3hZiXlbj_HfjkU0FZlAR7MiUySii9bIalhUiMed_ZA=
+text: |
+  Die Admin-Oberfläche für Tenant-Einstellungen muss die Einstellungen
+  in separate Formulare pro Einstellungsgruppe aufteilen. Jedes Formular
+  wird über einen eigenen HTTP-Endpunkt geladen und gespeichert. Die
+  folgenden Einstellungsgruppen müssen als eigenständige Formulare
+  dargestellt werden: Allgemeine Einstellungen (Blog-Name,
+  Login-Methode, Auto-Approval), OIDC-Konfiguration (Issuer URL,
+  Client ID, Client Secret), Impressum und Datenschutzerklärung.

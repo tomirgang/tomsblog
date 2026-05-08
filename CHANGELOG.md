@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 - Shared UI Library (libs/shared-ui): Gemeinsame Thymeleaf-Templates (Layout, Footer) und CSS-Styles als Maven-Modul (STK-048, SWR-065, SWR-066, SWR-067, SWR-068, SWA-033)
 - Blog Content und User Management Service nutzen die Shared UI Library statt duplizierter Layouts und Styles
+- Tenant-Einstellungen in separaten Formularen pro Einstellungsgruppe: Allgemein, OIDC und Impressum/Datenschutz mit Tab-Navigation und unabhängiger Speicherung (STK-049, SWR-069, SWR-070, SWR-071)
+
+### Changed
+
+- Admin-Settings-Endpunkte aufgeteilt: POST /auth/admin/settings ersetzt durch /settings/general, /settings/oidc und /settings/legal
 
 ### Fixed
 

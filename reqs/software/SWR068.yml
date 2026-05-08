@@ -4,10 +4,10 @@ header: |
   Gemeinsamer Footer in der Shared UI Library
 level: 68.0
 links:
-- STK048: null
+- STK048: y-CJHXDa0JVwPsPMt_KyQMK-SYB8BeQeKgG-s-nl4aw=
 normative: true
 ref: ''
-reviewed: null
+reviewed: 5Mjt0k_gvGjuMZJa1oO5i7RFcwf2KFloeQe-eM21ndA=
 text: |
   Die Shared UI Library muss ein Footer-Fragment
   (templates/shared/fragments/footer.html) bereitstellen, das

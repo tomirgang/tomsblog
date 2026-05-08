@@ -302,4 +302,132 @@ class TenantSettingsServiceTest {
             assertThat(result).isEmpty();
         }
     }
+
+    @Nested
+    @DisplayName("updateGeneralSettings")
+    class UpdateGeneralSettings {
+
+        @Test
+        @DisplayName("SWR-071: updates only general settings fields")
+        void updatesGeneralSettings() {
+            var settings = TenantSettings.create(TENANT_ID);
+            settings.updateImpressumContent("Existing Impressum");
+            settings.updateOidcIssuerUrl("https://auth.example.com");
+            settings.updateOidcClientId("client-id");
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            var result = service.updateGeneralSettings(
+                    TENANT_ID, "New Blog", "New Tagline", LoginMode.INTERNAL, true, Set.of("test.com"));
+
+            assertThat(result.getDisplayName()).isEqualTo("New Blog");
+            assertThat(result.getTagline()).isEqualTo("New Tagline");
+            assertThat(result.getLoginMode()).isEqualTo(LoginMode.INTERNAL);
+            assertThat(result.isAutoApproveOidc()).isTrue();
+            assertThat(result.getAutoApproveEmailDomains()).containsExactly("test.com");
+            assertThat(result.getImpressumContent()).isEqualTo("Existing Impressum");
+            verify(repository).save(settings);
+            verify(auditLogger).log(any());
+        }
+
+        @Test
+        @DisplayName("SWR-071: validates OIDC config when switching to OIDC mode")
+        void validatesOidcOnModeSwitch() {
+            var settings = TenantSettings.create(TENANT_ID);
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+
+            assertThatThrownBy(() ->
+                            service.updateGeneralSettings(TENANT_ID, "Blog", null, LoginMode.OIDC, false, Set.of()))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("oidcIssuerUrl is required");
+        }
+    }
+
+    @Nested
+    @DisplayName("updateOidcSettings")
+    class UpdateOidcSettings {
+
+        @Test
+        @DisplayName("SWR-071: updates only OIDC settings fields")
+        void updatesOidcSettings() {
+            var settings = TenantSettings.create(TENANT_ID);
+            settings.updateDisplayName("My Blog");
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            var result =
+                    service.updateOidcSettings(TENANT_ID, "https://auth.example.com", "new-client-id", "new-secret");
+
+            assertThat(result.getOidcIssuerUrl()).isEqualTo("https://auth.example.com");
+            assertThat(result.getOidcClientId()).isEqualTo("new-client-id");
+            assertThat(result.getOidcClientSecret()).isEqualTo("new-secret");
+            assertThat(result.getDisplayName()).isEqualTo("My Blog");
+            verify(repository).save(settings);
+            verify(auditLogger).log(any());
+        }
+
+        @Test
+        @DisplayName("SWR-071: preserves existing secret when input is masked")
+        void preservesSecretWhenMasked() {
+            var settings = TenantSettings.create(TENANT_ID);
+            settings.updateOidcClientSecret("existing-secret");
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            var result = service.updateOidcSettings(TENANT_ID, "https://auth.example.com", "client-id", "***");
+
+            assertThat(result.getOidcClientSecret()).isEqualTo("existing-secret");
+        }
+
+        @Test
+        @DisplayName("SWR-071: preserves existing secret when input is empty")
+        void preservesSecretWhenEmpty() {
+            var settings = TenantSettings.create(TENANT_ID);
+            settings.updateOidcClientSecret("existing-secret");
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            var result = service.updateOidcSettings(TENANT_ID, "https://auth.example.com", "client-id", "");
+
+            assertThat(result.getOidcClientSecret()).isEqualTo("existing-secret");
+        }
+    }
+
+    @Nested
+    @DisplayName("updateLegalSettings")
+    class UpdateLegalSettings {
+
+        @Test
+        @DisplayName("SWR-071: updates only legal settings fields")
+        void updatesLegalSettings() {
+            var settings = TenantSettings.create(TENANT_ID);
+            settings.updateDisplayName("My Blog");
+            settings.updateOidcIssuerUrl("https://auth.example.com");
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            var result = service.updateLegalSettings(TENANT_ID, "New Impressum", "New Privacy");
+
+            assertThat(result.getImpressumContent()).isEqualTo("New Impressum");
+            assertThat(result.getPrivacyPolicyContent()).isEqualTo("New Privacy");
+            assertThat(result.getDisplayName()).isEqualTo("My Blog");
+            assertThat(result.getOidcIssuerUrl()).isEqualTo("https://auth.example.com");
+            verify(repository).save(settings);
+            verify(auditLogger).log(any());
+        }
+
+        @Test
+        @DisplayName("SWR-071: allows clearing legal content")
+        void allowsClearingLegalContent() {
+            var settings = TenantSettings.create(TENANT_ID);
+            settings.updateImpressumContent("Old Impressum");
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            var result = service.updateLegalSettings(TENANT_ID, null, null);
+
+            assertThat(result.getImpressumContent()).isNull();
+            assertThat(result.getPrivacyPolicyContent()).isNull();
+        }
+    }
 }

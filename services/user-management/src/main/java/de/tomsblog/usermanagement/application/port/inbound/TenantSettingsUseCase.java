@@ -15,6 +15,8 @@ import java.util.Set;
  * @req SWR-052
  * @req SWR-053
  * @req SWR-061
+ * @req SWR-069
+ * @req SWR-071
  */
 public interface TenantSettingsUseCase {
 
@@ -36,6 +38,22 @@ public interface TenantSettingsUseCase {
             String oidcIssuerUrl,
             String oidcClientId,
             String oidcClientSecret);
+
+    /** @req SWR-071 */
+    TenantSettings updateGeneralSettings(
+            TenantId tenantId,
+            String displayName,
+            String tagline,
+            LoginMode loginMode,
+            boolean autoApproveOidc,
+            Set<String> autoApproveEmailDomains);
+
+    /** @req SWR-071 */
+    TenantSettings updateOidcSettings(
+            TenantId tenantId, String oidcIssuerUrl, String oidcClientId, String oidcClientSecret);
+
+    /** @req SWR-071 */
+    TenantSettings updateLegalSettings(TenantId tenantId, String impressumContent, String privacyPolicyContent);
 
     List<TenantSettings> listAllTenants();
 }

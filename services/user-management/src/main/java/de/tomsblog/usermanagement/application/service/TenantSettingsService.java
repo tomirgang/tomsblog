@@ -20,6 +20,8 @@ import java.util.Set;
  * @req SWR-053
  * @req SWR-056
  * @req SWR-061
+ * @req SWR-069
+ * @req SWR-071
  */
 public class TenantSettingsService implements TenantSettingsUseCase {
 
@@ -93,6 +95,58 @@ public class TenantSettingsService implements TenantSettingsUseCase {
         TenantSettings saved = repository.save(settings);
         auditLogger.log(AuditLogEntry.create(
                 tenantId.toString(), "system", "TENANT_SETTINGS_UPDATED", "TenantSettings", tenantId.toString()));
+        return saved;
+    }
+
+    @Override
+    public TenantSettings updateGeneralSettings(
+            TenantId tenantId,
+            String displayName,
+            String tagline,
+            LoginMode loginMode,
+            boolean autoApproveOidc,
+            Set<String> autoApproveEmailDomains) {
+        var settings = getOrCreate(tenantId);
+        settings.updateDisplayName(displayName);
+        settings.updateTagline(tagline);
+        settings.updateLoginMode(loginMode);
+        settings.updateAutoApproveOidc(autoApproveOidc);
+        settings.setAutoApproveEmailDomains(autoApproveEmailDomains);
+        validateOidcConfig(settings);
+        TenantSettings saved = repository.save(settings);
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(),
+                "system",
+                "TENANT_GENERAL_SETTINGS_UPDATED",
+                "TenantSettings",
+                tenantId.toString()));
+        return saved;
+    }
+
+    @Override
+    public TenantSettings updateOidcSettings(
+            TenantId tenantId, String oidcIssuerUrl, String oidcClientId, String oidcClientSecret) {
+        var settings = getOrCreate(tenantId);
+        settings.updateOidcIssuerUrl(oidcIssuerUrl);
+        settings.updateOidcClientId(oidcClientId);
+        if (oidcClientSecret != null && !oidcClientSecret.isEmpty() && !"***".equals(oidcClientSecret)) {
+            settings.updateOidcClientSecret(oidcClientSecret);
+        }
+        validateOidcConfig(settings);
+        TenantSettings saved = repository.save(settings);
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(), "system", "TENANT_OIDC_SETTINGS_UPDATED", "TenantSettings", tenantId.toString()));
+        return saved;
+    }
+
+    @Override
+    public TenantSettings updateLegalSettings(TenantId tenantId, String impressumContent, String privacyPolicyContent) {
+        var settings = getOrCreate(tenantId);
+        settings.updateImpressumContent(impressumContent);
+        settings.updatePrivacyPolicyContent(privacyPolicyContent);
+        TenantSettings saved = repository.save(settings);
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(), "system", "TENANT_LEGAL_SETTINGS_UPDATED", "TenantSettings", tenantId.toString()));
         return saved;
     }
 

@@ -5,81 +5,114 @@
       layout:decorate="~{shared/layout/default}">
 <head>
     <title>Settings</title>
+    <style>
+        .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--pico-muted-border-color); margin-bottom: 1.5rem; }
+        .tabs a { padding: 0.75rem 1.25rem; text-decoration: none; border-bottom: 2px solid transparent; margin-bottom: -2px; color: var(--pico-muted-color); }
+        .tabs a.active { border-bottom-color: var(--pico-primary); color: var(--pico-primary); font-weight: bold; }
+        .tabs a:hover { color: var(--pico-primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
 </head>
 <body>
     <section layout:fragment="content">
         <h2>Tenant-Einstellungen</h2>
-        <form th:action="@{/auth/admin/settings}" method="post">
-            <fieldset>
-                <legend>Branding</legend>
-                <label for="displayName">Blog-Name</label>
-                <input type="text" id="displayName" name="displayName"
-                       th:value="${settings.displayName}" required>
-                <label for="tagline">Tagline (optional)</label>
-                <input type="text" id="tagline" name="tagline"
-                       th:value="${settings.tagline}">
-            </fieldset>
 
-            <fieldset>
-                <legend>Login-Methode</legend>
-                <label>
-                    <input type="radio" name="loginMode" value="INTERNAL"
-                           th:checked="${settings.loginMode.name() == 'INTERNAL'}">
-                    Intern (formbasiert)
-                </label>
-                <label>
-                    <input type="radio" name="loginMode" value="OIDC"
-                           th:checked="${settings.loginMode.name() == 'OIDC'}">
-                    OIDC (Authentik)
-                </label>
-                <label>
-                    <input type="radio" name="loginMode" value="BOTH"
-                           th:checked="${settings.loginMode.name() == 'BOTH'}">
-                    Beides
-                </label>
-            </fieldset>
+        <nav class="tabs">
+            <a th:href="@{/auth/admin/settings(tab='general')}"
+               th:classappend="${activeTab == 'general'} ? 'active'">Allgemein</a>
+            <a th:href="@{/auth/admin/settings(tab='oidc')}"
+               th:classappend="${activeTab == 'oidc'} ? 'active'">OIDC</a>
+            <a th:href="@{/auth/admin/settings(tab='legal')}"
+               th:classappend="${activeTab == 'legal'} ? 'active'">Impressum &amp; Datenschutz</a>
+        </nav>
 
-            <fieldset>
-                <legend>Auto-Approval</legend>
-                <label>
-                    <input type="checkbox" name="autoApproveOidc" value="true"
-                           th:checked="${settings.autoApproveOidc}">
-                    OIDC-Benutzer automatisch freigeben
-                </label>
-                <label for="autoApproveEmailDomains">E-Mail-Domains (kommagetrennt)</label>
-                <input type="text" id="autoApproveEmailDomains" name="autoApproveEmailDomains"
-                       th:value="${settings.autoApproveEmailDomains != null ? #strings.listJoin(settings.autoApproveEmailDomains, ', ') : ''}"
-                       placeholder="example.com, company.org">
-            </fieldset>
+        <div th:classappend="${activeTab == 'general'} ? 'active'" class="tab-content">
+            <form th:action="@{/auth/admin/settings/general}" method="post">
+                <fieldset>
+                    <legend>Branding</legend>
+                    <label for="displayName">Blog-Name</label>
+                    <input type="text" id="displayName" name="displayName"
+                           th:value="${settings?.displayName}" required>
+                    <label for="tagline">Tagline (optional)</label>
+                    <input type="text" id="tagline" name="tagline"
+                           th:value="${settings?.tagline}">
+                </fieldset>
 
-            <fieldset>
-                <legend>Rechtliche Seiten</legend>
-                <label for="impressumContent">Impressum (HTML)</label>
-                <textarea id="impressumContent" name="impressumContent" rows="8"
-                          th:text="${settings.impressumContent}"></textarea>
-                <label for="privacyPolicyContent">Datenschutzerklärung (HTML)</label>
-                <textarea id="privacyPolicyContent" name="privacyPolicyContent" rows="8"
-                          th:text="${settings.privacyPolicyContent}"></textarea>
-                <small>Leer lassen für Standard-Platzhalter.</small>
-            </fieldset>
+                <fieldset>
+                    <legend>Login-Methode</legend>
+                    <label>
+                        <input type="radio" name="loginMode" value="INTERNAL"
+                               th:checked="${settings?.loginMode?.name() == 'INTERNAL'}">
+                        Intern (formbasiert)
+                    </label>
+                    <label>
+                        <input type="radio" name="loginMode" value="OIDC"
+                               th:checked="${settings?.loginMode?.name() == 'OIDC'}">
+                        OIDC (Authentik)
+                    </label>
+                    <label>
+                        <input type="radio" name="loginMode" value="BOTH"
+                               th:checked="${settings?.loginMode?.name() == 'BOTH'}">
+                        Beides
+                    </label>
+                </fieldset>
 
-            <fieldset th:if="${settings.loginMode.name() == 'OIDC' or settings.loginMode.name() == 'BOTH'}">
-                <legend>OIDC-Provider-Konfiguration</legend>
-                <label for="oidcIssuerUrl">Issuer-URL</label>
-                <input type="url" id="oidcIssuerUrl" name="oidcIssuerUrl"
-                       th:value="${settings.oidcIssuerUrl}"
-                       placeholder="https://auth.example.com/application/o/myapp/" required>
-                <label for="oidcClientId">Client-ID</label>
-                <input type="text" id="oidcClientId" name="oidcClientId"
-                       th:value="${settings.oidcClientId}" required>
-                <label for="oidcClientSecret">Client-Secret</label>
-                <input type="password" id="oidcClientSecret" name="oidcClientSecret"
-                       th:placeholder="${settings.oidcClientSecret != null ? '***' : ''}">
-                <small>Leer lassen, um den bestehenden Wert beizubehalten.</small>
-            </fieldset>
+                <fieldset>
+                    <legend>Auto-Approval</legend>
+                    <label>
+                        <input type="checkbox" name="autoApproveOidc" value="true"
+                               th:checked="${settings?.autoApproveOidc}">
+                        OIDC-Benutzer automatisch freigeben
+                    </label>
+                    <label for="autoApproveEmailDomains">E-Mail-Domains (kommagetrennt)</label>
+                    <input type="text" id="autoApproveEmailDomains" name="autoApproveEmailDomains"
+                           th:value="${settings?.autoApproveEmailDomains != null ? #strings.listJoin(settings.autoApproveEmailDomains, ', ') : ''}"
+                           placeholder="example.com, company.org">
+                </fieldset>
 
-            <button type="submit">Speichern</button>
-        </form>
+                <button type="submit">Speichern</button>
+            </form>
+        </div>
+
+        <div th:classappend="${activeTab == 'oidc'} ? 'active'" class="tab-content">
+            <form th:action="@{/auth/admin/settings/oidc}" method="post">
+                <fieldset>
+                    <legend>OIDC-Provider-Konfiguration</legend>
+                    <label for="oidcIssuerUrl">Issuer-URL</label>
+                    <input type="url" id="oidcIssuerUrl" name="oidcIssuerUrl"
+                           th:value="${settings?.oidcIssuerUrl}"
+                           placeholder="https://auth.example.com/application/o/myapp/">
+                    <label for="oidcClientId">Client-ID</label>
+                    <input type="text" id="oidcClientId" name="oidcClientId"
+                           th:value="${settings?.oidcClientId}">
+                    <label for="oidcClientSecret">Client-Secret</label>
+                    <input type="password" id="oidcClientSecret" name="oidcClientSecret"
+                           th:placeholder="${settings?.oidcClientSecret != null ? '***' : ''}">
+                    <small>Leer lassen, um den bestehenden Wert beizubehalten.</small>
+                </fieldset>
+
+                <button type="submit">Speichern</button>
+            </form>
+        </div>
+
+        <div th:classappend="${activeTab == 'legal'} ? 'active'" class="tab-content">
+            <form th:action="@{/auth/admin/settings/legal}" method="post">
+                <fieldset>
+                    <legend>Rechtliche Seiten</legend>
+                    <label for="impressumContent">Impressum (HTML)</label>
+                    <textarea id="impressumContent" name="impressumContent" rows="8"
+                              th:text="${settings?.impressumContent}"></textarea>
+                    <label for="privacyPolicyContent">Datenschutzerklärung (HTML)</label>
+                    <textarea id="privacyPolicyContent" name="privacyPolicyContent" rows="8"
+                              th:text="${settings?.privacyPolicyContent}"></textarea>
+                    <small>Leer lassen für Standard-Platzhalter.</small>
+                </fieldset>
+
+                <button type="submit">Speichern</button>
+            </form>
+        </div>
+
         <nav>
             <a th:href="@{/auth/admin/users}">Benutzerverwaltung</a>
         </nav>

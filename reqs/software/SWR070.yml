@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Navigation zwischen Tenant-Einstellungsgruppen
+level: 70.0
+links:
+- STK049: fguE2gU1syFoDW_B73_cEpIHujZ1YDVpXisS6x18dq4=
+normative: true
+ref: ''
+reviewed: zIWxeisR8WMEikBERM1mngQ32WbGi9HkZmqPfIV7ZXo=
+text: |
+  Die Admin-Oberfläche muss eine Navigation (z.B. Tabs oder
+  Seitenleiste) bereitstellen, über die der Administrator zwischen
+  den verschiedenen Einstellungsgruppen eines Tenants wechseln kann,
+  ohne die Seite vollständig neu laden zu müssen.

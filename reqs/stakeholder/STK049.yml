@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Tenant-Einstellungen in separaten Formularen pro Einstellungsgruppe
+level: 49.0
+links: []
+normative: true
+ref: ''
+reviewed: fguE2gU1syFoDW_B73_cEpIHujZ1YDVpXisS6x18dq4=
+text: |
+  Die Tenant-Einstellungen in der Admin-Oberfläche sollen in separate
+  Formulare pro Einstellungsgruppe aufgeteilt werden, statt alle
+  Einstellungen in einem einzigen Formular darzustellen. Jede
+  Einstellungsgruppe (z.B. OIDC-Konfiguration, Impressum und
+  Datenschutzerklärung, Allgemeine Einstellungen) erhält ein eigenes
+  Formular mit einer dedizierten Speichern-Aktion. Dadurch wird die
+  Übersichtlichkeit verbessert und das versehentliche Überschreiben
+  nicht zusammenhängender Einstellungen vermieden.

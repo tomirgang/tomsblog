@@ -4,13 +4,13 @@ header: |
   Shared UI Library Architektur
 level: 33.0
 links:
-- SWR065: null
-- SWR066: null
-- SWR067: null
-- SWR068: null
+- SWR065: zgmdIkedxJV-sHUoKg9jsGEmWR9CUe0x0MAem-pVjzg=
+- SWR066: z6Iv1FMGTK8DwNTvvKLjvfUai0-K1RVCHr4ZTEokPCw=
+- SWR067: JjuQeK7nykZBeuuiTHVde2EbikWnmNgh1SPqNYZBHzc=
+- SWR068: hIjlGXpxUtJsPKfbdCompe82lPQBfwFYAe1nE4cVNqU=
 normative: true
 ref: ''
-reviewed: null
+reviewed: b7DOUK9VDGaTBxO7JQ340IohhY5MxtyYdVUfKjRT-9E=
 text: |
   Die gemeinsame UI-Bibliothek wird als Maven-Modul libs/shared-ui
   bereitgestellt (analog zu libs/shared-kernel, SWA-002). Die Library

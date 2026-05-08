@@ -1,0 +1,15 @@
+active: true
+derived: false
+header: |
+  Unabhängige Speicherung pro Einstellungsgruppe
+level: 71.0
+links:
+- STK049: fguE2gU1syFoDW_B73_cEpIHujZ1YDVpXisS6x18dq4=
+normative: true
+ref: ''
+reviewed: AUjkx8kMGON9yAlngNlfCZ06jZtpFxCjyeJU3Zgpawk=
+text: |
+  Jedes Einstellungsformular muss über eine eigene Speichern-Aktion
+  verfügen, die nur die Felder der jeweiligen Einstellungsgruppe
+  persistiert. Das Speichern einer Einstellungsgruppe darf keine
+  Auswirkungen auf die Werte anderer Einstellungsgruppen haben.
