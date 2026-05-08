@@ -35,6 +35,7 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 - Dokumentation und Planungsdateien: **Deutsch**
 - Hexagonal structure per service: `domain/`, `application/` (ports), `adapter/` (inbound + outbound)
 - Tests: Unit tests + Integration tests with Testcontainers
+- **E2E Test Coverage**: Every Thymeleaf view must be fully covered by E2E tests in `e2e-tests/` (see `.github/instructions/e2e-test-coverage.instructions.md`). No view change is complete without corresponding Page Objects and E2E test methods.
 - API documentation: OpenAPI/Swagger for REST, GraphQL schema for GraphQL services
 - Events: publish domain events via Kafka for cross-service communication (Post created/updated/published)
 - Task-Queues: distribute jobs via RabbitMQ (translations, TTS, snapshots, notifications)

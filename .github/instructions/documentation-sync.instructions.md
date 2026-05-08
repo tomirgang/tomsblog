@@ -64,4 +64,5 @@ Before considering a feature implementation complete, verify:
 - [ ] User approved the design before implementation started
 - [ ] Requirement IDs referenced in code (`@req`, `@DisplayName`)
 - [ ] IMP entries created with `references:` to new files
+- [ ] E2E tests added for all new or modified views (Page Objects + test methods, see `e2e-test-coverage.instructions.md`)
 - [ ] Build passes (`./mvnw verify`)
