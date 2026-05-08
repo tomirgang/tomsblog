@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{shared/layout/default}">
+<head>
+    <title>Audit-Logs</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1>Audit-Logs</h1>
+
+        <form th:action="@{/admin/audit-logs}" method="get">
+            <div class="grid">
+                <label>
+                    Aktion
+                    <select name="action">
+                        <option value="">Alle</option>
+                        <option th:each="a : ${actions}" th:value="${a}" th:text="${a}"
+                                th:selected="${a == selectedAction}">ACTION</option>
+                    </select>
+                </label>
+                <label>
+                    Entitätstyp
+                    <select name="entityType">
+                        <option value="">Alle</option>
+                        <option th:each="et : ${entityTypes}" th:value="${et}" th:text="${et}"
+                                th:selected="${et == selectedEntityType}">TYPE</option>
+                    </select>
+                </label>
+                <label>
+                    Akteur
+                    <select name="actor">
+                        <option value="">Alle</option>
+                        <option th:each="ac : ${actors}" th:value="${ac}" th:text="${ac}"
+                                th:selected="${ac == selectedActor}">ACTOR</option>
+                    </select>
+                </label>
+            </div>
+            <div class="grid">
+                <label>
+                    Von
+                    <input type="date" name="from" th:value="${selectedFrom}">
+                </label>
+                <label>
+                    Bis
+                    <input type="date" name="to" th:value="${selectedTo}">
+                </label>
+                <label>
+                    Suche
+                    <input type="text" name="search" th:value="${selectedSearch}" placeholder="Freitextsuche...">
+                </label>
+            </div>
+            <div>
+                <button type="submit">Filtern</button>
+                <a th:href="@{/admin/audit-logs}" role="button" class="secondary outline">Zurücksetzen</a>
+            </div>
+        </form>
+
+        <p>
+            <span th:text="${totalElements}">0</span> Einträge gefunden
+            <span th:if="${totalPages > 1}">(Seite <span th:text="${currentPage + 1}">1</span> von <span th:text="${totalPages}">1</span>)</span>
+        </p>
+
+        <p th:if="${#lists.isEmpty(auditEntries)}">Keine Audit-Einträge vorhanden.</p>
+
+        <table th:if="${!#lists.isEmpty(auditEntries)}">
+            <thead>
+                <tr>
+                    <th>Zeitstempel</th>
+                    <th>Akteur</th>
+                    <th>Aktion</th>
+                    <th>Entitätstyp</th>
+                    <th>Entitäts-ID</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="entry : ${auditEntries}">
+                    <td th:text="${#temporals.format(entry.timestamp(), 'dd.MM.yyyy HH:mm:ss')}">01.01.2026 12:00:00</td>
+                    <td th:text="${entry.actor()}">admin</td>
+                    <td th:text="${entry.action()}">POST_CREATED</td>
+                    <td th:text="${entry.entityType()}">Post</td>
+                    <td>
+                        <small th:text="${entry.entityId()}">uuid</small>
+                    </td>
+                    <td>
+                        <details th:if="${entry.details() != null}">
+                            <summary>Details anzeigen</summary>
+                            <pre style="white-space:pre-wrap;word-break:break-all;font-size:0.8rem" th:text="${entry.details()}">details</pre>
+                        </details>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <nav th:if="${totalPages > 1}">
+            <ul>
+                <li>
+                    <a th:if="${currentPage > 0}"
+                       th:href="@{/admin/audit-logs(action=${selectedAction},entityType=${selectedEntityType},actor=${selectedActor},from=${selectedFrom},to=${selectedTo},search=${selectedSearch},page=${currentPage - 1})}">&laquo; Zurück</a>
+                    <span th:if="${currentPage == 0}" class="secondary">&laquo; Zurück</span>
+                </li>
+                <li>
+                    Seite <span th:text="${currentPage + 1}">1</span> / <span th:text="${totalPages}">1</span>
+                </li>
+                <li>
+                    <a th:if="${currentPage < totalPages - 1}"
+                       th:href="@{/admin/audit-logs(action=${selectedAction},entityType=${selectedEntityType},actor=${selectedActor},from=${selectedFrom},to=${selectedTo},search=${selectedSearch},page=${currentPage + 1})}">Weiter &raquo;</a>
+                    <span th:if="${currentPage >= totalPages - 1}" class="secondary">Weiter &raquo;</span>
+                </li>
+            </ul>
+        </nav>
+    </section>
+</body>
+</html>

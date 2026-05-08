@@ -289,8 +289,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            services/blog-content/target/blog-content-*.jar
-            services/user-management/target/user-management-*.jar
-            services/tenant-management/target/tenant-management-*.jar
+            services/blog-content/target/blog-content-*-exec.jar
+            services/user-management/target/user-management-*-exec.jar
+            services/tenant-management/target/tenant-management-*-exec.jar
             documentation.zip
             requirements-report.zip

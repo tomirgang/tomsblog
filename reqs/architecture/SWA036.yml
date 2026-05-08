@@ -1,0 +1,41 @@
+active: true
+derived: false
+header: |
+  Auditlog-View Architektur
+level: 36.0
+links:
+- SWR087: A2cBwKSoW2uI_z2mUFMxS3K9wdnN-BkQSyHA3cZmdNg=
+- SWR088: 6BI-dIB7Xe09wbKB6q2XvDDyX44iTlhYP4wEt5nDzdY=
+normative: true
+ref: ''
+reviewed: W8cnH57m57fknnznIJyzkPLWgrTfLPYH2t4v_URWxac=
+text: |
+  Die Auditlog-View folgt der hexagonalen Architektur jedes Services:
+
+  Inbound Port:
+  - AuditLogQueryUseCase: Interface im Application Layer mit Methoden
+    zur paginierten und gefilterten Abfrage von Audit-Einträgen
+  - AuditLogSearchCriteria: Record mit optionalen Filterfeldern
+    (action, entityType, actor, from, to, searchTerm)
+
+  Application Service:
+  - AuditLogQueryService: Implementiert AuditLogQueryUseCase,
+    delegiert an den Outbound Port
+
+  Outbound Port:
+  - AuditLogRepository (Erweiterung): Methoden für paginierte und
+    gefilterte Abfragen
+
+  Inbound Adapter:
+  - AuditLogAdminController: Thymeleaf-Controller unter /admin/audit-logs
+  - AuditLogViewDto: DTO für die Template-Darstellung
+
+  Outbound Adapter:
+  - SpringDataAuditLogRepository: Erweiterung um JPA Specification-
+    basierte Abfragen für dynamische Filterung
+
+  Da jeder Service seine eigene audit_log-Tabelle besitzt (Database per
+  Service), zeigt jeder Service nur seine eigenen Audit-Einträge an.
+  Der Blog Content Service wird als erster Service mit der Auditlog-View
+  ausgestattet. Die Architektur ist so gestaltet, dass User Management
+  und Tenant Management Service dieselbe Struktur übernehmen können.

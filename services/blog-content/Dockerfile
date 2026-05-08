@@ -4,7 +4,7 @@ RUN addgroup -S app && adduser -S app -G app
 
 WORKDIR /app
 
-COPY target/*.jar app.jar
+COPY target/*-exec.jar app.jar
 
 RUN chown -R app:app /app
 USER app

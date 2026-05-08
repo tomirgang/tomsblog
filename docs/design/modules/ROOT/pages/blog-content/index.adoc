@@ -1022,6 +1022,9 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWR-058 | Mehrere Replicas | Deployment mit replicas: 2, Rolling-Update-Strategie
 | SWR-064 | Shared Redis Session | Redis-Session wird vom User Management Service erstellt und vom Blog Content Service gelesen (ADR-0032)
 | SWA-032 | Redis als externer Session-Store | Spring Session Auto-Configuration, Redis-Verbindung in application-k8s.yml
+| SWR-087 | Auditlog-Abfrage-Port und Repository | AuditLogQueryUseCase, AuditLogSearchCriteria, AuditLogQueryService, SpringDataAuditLogRepository (Specification-Abfragen)
+| SWR-088 | Auditlog-Admin-View | AuditLogAdminController, admin/audit-logs.html, Header-Navigation
+| SWA-036 | Auditlog-View Architektur | Hexagonale Struktur: AuditLogQueryUseCase (Port), AuditLogQueryService (Service), AuditLogAdminController (Adapter)
 |===
 
 == Sicherheit: Admin-Login (SWR-028)
@@ -1262,3 +1265,145 @@ Die bestehende `SecurityConfiguration` wird erweitert:
 * `/admin/users` und `/admin/settings`: Zugriff nur mit Rolle `ADMIN` oder `SUPERADMIN`
 * `/admin/switch-tenant`: Zugriff nur mit Rolle `SUPERADMIN`
 * Der Break-Glass-Login unter `/admin/login` bleibt unverändert (nur SUPERADMIN)
+
+== Auditlog-Ansicht (SWR-087, SWR-088, SWA-036)
+
+Die Auditlog-Ansicht erlaubt Administratoren, alle Audit-Einträge des aktuellen Tenants einzusehen, zu durchsuchen und zu filtern. Sie ergänzt die bestehende Audit-Logging-Infrastruktur (SWR-056, SWA-031) um eine lesende Komponente.
+
+=== Architektur
+
+Das folgende Klassendiagramm zeigt die Struktur der Auditlog-View-Komponenten:
+
+[mermaid]
+----
+classDiagram
+    class AuditLogQueryUseCase {
+        <<interface>>
+        +findAll(TenantId, Pageable) Page~AuditLogEntry~
+        +search(TenantId, AuditLogSearchCriteria, Pageable) Page~AuditLogEntry~
+        +getDistinctActions(TenantId) List~String~
+        +getDistinctEntityTypes(TenantId) List~String~
+        +getDistinctActors(TenantId) List~String~
+    }
+
+    class AuditLogSearchCriteria {
+        <<record>>
+        +String action
+        +String entityType
+        +String actor
+        +Instant from
+        +Instant to
+        +String searchTerm
+    }
+
+    class AuditLogQueryService {
+        +findAll(TenantId, Pageable) Page~AuditLogEntry~
+        +search(TenantId, AuditLogSearchCriteria, Pageable) Page~AuditLogEntry~
+        +getDistinctActions(TenantId) List~String~
+        +getDistinctEntityTypes(TenantId) List~String~
+        +getDistinctActors(TenantId) List~String~
+    }
+
+    class AuditLogAdminController {
+        +listAuditLogs(UUID, String, String, String, String, String, String, int, Model) String
+    }
+
+    AuditLogQueryUseCase <|.. AuditLogQueryService
+    AuditLogAdminController --> AuditLogQueryUseCase
+    AuditLogQueryService --> AuditLogRepository
+----
+
+=== Inbound Port: AuditLogQueryUseCase
+
+Der `AuditLogQueryUseCase` definiert die Abfrageoperationen für Audit-Einträge (SWR-087). Er bietet paginierte Abfragen mit und ohne Filterkriterien sowie Methoden zur Ermittlung der verfügbaren Filterwerte (Aktionen, Entitätstypen, Akteure).
+
+Die `AuditLogSearchCriteria` ist ein Record mit optionalen Filterfeldern. Alle Felder sind nullable; ein leeres Kriterium liefert alle Einträge.
+
+=== Application Service: AuditLogQueryService
+
+Der `AuditLogQueryService` implementiert `AuditLogQueryUseCase` und delegiert an den `AuditLogRepository`-Outbound-Port. Er enthält keine Geschäftslogik, sondern dient als Brücke zwischen Inbound- und Outbound-Port.
+
+=== Outbound Adapter: SpringDataAuditLogRepository
+
+Das bestehende `SpringDataAuditLogRepository` (SWR-056) wird um JPA-Specification-basierte Abfragen erweitert. Die dynamischen Filter (Aktion, Entitätstyp, Akteur, Zeitraum, Freitextsuche) werden als JPA Specifications zusammengesetzt. Zusätzlich werden `@Query`-Methoden für die Ermittlung der distinct Filterwerte ergänzt.
+
+=== Inbound Adapter: AuditLogAdminController
+
+Der `AuditLogAdminController` stellt die Thymeleaf-basierte Auditlog-Ansicht unter `/admin/audit-logs` bereit (SWR-088):
+
+[cols="1,1,3"]
+|===
+| HTTP-Methode | Pfad | Beschreibung
+
+| GET | /admin/audit-logs | Paginierte, filterbare Auditlog-Ansicht
+|===
+
+Query-Parameter:
+
+* `action`: Filter nach Aktionstyp (z.B. POST_CREATED)
+* `entityType`: Filter nach Entitätstyp (z.B. Post, Tag)
+* `actor`: Filter nach Akteur
+* `from`: Zeitraum-Start (ISO-Format yyyy-MM-dd)
+* `to`: Zeitraum-Ende (ISO-Format yyyy-MM-dd)
+* `search`: Freitextsuche über alle Felder
+* `page`: Seitennummer (0-basiert, Standard: 0)
+
+=== Ablauf: Auditlog-Ansicht laden
+
+Das folgende Sequenzdiagramm zeigt den Ablauf beim Laden der Auditlog-Ansicht mit Filtern:
+
+[mermaid]
+----
+sequenceDiagram
+    actor Admin
+    participant Controller as AuditLogAdminController
+    participant UseCase as AuditLogQueryUseCase
+    participant Repo as SpringDataAuditLogRepository
+    participant DB as PostgreSQL
+
+    Admin->>Controller: GET /admin/audit-logs?action=POST_CREATED&page=0
+    Controller->>UseCase: search(tenantId, criteria, pageable)
+    UseCase->>Repo: findAll(specification, pageable)
+    Repo->>DB: SELECT * FROM audit_log WHERE tenant_id=? AND action=? ORDER BY timestamp DESC
+    DB-->>Repo: ResultSet
+    Repo-->>UseCase: Page<AuditLogJpaEntity>
+    UseCase-->>Controller: Page<AuditLogEntry>
+    Controller->>UseCase: getDistinctActions(tenantId)
+    Controller->>UseCase: getDistinctEntityTypes(tenantId)
+    Controller->>UseCase: getDistinctActors(tenantId)
+    Controller-->>Admin: admin/audit-logs.html (Tabelle + Filter)
+----
+
+=== Template-Struktur
+
+Die Auditlog-View wird als eigenständiges Thymeleaf-Template `admin/audit-logs.html` implementiert, das das bestehende Layout `shared/layout/default` erweitert:
+
+[mermaid]
+----
+graph TD
+    A[layout/default.html] -->|layout:fragment=content| B[admin/audit-logs.html]
+    A --> C[fragments/header.html]
+    C --> D[Audit-Logs Link - ADMIN/SUPERADMIN]
+----
+
+Das Template enthält:
+
+* Filterformular mit Dropdown-Selektoren für Aktion, Entitätstyp und Akteur (befüllt mit den tatsächlich vorhandenen Werten) sowie Datumsfelder und Suchfeld
+* Ergebnistabelle mit Spalten: Zeitstempel, Akteur, Aktion, Entitätstyp, Entitäts-ID, Details
+* Paginierung mit Vor/Zurück-Links und Anzeige der aktuellen Seite
+* Details werden als zusammenklappbarer Bereich dargestellt (Details-/Summary-Element)
+
+=== Navigation
+
+Das Header-Fragment erhält einen zusätzlichen Navigationslink „Audit-Logs" (SWR-088), der nur für Benutzer mit Rolle ADMIN oder SUPERADMIN sichtbar ist:
+
+[source,html]
+----
+<li sec:authorize="hasAnyRole('ADMIN','SUPERADMIN')">
+    <a th:href="@{/admin/audit-logs}">Audit-Logs</a>
+</li>
+----
+
+=== Security
+
+Der Endpunkt `/admin/audit-logs` wird in der bestehenden `SecurityConfiguration` als geschützter Admin-Endpunkt konfiguriert. Zugriff erfordert die Rolle ADMIN oder SUPERADMIN.

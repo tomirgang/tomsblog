@@ -112,7 +112,7 @@
 - [x] Vorschau für Posts
 - [x] E2E-Selenium-Tests für alle UI-Use-Cases (STK-052, SWR-078 bis SWR-083, ADR-0033)
 - [x] Tags
-- [ ] Auditlog View
+- [x] Auditlog View
 - [ ] Kafka-Cluster-Konfiguration definieren
 - [ ] RabbitMQ-Cluster-Konfiguration definieren
 - [ ] Event-Schema-Design (Avro/Protobuf oder JSON Schema)

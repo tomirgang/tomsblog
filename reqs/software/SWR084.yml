@@ -4,10 +4,10 @@ header: |
   Tag-Verwaltung im Admin-Backend
 level: 84.0
 links:
-- STK053: null
+- STK053: oJvqH1SQ4l4pSgDUuqSSuaaRIb8vSe0qfk1DddjE6GA=
 normative: true
 ref: ''
-reviewed: null
+reviewed: 9I_j5zyXt44ynNxqPx7vmmwFFFNNDO-7xx43Ww9f-Lk=
 text: |
   Der Blog Content Service stellt unter /admin/tags eine Thymeleaf-Seite
   bereit, die alle Tags des aktuellen Tenants auflistet. Administratoren

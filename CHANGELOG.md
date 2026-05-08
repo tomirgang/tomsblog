@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- Auditlog-Ansicht in der Admin-UI (STK-054, SWR-087, SWR-088, SWA-036)
+  - Paginierte Auflistung aller Audit-Einträge pro Tenant (neueste zuerst)
+  - Filterung nach Aktionstyp, Entitätstyp und Akteur per Dropdown-Selektor
+  - Zeitraum-Filter (von/bis) und Freitextsuche über alle Felder
+  - Paginierung mit Vor/Zurück-Navigation
+  - Details als zusammenklappbarer Bereich (HTML details/summary)
+  - Zugriff nur für ADMIN und SUPERADMIN Rollen
+  - Navigationslink "Audit-Logs" im Header
+  - AuditLogQueryUseCase (Inbound Port), AuditLogQueryService (Application Service)
+  - JpaAuditLogQueryAdapter mit JPA Specifications für dynamische Filterung
+  - AuditLogAdminController unter /admin/audit-logs
 - Tag-UI-Integration (STK-053, SWR-084, SWR-085, SWR-086)
   - Tag-Verwaltung im Admin-Bereich unter /admin/tags (anlegen, umbenennen, löschen)
   - Tag-Auswahl im Post-Formular per Checkboxen, inline-Anlage neuer Tags

@@ -47,6 +47,8 @@ git pull --rebase github "$BRANCH" || die "Failed to rebase on github/$BRANCH. R
 
 if [[ "$REBUILD" == true ]]; then
     # Rebuild mode: just run tests without version changes
+    info "Starting local infrastructure..."
+    docker compose -f infra/docker/docker-compose.yml up -d --wait || die "Failed to start local infrastructure."
     info "Rebuild mode: running clean build and verification..."
     ./mvnw clean verify --batch-mode --no-transfer-progress
     info "Build and verification successful."
@@ -97,6 +99,11 @@ info "New version: $NEW_VERSION"
 echo ""
 read -rp "Proceed with release $NEW_VERSION? [y/N] " confirm
 [[ "$confirm" =~ ^[Yy]$ ]] || exit 0
+
+# Start local infrastructure (PostgreSQL, Redis, Kafka, RabbitMQ)
+info "Starting local infrastructure..."
+docker compose -f infra/docker/docker-compose.yml up -d --wait || die "Failed to start local infrastructure."
+info "Local infrastructure is ready."
 
 # Clean build with full verification BEFORE any file modifications
 # This ensures failed builds don't leave the working directory dirty

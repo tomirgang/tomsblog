@@ -1,0 +1,23 @@
+active: true
+derived: false
+header: |
+  Auditlog-Ansicht in der Admin-UI
+level: 54.0
+links: []
+normative: true
+ref: ''
+reviewed: 59m10LvLZELj7vpchxDwrduwoA5OfVsryZqmCICtSu4=
+text: |
+  Als Administrator möchte ich in der Admin-UI eine Ansicht der Auditlogs
+  haben, um nachvollziehen zu können, wer wann welche Aktionen durchgeführt
+  hat.
+
+  Die Ansicht soll folgende Funktionen bieten:
+  - Chronologische Auflistung aller Audit-Einträge (neueste zuerst)
+  - Filterung nach Aktionstyp, Entitätstyp, Akteur und Zeitraum
+  - Volltextsuche über alle Felder (Aktion, Akteur, Entitätstyp, Details)
+  - Paginierung für große Datenmengen
+  - Detailansicht einzelner Einträge mit allen erfassten Informationen
+
+  Die Auditlog-Ansicht soll nur für Benutzer mit Admin- oder
+  SuperAdmin-Rolle zugänglich sein.

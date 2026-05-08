@@ -1,0 +1,25 @@
+active: true
+derived: false
+header: |
+  Auditlog-Abfrage-Port und Repository
+level: 87.0
+links:
+- STK054: 59m10LvLZELj7vpchxDwrduwoA5OfVsryZqmCICtSu4=
+- SWR056: ZVc7z3cKFeqO50A31h7mPhNzbGxWrgWyEoZu0JEsUJ0=
+normative: true
+ref: ''
+reviewed: SvcjrLgMgz87yWfBbJi4mOq5W-0pvT3HsyB62omRHGY=
+text: |
+  Jeder Service (Blog Content, User Management, Tenant Management) erhält
+  einen Inbound Port (AuditLogQueryUseCase) zur Abfrage von Audit-Einträgen.
+  Der Port bietet folgende Operationen:
+
+  - findAll(tenantId, pageable): Paginierte Abfrage aller Einträge eines
+    Tenants, sortiert nach Zeitstempel absteigend
+  - search(tenantId, criteria, pageable): Gefilterte und/oder durchsuchte
+    Abfrage mit optionalen Kriterien (Aktionstyp, Entitätstyp, Akteur,
+    Zeitraum von/bis, Freitextsuche)
+
+  Die Outbound-Adapter (SpringDataAuditLogRepository) werden um die
+  entsprechenden Abfragemethoden erweitert (Spring Data JPA Specifications
+  oder Query Methods).

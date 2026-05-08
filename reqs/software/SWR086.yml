@@ -4,11 +4,11 @@ header: |
   Tag-Anzeige in Post-Übersicht und Detailansicht
 level: 86.0
 links:
-- STK053: null
-- SWR026: null
+- STK053: oJvqH1SQ4l4pSgDUuqSSuaaRIb8vSe0qfk1DddjE6GA=
+- SWR026: M6M1IHJw4tAzKoWl4ZKxkqCv5ebxpgiPyyYevavy3Wc=
 normative: true
 ref: ''
-reviewed: null
+reviewed: 59MNJFIzhhklcZQtPWZH-RFPr16K-Lxlv97aOakYlhQ=
 text: |
   Die öffentliche Post-Übersicht (/posts und Landing Page) und die Post-
   Detailansicht (/posts/{slug}) zeigen die zugewiesenen Tags jedes Posts

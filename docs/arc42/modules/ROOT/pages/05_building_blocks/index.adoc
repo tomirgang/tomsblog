@@ -96,6 +96,9 @@ NOTE: `AuthorId` liegt im `shared-kernel` (SWA-002). Der blog-content Service ha
 | `JpaAuditLogger` | Outbound Adapter: Persistiert Audit-Einträge in audit_log-Tabelle (SWR-056, SWA-031)
 | `AuditLogJpaEntity` | JPA-Entity fuer Audit-Log-Einträge
 | `SpringDataAuditLogRepository` | Spring Data JPA Interface fuer Audit-Log CRUD
+| `AuditLogQueryUseCase` | Inbound Port: Paginierte und filterbare Abfrage von Audit-Einträgen (SWR-087, SWA-036)
+| `AuditLogQueryService` | Application Service: Implementiert AuditLogQueryUseCase
+| `AuditLogAdminController` | Inbound Adapter: Thymeleaf-Controller fuer Auditlog-Admin-Ansicht unter /admin/audit-logs (SWR-088)
 | `BlogContentConfiguration` | Spring-Konfiguration: Wiring der Adapter an die Ports
 |===
 

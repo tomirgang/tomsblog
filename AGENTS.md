@@ -52,6 +52,22 @@ See [ROADMAP.md](ROADMAP.md) for the full milestone plan and [TODO.md](TODO.md) 
 
 ## Build & Test
 
+### Local Infrastructure
+
+Before running integration or E2E tests locally, start the required infrastructure (PostgreSQL, Redis, Kafka, RabbitMQ):
+
+```bash
+docker compose -f infra/docker/docker-compose.yml up -d
+```
+
+To stop the infrastructure:
+
+```bash
+docker compose -f infra/docker/docker-compose.yml down
+```
+
+### Running Tests
+
 ```bash
 ./mvnw verify
 ./mvnw test

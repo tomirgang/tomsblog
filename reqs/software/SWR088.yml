@@ -1,0 +1,29 @@
+active: true
+derived: false
+header: |
+  Auditlog-Admin-View im Blog Content Service
+level: 88.0
+links:
+- STK054: 59m10LvLZELj7vpchxDwrduwoA5OfVsryZqmCICtSu4=
+normative: true
+ref: ''
+reviewed: GM-7wuCkVenzbFJvcaZn-IeOUNslCa3g17hRtody2Zw=
+text: |
+  Der Blog Content Service erhält einen AuditLogAdminController unter
+  /admin/audit-logs mit folgenden Endpunkten:
+
+  - GET /admin/audit-logs: Zeigt eine paginierte, filterbare Tabelle
+    aller Audit-Einträge des aktuellen Tenants an
+  - Query-Parameter: action, entityType, actor, from, to, search, page
+
+  Die Thymeleaf-View (admin/audit-logs.html) zeigt:
+  - Filterformular (Aktionstyp, Entitätstyp, Akteur, Zeitraum, Suche)
+  - Ergebnistabelle mit Spalten: Zeitstempel, Akteur, Aktion, Entitätstyp,
+    Entitäts-ID, Details
+  - Paginierung (Seite vor/zurück, aktuelle Seite)
+  - Zeitstempel in lesbarem Format (dd.MM.yyyy HH:mm:ss)
+
+  Zugriff nur für Benutzer mit Rolle ADMIN oder SUPERADMIN.
+
+  Das Navigationsmenü (Header-Fragment) erhält einen Link zur
+  Auditlog-Ansicht, sichtbar nur für ADMIN/SUPERADMIN.

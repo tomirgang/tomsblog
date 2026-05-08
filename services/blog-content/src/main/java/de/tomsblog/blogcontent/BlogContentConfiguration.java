@@ -1,12 +1,15 @@
 package de.tomsblog.blogcontent;
 
+import de.tomsblog.blogcontent.application.port.inbound.AuditLogQueryUseCase;
 import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
 import de.tomsblog.blogcontent.application.port.inbound.TagUseCase;
 import de.tomsblog.blogcontent.application.port.inbound.TranslationUseCase;
+import de.tomsblog.blogcontent.application.port.outbound.AuditLogQueryRepository;
 import de.tomsblog.blogcontent.application.port.outbound.EventPublisher;
 import de.tomsblog.blogcontent.application.port.outbound.PostRepository;
 import de.tomsblog.blogcontent.application.port.outbound.TagRepository;
 import de.tomsblog.blogcontent.application.port.outbound.TranslationRepository;
+import de.tomsblog.blogcontent.application.service.AuditLogQueryService;
 import de.tomsblog.blogcontent.application.service.PostService;
 import de.tomsblog.blogcontent.application.service.TagService;
 import de.tomsblog.blogcontent.application.service.TranslationService;
@@ -32,5 +35,10 @@ public class BlogContentConfiguration {
     public TranslationUseCase translationUseCase(
             TranslationRepository translationRepository, EventPublisher eventPublisher, AuditLogger auditLogger) {
         return new TranslationService(translationRepository, eventPublisher, auditLogger);
+    }
+
+    @Bean
+    public AuditLogQueryUseCase auditLogQueryUseCase(AuditLogQueryRepository auditLogQueryRepository) {
+        return new AuditLogQueryService(auditLogQueryRepository);
     }
 }
