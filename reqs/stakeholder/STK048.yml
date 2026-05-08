@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Gemeinsame UI-Bibliothek für Thymeleaf-Templates und Styles
+level: 48.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Die geteilten UI-Templates (Layout, Header, Footer) und CSS-Styles,
+  die von mehreren Services (Blog Content, User Management) verwendet
+  werden, sollen in eine gemeinsame UI-Bibliothek (shared-ui) ausgelagert
+  werden. Dadurch wird Code-Duplikation vermieden, ein einheitliches
+  Look-and-Feel über alle Services sichergestellt und die Wartbarkeit
+  der UI-Komponenten verbessert.

@@ -8,6 +8,12 @@ package "Toms Blog Platform" {
   [Video Service] as video
 }
 
+package "Shared Libraries" {
+  [shared-kernel] as kernel
+  [shared-ui] as sharedui
+  [event-contracts] as events
+}
+
 cloud "Authentik\n(OIDC Provider)" as authentik
 database "PostgreSQL\n(blog-content)" as db_blog
 database "PostgreSQL\n(user-mgmt)" as db_user
@@ -21,8 +27,12 @@ cloud "Garage (S3)" as s3
 blog --> db_blog
 blog --> authentik : OIDC Login\n(OAuth2 Client)
 blog --> usermgmt : Sync User Profile\n+ Fetch Roles (gRPC)
+blog ..> sharedui : Templates\n+ CSS
+blog ..> kernel : Domain\nPrimitives
 usermgmt --> db_user
 usermgmt --> authentik : Validate Tokens
+usermgmt ..> sharedui : Templates\n+ CSS
+usermgmt ..> kernel : Domain\nPrimitives
 blog --> kafka : Events
 blog --> s3 : Attachments
 feed --> kafka : Consumes

@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Shared UI Library als Maven-Modul
+level: 65.0
+links:
+- STK048: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Es muss ein Maven-Modul libs/shared-ui bereitgestellt werden, das
+  gemeinsame Thymeleaf-Templates, Fragmente und CSS-Styles als
+  Classpath-Ressourcen enthält. Die Ressourcen werden unter dem Pfad
+  templates/shared/ und static/css/ im Classpath bereitgestellt.
+  Services binden das Modul als Maven-Dependency ein und können die
+  gemeinsamen Templates über Thymeleaf-Referenzen nutzen.

@@ -105,7 +105,7 @@
 - [x] Benutzer Registrierung
 - [x] OIDC Config pro Tennant über Admin Interface
 - [x] Bessere Architektur für User UI
-- [ ] UI Library
+- [x] UI Library
 - [ ] Tenant Service
 - [ ] Der Superadmin soll neue Tenants über die Admin UI anlegen können.
 - [ ] Vorschau für Posts

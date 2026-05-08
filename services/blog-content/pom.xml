@@ -29,6 +29,10 @@
         </dependency>
         <dependency>
             <groupId>de.tomsblog</groupId>
+            <artifactId>shared-ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.tomsblog</groupId>
             <artifactId>event-contracts</artifactId>
         </dependency>
         <dependency>

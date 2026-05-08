@@ -119,6 +119,21 @@ Die Datenbank-Schema-Verwaltung erfolgt über Flyway (SWA-013). Alle Migrationen
 
 NOTE: Weitere Services werden analog strukturiert. Details werden ergänzt, sobald sie implementiert sind.
 
+== Shared UI Library (libs/shared-ui)
+
+Die Shared UI Library (SWR-065, SWR-066, SWR-067, SWR-068, SWA-033) stellt gemeinsame Thymeleaf-Templates und CSS-Styles bereit, die von allen Services mit Web-UI verwendet werden. Analog zum Shared Kernel (SWA-002) vermeidet sie Code-Duplikation und stellt ein einheitliches Look-and-Feel sicher (STK-048).
+
+[cols="1,2"]
+|===
+| Baustein | Beschreibung
+
+| `templates/shared/layout/default.html` | Master-Layout: HTML-Grundstruktur mit Pico CSS, Header-/Content-/Footer-Bereiche via Thymeleaf Layout Dialect
+| `templates/shared/fragments/footer.html` | Einheitlicher Footer: Copyright, Impressum-Link, Datenschutz-Link, Versionsnummer
+| `static/css/custom.css` | Plattformweite CSS-Anpassungen: Sticky-Footer-Layout, Tenant-Branding-Hooks (CSS Custom Properties)
+|===
+
+NOTE: Header-Fragmente verbleiben in den jeweiligen Services, da sie service-spezifische Navigation enthalten (z.B. Blog-Navigation im Blog Content Service, Auth-Menü im User Management Service). Das gemeinsame Layout bindet den Header über einen service-lokalen Fragment-Verweis ein.
+
 == Ebene 2: User Management Service
 
 Der User Management Service verwaltet plattformspezifische Benutzerprofile, Rollen und Tenant-Zuordnungen (SWR-043, SWA-029). Er agiert als Ergänzung zum externen OIDC Provider Authentik (ADR-0027, SWR-016). Authentik übernimmt Authentifizierung (Login, MFA, Passwort-Policies), während der User Management Service die Autorisierungsdaten (Rollen, Tenant-Mitgliedschaften) intern verwaltet.

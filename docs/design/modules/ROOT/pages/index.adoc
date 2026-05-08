@@ -27,3 +27,9 @@ Die folgenden Services sind dokumentiert:
 
 * xref:blog-content/index.adoc[Blog Content Service] -- der zentrale Service für die Verwaltung von Blog-Inhalten (Posts, Tags, Übersetzungen)
 * xref:user-management/index.adoc[User Management Service] -- verwaltet Benutzerprofile, Rollen und Tenant-Zuordnungen (OIDC-Integration mit Authentik)
+
+== Shared Libraries
+
+Die folgenden Shared Libraries sind dokumentiert:
+
+* xref:shared-ui/index.adoc[Shared UI Library] -- gemeinsame Thymeleaf-Templates und CSS-Styles für alle Services mit Web-Oberfläche (STK-048)

@@ -1,0 +1,36 @@
+active: true
+derived: false
+header: |
+  Shared UI Library Architektur
+level: 33.0
+links:
+- SWR065: null
+- SWR066: null
+- SWR067: null
+- SWR068: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Die gemeinsame UI-Bibliothek wird als Maven-Modul libs/shared-ui
+  bereitgestellt (analog zu libs/shared-kernel, SWA-002). Die Library
+  enthält ausschließlich Thymeleaf-Template-Fragmente und statische
+  CSS-Ressourcen, keine Java-Klassen.
+
+  Struktur:
+  - src/main/resources/templates/shared/layout/default.html
+    Master-Layout mit Pico CSS, Header-/Footer-Einbindung
+  - src/main/resources/templates/shared/fragments/footer.html
+    Einheitlicher Footer (Copyright, Impressum, Datenschutz, Version)
+  - src/main/resources/static/css/custom.css
+    Plattformweite CSS-Anpassungen (Sticky Footer, Branding-Hooks)
+
+  Services binden shared-ui als Maven-Dependency ein. Thymeleaf
+  löst Templates über den Classpath auf, sodass shared/ Prefix
+  Templates aus dem JAR der Library geladen werden. Header-Fragmente
+  verbleiben in den jeweiligen Services, da sie service-spezifische
+  Navigation enthalten.
+
+  Die Library hat Spring Boot Starter Thymeleaf und Thymeleaf Layout
+  Dialect als provided Dependencies. Sie enthält keine
+  Spring-Konfiguration oder Auto-Configuration.

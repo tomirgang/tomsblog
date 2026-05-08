@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Gemeinsame CSS-Styles in der Shared UI Library
+level: 67.0
+links:
+- STK048: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Die Shared UI Library muss die gemeinsamen CSS-Styles
+  (static/css/custom.css) bereitstellen, die das Basisdesign der
+  Plattform definieren (Pico CSS Anpassungen, Sticky-Footer-Layout,
+  Tenant-Branding-Hooks). Alle Services verwenden diese gemeinsame
+  CSS-Datei anstelle eigener Kopien. Service-spezifische
+  Erweiterungen können über zusätzliche CSS-Dateien im jeweiligen
+  Service ergänzt werden.

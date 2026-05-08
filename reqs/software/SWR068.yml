@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Gemeinsamer Footer in der Shared UI Library
+level: 68.0
+links:
+- STK048: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Die Shared UI Library muss ein Footer-Fragment
+  (templates/shared/fragments/footer.html) bereitstellen, das
+  Copyright-Hinweis, Impressum-Link, Datenschutz-Link und
+  Versionsnummer einheitlich über alle Services darstellt. Services
+  referenzieren diesen Footer über
+  th:replace="~{shared/fragments/footer :: footer}".

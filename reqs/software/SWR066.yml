@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Gemeinsames Layout-Template in der Shared UI Library
+level: 66.0
+links:
+- STK048: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Die Shared UI Library muss ein Master-Layout-Template
+  (templates/shared/layout/default.html) bereitstellen, das von allen
+  Services als Basis-Layout verwendet wird. Das Layout definiert die
+  HTML-Grundstruktur (Head mit Pico CSS, Body mit Header-, Content-
+  und Footer-Bereichen) und nutzt das Thymeleaf Layout Dialect für
+  Content-Injection. Services können das gemeinsame Layout über
+  layout:decorate="~{shared/layout/default}" referenzieren.
