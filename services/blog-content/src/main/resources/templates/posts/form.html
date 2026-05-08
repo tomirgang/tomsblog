@@ -83,6 +83,26 @@
                 <input type="date" id="featuredUntil" th:field="*{featuredUntil}">
             </details>
 
+            <details open="open" th:if="${availableTags != null}">
+                <summary>Tags</summary>
+
+                <div th:if="${!#lists.isEmpty(availableTags)}">
+                    <label th:each="tag : ${availableTags}" style="display:inline-block;margin-right:1rem">
+                        <input type="checkbox" name="tagIds"
+                               th:value="${tag.id.value}"
+                               th:checked="${postForm.tagIds.contains(tag.id.value.toString())}">
+                        <span th:text="${tag.name}">Tag</span>
+                    </label>
+                </div>
+                <p th:if="${#lists.isEmpty(availableTags)}">
+                    Noch keine Tags vorhanden. <a th:href="@{/admin/tags}">Tags verwalten</a>
+                </p>
+
+                <label for="newTagName">Neuen Tag anlegen (optional)</label>
+                <input type="text" id="newTagName" th:field="*{newTagName}"
+                       placeholder="Name des neuen Tags">
+            </details>
+
             <div role="group">
                 <button type="submit" th:text="${editMode} ? 'Speichern' : 'Erstellen'">Absenden</button>
                 <a th:if="${editMode}" th:href="@{/posts/{id}/preview(id=${postId})}" role="button"

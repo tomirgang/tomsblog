@@ -1,0 +1,19 @@
+active: true
+derived: false
+header: |
+  Tag-Verwaltung im Admin-Backend
+level: 84.0
+links:
+- STK053: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Der Blog Content Service stellt unter /admin/tags eine Thymeleaf-Seite
+  bereit, die alle Tags des aktuellen Tenants auflistet. Administratoren
+  und Autoren können:
+  - Neue Tags anlegen (Name eingeben, Slug wird automatisch generiert).
+  - Bestehende Tags umbenennen.
+  - Tags löschen.
+  Die Seite ist nur für authentifizierte Benutzer zugänglich.
+  Der Controller nutzt den bestehenden TagUseCase (SWR-020).

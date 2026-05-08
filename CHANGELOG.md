@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- Tag-UI-Integration (STK-053, SWR-084, SWR-085, SWR-086)
+  - Tag-Verwaltung im Admin-Bereich unter /admin/tags (anlegen, umbenennen, löschen)
+  - Tag-Auswahl im Post-Formular per Checkboxen, inline-Anlage neuer Tags
+  - Tag-Anzeige in Post-Übersicht und Detailansicht als Labels
+  - Neuer TagAdminController für die Web-Administration
+  - BlogViewController um Tag-Logik erweitert (syncPostTags, resolvePostTags, buildPostTagMap)
+  - PostFormData um tagIds und newTagName Felder erweitert
+  - PostUseCase/PostService um syncPostTags-Methode erweitert
+  - CSS-Klasse .tag-label für einheitliche Tag-Darstellung
+  - Navigation-Link "Tags" im Header für authentifizierte Benutzer
 - E2E-Testing mit Selenium WebDriver (STK-052, SWR-078 bis SWR-083, SWA-035, ADR-0033)
   - Separates Maven-Modul e2e-tests/ mit Profil 'e2e' (mvn verify -Pe2e)
   - Testcontainers-Selenium (Chrome-Container, kein lokaler Browser nötig)

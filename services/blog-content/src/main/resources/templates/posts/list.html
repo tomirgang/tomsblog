@@ -32,6 +32,12 @@
                 <div th:utext="${featuredExcerpts[post.id.value]}">
                     Post preview text...
                 </div>
+                <div th:if="${featuredPostTags != null and featuredPostTags.containsKey(post.id.value)}" class="post-tags">
+                    <small>
+                        <span th:each="tag : ${featuredPostTags[post.id.value]}"
+                              class="tag-label" th:text="${tag.name}">Tag</span>
+                    </small>
+                </div>
                 <footer>
                     <a th:if="${post.status.name() == 'PUBLISHED'}"
                        th:href="@{/posts/{slug}(slug=${post.slug.value})}">Weiterlesen</a>
@@ -77,6 +83,12 @@
             </header>
             <div th:utext="${excerpts[post.id.value]}">
                 Post preview text...
+            </div>
+            <div th:if="${postTags != null and postTags.containsKey(post.id.value)}" class="post-tags">
+                <small>
+                    <span th:each="tag : ${postTags[post.id.value]}"
+                          class="tag-label" th:text="${tag.name}">Tag</span>
+                </small>
             </div>
             <footer>
                 <a th:if="${post.status.name() == 'PUBLISHED'}"

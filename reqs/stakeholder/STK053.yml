@@ -1,0 +1,19 @@
+active: true
+derived: false
+header: |
+  Tag-Verwaltung und Tag-Anzeige im Blog
+level: 53.0
+links: []
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Als Autor möchte ich Posts mit Tags versehen können, um Inhalte thematisch
+  zu kategorisieren. Im Post-Formular sollen bestehende Tags ausgewählt und
+  neue Tags direkt angelegt werden können.
+
+  Als Administrator möchte ich Tags im Admin-Backend verwalten (anlegen,
+  umbenennen, löschen) können.
+
+  Als Leser möchte ich in der Post-Übersicht und der Post-Detailansicht die
+  zugewiesenen Tags sehen, um thematisch verwandte Inhalte zu erkennen.

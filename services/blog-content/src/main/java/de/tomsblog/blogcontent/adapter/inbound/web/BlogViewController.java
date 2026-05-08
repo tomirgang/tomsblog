@@ -1,13 +1,17 @@
 package de.tomsblog.blogcontent.adapter.inbound.web;
 
 import de.tomsblog.blogcontent.application.port.inbound.CreatePostCommand;
+import de.tomsblog.blogcontent.application.port.inbound.CreateTagCommand;
 import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
+import de.tomsblog.blogcontent.application.port.inbound.TagUseCase;
 import de.tomsblog.blogcontent.application.port.inbound.UpdatePostCommand;
 import de.tomsblog.blogcontent.application.port.outbound.MarkdownRenderer;
 import de.tomsblog.blogcontent.domain.model.ContentType;
 import de.tomsblog.blogcontent.domain.model.Post;
 import de.tomsblog.blogcontent.domain.model.PostId;
 import de.tomsblog.blogcontent.domain.model.Slug;
+import de.tomsblog.blogcontent.domain.model.Tag;
+import de.tomsblog.blogcontent.domain.model.TagId;
 import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
 import jakarta.validation.Valid;
@@ -17,9 +21,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -46,6 +52,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @req SWR-042
  * @req SWR-076
  * @req SWR-077
+ * @req SWR-085
+ * @req SWR-086
  */
 @Controller
 public class BlogViewController {
@@ -54,10 +62,12 @@ public class BlogViewController {
     private static final int LANDING_PAGE_LIMIT = 3;
 
     private final PostUseCase postUseCase;
+    private final TagUseCase tagUseCase;
     private final MarkdownRenderer markdownRenderer;
 
-    public BlogViewController(PostUseCase postUseCase, MarkdownRenderer markdownRenderer) {
+    public BlogViewController(PostUseCase postUseCase, TagUseCase tagUseCase, MarkdownRenderer markdownRenderer) {
         this.postUseCase = postUseCase;
+        this.tagUseCase = tagUseCase;
         this.markdownRenderer = markdownRenderer;
     }
 
@@ -81,6 +91,8 @@ public class BlogViewController {
         model.addAttribute("featuredExcerpts", buildExcerpts(featuredPosts));
         model.addAttribute("authenticated", principal != null);
         model.addAttribute("landingPage", true);
+        model.addAttribute("postTags", buildPostTagMap(posts, tenant));
+        model.addAttribute("featuredPostTags", buildPostTagMap(featuredPosts, tenant));
         return "posts/list";
     }
 
@@ -105,6 +117,7 @@ public class BlogViewController {
         model.addAttribute("excerpts", buildExcerpts(posts));
         model.addAttribute("authenticated", principal != null);
         model.addAttribute("landingPage", false);
+        model.addAttribute("postTags", buildPostTagMap(posts, tenant));
         return "posts/list";
     }
 
@@ -116,6 +129,7 @@ public class BlogViewController {
         Post post = postUseCase.getPublishedPostBySlug(postSlug, tenant);
         model.addAttribute("post", post);
         model.addAttribute("renderedContent", renderContent(post));
+        model.addAttribute("tags", resolvePostTags(post, tenant));
 
         Optional<Post> previousPost = postUseCase.findPreviousPublishedPost(postSlug, tenant);
         Optional<Post> nextPost = postUseCase.findNextPublishedPost(postSlug, tenant);
@@ -133,26 +147,29 @@ public class BlogViewController {
         return "posts/show";
     }
 
-    /** @req SWR-027 */
+    /** @req SWR-027 @req SWR-085 */
     @GetMapping("/posts/new")
     public String newPostForm(@RequestHeader("X-Tenant-Id") UUID tenantId, Model model) {
         model.addAttribute("postForm", new PostFormData());
         model.addAttribute("editMode", false);
         model.addAttribute("availablePosts", postUseCase.listPosts(new TenantId(tenantId)));
+        model.addAttribute("availableTags", tagUseCase.listTags(new TenantId(tenantId)));
         return "posts/form";
     }
 
     /** @req SWR-076 */
     @GetMapping("/posts/{id}/preview")
     public String previewPost(@PathVariable UUID id, @RequestHeader("X-Tenant-Id") UUID tenantId, Model model) {
-        Post post = postUseCase.getPost(new PostId(id), new TenantId(tenantId));
+        TenantId tenant = new TenantId(tenantId);
+        Post post = postUseCase.getPost(new PostId(id), tenant);
         model.addAttribute("post", post);
         model.addAttribute("renderedContent", renderContent(post));
         model.addAttribute("preview", true);
+        model.addAttribute("tags", resolvePostTags(post, tenant));
         return "posts/show";
     }
 
-    /** @req SWR-027 */
+    /** @req SWR-027 @req SWR-085 */
     @PostMapping("/posts")
     public String createPost(
             @Valid @ModelAttribute("postForm") PostFormData form,
@@ -160,13 +177,15 @@ public class BlogViewController {
             @RequestHeader("X-Tenant-Id") UUID tenantId,
             @RequestHeader("X-Author-Id") UUID authorId,
             Model model) {
+        TenantId tenant = new TenantId(tenantId);
         if (bindingResult.hasErrors()) {
             model.addAttribute("editMode", false);
-            model.addAttribute("availablePosts", postUseCase.listPosts(new TenantId(tenantId)));
+            model.addAttribute("availablePosts", postUseCase.listPosts(tenant));
+            model.addAttribute("availableTags", tagUseCase.listTags(tenant));
             return "posts/form";
         }
         CreatePostCommand command = new CreatePostCommand(
-                new TenantId(tenantId),
+                tenant,
                 new AuthorId(authorId),
                 form.getTitle(),
                 form.getContent(),
@@ -178,14 +197,18 @@ public class BlogViewController {
                 parseUuid(form.getSeriesNextPostId()),
                 parseLocalDate(form.getFeaturedFrom()),
                 parseLocalDate(form.getFeaturedUntil()));
-        postUseCase.createPost(command);
+        Post post = postUseCase.createPost(command);
+        applyTags(post, form, tenant);
         return "redirect:/posts";
     }
 
-    /** @req SWR-027 */
+    /** @req SWR-027 @req SWR-085 */
     @GetMapping("/posts/{id}/edit")
     public String editPostForm(@PathVariable UUID id, @RequestHeader("X-Tenant-Id") UUID tenantId, Model model) {
-        Post post = postUseCase.getPost(new PostId(id), new TenantId(tenantId));
+        TenantId tenant = new TenantId(tenantId);
+        Post post = postUseCase.getPost(new PostId(id), tenant);
+        List<String> existingTagIds =
+                post.getTags().stream().map(tagId -> tagId.value().toString()).toList();
         PostFormData form = new PostFormData(
                 post.getTitle(),
                 post.getContent(),
@@ -200,15 +223,17 @@ public class BlogViewController {
                         ? post.getSeriesNextPostId().value().toString()
                         : null,
                 post.getFeaturedFrom() != null ? post.getFeaturedFrom().toString() : null,
-                post.getFeaturedUntil() != null ? post.getFeaturedUntil().toString() : null);
+                post.getFeaturedUntil() != null ? post.getFeaturedUntil().toString() : null,
+                existingTagIds);
         model.addAttribute("postForm", form);
         model.addAttribute("editMode", true);
         model.addAttribute("postId", id);
-        model.addAttribute("availablePosts", postUseCase.listPosts(new TenantId(tenantId)));
+        model.addAttribute("availablePosts", postUseCase.listPosts(tenant));
+        model.addAttribute("availableTags", tagUseCase.listTags(tenant));
         return "posts/form";
     }
 
-    /** @req SWR-027 */
+    /** @req SWR-027 @req SWR-085 */
     @PostMapping("/posts/{id}")
     public String updatePost(
             @PathVariable UUID id,
@@ -216,15 +241,17 @@ public class BlogViewController {
             BindingResult bindingResult,
             @RequestHeader("X-Tenant-Id") UUID tenantId,
             Model model) {
+        TenantId tenant = new TenantId(tenantId);
         if (bindingResult.hasErrors()) {
             model.addAttribute("editMode", true);
             model.addAttribute("postId", id);
-            model.addAttribute("availablePosts", postUseCase.listPosts(new TenantId(tenantId)));
+            model.addAttribute("availablePosts", postUseCase.listPosts(tenant));
+            model.addAttribute("availableTags", tagUseCase.listTags(tenant));
             return "posts/form";
         }
         UpdatePostCommand command = new UpdatePostCommand(
                 new PostId(id),
-                new TenantId(tenantId),
+                tenant,
                 form.getTitle(),
                 form.getContent(),
                 form.getContentType(),
@@ -234,7 +261,8 @@ public class BlogViewController {
                 parseUuid(form.getSeriesNextPostId()),
                 parseLocalDate(form.getFeaturedFrom()),
                 parseLocalDate(form.getFeaturedUntil()));
-        postUseCase.updatePost(command);
+        Post post = postUseCase.updatePost(command);
+        applyTags(post, form, tenant);
         return "redirect:/posts";
     }
 
@@ -316,5 +344,68 @@ public class BlogViewController {
             return null;
         }
         return LocalDate.parse(value);
+    }
+
+    /**
+     * Resolves TagIds of a post to full Tag objects.
+     *
+     * @req SWR-086
+     */
+    private List<Tag> resolvePostTags(Post post, TenantId tenantId) {
+        if (post.getTags().isEmpty()) {
+            return List.of();
+        }
+        Map<UUID, Tag> tagIndex = tagUseCase.listTags(tenantId).stream()
+                .collect(Collectors.toMap(t -> t.getId().value(), t -> t));
+        return post.getTags().stream()
+                .map(tagId -> tagIndex.get(tagId.value()))
+                .filter(t -> t != null)
+                .toList();
+    }
+
+    /**
+     * Builds a map from post UUID to its resolved Tag list for use in list views.
+     *
+     * @req SWR-086
+     */
+    private Map<UUID, List<Tag>> buildPostTagMap(List<Post> posts, TenantId tenantId) {
+        boolean anyPostHasTags = posts.stream().anyMatch(p -> !p.getTags().isEmpty());
+        if (!anyPostHasTags) {
+            return Map.of();
+        }
+        Map<UUID, Tag> tagIndex = tagUseCase.listTags(tenantId).stream()
+                .collect(Collectors.toMap(t -> t.getId().value(), t -> t));
+        Map<UUID, List<Tag>> result = new LinkedHashMap<>();
+        for (Post post : posts) {
+            List<Tag> resolved = post.getTags().stream()
+                    .map(tagId -> tagIndex.get(tagId.value()))
+                    .filter(t -> t != null)
+                    .toList();
+            if (!resolved.isEmpty()) {
+                result.put(post.getId().value(), resolved);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Applies tag selections from form to a post. Creates new tags if requested.
+     *
+     * @req SWR-085
+     */
+    private void applyTags(Post post, PostFormData form, TenantId tenantId) {
+        Set<TagId> selectedTags = form.getTagIds().stream()
+                .filter(s -> s != null && !s.isBlank())
+                .map(UUID::fromString)
+                .map(TagId::new)
+                .collect(Collectors.toSet());
+
+        // Create new tag if requested
+        if (form.getNewTagName() != null && !form.getNewTagName().isBlank()) {
+            Tag newTag = tagUseCase.createTag(new CreateTagCommand(tenantId, form.getNewTagName()));
+            selectedTags.add(newTag.getId());
+        }
+
+        postUseCase.syncPostTags(post.getId(), tenantId, selectedTags);
     }
 }

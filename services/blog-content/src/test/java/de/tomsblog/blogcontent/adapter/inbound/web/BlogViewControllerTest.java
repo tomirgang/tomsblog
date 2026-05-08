@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
 import de.tomsblog.blogcontent.application.port.inbound.CreatePostCommand;
 import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
+import de.tomsblog.blogcontent.application.port.inbound.TagUseCase;
 import de.tomsblog.blogcontent.application.port.inbound.UpdatePostCommand;
 import de.tomsblog.blogcontent.application.port.outbound.MarkdownRenderer;
 import de.tomsblog.blogcontent.application.service.PostNotFoundException;
@@ -16,6 +17,7 @@ import de.tomsblog.blogcontent.domain.model.*;
 import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,6 +42,9 @@ class BlogViewControllerTest {
     private PostUseCase postUseCase;
 
     @MockitoBean
+    private TagUseCase tagUseCase;
+
+    @MockitoBean
     private MarkdownRenderer markdownRenderer;
 
     @MockitoBean
@@ -53,6 +58,7 @@ class BlogViewControllerTest {
         when(postUseCase.listFeaturedPosts(any(TenantId.class), any(LocalDate.class)))
                 .thenReturn(List.of());
         when(postUseCase.listPosts(any(TenantId.class))).thenReturn(List.of());
+        when(tagUseCase.listTags(any(TenantId.class))).thenReturn(Collections.emptyList());
     }
 
     @Test
@@ -862,5 +868,176 @@ class BlogViewControllerTest {
 
         mockMvc.perform(get("/posts/{id}/preview", postId).header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    @DisplayName("SWR-085: GET /posts/new includes available tags in model")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void newPostForm_includesAvailableTags() throws Exception {
+        Tag tag = Tag.create(TenantId.of(tenantId), "Java");
+        when(tagUseCase.listTags(any(TenantId.class))).thenReturn(List.of(tag));
+
+        mockMvc.perform(get("/posts/new").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("availableTags"));
+    }
+
+    @Test
+    @DisplayName("SWR-085: GET /posts/{id}/edit includes available tags in model")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void editPostForm_includesAvailableTags() throws Exception {
+        UUID postId = UUID.randomUUID();
+        Post post =
+                Post.create(TenantId.of(tenantId), authorId, "Existing Post", "Existing content", PostLocale.german());
+        when(postUseCase.getPost(any(PostId.class), any(TenantId.class))).thenReturn(post);
+
+        Tag tag = Tag.create(TenantId.of(tenantId), "Spring");
+        when(tagUseCase.listTags(any(TenantId.class))).thenReturn(List.of(tag));
+
+        mockMvc.perform(get("/posts/{id}/edit", postId).header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("availableTags"));
+    }
+
+    @Test
+    @DisplayName("SWR-085: POST /posts syncs tags after creation")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void createPost_withTags_syncsTags() throws Exception {
+        Post post = Post.create(TenantId.of(tenantId), authorId, "New Post", "Content", PostLocale.german());
+        when(postUseCase.createPost(any(CreatePostCommand.class))).thenReturn(post);
+        when(postUseCase.syncPostTags(any(), any(), any())).thenReturn(post);
+
+        UUID tagId = UUID.randomUUID();
+        mockMvc.perform(post("/posts")
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", authorId.value().toString())
+                        .param("title", "New Post")
+                        .param("content", "Some content")
+                        .param("contentType", "HTML")
+                        .param("locale", "de")
+                        .param("tagIds", tagId.toString()))
+                .andExpect(status().is3xxRedirection());
+
+        verify(postUseCase).syncPostTags(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("SWR-086: GET /posts/{slug} includes tags in model")
+    void showPost_includesTags() throws Exception {
+        Tag tag = Tag.create(TenantId.of(tenantId), "Java");
+        TagId tagId = tag.getId();
+        Post post = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                authorId,
+                "Tagged Post",
+                Slug.fromTitle("Tagged Post"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                java.util.Set.of(tagId),
+                List.of(),
+                List.of(),
+                java.time.Instant.now(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+        when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
+                .thenReturn(post);
+        when(postUseCase.findPreviousPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+        when(postUseCase.findNextPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+        when(tagUseCase.listTags(any(TenantId.class))).thenReturn(List.of(tag));
+
+        mockMvc.perform(get("/posts/tagged-post").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("tags"));
+    }
+
+    @Test
+    @DisplayName("SWR-086: GET /posts includes postTags map in model")
+    void listPosts_includesPostTagsMap() throws Exception {
+        Tag tag = Tag.create(TenantId.of(tenantId), "Java");
+        TagId tagId = tag.getId();
+        Post post = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                authorId,
+                "Tagged",
+                Slug.fromTitle("Tagged"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                java.util.Set.of(tagId),
+                List.of(),
+                List.of(),
+                java.time.Instant.now(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of(post));
+        when(tagUseCase.listTags(any(TenantId.class))).thenReturn(List.of(tag));
+
+        mockMvc.perform(get("/posts").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("postTags"));
+    }
+
+    @Test
+    @DisplayName("SWR-085: POST /posts creates new tag when newTagName is provided")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void createPost_withNewTagName_createsTag() throws Exception {
+        Post post = Post.create(TenantId.of(tenantId), authorId, "New Post", "Content", PostLocale.german());
+        when(postUseCase.createPost(any(CreatePostCommand.class))).thenReturn(post);
+        when(postUseCase.syncPostTags(any(), any(), any())).thenReturn(post);
+        Tag newTag = Tag.create(TenantId.of(tenantId), "NewTag");
+        when(tagUseCase.createTag(any())).thenReturn(newTag);
+
+        mockMvc.perform(post("/posts")
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", authorId.value().toString())
+                        .param("title", "New Post")
+                        .param("content", "Content")
+                        .param("contentType", "HTML")
+                        .param("locale", "de")
+                        .param("newTagName", "NewTag"))
+                .andExpect(status().is3xxRedirection());
+
+        verify(tagUseCase).createTag(any());
+        verify(postUseCase).syncPostTags(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("SWR-085: POST /posts/{id} syncs tags after update")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void updatePost_withTags_syncsTags() throws Exception {
+        UUID postId = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Updated", "Content", PostLocale.german());
+        when(postUseCase.updatePost(any(UpdatePostCommand.class))).thenReturn(post);
+        when(postUseCase.syncPostTags(any(), any(), any())).thenReturn(post);
+
+        UUID tagId = UUID.randomUUID();
+        mockMvc.perform(post("/posts/{id}", postId)
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .param("title", "Updated")
+                        .param("content", "Content")
+                        .param("contentType", "HTML")
+                        .param("locale", "de")
+                        .param("tagIds", tagId.toString()))
+                .andExpect(status().is3xxRedirection());
+
+        verify(postUseCase).syncPostTags(any(), any(), any());
     }
 }

@@ -4,6 +4,7 @@ import de.tomsblog.e2e.page.BasePage;
 import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 /**
  * Page Object for the blog post list page (GET /posts).
@@ -64,5 +65,24 @@ public class PostListPage extends BasePage {
 
     public boolean hasEmptyMessage() {
         return driver.getPageSource().contains("Noch keine Beiträge vorhanden.");
+    }
+
+    /** @req SWR-086 */
+    public boolean hasTagLabels() {
+        return isElementPresent(By.cssSelector(".tag-label"));
+    }
+
+    /** @req SWR-086 */
+    public List<String> getTagLabelsForPost(String title) {
+        var articles = driver.findElements(By.cssSelector("article"));
+        for (var article : articles) {
+            String heading = article.findElement(By.tagName("h2")).getText().trim();
+            if (heading.equals(title)) {
+                return article.findElements(By.cssSelector(".tag-label")).stream()
+                        .map(WebElement::getText)
+                        .toList();
+            }
+        }
+        return List.of();
     }
 }

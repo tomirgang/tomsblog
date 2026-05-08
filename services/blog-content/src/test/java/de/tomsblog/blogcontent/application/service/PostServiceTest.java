@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -563,5 +564,47 @@ class PostServiceTest {
 
         assertThat(result.getFeaturedFrom()).isEqualTo(from);
         assertThat(result.getFeaturedUntil()).isEqualTo(until);
+    }
+
+    @Test
+    @DisplayName("SWR-085: syncPostTags adds new tags and removes old ones")
+    void syncPostTags_addsAndRemovesTags() {
+        TagId existingTag = TagId.generate();
+        TagId newTag = TagId.generate();
+        Post post = Post.create(tenantId, authorId, "Tagged Post", "Content", PostLocale.german());
+        post.addTag(existingTag);
+        when(postRepository.findByIdAndTenantId(post.getId(), tenantId)).thenReturn(Optional.of(post));
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Post result = postService.syncPostTags(post.getId(), tenantId, Set.of(newTag));
+
+        assertThat(result.getTags()).containsExactly(newTag);
+        verify(auditLogger).log(any());
+    }
+
+    @Test
+    @DisplayName("SWR-085: syncPostTags with empty set removes all tags")
+    void syncPostTags_emptySet_removesAllTags() {
+        TagId tag1 = TagId.generate();
+        TagId tag2 = TagId.generate();
+        Post post = Post.create(tenantId, authorId, "Tagged Post", "Content", PostLocale.german());
+        post.addTag(tag1);
+        post.addTag(tag2);
+        when(postRepository.findByIdAndTenantId(post.getId(), tenantId)).thenReturn(Optional.of(post));
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Post result = postService.syncPostTags(post.getId(), tenantId, Set.of());
+
+        assertThat(result.getTags()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("SWR-085: syncPostTags throws when post not found")
+    void syncPostTags_postNotFound_throws() {
+        PostId postId = PostId.generate();
+        when(postRepository.findByIdAndTenantId(postId, tenantId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> postService.syncPostTags(postId, tenantId, Set.of()))
+                .isInstanceOf(PostNotFoundException.class);
     }
 }

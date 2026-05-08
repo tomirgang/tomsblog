@@ -4,10 +4,12 @@ import de.tomsblog.blogcontent.domain.model.Post;
 import de.tomsblog.blogcontent.domain.model.PostId;
 import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.blogcontent.domain.model.Source;
+import de.tomsblog.blogcontent.domain.model.TagId;
 import de.tomsblog.shared.tenant.TenantId;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Inbound port for post management use cases.
@@ -78,4 +80,7 @@ public interface PostUseCase {
 
     /** @req SWR-042 */
     List<Post> listFeaturedPosts(TenantId tenantId, LocalDate today);
+
+    /** @req SWR-085 */
+    Post syncPostTags(PostId postId, TenantId tenantId, Set<TagId> tagIds);
 }

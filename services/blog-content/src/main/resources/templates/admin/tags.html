@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{shared/layout/default}">
+<head>
+    <title>Tag-Verwaltung</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1>Tag-Verwaltung</h1>
+
+        <h2>Neuen Tag anlegen</h2>
+        <form th:action="@{/admin/tags}" method="post">
+            <fieldset role="group">
+                <input type="text" name="name" placeholder="Tag-Name" required aria-label="Tag-Name">
+                <button type="submit">Anlegen</button>
+            </fieldset>
+        </form>
+
+        <h2>Bestehende Tags</h2>
+        <p th:if="${#lists.isEmpty(tags)}">Noch keine Tags vorhanden.</p>
+
+        <table th:if="${!#lists.isEmpty(tags)}">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Slug</th>
+                    <th>Aktionen</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tag : ${tags}">
+                    <td th:text="${tag.name}">Tag Name</td>
+                    <td th:text="${tag.slug.value}">tag-slug</td>
+                    <td>
+                        <form th:action="@{/admin/tags/{id}/rename(id=${tag.id.value})}"
+                              method="post" style="display:inline">
+                            <fieldset role="group" style="margin-bottom:0">
+                                <input type="text" name="name" th:value="${tag.name}"
+                                       required aria-label="Neuer Name" style="padding:0.25rem">
+                                <button type="submit" class="secondary outline"
+                                        style="padding:0.25rem 0.5rem">Umbenennen</button>
+                            </fieldset>
+                        </form>
+                        <form th:action="@{/admin/tags/{id}/delete(id=${tag.id.value})}"
+                              method="post" style="display:inline">
+                            <button type="submit" class="secondary outline"
+                                    style="padding:0.25rem 0.5rem"
+                                    onclick="return confirm('Tag wirklich löschen?')">Löschen</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <nav>
+            <a th:href="@{/posts}">&larr; Zurück zu Posts</a>
+        </nav>
+    </section>
+</body>
+</html>

@@ -14,12 +14,14 @@ import de.tomsblog.blogcontent.domain.model.PostLocale;
 import de.tomsblog.blogcontent.domain.model.PostStatus;
 import de.tomsblog.blogcontent.domain.model.Slug;
 import de.tomsblog.blogcontent.domain.model.Source;
+import de.tomsblog.blogcontent.domain.model.TagId;
 import de.tomsblog.shared.audit.AuditLogEntry;
 import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.shared.tenant.TenantId;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Application service orchestrating post use cases.
@@ -225,6 +227,27 @@ public class PostService implements PostUseCase {
     @Override
     public List<Post> listFeaturedPosts(TenantId tenantId, LocalDate today) {
         return postRepository.findFeaturedByTenantId(tenantId, today);
+    }
+
+    /** @req SWR-085 */
+    @Override
+    public Post syncPostTags(PostId postId, TenantId tenantId, Set<TagId> tagIds) {
+        Post post = findOrThrow(postId, tenantId);
+        Set<TagId> currentTags = Set.copyOf(post.getTags());
+        for (TagId tagId : currentTags) {
+            if (!tagIds.contains(tagId)) {
+                post.removeTag(tagId);
+            }
+        }
+        for (TagId tagId : tagIds) {
+            if (!currentTags.contains(tagId)) {
+                post.addTag(tagId);
+            }
+        }
+        Post saved = postRepository.save(post);
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(), post.getAuthorId().toString(), "POST_TAGS_SYNCED", "Post", postId.asString()));
+        return saved;
     }
 
     private Post findOrThrow(PostId postId, TenantId tenantId) {

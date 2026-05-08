@@ -6,8 +6,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
 import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
+import de.tomsblog.blogcontent.application.port.inbound.TagUseCase;
 import de.tomsblog.blogcontent.application.port.outbound.MarkdownRenderer;
+import de.tomsblog.blogcontent.domain.model.Post;
+import de.tomsblog.blogcontent.domain.model.PostLocale;
+import de.tomsblog.shared.domain.AuthorId;
+import de.tomsblog.shared.tenant.TenantId;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -31,6 +37,9 @@ class DefaultTenantFilterTest {
     private PostUseCase postUseCase;
 
     @MockitoBean
+    private TagUseCase tagUseCase;
+
+    @MockitoBean
     private MarkdownRenderer markdownRenderer;
 
     @MockitoBean
@@ -39,7 +48,9 @@ class DefaultTenantFilterTest {
     @Test
     @DisplayName("SWR-027: Filter injects default headers when both are missing")
     void missingBothHeaders_usesDefaults() throws Exception {
-        Mockito.when(postUseCase.createPost(Mockito.any())).thenReturn(null);
+        Post post = Post.create(
+                TenantId.of(UUID.randomUUID()), AuthorId.generate(), "Test", "Content", PostLocale.german());
+        Mockito.when(postUseCase.createPost(Mockito.any())).thenReturn(post);
 
         mockMvc.perform(post("/posts")
                         .with(csrf())
@@ -53,7 +64,9 @@ class DefaultTenantFilterTest {
     @Test
     @DisplayName("SWR-027: Filter injects default X-Author-Id when only tenant is present")
     void missingAuthorHeader_onlyAuthorInjected() throws Exception {
-        Mockito.when(postUseCase.createPost(Mockito.any())).thenReturn(null);
+        Post post = Post.create(
+                TenantId.of(UUID.randomUUID()), AuthorId.generate(), "Test", "Content", PostLocale.german());
+        Mockito.when(postUseCase.createPost(Mockito.any())).thenReturn(post);
 
         mockMvc.perform(post("/posts")
                         .with(csrf())

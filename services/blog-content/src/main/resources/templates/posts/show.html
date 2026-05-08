@@ -22,6 +22,10 @@
                         01.01.2026
                     </time>
                 </small>
+                <div th:if="${tags != null and !tags.isEmpty()}" class="post-tags">
+                    <span th:each="tag : ${tags}"
+                          class="tag-label" th:text="${tag.name}">Tag</span>
+                </div>
             </header>
 
             <div th:utext="${renderedContent}">

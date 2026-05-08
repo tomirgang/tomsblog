@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
 import de.tomsblog.blogcontent.application.port.inbound.PostUseCase;
+import de.tomsblog.blogcontent.application.port.inbound.TagUseCase;
 import de.tomsblog.blogcontent.application.port.outbound.MarkdownRenderer;
 import de.tomsblog.blogcontent.domain.model.Post;
 import de.tomsblog.blogcontent.domain.model.PostLocale;
@@ -44,6 +45,9 @@ class SecurityConfigurationTest {
 
     @MockitoBean
     private PostUseCase postUseCase;
+
+    @MockitoBean
+    private TagUseCase tagUseCase;
 
     @MockitoBean
     private MarkdownRenderer markdownRenderer;

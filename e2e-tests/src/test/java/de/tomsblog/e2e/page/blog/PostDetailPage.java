@@ -1,8 +1,10 @@
 package de.tomsblog.e2e.page.blog;
 
 import de.tomsblog.e2e.page.BasePage;
+import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 /**
  * Page Object for the blog post detail page (GET /posts/{slug}).
@@ -52,5 +54,17 @@ public class PostDetailPage extends BasePage {
     public PostListPage clickBackToList() {
         click(By.partialLinkText("Zurück zur Übersicht"));
         return new PostListPage(driver, baseUrl);
+    }
+
+    /** @req SWR-086 */
+    public boolean hasTagLabels() {
+        return isElementPresent(By.cssSelector(".tag-label"));
+    }
+
+    /** @req SWR-086 */
+    public List<String> getTagNames() {
+        return driver.findElements(By.cssSelector(".tag-label")).stream()
+                .map(WebElement::getText)
+                .toList();
     }
 }

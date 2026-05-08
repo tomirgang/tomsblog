@@ -1,8 +1,10 @@
 package de.tomsblog.e2e.page.blog;
 
 import de.tomsblog.e2e.page.BasePage;
+import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 /**
  * Page Object for the blog post creation/editing form (GET /posts/new, GET /posts/{id}/edit).
@@ -63,5 +65,41 @@ public class PostFormPage extends BasePage {
 
     public String getValidationError() {
         return getText(By.className("error"));
+    }
+
+    /** @req SWR-085 */
+    public boolean hasTagSection() {
+        return driver.getPageSource().contains("Tags");
+    }
+
+    /** @req SWR-085 */
+    public List<String> getAvailableTagNames() {
+        return driver.findElements(By.cssSelector("input[name='tagIds']")).stream()
+                .map(el -> el.findElement(By.xpath("./following-sibling::span")).getText())
+                .toList();
+    }
+
+    /** @req SWR-085 */
+    public PostFormPage selectTag(String tagName) {
+        List<WebElement> checkboxes = driver.findElements(By.cssSelector("input[name='tagIds']"));
+        for (WebElement cb : checkboxes) {
+            String label = cb.findElement(By.xpath("./following-sibling::span")).getText();
+            if (label.equals(tagName) && !cb.isSelected()) {
+                cb.click();
+                break;
+            }
+        }
+        return this;
+    }
+
+    /** @req SWR-085 */
+    public PostFormPage fillNewTagName(String name) {
+        type(By.id("newTagName"), name);
+        return this;
+    }
+
+    /** @req SWR-085 */
+    public boolean hasNewTagNameField() {
+        return isElementPresent(By.id("newTagName"));
     }
 }

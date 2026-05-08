@@ -14,3 +14,15 @@ body {
 body > main {
     flex: 1;
 }
+
+/* Tag labels */
+.tag-label {
+    display: inline-block;
+    background: var(--pico-secondary-background);
+    color: var(--pico-secondary-inverse);
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+    margin-right: 0.25rem;
+    margin-top: 0.25rem;
+}

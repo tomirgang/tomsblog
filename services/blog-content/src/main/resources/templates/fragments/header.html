@@ -12,6 +12,7 @@
             <ul>
                 <li><a th:href="@{/}" href="/">Home</a></li>
                 <li><a th:href="@{/posts}" href="/posts">Posts</a></li>
+                <li sec:authorize="isAuthenticated()"><a th:href="@{/admin/tags}">Tags</a></li>
                 <li sec:authorize="hasAnyRole('ADMIN','SUPERADMIN')"><a th:href="@{/auth/admin/users}">Admin</a></li>
                 <li th:if="${isSuperAdmin} and ${not #lists.isEmpty(tenants)}">
                     <form th:action="@{/auth/admin/switch-tenant}" method="post" style="margin:0;display:inline">

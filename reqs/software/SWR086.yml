@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Tag-Anzeige in Post-Übersicht und Detailansicht
+level: 86.0
+links:
+- STK053: null
+- SWR026: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Die öffentliche Post-Übersicht (/posts und Landing Page) und die Post-
+  Detailansicht (/posts/{slug}) zeigen die zugewiesenen Tags jedes Posts
+  an. Tags werden als klickbare Labels dargestellt. Der BlogViewController
+  löst die TagIds jedes Posts zu vollständigen Tag-Objekten auf und übergibt
+  sie an die Templates. Die Tag-Auflösung nutzt den bestehenden TagUseCase.

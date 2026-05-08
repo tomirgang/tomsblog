@@ -1,0 +1,19 @@
+active: true
+derived: false
+header: |
+  Tag-Auswahl im Post-Formular
+level: 85.0
+links:
+- STK053: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Das Post-Formular (Erstellen und Bearbeiten) zeigt eine Multi-Select-
+  Auswahl aller bestehenden Tags des Tenants. Autoren können:
+  - Einen oder mehrere bestehende Tags auswählen.
+  - Neue Tags direkt im Formular anlegen (Inline-Erstellung).
+  Beim Speichern des Posts werden die ausgewählten Tags als TagIds am Post
+  gespeichert. Das PostFormData wird um ein tags-Feld erweitert. Der
+  BlogViewController übergibt die verfügbaren Tags an das Template und
+  verarbeitet die Auswahl beim Erstellen und Aktualisieren.
