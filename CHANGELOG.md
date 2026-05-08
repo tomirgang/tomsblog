@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.9.2] - 2026-05-08
+
 ### Added
 
 - Shared UI Library (libs/shared-ui): Gemeinsame Thymeleaf-Templates (Layout, Footer) und CSS-Styles als Maven-Modul (STK-048, SWR-065, SWR-066, SWR-067, SWR-068, SWA-033)
