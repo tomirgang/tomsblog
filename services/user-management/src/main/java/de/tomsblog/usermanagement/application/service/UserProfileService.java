@@ -62,6 +62,7 @@ public class UserProfileService implements UserProfileUseCase {
         }
 
         var profile = UserProfile.createFromOidc(command.oidcSubject(), command.email(), command.displayName());
+        profile.addTenantMembership(new TenantMembership(command.tenantId(), Role.READER));
         applyAutoApproval(profile, command.tenantId(), AuthSource.OIDC, command.email());
         UserProfile saved = repository.save(profile);
         auditLogger.log(AuditLogEntry.create(
@@ -93,6 +94,7 @@ public class UserProfileService implements UserProfileUseCase {
 
         var profile = UserProfile.createInternal(
                 command.username(), command.passwordHash(), command.email(), command.displayName());
+        profile.addTenantMembership(new TenantMembership(command.tenantId(), Role.READER));
         applyAutoApproval(profile, command.tenantId(), AuthSource.INTERNAL, command.email());
         UserProfile saved = repository.save(profile);
         auditLogger.log(AuditLogEntry.create(
@@ -116,6 +118,7 @@ public class UserProfileService implements UserProfileUseCase {
         String hashedPassword = passwordEncoder.encode(command.password());
         var profile =
                 UserProfile.createInternal(command.username(), hashedPassword, command.email(), command.displayName());
+        profile.addTenantMembership(new TenantMembership(command.tenantId(), Role.READER));
         applyAutoApproval(profile, command.tenantId(), AuthSource.INTERNAL, command.email());
         UserProfile saved = repository.save(profile);
         auditLogger.log(AuditLogEntry.create(
