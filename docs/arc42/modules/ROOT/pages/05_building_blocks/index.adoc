@@ -213,3 +213,56 @@ Die Datenbank-Schema-Verwaltung des User Management Service erfolgt analog zum B
 | `V4__add_branding_fields.sql` | Branding-Felder (display_name, tagline, impressum, privacy_policy) fuer TenantSettings
 | `V5__create_audit_log.sql` | Audit-Log-Tabelle mit Indizes auf tenant_id und timestamp (SWR-056, SWA-031)
 |===
+
+== Ebene 2: Tenant Management Service
+
+Der Tenant Management Service verwaltet den Tenant-Lifecycle und die Tenant-Konfiguration (SWR-072, SWA-034, ADR-0031). Er uebernimmt die Verantwortlichkeiten, die bisher im User Management Service als TenantSettings modelliert waren, als eigenstaendiger Bounded Context.
+
+Das Detail Design des Tenant Management Service ist in der xref:tomsblog-design::tenant-management/index.adoc[Software Detail Design Dokumentation] beschrieben.
+
+=== Domain Layer (domain/)
+
+[cols="1,1,2"]
+|===
+| Baustein | Typ | Beschreibung
+
+| `Tenant` | Aggregate Root | TenantId, slug, displayName, tagline, TenantStatus, LoginMode, Auto-Approval-Konfiguration, OIDC-Provider-Config, Impressum, Datenschutzerklaerung. Lifecycle-Management mit Statusuebergaengen.
+| `TenantStatus` | Enum | ACTIVE, SUSPENDED, DEACTIVATED. Steuert die Verfuegbarkeit des Tenants.
+| `LoginMode` | Enum | INTERNAL, OIDC, BOTH. Konfigurierbare Login-Methode pro Tenant (migriert aus user-management).
+|===
+
+=== Application Layer (application/)
+
+[cols="1,2"]
+|===
+| Baustein | Beschreibung
+
+| `TenantManagementUseCase` | Inbound Port: createTenant, getTenant, updateGeneralSettings, updateOidcSettings, updateLegalSettings, listAllTenants
+| `TenantRepository` | Outbound Port: Persistence-Abstraktion fuer Tenants
+| `TenantManagementService` | Implementiert TenantManagementUseCase, orchestriert Domain und Ports
+|===
+
+=== Adapter Layer (adapter/)
+
+[cols="1,2"]
+|===
+| Baustein | Beschreibung
+
+| `TenantAdminController` | Thymeleaf Inbound Adapter: Admin-UI unter /tenant/admin/** (SWR-073). Tenant-Liste, Erstellung, Einstellungen mit Tab-Navigation.
+| `TenantManagementGrpcService` | gRPC Inbound Adapter: GetTenantSettings, ListTenants fuer Service-zu-Service-Abfragen (SWR-074)
+| `SecurityConfiguration` | Break-Glass-SuperAdmin-Login, Redis-Session-Sharing
+| `JpaTenantRepository` | JPA Outbound Adapter: Implementiert TenantRepository
+| `TenantJpaEntity` | JPA-Entity fuer Tenants
+| `TenantMapper` | Bidirektionales Mapping zwischen Domain-Tenant und TenantJpaEntity
+| `JpaAuditLogger` | Outbound Adapter: Audit-Log-Persistenz (SWR-056, SWA-031)
+|===
+
+=== Datenbank-Migrationen (Flyway)
+
+[cols="1,2"]
+|===
+| Migration | Beschreibung
+
+| `V1__create_tenants.sql` | tenants Grundschema mit Lifecycle-Status, Login-Mode, Branding, OIDC-Config, Impressum, Datenschutz
+| `V2__create_audit_log.sql` | Audit-Log-Tabelle (SWR-056, SWA-031)
+|===

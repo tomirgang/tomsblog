@@ -1,4 +1,5 @@
 * xref:index.adoc[Überblick]
 * xref:blog-content/index.adoc[Blog Content Service]
 * xref:user-management/index.adoc[User Management Service]
+* xref:tenant-management/index.adoc[Tenant Management Service]
 * xref:shared-ui/index.adoc[Shared UI Library]

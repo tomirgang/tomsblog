@@ -10,7 +10,7 @@ ref: ''
 references:
 - path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/web/VersionModelAdvice.java
   type: file
-- path: services/blog-content/src/main/resources/templates/fragments/footer.html
+- path: libs/shared-ui/src/main/resources/templates/shared/fragments/footer.html
   type: file
 reviewed: quIQKJhW8ERsezBK-HnmvVmdCd4odtVHggkDP1vKYsY=
 text: |

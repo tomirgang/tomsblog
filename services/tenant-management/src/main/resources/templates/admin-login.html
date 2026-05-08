@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{shared/layout/default}">
+<head>
+    <title>Tenant Admin Login</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1>Tenant Admin Login</h1>
+
+        <article th:if="${param.error}" aria-label="Fehler">
+            <p role="alert"><strong>Anmeldung fehlgeschlagen.</strong> Benutzername oder Passwort falsch.</p>
+        </article>
+
+        <form th:action="@{/tenant/admin/login}" method="post">
+            <label for="username">Benutzername</label>
+            <input type="text" id="username" name="username" autocomplete="username" required autofocus>
+
+            <label for="password">Passwort</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required>
+
+            <button type="submit">Anmelden</button>
+        </form>
+    </section>
+</body>
+</html>

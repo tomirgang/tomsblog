@@ -12,6 +12,7 @@ spec:
       owner: blog_content
       postInitApplicationSQL:
         - CREATE DATABASE user_management OWNER app;
+        - CREATE DATABASE tenant_management OWNER app;
 
   postgresql:
     parameters:

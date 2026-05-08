@@ -10,15 +10,15 @@ ref: ''
 references:
 - path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/inbound/web/BlogViewController.java
   type: file
-- path: services/blog-content/src/main/resources/templates/layout/default.html
+- path: libs/shared-ui/src/main/resources/templates/shared/layout/default.html
   type: file
 - path: services/blog-content/src/main/resources/templates/fragments/header.html
   type: file
-- path: services/blog-content/src/main/resources/templates/fragments/footer.html
+- path: libs/shared-ui/src/main/resources/templates/shared/fragments/footer.html
   type: file
 - path: services/blog-content/src/main/resources/templates/index.html
   type: file
-- path: services/blog-content/src/main/resources/static/css/custom.css
+- path: libs/shared-ui/src/main/resources/static/css/custom.css
   type: file
 reviewed: Y71cmAfxEptd7Bp8NeQBPcXvMaBfXOkvCxwoGZY_-kQ=
 text: |

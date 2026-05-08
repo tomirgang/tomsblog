@@ -81,6 +81,24 @@ services:
       timeout: 3s
       retries: 5
 
+  # Database per Service: Tenant Management gets its own PostgreSQL instance (ADR-0019)
+  postgres-tenant-management:
+    image: postgres:17
+    container_name: tomsblog-postgres-tenant-management
+    environment:
+      POSTGRES_DB: tenant_management
+      POSTGRES_USER: ${TENANT_MGMT_DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${TENANT_MGMT_DB_PASSWORD:-postgres}
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_tenant_management_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   rabbitmq:
     image: rabbitmq:4-management-alpine
     container_name: tomsblog-rabbitmq
@@ -102,4 +120,5 @@ services:
 volumes:
   postgres_blog_content_data:
   postgres_user_management_data:
+  postgres_tenant_management_data:
   rabbitmq_data:

@@ -12,4 +12,5 @@ resources:
   - pvc.yaml
   - blog-content
   - user-management
+  - tenant-management
   - routing

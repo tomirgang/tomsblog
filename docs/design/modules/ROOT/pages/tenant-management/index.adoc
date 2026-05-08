@@ -1,0 +1,250 @@
+= Tenant Management Service: Detail Design
+:toc: left
+:toclevels: 3
+:sectnums:
+
+== Überblick
+
+Der Tenant Management Service verwaltet den Tenant-Lifecycle und die Tenant-Konfiguration als eigenständiger Bounded Context (ADR-0031, SWR-072). Er übernimmt die Verantwortlichkeiten, die bisher im User Management Service als TenantSettings modelliert waren.
+
+Der Service stellt eine Thymeleaf-basierte Admin-UI für SuperAdmins bereit (SWR-073) und eine gRPC-Schnittstelle für Service-zu-Service-Abfragen (SWR-074). Die Architektur folgt der hexagonalen Architektur (SWA-001) mit klarer Trennung von Domain, Application und Adapter Layer (SWA-034).
+
+Der Service besitzt eine eigene PostgreSQL-Datenbank (Database per Service, ADR-0019) und wird mit eigenen Kubernetes-Ressourcen deployt (SWR-075).
+
+== Domain-Modell
+
+Das Domain-Modell bildet Tenants als Aggregate Root mit Lifecycle-Management, Login-Konfiguration, Branding und rechtlichen Inhalten ab.
+
+Das folgende Klassendiagramm zeigt die Struktur des Domain Layers:
+
+[mermaid]
+----
+classDiagram
+    class Tenant {
+        -TenantId tenantId
+        -String slug
+        -String displayName
+        -String tagline
+        -TenantStatus status
+        -LoginMode loginMode
+        -boolean autoApproveOidc
+        -Set~String~ autoApproveEmailDomains
+        -String impressumContent
+        -String privacyPolicyContent
+        -String oidcIssuerUrl
+        -String oidcClientId
+        -String oidcClientSecret
+        -Instant createdAt
+        -Instant updatedAt
+        +create(slug, displayName) Tenant
+        +updateGeneralSettings(displayName, tagline, loginMode, autoApproveOidc, domains) void
+        +updateOidcSettings(issuerUrl, clientId, clientSecret) void
+        +updateLegalSettings(impressum, privacy) void
+        +shouldAutoApprove(authSource, email) boolean
+        +activate() void
+        +suspend() void
+        +deactivate() void
+    }
+
+    class TenantStatus {
+        <<enumeration>>
+        ACTIVE
+        SUSPENDED
+        DEACTIVATED
+    }
+
+    class LoginMode {
+        <<enumeration>>
+        INTERNAL
+        OIDC
+        BOTH
+    }
+
+    Tenant --> TenantStatus
+    Tenant --> LoginMode
+----
+
+=== Tenant (Aggregate Root)
+
+Der Tenant ist das zentrale Aggregate Root des Service (STK-050). Er kapselt alle Konfigurationsdaten, die bisher als TenantSettings im User Management Service verwaltet wurden, und erweitert sie um einen expliziten Lifecycle.
+
+Die Login-Mode-Konfiguration (SWR-044) steuert, ob Benutzer sich über interne Accounts, OIDC oder beides anmelden können. Die Auto-Approval-Regeln (SWR-045) ermöglichen die automatische Freigabe neuer Benutzer basierend auf OIDC-Login oder E-Mail-Domain.
+
+=== LoginMode (Enum)
+
+Das LoginMode-Enum wird aus dem User Management Service migriert. Es bestimmt die verfügbaren Authentifizierungsmethoden pro Tenant.
+
+== Application Layer
+
+Der Application Layer definiert die Inbound- und Outbound-Ports gemäß hexagonaler Architektur.
+
+Das folgende Diagramm zeigt die Ports und den Service:
+
+[mermaid]
+----
+classDiagram
+    class TenantManagementUseCase {
+        <<interface>>
+        +createTenant(slug, displayName) Tenant
+        +getTenant(tenantId) Tenant
+        +updateGeneralSettings(tenantId, displayName, tagline, loginMode, autoApproveOidc, domains) void
+        +updateOidcSettings(tenantId, issuerUrl, clientId, clientSecret) void
+        +updateLegalSettings(tenantId, impressum, privacy) void
+        +listAllTenants() List~Tenant~
+    }
+
+    class TenantRepository {
+        <<interface>>
+        +save(tenant) Tenant
+        +findByTenantId(tenantId) Optional~Tenant~
+        +findAll() List~Tenant~
+    }
+
+    class TenantManagementService {
+        -TenantRepository tenantRepository
+        -AuditLogger auditLogger
+        +createTenant(slug, displayName) Tenant
+        +getTenant(tenantId) Tenant
+        +updateGeneralSettings(...) void
+        +updateOidcSettings(...) void
+        +updateLegalSettings(...) void
+        +listAllTenants() List~Tenant~
+    }
+
+    TenantManagementService ..|> TenantManagementUseCase
+    TenantManagementService --> TenantRepository
+----
+
+=== Inbound Port: TenantManagementUseCase
+
+Der TenantManagementUseCase definiert alle Operationen zur Tenant-Verwaltung. Die Methode `createTenant` ermöglicht das Anlegen neuer Tenants durch den SuperAdmin. Die Update-Methoden sind analog zum User Management Service in Einstellungsgruppen aufgeteilt (SWR-069, SWR-070, SWR-071).
+
+=== Outbound Port: TenantRepository
+
+Der TenantRepository Port abstrahiert die Persistenz. Die `findAll`-Methode wird sowohl für die Admin-UI als auch für den gRPC-ListTenants-Endpunkt verwendet.
+
+=== TenantManagementService
+
+Der Service implementiert den Inbound Port und orchestriert Domain-Logik mit Persistenz. Alle Mutationen werden über den AuditLogger protokolliert (SWR-056).
+
+== Adapter Layer
+
+=== Inbound: Thymeleaf Web-UI
+
+Die Admin-UI (SWR-073) wird als Thymeleaf-basierte Webanwendung unter `/tenant/admin/**` bereitgestellt. Sie verwendet die Shared UI Library (SWR-065, SWA-033) für Layout, Footer und CSS.
+
+Das folgende Diagramm zeigt den Ablauf des Tenant-Erstellungsprozesses:
+
+[mermaid]
+----
+sequenceDiagram
+    actor SuperAdmin
+    participant UI as TenantAdminController
+    participant UseCase as TenantManagementUseCase
+    participant Repo as TenantRepository
+
+    SuperAdmin->>UI: GET /tenant/admin/tenants/new
+    UI-->>SuperAdmin: Formular anzeigen
+
+    SuperAdmin->>UI: POST /tenant/admin/tenants (slug, displayName)
+    UI->>UseCase: createTenant(slug, displayName)
+    UseCase->>Repo: save(tenant)
+    Repo-->>UseCase: Tenant
+    UseCase-->>UI: Tenant
+    UI-->>SuperAdmin: Redirect /tenant/admin/tenants
+----
+
+==== Seiten
+
+[cols="1,2,1"]
+|===
+| Pfad | Funktion | Rollen
+
+| `/tenant/admin/login` | Break-Glass-SuperAdmin-Login | Öffentlich
+| `/tenant/admin/tenants` | Tenant-Übersicht mit Status | SUPERADMIN
+| `/tenant/admin/tenants/new` | Neuen Tenant anlegen | SUPERADMIN
+| `/tenant/admin/tenants/{id}/settings` | Tenant-Einstellungen bearbeiten | SUPERADMIN
+|===
+
+Die Einstellungsseite verwendet Tab-Navigation mit separaten Formularen pro Einstellungsgruppe (allgemein, OIDC, Impressum/Datenschutz), analog zur bestehenden Admin-Settings-UI im User Management Service (SWR-069, SWR-070, SWR-071).
+
+=== Inbound: gRPC
+
+Der gRPC-Adapter (SWR-074) stellt Tenant-Informationen für andere Services bereit. Er ersetzt die bisherige TenantSettingsService-Definition in user_management.proto.
+
+Die Proto-Definition wird in eine eigene Datei `tenant_management.proto` in `libs/grpc-contracts/` migriert:
+
+[source,protobuf]
+----
+service TenantManagementService {
+  rpc GetTenantSettings(GetTenantSettingsRequest) returns (TenantSettingsResponse);
+  rpc ListTenants(ListTenantsRequest) returns (ListTenantsResponse);
+}
+----
+
+==== Konsumenten
+
+[cols="1,2"]
+|===
+| Service | Verwendung
+
+| user-management | Login-Mode und OIDC-Konfiguration für dynamische ClientRegistration (SWR-063)
+| blog-content | Tenant-Branding und Impressum/Datenschutz für Anzeige
+|===
+
+=== Inbound: Security
+
+Die Security-Konfiguration umfasst zwei Filter Chains:
+
+[cols="1,1,2"]
+|===
+| Chain (Order) | Pfadmuster | Verhalten
+
+| Admin (Order 1) | `/tenant/admin/**` | Break-Glass-FormLogin, SUPERADMIN-Rolle erforderlich
+| Default (Order 2) | alles andere | Actuator Health öffentlich, Rest gesperrt
+|===
+
+Redis-Session-Sharing (SWR-064) wird konfiguriert, um Sessions mit den anderen Services zu teilen.
+
+=== Outbound: JPA-Persistenz
+
+Die Persistenz erfolgt über JPA mit einer eigenen PostgreSQL-Datenbank `tenant_management` (ADR-0019, ADR-0023). Das Schema wird über Flyway verwaltet (ADR-0015).
+
+== Kubernetes-Deployment
+
+Der Service wird mit den folgenden Kubernetes-Ressourcen deployt (SWR-075):
+
+[cols="1,2"]
+|===
+| Ressource | Beschreibung
+
+| Deployment | 2 Replicas, Rolling-Update, SecurityContext (non-root, read-only FS)
+| Service | ClusterIP: Port 80 (HTTP) → 8082, Port 9090 (gRPC)
+| Ingress | `/tenant/admin/**` → tenant-management (blog.tomirgang.de, shared TLS)
+| NetworkPolicy | Ingress: Traefik (HTTP), Intra-Namespace (gRPC). Egress: DNS, PostgreSQL, Redis
+| Linkerd Server | HTTP/1 (tenant-management-http), HTTP/2 (tenant-management-grpc)
+| AuthorizationPolicy | Traefik → HTTP, blog-content/user-management → gRPC
+| Secret | SOPS-verschlüsselt: admin-password
+| ServiceAccount | Dedizierter ServiceAccount
+|===
+
+Die Manifeste liegen unter `infra/k8s/tenant-management/`.
+
+== Anforderungsabdeckung
+
+[cols="1,3,1"]
+|===
+| Requirement | Beschreibung | Abdeckung
+
+| STK-050 | Eigenständiger Tenant-Verwaltungsservice mit Admin-UI | Vollständig
+| SWR-072 | Tenant-Management-Service als eigenständiger Microservice | Vollständig
+| SWR-073 | Tenant-Admin-UI mit Shared UI Library | Vollständig
+| SWR-074 | Tenant-Management gRPC-Schnittstelle | Vollständig
+| SWR-075 | Kubernetes-Deployment für Tenant-Management-Service | Vollständig
+| SWA-034 | Tenant-Management-Service Architektur | Vollständig
+| SWR-044 | Konfigurierbare Login-Methode pro Tenant | Migriert aus user-management
+| SWR-045 | Auto-Approval-Regeln | Migriert aus user-management
+| SWR-050 | Tenant-Branding | Migriert aus user-management
+| SWR-056 | Audit-Logging | Via JpaAuditLogger
+| SWR-061 | OIDC-Konfiguration pro Tenant | Migriert aus user-management
+|===

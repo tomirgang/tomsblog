@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{shared/layout/default}">
+<head>
+    <title>Tenants</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h2>Tenant-Verwaltung</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Slug</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Login-Modus</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tenant : ${tenants}">
+                    <td th:text="${tenant.slug}"></td>
+                    <td th:text="${tenant.displayName}"></td>
+                    <td th:text="${tenant.status}"></td>
+                    <td th:text="${tenant.loginMode}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(tenants)}">
+                    <td colspan="4">Keine Tenants vorhanden.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Neuen Tenant anlegen</h3>
+        <form th:action="@{/tenant/admin/tenants/new}" method="post">
+            <label for="slug">Slug (eindeutig)</label>
+            <input type="text" id="slug" name="slug" required
+                   pattern="[a-z0-9\-]+" title="Nur Kleinbuchstaben, Ziffern und Bindestriche">
+
+            <label for="displayName">Anzeigename</label>
+            <input type="text" id="displayName" name="displayName" required>
+
+            <button type="submit">Anlegen</button>
+        </form>
+
+        <nav>
+            <a th:href="@{/tenant/admin/settings}">Tenant-Einstellungen</a>
+        </nav>
+    </section>
+</body>
+</html>

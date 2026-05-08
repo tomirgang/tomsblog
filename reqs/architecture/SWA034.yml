@@ -1,0 +1,46 @@
+active: true
+derived: false
+header: |
+  Tenant-Management-Service Architektur
+level: 34.0
+links:
+- SWR072: 7AW6FhXHrSbbwF23kYL6WVN_QY6H4hwEWCauG7rbC8U=
+- SWR073: eTCdMFwN1Mr5BGSG2V6j5si6G8OavBitaCZ-qU06FU4=
+- SWR074: 9iTQiQH3khZU2X_1nwB9s5BUZiIp5T2M-GNQsiJMVZQ=
+- SWR075: Ir46Jwq8fmiLrwJFJeu80ZJGn2r49cgIF73T6ce4npY=
+normative: true
+ref: ''
+reviewed: 9INUV2nQrlKnq-x7Lfqja9gmSfECzcZTE_qHbXxGh7g=
+text: |
+  Der tenant-management Service folgt der hexagonalen Architektur (SWA-001)
+  und dem Database-per-Service-Prinzip (ADR-0019).
+
+  Domain Layer:
+  - Tenant (Aggregate Root): TenantId, slug, displayName, tagline,
+    TenantStatus (ACTIVE, SUSPENDED, DEACTIVATED), LoginMode, Auto-Approval,
+    OIDC-Konfiguration, Impressum, Datenschutzerklärung
+  - LoginMode (Enum): INTERNAL, OIDC, BOTH (migriert aus user-management)
+
+  Application Layer:
+  - TenantManagementUseCase (Inbound Port): createTenant, getTenant,
+    updateGeneralSettings, updateOidcSettings, updateLegalSettings,
+    listAllTenants
+  - TenantRepository (Outbound Port): save, findByTenantId, findAll
+
+  Adapter Layer (Inbound):
+  - TenantAdminController: Thymeleaf-Admin-UI unter /tenant/admin/**
+  - TenantManagementGrpcService: gRPC-Endpunkte für Service-zu-Service-Abfragen
+  - SecurityConfiguration: Break-Glass-Admin-Login, Redis-Session
+
+  Adapter Layer (Outbound):
+  - JpaTenantRepository: PostgreSQL-Persistenz via JPA
+  - JpaAuditLogger: Audit-Log-Persistenz (SWR-056)
+
+  Datenbank:
+  - Eigene PostgreSQL-Datenbank tenant_management (CloudNativePG, ADR-0023)
+  - Flyway-Migrationen (ADR-0015) für Schema-Verwaltung
+  - Tabellen: tenants, tenant_auto_approve_domains
+
+  Kommunikation:
+  - gRPC (ADR-0010) für synchrone Abfragen durch andere Services
+  - Linkerd mTLS (ADR-0021) für Pod-zu-Pod-Verschlüsselung

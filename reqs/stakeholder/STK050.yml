@@ -1,0 +1,24 @@
+active: true
+derived: false
+header: |
+  Eigenständiger Tenant-Verwaltungsservice mit Admin-UI
+level: 50.0
+links: []
+normative: true
+ref: ''
+reviewed: gWu9LqW6-M3JzWaQoJXA8SGlRboXCM75hGLvISatrMk=
+text: |
+  Die Tenant-Verwaltung soll über einen eigenständigen Service erfolgen,
+  der unabhängig vom User Management Service betrieben wird. Der Service
+  stellt die Admin-UI für die Tenant-Verwaltung selbst über Thymeleaf
+  bereit (unter Verwendung der Shared UI Library) und wird über eigene
+  Kubernetes-Ressourcen (Ingress, Linkerd AuthorizationPolicies,
+  NetworkPolicies) exponiert.
+
+  Der SuperAdmin soll über die Admin-UI neue Tenants anlegen, bestehende
+  Tenants konfigurieren und Tenant-Einstellungen (Login-Mode, OIDC,
+  Branding, Impressum, Datenschutz) verwalten können.
+
+  Die Trennung von Tenant-Verwaltung und Benutzerverwaltung folgt dem
+  Prinzip der Bounded Context Separation (DDD): Ein Tenant existiert
+  unabhängig von einzelnen Benutzern.

@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tenant-management
+  namespace: tomsblog
+  labels:
+    app: tenant-management
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - blog.tomirgang.de
+      secretName: blog-content-tls
+  rules:
+    - host: blog.tomirgang.de
+      http:
+        paths:
+          - path: /tenant/admin
+            pathType: Prefix
+            backend:
+              service:
+                name: tenant-management
+                port:
+                  name: http

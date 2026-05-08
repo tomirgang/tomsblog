@@ -1,0 +1,26 @@
+active: true
+derived: false
+header: |
+  Tenant-Admin-UI mit Shared UI Library
+level: 73.0
+links:
+- STK050: gWu9LqW6-M3JzWaQoJXA8SGlRboXCM75hGLvISatrMk=
+normative: true
+ref: ''
+reviewed: 0lX6RwdsgR3GIqBaJIQm0BU7BVfdTzQ0qYbY6SbmzVw=
+text: |
+  Der tenant-management Service stellt eine Thymeleaf-basierte Admin-UI
+  unter /tenant/admin/** bereit. Die UI verwendet die Shared UI Library
+  (libs/shared-ui, SWR-065) für Layout, Footer und CSS-Styles.
+
+  Folgende Seiten werden bereitgestellt:
+
+  - /tenant/admin/login: Break-Glass-SuperAdmin-Login (formbasiert)
+  - /tenant/admin/tenants: Übersicht aller Tenants mit Status
+  - /tenant/admin/tenants/new: Formular zum Anlegen eines neuen Tenants
+  - /tenant/admin/tenants/{id}/settings: Tenant-Einstellungen bearbeiten
+    (allgemein, OIDC, Impressum/Datenschutz) in separaten Tab-Formularen
+
+  Der Zugriff erfordert die Rolle SUPERADMIN. Die Authentifizierung
+  erfolgt über einen Break-Glass-Login analog zum User Management Service
+  (Umgebungsvariable BLOG_ADMIN_PASSWORD).

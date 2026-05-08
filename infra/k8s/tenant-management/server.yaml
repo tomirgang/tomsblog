@@ -1,0 +1,27 @@
+apiVersion: policy.linkerd.io/v1beta1
+kind: Server
+metadata:
+  name: tenant-management-http
+  namespace: tomsblog
+  labels:
+    app: tenant-management
+spec:
+  podSelector:
+    matchLabels:
+      app: tenant-management
+  port: http
+  proxyProtocol: HTTP/1
+---
+apiVersion: policy.linkerd.io/v1beta1
+kind: Server
+metadata:
+  name: tenant-management-grpc
+  namespace: tomsblog
+  labels:
+    app: tenant-management
+spec:
+  podSelector:
+    matchLabels:
+      app: tenant-management
+  port: grpc
+  proxyProtocol: HTTP/2

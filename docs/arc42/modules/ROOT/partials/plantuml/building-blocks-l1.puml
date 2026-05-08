@@ -2,6 +2,7 @@
 package "Toms Blog Platform" {
   [Blog Content Service] as blog
   [User Management Service] as usermgmt
+  [Tenant Management Service] as tenantmgmt
   [Feed Service] as feed
   [AI Service] as ai
   [Podcast Service] as podcast
@@ -17,6 +18,7 @@ package "Shared Libraries" {
 cloud "Authentik\n(OIDC Provider)" as authentik
 database "PostgreSQL\n(blog-content)" as db_blog
 database "PostgreSQL\n(user-mgmt)" as db_user
+database "PostgreSQL\n(tenant-mgmt)" as db_tenant
 database "PostgreSQL\n(podcast)" as db_podcast
 database "PostgreSQL\n(video)" as db_video
 queue "Apache Kafka" as kafka
@@ -25,14 +27,18 @@ cloud "OpenRouter" as openrouter
 cloud "Garage (S3)" as s3
 
 blog --> db_blog
-blog --> authentik : OIDC Login\n(OAuth2 Client)
 blog --> usermgmt : Sync User Profile\n+ Fetch Roles (gRPC)
+blog --> tenantmgmt : Fetch Tenant\nSettings (gRPC)
 blog ..> sharedui : Templates\n+ CSS
 blog ..> kernel : Domain\nPrimitives
 usermgmt --> db_user
-usermgmt --> authentik : Validate Tokens
+usermgmt --> authentik : OIDC Login\n(OAuth2 Client)
+usermgmt --> tenantmgmt : Fetch Login\nConfig (gRPC)
 usermgmt ..> sharedui : Templates\n+ CSS
 usermgmt ..> kernel : Domain\nPrimitives
+tenantmgmt --> db_tenant
+tenantmgmt ..> sharedui : Templates\n+ CSS
+tenantmgmt ..> kernel : Domain\nPrimitives
 blog --> kafka : Events
 blog --> s3 : Attachments
 feed --> kafka : Consumes

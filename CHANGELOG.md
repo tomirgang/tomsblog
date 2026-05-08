@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Tenant Management Service (services/tenant-management): Eigenständiger Microservice für die Verwaltung von Tenants mit eigener Admin UI (ADR-0031, STK-050, SWR-072, SWR-073, SWR-074, SWR-075, SWA-034)
+  - Domain-Modell: Tenant-Aggregate mit Lifecycle (ACTIVE, SUSPENDED, DEACTIVATED), Login-Modi (INTERNAL, OIDC, BOTH), OIDC-Konfiguration, Auto-Approve-Regeln, Impressum/Datenschutz
+  - gRPC-API (Port 9090) für Service-zu-Service-Kommunikation: GetTenant, CreateTenant, UpdateGeneralSettings, UpdateOidcSettings, UpdateLegalSettings, ListTenants
+  - Break-Glass Admin UI unter /tenant/admin mit InMemoryUserDetailsManager, Tenant-Liste, Einstellungs-Tabs (Allgemein, OIDC, Legal), Tenant-Wechsel
+  - PostgreSQL-Persistenz mit Flyway-Migrationen (Port 5434), Audit-Logging aller Tenant-Mutationen
+  - Kubernetes-Manifeste: Deployment (2 Replicas), Service, Ingress, NetworkPolicy, Linkerd Server/AuthorizationPolicy (gRPC HTTP/2), ServiceAccount, PodDisruptionBudget
+  - DefaultTenantFilter: Injiziert X-Tenant-Id Header wenn fehlend, Session-basierter Tenant-Override
+  - Dockerfile für Container-Image (eclipse-temurin:25-jre-alpine, Ports 8082/9090)
+  - CI-Pipeline: Container-Build und Release-Assets für tenant-management
+  - Flux GitOps: ImageRepository, ImagePolicy und ImageUpdateAutomation für automatische Deployments
+  - Flux Kustomization: Health-Check für tenant-management Deployment
+  - CloudNativePG: tenant_management Datenbank in postInitApplicationSQL
+  - docker-compose: postgres-tenant-management Service (Port 5434) für lokale Entwicklung
+
+### Fixed
+
+- Mermaid-Diagramme in Blog-Posts wurden als Roh-Codeblöcke angezeigt: Flexmark rendert Mermaid-Blöcke als `<pre><code class="language-mermaid">`, aber Mermaid.js erwartet `<pre class="mermaid">`. JavaScript wandelt die Elemente jetzt vor der Mermaid-Initialisierung um und highlight.js verarbeitet Mermaid-Blöcke nicht mehr.
+- Doorstop-Referenzen in IMP021 und IMP025 zeigten auf alte Pfade unter services/blog-content, obwohl layout/default.html, fragments/footer.html und static/css/custom.css nach libs/shared-ui verschoben wurden
+
 ## [0.9.2] - 2026-05-08
 
 ### Added

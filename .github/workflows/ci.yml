@@ -179,7 +179,7 @@ jobs:
     if: github.event_name == 'push'
     strategy:
       matrix:
-        service: [blog-content, user-management]
+        service: [blog-content, user-management, tenant-management]
 
     steps:
       - uses: actions/checkout@v4
@@ -246,7 +246,7 @@ jobs:
           cache: maven
 
       - name: Build JAR (skip tests, already passed)
-        run: ./mvnw package -pl services/blog-content,services/user-management -am --batch-mode --no-transfer-progress -DskipTests
+        run: ./mvnw package -pl services/blog-content,services/user-management,services/tenant-management -am --batch-mode --no-transfer-progress -DskipTests
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -291,5 +291,6 @@ jobs:
           files: |
             services/blog-content/target/blog-content-*.jar
             services/user-management/target/user-management-*.jar
+            services/tenant-management/target/tenant-management-*.jar
             documentation.zip
             requirements-report.zip

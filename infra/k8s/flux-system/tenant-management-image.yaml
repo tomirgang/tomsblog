@@ -1,0 +1,22 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: tenant-management
+  namespace: flux-system
+spec:
+  image: ghcr.io/tomirgang/tomsblog/tenant-management
+  interval: 5m
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: tenant-management
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: tenant-management
+  filterTags:
+    pattern: '^\d+\.\d+\.\d+$'
+  policy:
+    semver:
+      range: '>=0.1.0'

@@ -7,3 +7,5 @@ resources:
   - blog-content-image-automation.yaml
   - user-management-image.yaml
   - user-management-image-automation.yaml
+  - tenant-management-image.yaml
+  - tenant-management-image-automation.yaml

@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: tenant-management
+  namespace: tomsblog
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: tenant-management

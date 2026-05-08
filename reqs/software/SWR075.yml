@@ -1,0 +1,26 @@
+active: true
+derived: false
+header: |
+  Kubernetes-Deployment für Tenant-Management-Service
+level: 75.0
+links:
+- STK050: gWu9LqW6-M3JzWaQoJXA8SGlRboXCM75hGLvISatrMk=
+normative: true
+ref: ''
+reviewed: 8VogojB5cPUexKM7g1lIl-pQ5vi9MDz-flPzyncTfmc=
+text: |
+  Der tenant-management Service wird mit folgenden Kubernetes-Ressourcen
+  deployt:
+
+  - Deployment: 2 Replicas, Rolling-Update-Strategie
+  - Service: ClusterIP mit HTTP- und gRPC-Ports
+  - Ingress: Pfad-basiertes Routing für /tenant/admin/** auf
+    blog.tomirgang.de (gemeinsames TLS-Secret blog-content-tls)
+  - NetworkPolicy: Ingress nur von Traefik (HTTP) und Intra-Namespace (gRPC)
+  - Linkerd Server + AuthorizationPolicy: Traefik-Identity für HTTP,
+    Service-Identities für gRPC
+  - Secret: SOPS-verschlüsselt (admin-password)
+  - ServiceAccount: Dedizierter ServiceAccount
+
+  Redis-Session-Sharing wird für die Admin-UI konfiguriert (SWR-064).
+  Die Manifeste liegen unter infra/k8s/tenant-management/.

@@ -26,6 +26,7 @@
         <module>libs/grpc-contracts</module>
         <module>services/blog-content</module>
         <module>services/user-management</module>
+        <module>services/tenant-management</module>
     </modules>
 
     <properties>

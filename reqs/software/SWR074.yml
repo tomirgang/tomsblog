@@ -1,0 +1,25 @@
+active: true
+derived: false
+header: |
+  Tenant-Management gRPC-Schnittstelle
+level: 74.0
+links:
+- STK002: evLZsjXR3mxOQtxmkgANEz_UWhgFAzRbCaOHAIHRsvk=
+- STK050: gWu9LqW6-M3JzWaQoJXA8SGlRboXCM75hGLvISatrMk=
+normative: true
+ref: ''
+reviewed: 1zvOI6h-guekKkNoMyRoUxx0PQoNhWbHojD1gRytkns=
+text: |
+  Der tenant-management Service stellt eine gRPC-Schnittstelle bereit,
+  über die andere Services Tenant-Informationen abfragen können (ADR-0010):
+
+  - GetTenantSettings: Tenant-Einstellungen (Login-Mode, Auto-Approval,
+    OIDC-Konfiguration) für einen gegebenen TenantId abrufen
+  - ListTenants: Alle aktiven Tenants auflisten
+
+  Die Proto-Datei wird in libs/grpc-contracts/ gepflegt. Die bestehende
+  TenantSettingsService-Definition aus user_management.proto wird in eine
+  eigene tenant_management.proto Datei migriert.
+
+  User-Management und Blog-Content konsumieren diese gRPC-Schnittstelle
+  statt direkt auf die Tenant-Datenbank zuzugreifen.

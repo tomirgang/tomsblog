@@ -1,0 +1,25 @@
+apiVersion: policy.linkerd.io/v1alpha1
+kind: NetworkAuthentication
+metadata:
+  name: kubelet-probes-tenant-management
+  namespace: tomsblog
+spec:
+  networks:
+    - cidr: 0.0.0.0/0
+    - cidr: "::/0"
+---
+apiVersion: policy.linkerd.io/v1alpha1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-probes-to-tenant-management
+  namespace: tomsblog
+  labels:
+    app: tenant-management
+spec:
+  targetRef:
+    group: policy.linkerd.io
+    kind: Server
+    name: tenant-management-http
+  requiredAuthenticationRefs:
+    - name: kubelet-probes-tenant-management
+      kind: NetworkAuthentication

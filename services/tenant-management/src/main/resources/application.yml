@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: tenant-management
+
+  session:
+    store-type: redis
+
+  datasource:
+    url: jdbc:postgresql://localhost:5434/tenant_management
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+blog:
+  default-tenant-id: "00000000-0000-0000-0000-000000000001"
+  admin:
+    username: admin
+    password: ${BLOG_ADMIN_PASSWORD}
+
+server:
+  port: 8082
+
+grpc:
+  server:
+    port: 9090
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method

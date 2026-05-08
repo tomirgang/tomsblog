@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package de.tomsblog.tenantmanagement.grpc;
+
+option java_multiple_files = true;
+option java_package = "de.tomsblog.grpc.tenantmanagement";
+option java_outer_classname = "TenantManagementProto";
+
+// Service for tenant lifecycle and configuration management (ADR-0031).
+// Replaces TenantSettingsService from user_management.proto.
+// Fulfills SWR-074: gRPC interface for tenant management.
+service TenantManagementService {
+  // Get full tenant configuration including OIDC settings.
+  rpc GetTenant (GetTenantRequest) returns (TenantResponse);
+
+  // Create a new tenant.
+  rpc CreateTenant (CreateTenantRequest) returns (TenantResponse);
+
+  // Update general tenant settings (branding, login mode, auto-approval).
+  rpc UpdateGeneralSettings (UpdateGeneralSettingsRequest) returns (TenantResponse);
+
+  // Update OIDC provider settings.
+  rpc UpdateOidcSettings (UpdateOidcSettingsRequest) returns (TenantResponse);
+
+  // Update legal pages (impressum, privacy policy).
+  rpc UpdateLegalSettings (UpdateLegalSettingsRequest) returns (TenantResponse);
+
+  // List all tenants with basic info.
+  rpc ListTenants (ListTenantsRequest) returns (ListTenantsResponse);
+}
+
+message GetTenantRequest {
+  string tenant_id = 1;
+}
+
+message CreateTenantRequest {
+  string slug = 1;
+  string display_name = 2;
+}
+
+message UpdateGeneralSettingsRequest {
+  string tenant_id = 1;
+  string display_name = 2;
+  string tagline = 3;
+  string login_mode = 4;
+  bool auto_approve_oidc = 5;
+  repeated string auto_approve_email_domains = 6;
+}
+
+message UpdateOidcSettingsRequest {
+  string tenant_id = 1;
+  string oidc_issuer_url = 2;
+  string oidc_client_id = 3;
+  string oidc_client_secret = 4;
+}
+
+message UpdateLegalSettingsRequest {
+  string tenant_id = 1;
+  string impressum_content = 2;
+  string privacy_policy_content = 3;
+}
+
+message ListTenantsRequest {
+}
+
+message TenantResponse {
+  string tenant_id = 1;
+  string slug = 2;
+  string display_name = 3;
+  string tagline = 4;
+  string status = 5;
+  string login_mode = 6;
+  bool auto_approve_oidc = 7;
+  repeated string auto_approve_email_domains = 8;
+  string impressum_content = 9;
+  string privacy_policy_content = 10;
+  string oidc_issuer_url = 11;
+  string oidc_client_id = 12;
+  string oidc_client_secret = 13;
+}
+
+message TenantInfoResponse {
+  string tenant_id = 1;
+  string slug = 2;
+  string display_name = 3;
+  string status = 4;
+}
+
+message ListTenantsResponse {
+  repeated TenantInfoResponse tenants = 1;
+}

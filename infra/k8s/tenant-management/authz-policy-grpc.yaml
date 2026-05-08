@@ -1,0 +1,51 @@
+apiVersion: policy.linkerd.io/v1alpha1
+kind: MeshTLSAuthentication
+metadata:
+  name: blog-content-identity-for-tenant
+  namespace: tomsblog
+spec:
+  identities:
+    - "blog-content.tomsblog.serviceaccount.identity.linkerd.cluster.local"
+---
+apiVersion: policy.linkerd.io/v1alpha1
+kind: MeshTLSAuthentication
+metadata:
+  name: user-management-identity-for-tenant
+  namespace: tomsblog
+spec:
+  identities:
+    - "user-management.tomsblog.serviceaccount.identity.linkerd.cluster.local"
+---
+apiVersion: policy.linkerd.io/v1alpha1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-blog-content-to-tenant-management
+  namespace: tomsblog
+  labels:
+    app: tenant-management
+spec:
+  targetRef:
+    group: policy.linkerd.io
+    kind: Server
+    name: tenant-management-grpc
+  requiredAuthenticationRefs:
+    - name: blog-content-identity-for-tenant
+      kind: MeshTLSAuthentication
+      group: policy.linkerd.io
+---
+apiVersion: policy.linkerd.io/v1alpha1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-user-management-to-tenant-management
+  namespace: tomsblog
+  labels:
+    app: tenant-management
+spec:
+  targetRef:
+    group: policy.linkerd.io
+    kind: Server
+    name: tenant-management-grpc
+  requiredAuthenticationRefs:
+    - name: user-management-identity-for-tenant
+      kind: MeshTLSAuthentication
+      group: policy.linkerd.io

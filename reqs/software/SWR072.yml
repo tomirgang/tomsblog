@@ -1,0 +1,25 @@
+active: true
+derived: false
+header: |
+  Tenant-Management-Service als eigenständiger Microservice
+level: 72.0
+links:
+- STK050: gWu9LqW6-M3JzWaQoJXA8SGlRboXCM75hGLvISatrMk=
+normative: true
+ref: ''
+reviewed: VB3OL2lIG7LiHucICRaG9I0TAOFpqCNM5mh40DbB20o=
+text: |
+  Ein eigenständiger tenant-management Service (services/tenant-management/)
+  verwaltet den gesamten Tenant-Lifecycle. Der Service implementiert:
+
+  - Tenant-CRUD: Erstellen, Lesen, Aktualisieren von Tenants
+  - Tenant-Konfiguration: Login-Mode, Auto-Approval, Branding
+  - OIDC-Provider-Konfiguration pro Tenant (Issuer URL, Client ID, Client Secret)
+  - Impressum und Datenschutzerklärung pro Tenant
+  - Thymeleaf-Admin-UI unter /tenant/admin/** für SuperAdmin-Zugriff
+
+  Der Service besitzt eine eigene PostgreSQL-Datenbank (Database per Service,
+  ADR-0019) und verwendet Flyway für Schema-Migrationen (ADR-0015).
+
+  Die hexagonale Architektur (ADR-0001) wird analog zu den bestehenden
+  Services eingehalten: domain/, application/ (ports), adapter/ (inbound + outbound).

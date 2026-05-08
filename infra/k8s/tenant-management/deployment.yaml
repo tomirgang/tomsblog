@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tenant-management
+  namespace: tomsblog
+  labels:
+    app: tenant-management
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: tenant-management
+  template:
+    metadata:
+      labels:
+        app: tenant-management
+    spec:
+      serviceAccountName: tenant-management
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 1000
+      containers:
+        - name: tenant-management
+          image: ghcr.io/tomirgang/tomsblog/tenant-management:0.9.1 # {"$imagepolicy": "flux-system:tenant-management"}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - containerPort: 8082
+              name: http
+            - containerPort: 9090
+              name: grpc
+          env:
+            - name: JDK_JAVA_OPTIONS
+              value: "-XX:MaxRAMPercentage=65.0 -XX:+UseG1GC"
+            - name: SPRING_PROFILES_ACTIVE
+              value: "k8s"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres-cluster-rw.postgres.svc.cluster.local:5432/tenant_management"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-cluster-app
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-cluster-app
+                  key: password
+            - name: BLOG_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tenant-management-secrets
+                  key: admin-password
+            - name: SPRING_REDIS_HOST
+              value: "redis.redis.svc.cluster.local"
+            - name: SPRING_REDIS_PORT
+              value: "6379"
+            - name: SPRING_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-password
+                  key: password
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "384Mi"
+              cpu: "200m"
+            limits:
+              memory: "768Mi"
+              cpu: "1000m"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
