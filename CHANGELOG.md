@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Kubernetes Ingress für User Management Service: Pfad-basiertes Routing von `/auth/**` und `/login/oauth2/code/**` zu user-management (ADR-0032)
+- NetworkPolicy für Traefik-zu-User-Management Ingress-Traffic (Port 8081)
+- Linkerd AuthorizationPolicy für Traefik-zu-User-Management HTTP-Zugriff
+- Redis-Session-Konfiguration (spring.data.redis.*) im user-management k8s-Profil (SWR-064)
+- Forward-Headers-Strategy im user-management k8s-Profil für korrekte Redirect-URLs hinter Traefik
+
+### Fixed
+
+- Redirect-Loop bei `/auth/login`: Fehlende Ingress-Konfiguration leitete Auth-Requests an blog-content statt user-management, was eine Endlosumleitungsschleife verursachte
+- Fehlende Umgebungsvariablen im user-management Deployment (BLOG_ADMIN_PASSWORD, SPRING_REDIS_HOST/PORT/PASSWORD)
+
 ## [0.9.0] - 2026-05-07
 
 ### Added

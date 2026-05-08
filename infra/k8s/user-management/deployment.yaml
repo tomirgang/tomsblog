@@ -62,6 +62,20 @@ spec:
                 secretKeyRef:
                   name: user-management-secrets
                   key: service-api-key
+            - name: BLOG_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: user-management-secrets
+                  key: admin-password
+            - name: SPRING_REDIS_HOST
+              value: "redis.redis.svc.cluster.local"
+            - name: SPRING_REDIS_PORT
+              value: "6379"
+            - name: SPRING_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-password
+                  key: password
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness

@@ -46,6 +46,21 @@ Externer Traffic wird über den Traefik Ingress-Controller (k3s-Standard) mit au
 | Default-Redirect | Unbekannte Domains -> https://blog.tomirgang.de
 |===
 
+=== Service-Routing
+
+Die Domain `blog.tomirgang.de` bedient zwei Services über pfad-basiertes Routing. Traefik wertet die spezifischeren Pfadregeln vorrangig aus:
+
+[cols="1,1,2"]
+|===
+| Pfad | Service | Funktion
+
+| `/auth/**` | user-management | Login, Registrierung, Admin-UI (ADR-0032)
+| `/login/oauth2/code/**` | user-management | OIDC Callback (SWR-063)
+| `/` (alles andere) | blog-content | Blog-Posts, statische Seiten
+|===
+
+Die Ingress-Definitionen liegen unter `infra/k8s/blog-content/ingress.yaml` und `infra/k8s/user-management/ingress.yaml`. Beide nutzen das gemeinsame TLS-Secret `blog-content-tls`.
+
 === Catch-all Routing-Regeln
 
 Neben den service-spezifischen Ingress-Ressourcen existieren zwei plattformweite Catch-all IngressRoutes mit niedriger Priorität (STK035, STK036):
@@ -102,7 +117,7 @@ Das Continuous Deployment erfolgt über Flux (ADR-0020). Flux ist im IaC-Reposit
 
 == Redis als Session-Store
 
-Redis wird als externer Session-Store für den Blog Content Service eingesetzt (ADR-0030, INF-014). Die HTTP-Sessions werden über Spring Session Data Redis (SWR-057, SWA-032) zentral gespeichert, sodass der Blog Content Service horizontal mit mehreren Replicas betrieben werden kann (STK-045, SWR-058).
+Redis wird als externer Session-Store für den Blog Content Service und den User Management Service eingesetzt (ADR-0030, INF-014). Die HTTP-Sessions werden über Spring Session Data Redis (SWR-057, SWR-064, SWA-032) zentral gespeichert, sodass beide Services die gleichen Sessions lesen können und horizontal mit mehreren Replicas betrieben werden können (STK-045, SWR-058).
 
 [cols="1,2"]
 |===

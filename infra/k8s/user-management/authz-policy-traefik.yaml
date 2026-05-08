@@ -1,0 +1,16 @@
+apiVersion: policy.linkerd.io/v1alpha1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-traefik-to-user-management
+  namespace: tomsblog
+  labels:
+    app: user-management
+spec:
+  targetRef:
+    group: policy.linkerd.io
+    kind: Server
+    name: user-management-http
+  requiredAuthenticationRefs:
+    - name: traefik-identity
+      kind: MeshTLSAuthentication
+      group: policy.linkerd.io

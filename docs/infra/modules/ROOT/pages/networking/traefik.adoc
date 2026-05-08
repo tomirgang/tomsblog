@@ -68,7 +68,17 @@ spec:
 
 == Routing-Strategie
 
-Aktuell gibt es eine einzige Host-basierte Route (`blog.tomirgang.de → blog-content`). Mit zusätzlichen Services werden entweder:
+Das Routing nutzt pfad-basiertes Routing auf der Domain `blog.tomirgang.de`. Traefik wertet spezifischere Pfadregeln vorrangig aus.
 
-* Weitere Subdomains eingerichtet (z.B. `api.tomirgang.de`, `auth.do9ita.de`)
-* Pfad-basiertes Routing innerhalb einer Domain verwendet (z.B. `/api/v1/...`)
+[cols="1,1,2"]
+|===
+| Pfad | Service | Funktion
+
+| `/auth/**` | user-management | Login, Registrierung, Admin-UI (ADR-0032)
+| `/login/oauth2/code/**` | user-management | OIDC Callback (SWR-063)
+| `/` (alles andere) | blog-content | Blog-Posts, statische Seiten, API
+|===
+
+Beide Services teilen sich das TLS-Secret `blog-content-tls`, das von cert-manager über die blog-content Ingress-Ressource verwaltet wird. Der user-management Ingress referenziert dasselbe Secret ohne eigene `cert-manager.io/cluster-issuer` Annotation, um Konflikte zu vermeiden.
+
+Die Ingress-Definitionen liegen unter `infra/k8s/blog-content/ingress.yaml` und `infra/k8s/user-management/ingress.yaml`.
