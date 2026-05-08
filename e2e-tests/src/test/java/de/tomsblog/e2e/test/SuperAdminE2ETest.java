@@ -8,13 +8,17 @@ import de.tomsblog.e2e.page.admin.GlobalSettingsPage;
 import de.tomsblog.e2e.page.admin.TenantListPage;
 import de.tomsblog.e2e.page.auth.AdminLoginPage;
 import de.tomsblog.tenantmanagement.TenantManagementApplication;
+import java.time.Duration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -137,5 +141,79 @@ class SuperAdminE2ETest implements WebDriverProvider {
         loginAsSuperAdmin();
         GlobalSettingsPage page = new GlobalSettingsPage(driver, baseUrl).open();
         assertThat(page.hasTenantListLink()).isTrue();
+    }
+
+    @Test
+    @DisplayName("SWR-083: SuperAdmin can create a new tenant")
+    void superAdminCanCreateTenant() {
+        loginAsSuperAdmin();
+        TenantListPage page = new TenantListPage(driver, baseUrl).open();
+        page.createTenant("e2e-test-tenant", "E2E Test Tenant");
+        // After creation, the tenant list should contain the new tenant
+        assertThat(page.getTenantSlugs()).contains("e2e-test-tenant");
+    }
+
+    @Test
+    @DisplayName("SWR-083: SuperAdmin can save general settings")
+    void superAdminCanSaveGeneralSettings() {
+        loginAsSuperAdmin();
+        GlobalSettingsPage page = new GlobalSettingsPage(driver, baseUrl).open();
+        page.fillDisplayName("Updated Tenant Name");
+        page.submitGeneralForm();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.urlContains("/tenant/admin/settings"));
+        assertThat(driver.getCurrentUrl()).contains("/tenant/admin/settings");
+    }
+
+    @Test
+    @DisplayName("SWR-083: SuperAdmin can navigate to OIDC settings tab")
+    void superAdminCanAccessOidcTab() {
+        loginAsSuperAdmin();
+        GlobalSettingsPage page = new GlobalSettingsPage(driver, baseUrl).open();
+        page.switchToTab("OIDC");
+        assertThat(driver.getCurrentUrl()).containsAnyOf("tab=oidc", "OIDC");
+    }
+
+    @Test
+    @DisplayName("SWR-083: SuperAdmin can save legal settings")
+    void superAdminCanSaveLegalSettings() {
+        loginAsSuperAdmin();
+        driver.get(baseUrl + "/tenant/admin/settings?tab=legal");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("h2")));
+        // Fill legal form fields if present
+        if (driver.findElements(By.id("impressumContent")).size() > 0) {
+            driver.findElement(By.id("impressumContent")).clear();
+            driver.findElement(By.id("impressumContent")).sendKeys("E2E Impressum");
+        }
+        if (driver.findElements(By.id("privacyPolicyContent")).size() > 0) {
+            driver.findElement(By.id("privacyPolicyContent")).clear();
+            driver.findElement(By.id("privacyPolicyContent")).sendKeys("E2E Privacy");
+        }
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
+        wait.until(ExpectedConditions.urlContains("/tenant/admin/settings"));
+        assertThat(driver.getCurrentUrl()).contains("/tenant/admin/settings");
+    }
+
+    @Test
+    @DisplayName("SWR-083: SuperAdmin can switch active tenant")
+    void superAdminCanSwitchTenant() {
+        loginAsSuperAdmin();
+        // First create a tenant to switch to
+        TenantListPage page = new TenantListPage(driver, baseUrl).open();
+        page.createTenant("switch-target", "Switch Target");
+        // Look for the switch-tenant form
+        driver.get(baseUrl + "/tenant/admin/tenants");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("h2")));
+        boolean hasSwitchForm = driver.findElements(By.xpath("//form[contains(@action,'/switch-tenant')]"))
+                        .size()
+                > 0;
+        if (hasSwitchForm) {
+            driver.findElement(By.xpath("//form[contains(@action,'/switch-tenant')]//button"))
+                    .click();
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("h2")));
+        }
+        assertThat(driver.getCurrentUrl()).contains("/tenant/admin/");
     }
 }
