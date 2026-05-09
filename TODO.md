@@ -115,8 +115,8 @@
 - [x] Auditlog View
 - [x] Kafka-Cluster-Konfiguration definieren
 - [x] RabbitMQ-Cluster-Konfiguration definieren
-- [ ] Event-Schema-Design (Avro/Protobuf oder JSON Schema)
-- [ ] Events produzieren (Post erstellt, aktualisiert, veröffentlicht) via Kafka
+- [x] Event-Schema-Design (Avro/Protobuf oder JSON Schema)
+- [x] Events produzieren (Post erstellt, aktualisiert, veröffentlicht) via Kafka
 - [ ] RabbitMQ-Queues für Task-Verteilung (Übersetzung, TTS, Snapshots)
 - [ ] Consumer für nachgelagerte Prozesse (Feeds)
 - [x] Infra: Kafka Deployment (Strimzi Operator via Helm, siehe ADR-0026)

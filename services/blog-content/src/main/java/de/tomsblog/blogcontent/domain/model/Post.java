@@ -90,7 +90,7 @@ public class Post extends AggregateRoot {
         PostId id = PostId.generate();
         Slug slug = Slug.fromTitle(title);
         Post post = new Post(id, tenantId, authorId, title, slug, content, contentType, locale);
-        post.registerEvent(PostCreatedEvent.of(id, tenantId));
+        post.registerEvent(PostCreatedEvent.of(id, tenantId, title, slug.value(), locale.languageTag()));
         return post;
     }
 
@@ -115,7 +115,8 @@ public class Post extends AggregateRoot {
         }
         this.status = PostStatus.PUBLISHED;
         this.publishedAt = Instant.now();
-        registerEvent(PostPublishedEvent.of(this.id, this.tenantId));
+        registerEvent(PostPublishedEvent.of(
+                this.id, this.tenantId, this.slug.value(), this.locale.languageTag(), this.publishedAt));
     }
 
     public void archive() {
@@ -130,7 +131,8 @@ public class Post extends AggregateRoot {
         this.slug = Slug.fromTitle(title);
         this.content = content;
         this.contentType = contentType;
-        registerEvent(PostUpdatedEvent.of(this.id, this.tenantId));
+        registerEvent(
+                PostUpdatedEvent.of(this.id, this.tenantId, this.title, this.slug.value(), this.locale.languageTag()));
     }
 
     public void updateSocialMedia(String socialMediaTitle, String socialMediaSummary) {

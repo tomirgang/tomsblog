@@ -5,12 +5,14 @@ import de.tomsblog.shared.domain.DomainEvent;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * Logs events for now. Will be replaced by a Kafka adapter in Phase 4.
+ * Fallback event publisher that logs events. Active when the kafka profile is not enabled.
  */
 @Component
+@Profile("!kafka")
 public class LoggingEventPublisher implements EventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(LoggingEventPublisher.class);

@@ -82,6 +82,8 @@ public class PostService implements PostUseCase {
                 command.seriesNextPostId() != null ? PostId.of(command.seriesNextPostId()) : null);
         post.updateFeatured(command.featuredFrom(), command.featuredUntil());
         Post saved = postRepository.save(post);
+        eventPublisher.publish(post.getDomainEvents());
+        post.clearDomainEvents();
         auditLogger.log(AuditLogEntry.create(
                 command.tenantId().toString(),
                 post.getAuthorId().toString(),

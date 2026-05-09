@@ -8,8 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- Kafka Event-Produktion für Blog-Posts: `KafkaEventPublisher` Outbound-Adapter sendet `PostCreatedEvent`, `PostUpdatedEvent`, `PostPublishedEvent` als JSON an Kafka-Topics. Domain-Events um `title`, `slug`, `locale` erweitert. `DomainEventMapper` mappt interne Domain-Events auf externe Contract-Events. Profil-basierte Steuerung (`kafka` Profil für Produktion, `LoggingEventPublisher` als Fallback). K8s-Deployment mit `SPRING_KAFKA_BOOTSTRAP_SERVERS` konfiguriert. (SWR-009, SWA-005, ADR-0018)
 - RabbitMQ-Cluster-Konfiguration für Kubernetes: RabbitMQ Cluster Operator (Bitnami Helm Chart v4.4.34) via Flux HelmRelease, Single-Node-Cluster (RabbitMQ 4.x management-alpine), Management- und Prometheus-Plugin, Quorum-Queue-ready, 2Gi persistenter Storage (hcloud-volumes), Default-VHost "tomsblog", NetworkPolicies mit Default-Deny und Ausnahme für tomsblog-Namespace (INF-016, SWA-014, ADR-0026)
 - Kafka-Cluster-Konfiguration für Kubernetes: Strimzi Operator (v0.45.0) via Flux HelmRelease, Single-Node KRaft-Cluster (Kafka 3.9.0), KafkaTopic-CRDs für post.created/post.updated/post.published, NetworkPolicies, Egress-Regel für tomsblog-Namespace (INF-015, SWA-005, ADR-0026)
+
+### Fixed
+
+- `PostService.updatePost()` hat keine Domain-Events publiziert (fehlender `eventPublisher.publish()` Aufruf)
 
 ## [0.9.6] - 2026-05-09
 

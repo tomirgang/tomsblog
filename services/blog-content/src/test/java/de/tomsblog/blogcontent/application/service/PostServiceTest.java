@@ -12,6 +12,7 @@ import de.tomsblog.blogcontent.application.port.outbound.EventPublisher;
 import de.tomsblog.blogcontent.application.port.outbound.PostRepository;
 import de.tomsblog.blogcontent.domain.event.PostCreatedEvent;
 import de.tomsblog.blogcontent.domain.event.PostPublishedEvent;
+import de.tomsblog.blogcontent.domain.event.PostUpdatedEvent;
 import de.tomsblog.blogcontent.domain.model.*;
 import de.tomsblog.shared.audit.AuditLogger;
 import de.tomsblog.shared.domain.AuthorId;
@@ -115,6 +116,40 @@ class PostServiceTest {
         assertThat(result.getTitle()).isEqualTo("Updated Title");
         assertThat(result.getContent()).isEqualTo("Updated content");
         verify(postRepository).save(any(Post.class));
+    }
+
+    @Test
+    @DisplayName("SWR-009: updatePost publishes PostUpdatedEvent")
+    void updatePost_publishesEvent() {
+        Post existing = Post.create(tenantId, authorId, "Original", "Original content", PostLocale.german());
+        existing.clearDomainEvents();
+        when(postRepository.findByIdAndTenantId(existing.getId(), tenantId)).thenReturn(Optional.of(existing));
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        List<DomainEvent> captured = new ArrayList<>();
+        doAnswer(inv -> {
+                    captured.addAll(inv.getArgument(0));
+                    return null;
+                })
+                .when(eventPublisher)
+                .publish(any());
+
+        UpdatePostCommand command = new UpdatePostCommand(
+                existing.getId(),
+                tenantId,
+                "Updated Title",
+                "Updated content",
+                "HTML",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        postService.updatePost(command);
+
+        assertThat(captured).hasSize(1);
+        assertThat(captured.getFirst()).isInstanceOf(PostUpdatedEvent.class);
     }
 
     @Test

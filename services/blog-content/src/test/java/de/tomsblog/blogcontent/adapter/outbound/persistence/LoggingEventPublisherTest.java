@@ -19,7 +19,7 @@ class LoggingEventPublisherTest {
     void publish_logsEvents() {
         PostId postId = PostId.generate();
         TenantId tenantId = TenantId.generate();
-        DomainEvent event = PostCreatedEvent.of(postId, tenantId);
+        DomainEvent event = PostCreatedEvent.of(postId, tenantId, "Test Title", "test-title", "de");
 
         assertThatCode(() -> publisher.publish(List.of(event))).doesNotThrowAnyException();
     }
