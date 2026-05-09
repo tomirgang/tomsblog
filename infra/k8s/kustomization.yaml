@@ -12,6 +12,7 @@ resources:
   - redis
   - kafka
   - rabbitmq
+  - mongodb
   - pvc.yaml
   - blog-content
   - user-management

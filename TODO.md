@@ -121,7 +121,7 @@
 - [x] Consumer für nachgelagerte Prozesse (Feeds)
 - [x] Infra: Kafka Deployment (Strimzi Operator via Helm, siehe ADR-0026)
 - [x] Infra: RabbitMQ Deployment (RabbitMQ Cluster Operator via Helm, siehe ADR-0026)
-- [ ] Infra: MongoDB Deployment (Community Operator via Helm, siehe ADR-0026)
+- [x] Infra: MongoDB Deployment (Community Operator via Helm, siehe ADR-0026)
 - [ ] Migration auf Helm Charts für Operator-managed Services (ADR-0026)
 - [x] CloudNativePG auf ≥ 1.25 upgraden (Voraussetzung für Database CRD, ADR-0029)
 - [x] Migration auf deklarative Database CRD für alle Service-Datenbanken (INF-013, SWA-030)

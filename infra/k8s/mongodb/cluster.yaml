@@ -1,0 +1,54 @@
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: mongodb
+  namespace: mongodb
+spec:
+  members: 1
+  type: ReplicaSet
+  version: "7.0.17"
+  security:
+    authentication:
+      modes:
+        - SCRAM
+  users:
+    - name: tomsblog
+      db: admin
+      passwordSecretRef:
+        name: mongodb-password
+      roles:
+        - name: readWrite
+          db: tomsblog
+      scramCredentialsSecretName: mongodb-scram-credentials
+  statefulSet:
+    spec:
+      volumeClaimTemplates:
+        - metadata:
+            name: data-volume
+          spec:
+            storageClassName: hcloud-volumes
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 5Gi
+        - metadata:
+            name: logs-volume
+          spec:
+            storageClassName: hcloud-volumes
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 1Gi
+      template:
+        spec:
+          containers:
+            - name: mongod
+              resources:
+                requests:
+                  memory: 256Mi
+                  cpu: 100m
+                limits:
+                  memory: 512Mi
+                  cpu: 500m
