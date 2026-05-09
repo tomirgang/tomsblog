@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ### Fixed
 
 - Fehlendes `group: policy.linkerd.io` in der AuthorizationPolicy `allow-probes-to-tenant-management` ergänzt (blockierte Flux Kustomization-Reconciliation)
+- Mermaid-Diagramme in Blog-Posts wurden nicht gerendert, weil Inline-Scripts von der Content-Security-Policy blockiert wurden. JavaScript in externe Dateien (`post-show.js`, `mermaid-init.js`) ausgelagert.
 
 ## [0.9.5] - 2026-05-09
 

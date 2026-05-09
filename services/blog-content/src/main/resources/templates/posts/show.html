@@ -78,18 +78,8 @@
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
                 crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script>
-            document.querySelectorAll('pre > code.language-mermaid').forEach(function(codeEl) {
-                var preEl = codeEl.parentElement;
-                preEl.className = 'mermaid';
-                preEl.textContent = codeEl.textContent;
-            });
-            hljs.highlightAll();
-        </script>
-        <script type="module">
-            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-            mermaid.initialize({ startOnLoad: true });
-        </script>
+        <script th:src="@{/js/post-show.js}"></script>
+        <script type="module" th:src="@{/js/mermaid-init.js}"></script>
     </section>
 </body>
 </html>
