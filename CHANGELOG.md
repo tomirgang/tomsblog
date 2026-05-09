@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.9.6] - 2026-05-09
+
 ### Added
 
 - Deklarative Database CRDs für alle drei Service-Datenbanken (blog_content, user_management, tenant_management) in `infra/k8s/postgres/databases.yaml` (ADR-0029, INF-013, SWA-030)

@@ -10,7 +10,7 @@ Diese Dokumentation beschreibt die Softwarearchitektur der *Toms Blog*-Plattform
 [cols="1,3"]
 |===
 | Projekt | Toms Blog, Multi-Tenant Blog & Podcast Plattform
-| Version | 0.9.5-SNAPSHOT
+| Version | 0.9.6
 | Status  | In Entwicklung (Meilenstein 1)
 | Sprache | Deutsch (Dokumentation), Englisch (Code)
 |===
