@@ -7,6 +7,8 @@ import de.tomsblog.blogcontent.application.port.inbound.RemoveSourceCommand;
 import de.tomsblog.blogcontent.application.port.inbound.UpdatePostCommand;
 import de.tomsblog.blogcontent.application.port.outbound.EventPublisher;
 import de.tomsblog.blogcontent.application.port.outbound.PostRepository;
+import de.tomsblog.blogcontent.application.port.outbound.SnapshotTaskMessage;
+import de.tomsblog.blogcontent.application.port.outbound.TaskPublisher;
 import de.tomsblog.blogcontent.domain.model.ContentType;
 import de.tomsblog.blogcontent.domain.model.Post;
 import de.tomsblog.blogcontent.domain.model.PostId;
@@ -35,16 +37,23 @@ import java.util.Set;
  * @req SWR-040
  * @req SWR-042
  * @req SWR-056
+ * @req SWR-089
  */
 public class PostService implements PostUseCase {
 
     private final PostRepository postRepository;
     private final EventPublisher eventPublisher;
+    private final TaskPublisher taskPublisher;
     private final AuditLogger auditLogger;
 
-    public PostService(PostRepository postRepository, EventPublisher eventPublisher, AuditLogger auditLogger) {
+    public PostService(
+            PostRepository postRepository,
+            EventPublisher eventPublisher,
+            TaskPublisher taskPublisher,
+            AuditLogger auditLogger) {
         this.postRepository = postRepository;
         this.eventPublisher = eventPublisher;
+        this.taskPublisher = taskPublisher;
         this.auditLogger = auditLogger;
     }
 
@@ -100,8 +109,17 @@ public class PostService implements PostUseCase {
         postRepository.save(post);
         eventPublisher.publish(post.getDomainEvents());
         post.clearDomainEvents();
+        dispatchSnapshotTasks(post);
         auditLogger.log(AuditLogEntry.create(
                 tenantId.toString(), post.getAuthorId().toString(), "POST_PUBLISHED", "Post", postId.asString()));
+    }
+
+    /** @req SWR-089 */
+    private void dispatchSnapshotTasks(Post post) {
+        for (Source source : post.getSources()) {
+            taskPublisher.publishSnapshotTask(
+                    new SnapshotTaskMessage(post.getId().value(), post.getTenantId(), source.url(), source.title()));
+        }
     }
 
     @Override

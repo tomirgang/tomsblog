@@ -9,6 +9,7 @@ import de.tomsblog.blogcontent.application.port.inbound.TranslationUseCase;
 import de.tomsblog.blogcontent.application.port.outbound.EventPublisher;
 import de.tomsblog.blogcontent.application.port.outbound.PostRepository;
 import de.tomsblog.blogcontent.application.port.outbound.TagRepository;
+import de.tomsblog.blogcontent.application.port.outbound.TaskPublisher;
 import de.tomsblog.blogcontent.application.port.outbound.TranslationRepository;
 import de.tomsblog.shared.audit.AuditLogger;
 import org.junit.jupiter.api.DisplayName;
@@ -22,9 +23,10 @@ class BlogContentConfigurationTest {
         BlogContentConfiguration config = new BlogContentConfiguration();
         PostRepository postRepository = mock(PostRepository.class);
         EventPublisher eventPublisher = mock(EventPublisher.class);
+        TaskPublisher taskPublisher = mock(TaskPublisher.class);
         AuditLogger auditLogger = mock(AuditLogger.class);
 
-        PostUseCase result = config.postUseCase(postRepository, eventPublisher, auditLogger);
+        PostUseCase result = config.postUseCase(postRepository, eventPublisher, taskPublisher, auditLogger);
 
         assertThat(result).isNotNull();
     }

@@ -1,0 +1,26 @@
+active: true
+derived: false
+header: |
+  TaskPublisher als Outbound Port für RabbitMQ-Task-Verteilung
+level: 89.0
+links:
+- STK038: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Der Blog Content Service erhält einen Outbound Port TaskPublisher
+  im Application Layer, der Task-Nachrichten an RabbitMQ-Queues
+  versendet (ADR-0018, SWA-014). Folgende Task-Typen werden
+  unterstützt:
+
+  - TranslationTaskMessage: KI-Übersetzungsauftrag mit postId,
+    tenantId, sourceLocale, targetLocale und content
+  - TtsGenerationTaskMessage: Text-to-Speech-Auftrag mit postId,
+    tenantId, locale und title
+  - SnapshotTaskMessage: Web-Snapshot-Auftrag mit postId, tenantId,
+    url und sourceTitle
+
+  Der TaskPublisher wird als Spring-Profil-gesteuert implementiert:
+  RabbitMqTaskPublisher (Profil rabbitmq) und LoggingTaskPublisher
+  (Fallback ohne rabbitmq-Profil).

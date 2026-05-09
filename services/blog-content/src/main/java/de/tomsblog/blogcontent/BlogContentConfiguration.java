@@ -8,6 +8,7 @@ import de.tomsblog.blogcontent.application.port.outbound.AuditLogQueryRepository
 import de.tomsblog.blogcontent.application.port.outbound.EventPublisher;
 import de.tomsblog.blogcontent.application.port.outbound.PostRepository;
 import de.tomsblog.blogcontent.application.port.outbound.TagRepository;
+import de.tomsblog.blogcontent.application.port.outbound.TaskPublisher;
 import de.tomsblog.blogcontent.application.port.outbound.TranslationRepository;
 import de.tomsblog.blogcontent.application.service.AuditLogQueryService;
 import de.tomsblog.blogcontent.application.service.PostService;
@@ -22,8 +23,11 @@ public class BlogContentConfiguration {
 
     @Bean
     public PostUseCase postUseCase(
-            PostRepository postRepository, EventPublisher eventPublisher, AuditLogger auditLogger) {
-        return new PostService(postRepository, eventPublisher, auditLogger);
+            PostRepository postRepository,
+            EventPublisher eventPublisher,
+            TaskPublisher taskPublisher,
+            AuditLogger auditLogger) {
+        return new PostService(postRepository, eventPublisher, taskPublisher, auditLogger);
     }
 
     @Bean

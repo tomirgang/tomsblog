@@ -17,6 +17,19 @@ Der Ablauf der Post-Erstellung zeigt das Zusammenspiel von REST-Adapter, Applica
 
 plantuml::partial$plantuml/runtime-create.puml[format=svg]
 
+== Task-Verteilung nach Post-Veröffentlichung
+
+Beim Veröffentlichen eines Posts werden neben dem Kafka Domain Event (`PostPublishedEvent`, SWR-009) auch Task-Nachrichten an RabbitMQ-Queues gesendet (SWR-089, SWA-037, ADR-0018).
+Der `PostService` dispatcht `SnapshotTaskMessage`-Nachrichten für alle am Post hinterlegten Quellen an die Queue `snapshot.requests`.
+
+Die Consumer dieser Queues werden in späteren Phasen als eigenständige Services implementiert:
+
+* `snapshot.requests` → Snapshot-Service (Phase 9)
+* `translation.requests` → AI-Service (Phase 7)
+* `tts.generation` → Podcast-Service (Meilenstein 4)
+
+plantuml::partial$plantuml/runtime-task-dispatch.puml[format=svg]
+
 == OIDC Login mit Authentik
 
 Der OIDC-Login-Ablauf zeigt die Authentifizierung ueber Authentik als externem Identity Provider und die anschliessende Synchronisation der Benutzerdaten mit dem User Management Service (SWR-016, SWR-043, SWA-010, ADR-0027):

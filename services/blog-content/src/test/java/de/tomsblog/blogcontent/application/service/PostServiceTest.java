@@ -10,6 +10,8 @@ import de.tomsblog.blogcontent.application.port.inbound.RemoveSourceCommand;
 import de.tomsblog.blogcontent.application.port.inbound.UpdatePostCommand;
 import de.tomsblog.blogcontent.application.port.outbound.EventPublisher;
 import de.tomsblog.blogcontent.application.port.outbound.PostRepository;
+import de.tomsblog.blogcontent.application.port.outbound.SnapshotTaskMessage;
+import de.tomsblog.blogcontent.application.port.outbound.TaskPublisher;
 import de.tomsblog.blogcontent.domain.event.PostCreatedEvent;
 import de.tomsblog.blogcontent.domain.event.PostPublishedEvent;
 import de.tomsblog.blogcontent.domain.event.PostUpdatedEvent;
@@ -41,6 +43,9 @@ class PostServiceTest {
     private EventPublisher eventPublisher;
 
     @Mock
+    private TaskPublisher taskPublisher;
+
+    @Mock
     private AuditLogger auditLogger;
 
     private PostService postService;
@@ -50,7 +55,7 @@ class PostServiceTest {
 
     @BeforeEach
     void setUp() {
-        postService = new PostService(postRepository, eventPublisher, auditLogger);
+        postService = new PostService(postRepository, eventPublisher, taskPublisher, auditLogger);
     }
 
     @Test
@@ -679,5 +684,33 @@ class PostServiceTest {
 
         assertThatThrownBy(() -> postService.syncPostTags(postId, tenantId, Set.of()))
                 .isInstanceOf(PostNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("SWR-089: publishPost dispatches snapshot tasks for each source")
+    void publishPost_dispatchesSnapshotTasks() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+        post.addSource(new Source("https://example.com/article", "Example Article"));
+        post.addSource(new Source("https://example.com/ref", "Reference"));
+        post.clearDomainEvents();
+        when(postRepository.findByIdAndTenantId(post.getId(), tenantId)).thenReturn(Optional.of(post));
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        postService.publishPost(post.getId(), tenantId);
+
+        verify(taskPublisher, times(2)).publishSnapshotTask(any(SnapshotTaskMessage.class));
+    }
+
+    @Test
+    @DisplayName("SWR-089: publishPost dispatches no tasks when no sources")
+    void publishPost_noSources_noSnapshotTasks() {
+        Post post = Post.create(tenantId, authorId, "Title", "Content", PostLocale.german());
+        post.clearDomainEvents();
+        when(postRepository.findByIdAndTenantId(post.getId(), tenantId)).thenReturn(Optional.of(post));
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        postService.publishPost(post.getId(), tenantId);
+
+        verify(taskPublisher, never()).publishSnapshotTask(any(SnapshotTaskMessage.class));
     }
 }

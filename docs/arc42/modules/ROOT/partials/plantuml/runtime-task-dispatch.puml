@@ -1,0 +1,23 @@
+@startuml runtime-task-dispatch
+actor Author
+participant "BlogViewController" as web
+participant "PostUseCase" as uc
+participant "PostRepository" as repo
+participant "EventPublisher" as events
+participant "TaskPublisher" as tasks
+queue "Kafka\npost.published" as kafka
+queue "RabbitMQ\nsnapshot.requests" as rmq
+
+Author -> web : POST /posts/{id}/publish
+web -> uc : publishPost(postId, tenantId)
+uc -> repo : findByIdAndTenantId()
+repo --> uc : Post
+uc -> uc : post.publish()
+uc -> repo : save(post)
+uc -> events : publish(PostPublishedEvent)
+events -> kafka : send
+uc -> tasks : publishSnapshotTask()\n[fuer jede Quelle]
+tasks -> rmq : send
+uc --> web : void
+web --> Author : 302 Redirect
+@enduml

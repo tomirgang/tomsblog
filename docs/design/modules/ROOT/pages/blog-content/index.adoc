@@ -221,9 +221,17 @@ classDiagram
         +publish(events) void
     }
 
+    class TaskPublisher {
+        <<interface>>
+        +publishTranslationTask(message) void
+        +publishTtsTask(message) void
+        +publishSnapshotTask(message) void
+    }
+
     class PostService {
         -PostRepository postRepository
         -EventPublisher eventPublisher
+        -TaskPublisher taskPublisher
     }
 
     class TagService {
@@ -238,6 +246,7 @@ classDiagram
     PostService ..|> PostUseCase : implements
     PostService --> PostRepository : uses
     PostService --> EventPublisher : uses
+    PostService --> TaskPublisher : uses
     TagService ..|> TagUseCase : implements
     TagService --> TagRepository : uses
     TranslationService ..|> TranslationUseCase : implements
@@ -269,11 +278,13 @@ Für die chronologische Navigation (SWR-039) stehen `findPreviousPublished(tenan
 
 `TagRepository` bietet zusätzlich eine Duplikat-Prüfung über `existsByTenantIdAndName()` (SWR-020).
 `TranslationRepository` unterstützt Abfragen nach PostId und Locale (SWR-021).
-`EventPublisher` ermöglicht die asynchrone Kommunikation via Domain Events (SWR-009).
+`EventPublisher` ermöglicht die asynchrone Kommunikation via Domain Events über Kafka (SWR-009).
+`TaskPublisher` versendet Arbeitsaufträge an RabbitMQ-Queues für Task-Verteilung (SWR-089, ADR-0018).
 
 === PostService
 
 Der `PostService` orchestriert Domain-Objekte und Ports. Er sorgt dafür, dass bei jeder Post-Erstellung ein `PostCreatedEvent` und bei jeder Veröffentlichung ein `PostPublishedEvent` publiziert wird.
+Beim Veröffentlichen eines Posts werden zusätzlich `SnapshotTaskMessage`-Nachrichten für alle Quellen des Posts an die RabbitMQ-Queue `snapshot.requests` gesendet (SWR-089).
 
 Bei der Volltextsuche (SWR-038) prüft der Service, ob der Suchbegriff leer oder null ist. Ist dies der Fall, werden alle veröffentlichten Posts zurückgegeben. Andernfalls wird die Suche an das Repository delegiert.
 
@@ -724,10 +735,111 @@ Der `TagMapper` konvertiert zwischen Domain-Tag (mit `Slug` Value Object) und JP
 Der `JpaTranslationRepository` implementiert den `TranslationRepository`-Port. Die `TranslationJpaEntity` bildet die translations-Tabelle ab mit FK auf posts und Unique Constraint auf `(post_id, locale)`.
 Status und Source werden als Strings persistiert und im `TranslationMapper` über `valueOf()` und `PostLocale.of()` zurückgemappt.
 
-=== Outbound Adapter: Event Publishing
+=== Outbound Adapter: Event Publishing (SWR-009, SWA-005)
 
-Der `LoggingEventPublisher` ist ein Interim-Adapter, der Domain Events zunächst nur loggt.
-Er wird in einer späteren Phase durch einen Kafka-Producer ersetzt (SWA-005), der die Events an den zentralen Event-Broker sendet (SWR-009).
+Der `KafkaEventPublisher` publiziert Domain Events an Kafka-Topics (SWR-009, SWA-005).
+Er wird über das Spring-Profil `kafka` aktiviert und nutzt `KafkaTemplate` mit JSON-Serialisierung.
+Der `DomainEventMapper` konvertiert interne Domain Events in die externen Contract Events aus `libs/event-contracts`.
+Als Fallback dient der `LoggingEventPublisher` (Profil `!kafka`), der Events nur loggt.
+
+Das folgende Klassendiagramm zeigt die Port-Adapter-Beziehung für Event Publishing:
+
+[mermaid]
+----
+classDiagram
+    class EventPublisher {
+        <<interface>>
+        +publish(events: List~DomainEvent~) void
+    }
+    class KafkaEventPublisher {
+        -KafkaTemplate kafkaTemplate
+        +publish(events) void
+    }
+    class LoggingEventPublisher {
+        +publish(events) void
+    }
+    class DomainEventMapper {
+        +toContractEvent(event)$ Object
+    }
+    KafkaEventPublisher ..|> EventPublisher : implements
+    LoggingEventPublisher ..|> EventPublisher : implements
+    KafkaEventPublisher --> DomainEventMapper : uses
+----
+
+=== Outbound Adapter: Task Publishing (SWR-089, SWA-037)
+
+Der `TaskPublisher` ist ein Outbound Port im Application Layer, über den asynchrone Arbeitsaufträge an RabbitMQ-Queues versendet werden (ADR-0018, SWA-014).
+Im Gegensatz zum `EventPublisher` (Kafka, Event-Streaming) dient der `TaskPublisher` der Task-Verteilung mit garantierter Einzelverarbeitung.
+
+Folgende Task-Nachrichten werden unterstützt:
+
+* `TranslationTaskMessage`: KI-Übersetzungsauftrag (postId, tenantId, sourceLocale, targetLocale, content)
+* `TtsGenerationTaskMessage`: Text-to-Speech-Auftrag (postId, tenantId, locale, title)
+* `SnapshotTaskMessage`: Web-Snapshot-Auftrag (postId, tenantId, url, sourceTitle)
+
+Die RabbitMQ-Infrastruktur wird über eine deklarative Konfigurationsklasse `RabbitMqConfiguration` eingerichtet:
+
+* **Exchange**: `tomsblog.tasks` (Topic Exchange)
+* **Queues** (Quorum Queues): `translation.requests`, `tts.generation`, `snapshot.requests`
+* **Dead-Letter-Exchange**: `tomsblog.tasks.dlx` mit zugehörigen Dead-Letter-Queues (`*.dlq`)
+
+Das folgende Klassendiagramm zeigt die Port-Adapter-Beziehung für Task Publishing:
+
+[mermaid]
+----
+classDiagram
+    class TaskPublisher {
+        <<interface>>
+        +publishTranslationTask(message: TranslationTaskMessage) void
+        +publishTtsTask(message: TtsGenerationTaskMessage) void
+        +publishSnapshotTask(message: SnapshotTaskMessage) void
+    }
+    class RabbitMqTaskPublisher {
+        -RabbitTemplate rabbitTemplate
+        +publishTranslationTask(message) void
+        +publishTtsTask(message) void
+        +publishSnapshotTask(message) void
+    }
+    class LoggingTaskPublisher {
+        +publishTranslationTask(message) void
+        +publishTtsTask(message) void
+        +publishSnapshotTask(message) void
+    }
+    class RabbitMqConfiguration {
+        +taskExchange() TopicExchange
+        +deadLetterExchange() TopicExchange
+        +translationQueue() Queue
+        +ttsQueue() Queue
+        +snapshotQueue() Queue
+    }
+    class TranslationTaskMessage {
+        UUID postId
+        TenantId tenantId
+        String sourceLocale
+        String targetLocale
+        String content
+    }
+    class TtsGenerationTaskMessage {
+        UUID postId
+        TenantId tenantId
+        String locale
+        String title
+    }
+    class SnapshotTaskMessage {
+        UUID postId
+        TenantId tenantId
+        String url
+        String sourceTitle
+    }
+    RabbitMqTaskPublisher ..|> TaskPublisher : implements
+    LoggingTaskPublisher ..|> TaskPublisher : implements
+    RabbitMqTaskPublisher --> RabbitMqConfiguration : uses
+    TaskPublisher ..> TranslationTaskMessage : publishes
+    TaskPublisher ..> TtsGenerationTaskMessage : publishes
+    TaskPublisher ..> SnapshotTaskMessage : publishes
+----
+
+Der `RabbitMqTaskPublisher` wird über das Spring-Profil `rabbitmq` aktiviert, der `LoggingTaskPublisher` dient als Fallback (Profil `!rabbitmq`).
 
 === Outbound Adapter: Audit Logging (SWR-056, SWA-031)
 
@@ -1025,6 +1137,8 @@ Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt 
 | SWR-087 | Auditlog-Abfrage-Port und Repository | AuditLogQueryUseCase, AuditLogSearchCriteria, AuditLogQueryService, SpringDataAuditLogRepository (Specification-Abfragen)
 | SWR-088 | Auditlog-Admin-View | AuditLogAdminController, admin/audit-logs.html, Header-Navigation
 | SWA-036 | Auditlog-View Architektur | Hexagonale Struktur: AuditLogQueryUseCase (Port), AuditLogQueryService (Service), AuditLogAdminController (Adapter)
+| SWR-089 | TaskPublisher für RabbitMQ-Task-Verteilung | TaskPublisher (Port), RabbitMqTaskPublisher (Adapter), LoggingTaskPublisher (Fallback), TranslationTaskMessage, TtsGenerationTaskMessage, SnapshotTaskMessage
+| SWA-037 | RabbitMQ-Adapter mit Quorum Queues | RabbitMqConfiguration (Exchange, Queues, Bindings, DLX), RabbitMqTaskPublisher, TaskRoutingKeyResolver
 |===
 
 == Sicherheit: Admin-Login (SWR-028)

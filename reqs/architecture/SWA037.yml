@@ -1,0 +1,27 @@
+active: true
+derived: false
+header: |
+  RabbitMQ-Adapter mit Quorum Queues und Dead-Letter-Handling
+level: 37.0
+links:
+- SWR089: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Der RabbitMQ Outbound Adapter konfiguriert eine Topic Exchange
+  (tomsblog.tasks) mit folgenden Quorum Queues:
+
+  - translation.requests (Routing Key: task.translation)
+  - tts.generation (Routing Key: task.tts)
+  - snapshot.requests (Routing Key: task.snapshot)
+
+  Jede Queue besitzt eine Dead-Letter-Exchange (tomsblog.tasks.dlx)
+  mit zugehöriger Dead-Letter-Queue (*.dlq) für fehlgeschlagene
+  Nachrichten. Die Konfiguration erfolgt deklarativ über Spring AMQP
+  Beans (Queue, Exchange, Binding).
+
+  Das Package adapter.outbound.rabbitmq enthält:
+  - RabbitMqTaskPublisher: Implementiert TaskPublisher Port
+  - RabbitMqConfiguration: Deklariert Exchanges, Queues, Bindings
+  - TaskRoutingKeyResolver: Bestimmt den Routing Key pro Nachrichtentyp
