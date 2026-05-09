@@ -43,8 +43,9 @@ class SuperAdminE2ETest implements WebDriverProvider {
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine");
 
     @Container
-    static final BrowserWebDriverContainer<?> chrome =
-            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions()).withAccessToHost(true);
+    static final BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>()
+            .withCapabilities(new ChromeOptions())
+            .withAccessToHost(true);
 
     @LocalServerPort
     private int port;
@@ -200,7 +201,8 @@ class SuperAdminE2ETest implements WebDriverProvider {
             driver.findElement(By.id("privacyPolicyContent")).clear();
             driver.findElement(By.id("privacyPolicyContent")).sendKeys("E2E Privacy");
         }
-        driver.findElement(By.cssSelector(".tab-content.active button[type='submit']")).click();
+        driver.findElement(By.cssSelector(".tab-content.active button[type='submit']"))
+                .click();
         wait.until(ExpectedConditions.urlContains("/tenant/admin/settings"));
         assertThat(driver.getCurrentUrl()).contains("/tenant/admin/settings");
     }

@@ -41,8 +41,9 @@ class BlogPublicViewE2ETest implements WebDriverProvider {
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine");
 
     @Container
-    static final BrowserWebDriverContainer<?> chrome =
-            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions()).withAccessToHost(true);
+    static final BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>()
+            .withCapabilities(new ChromeOptions())
+            .withAccessToHost(true);
 
     @LocalServerPort
     private int port;

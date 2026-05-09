@@ -3,6 +3,7 @@ package de.tomsblog.e2e.page.auth;
 import de.tomsblog.e2e.page.BasePage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 /**
  * Page Object for the user login page (GET /auth/login).
@@ -33,7 +34,9 @@ public class LoginPage extends BasePage {
         }
         type(By.id("username"), username);
         type(By.id("password"), password);
+        String currentUrl = driver.getCurrentUrl();
         click(By.cssSelector("button[type='submit']"));
+        wait.until(ExpectedConditions.not(ExpectedConditions.urlToBe(currentUrl)));
     }
 
     public boolean hasErrorMessage() {

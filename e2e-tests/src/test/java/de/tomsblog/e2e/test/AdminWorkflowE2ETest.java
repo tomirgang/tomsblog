@@ -45,8 +45,9 @@ class AdminWorkflowE2ETest implements WebDriverProvider {
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine");
 
     @Container
-    static final BrowserWebDriverContainer<?> chrome =
-            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions()).withAccessToHost(true);
+    static final BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>()
+            .withCapabilities(new ChromeOptions())
+            .withAccessToHost(true);
 
     @LocalServerPort
     private int port;
@@ -85,14 +86,12 @@ class AdminWorkflowE2ETest implements WebDriverProvider {
                 "spring.security.oauth2.client.provider.authentik.authorization-uri",
                 () -> "http://localhost:19999/authorize");
         registry.add(
-                "spring.security.oauth2.client.provider.authentik.token-uri",
-                () -> "http://localhost:19999/token");
+                "spring.security.oauth2.client.provider.authentik.token-uri", () -> "http://localhost:19999/token");
         registry.add(
                 "spring.security.oauth2.client.provider.authentik.user-info-uri",
                 () -> "http://localhost:19999/userinfo");
         registry.add(
-                "spring.security.oauth2.client.provider.authentik.jwk-set-uri",
-                () -> "http://localhost:19999/jwks");
+                "spring.security.oauth2.client.provider.authentik.jwk-set-uri", () -> "http://localhost:19999/jwks");
     }
 
     @BeforeEach

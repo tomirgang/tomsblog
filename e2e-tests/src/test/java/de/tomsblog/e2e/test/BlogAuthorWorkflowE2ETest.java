@@ -6,9 +6,9 @@ import de.tomsblog.blogcontent.BlogContentApplication;
 import de.tomsblog.e2e.config.ScreenshotOnFailureExtension;
 import de.tomsblog.e2e.config.WebDriverProvider;
 import de.tomsblog.e2e.page.blog.PostListPage;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Map;
-import java.time.Duration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,8 +46,9 @@ class BlogAuthorWorkflowE2ETest implements WebDriverProvider {
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine");
 
     @Container
-    static final BrowserWebDriverContainer<?> chrome =
-            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions()).withAccessToHost(true);
+    static final BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>()
+            .withCapabilities(new ChromeOptions())
+            .withAccessToHost(true);
 
     @LocalServerPort
     private int port;
@@ -93,14 +94,14 @@ class BlogAuthorWorkflowE2ETest implements WebDriverProvider {
         var devTools = ((HasDevTools) driver).getDevTools();
         devTools.createSession();
         devTools.send(new org.openqa.selenium.devtools.Command<>("Network.enable", Map.of()));
-        devTools.send(new org.openqa.selenium.devtools.Command<>("Network.setExtraHTTPHeaders",
-                Map.of("headers", Map.of("Authorization", "Basic " + credentials))));
+        devTools.send(new org.openqa.selenium.devtools.Command<>(
+                "Network.setExtraHTTPHeaders", Map.of("headers", Map.of("Authorization", "Basic " + credentials))));
     }
 
     private void clearAuthentication() {
         var devTools = ((HasDevTools) driver).getDevTools();
-        devTools.send(new org.openqa.selenium.devtools.Command<>("Network.setExtraHTTPHeaders",
-                Map.of("headers", Map.of())));
+        devTools.send(
+                new org.openqa.selenium.devtools.Command<>("Network.setExtraHTTPHeaders", Map.of("headers", Map.of())));
     }
 
     @AfterEach
@@ -142,7 +143,8 @@ class BlogAuthorWorkflowE2ETest implements WebDriverProvider {
         assertThat(driver.findElement(By.id("content")).isDisplayed()).isTrue();
         assertThat(driver.findElement(By.id("contentType")).isDisplayed()).isTrue();
         assertThat(driver.findElement(By.id("locale")).isDisplayed()).isTrue();
-        assertThat(driver.findElement(By.cssSelector("main button[type='submit']")).isDisplayed())
+        assertThat(driver.findElement(By.cssSelector("main button[type='submit']"))
+                        .isDisplayed())
                 .isTrue();
     }
 
@@ -157,7 +159,11 @@ class BlogAuthorWorkflowE2ETest implements WebDriverProvider {
         new Select(driver.findElement(By.id("locale"))).selectByValue("de");
         // Submit the form
         driver.findElement(By.cssSelector("main button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
         // After creation, should redirect to post list
         assertThat(driver.getCurrentUrl()).contains("/posts");
     }
@@ -173,7 +179,11 @@ class BlogAuthorWorkflowE2ETest implements WebDriverProvider {
         driver.findElement(By.id("content")).sendKeys("Content for visible post");
         new Select(driver.findElement(By.id("locale"))).selectByValue("de");
         driver.findElement(By.cssSelector("main button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
         // Verify it appears in the list (authenticated users see all posts)
         assertThat(driver.getPageSource()).contains("Visible Post");
     }
@@ -189,9 +199,14 @@ class BlogAuthorWorkflowE2ETest implements WebDriverProvider {
         driver.findElement(By.id("content")).sendKeys("Original content");
         new Select(driver.findElement(By.id("locale"))).selectByValue("de");
         driver.findElement(By.cssSelector("main button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
         // Find the edit link for the created post
-        var editLink = driver.findElement(By.xpath("//article[.//h2[contains(.,'Editable Post')]]//a[contains(@href,'/edit')]"));
+        var editLink = driver.findElement(
+                By.xpath("//article[.//h2[contains(.,'Editable Post')]]//a[contains(@href,'/edit')]"));
         String editUrl = editLink.getDomAttribute("href");
         driver.get(baseUrl + editUrl.substring(editUrl.indexOf("/posts/")));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("title")));
@@ -211,9 +226,14 @@ class BlogAuthorWorkflowE2ETest implements WebDriverProvider {
         driver.findElement(By.id("content")).sendKeys("Before update");
         new Select(driver.findElement(By.id("locale"))).selectByValue("de");
         driver.findElement(By.cssSelector("main button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
         // Navigate to edit page
-        var editLink = driver.findElement(By.xpath("//article[.//h2[contains(.,'Update Me')]]//a[contains(@href,'/edit')]"));
+        var editLink =
+                driver.findElement(By.xpath("//article[.//h2[contains(.,'Update Me')]]//a[contains(@href,'/edit')]"));
         String editUrl = editLink.getDomAttribute("href");
         driver.get(baseUrl + editUrl.substring(editUrl.indexOf("/posts/")));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("title")));
@@ -221,7 +241,11 @@ class BlogAuthorWorkflowE2ETest implements WebDriverProvider {
         driver.findElement(By.id("content")).clear();
         driver.findElement(By.id("content")).sendKeys("After update");
         driver.findElement(By.cssSelector("main button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
         // Verify redirect to post list after update
         assertThat(driver.getCurrentUrl()).contains("/posts");
     }
@@ -237,11 +261,20 @@ class BlogAuthorWorkflowE2ETest implements WebDriverProvider {
         driver.findElement(By.id("content")).sendKeys("Content to publish");
         new Select(driver.findElement(By.id("locale"))).selectByValue("de");
         driver.findElement(By.cssSelector("main button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
         // Find and click the publish button/link
-        var publishForm = driver.findElement(By.xpath("//article[.//h2[contains(.,'Publishable Post')]]//form[contains(@action,'/publish')]"));
+        var publishForm = driver.findElement(
+                By.xpath("//article[.//h2[contains(.,'Publishable Post')]]//form[contains(@action,'/publish')]"));
         publishForm.findElement(By.cssSelector("button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
         assertThat(driver.getCurrentUrl()).contains("/posts");
     }
 
@@ -256,9 +289,14 @@ class BlogAuthorWorkflowE2ETest implements WebDriverProvider {
         driver.findElement(By.id("content")).sendKeys("Preview content here");
         new Select(driver.findElement(By.id("locale"))).selectByValue("de");
         driver.findElement(By.cssSelector("main button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
         // Navigate to edit page first (preview link is only on edit form)
-        var editLink = driver.findElement(By.xpath("//article[.//h2[contains(.,'Preview Post')]]//a[contains(@href,'/edit')]"));
+        var editLink = driver.findElement(
+                By.xpath("//article[.//h2[contains(.,'Preview Post')]]//a[contains(@href,'/edit')]"));
         String editUrl = editLink.getDomAttribute("href");
         driver.get(baseUrl + editUrl.substring(editUrl.indexOf("/posts/")));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("title")));
@@ -281,11 +319,20 @@ class BlogAuthorWorkflowE2ETest implements WebDriverProvider {
         driver.findElement(By.id("content")).sendKeys("This is publicly visible");
         new Select(driver.findElement(By.id("locale"))).selectByValue("de");
         driver.findElement(By.cssSelector("main button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
         // Publish the post
-        var publishForm = driver.findElement(By.xpath("//article[.//h2[contains(.,'Public Post')]]//form[contains(@action,'/publish')]"));
+        var publishForm = driver.findElement(
+                By.xpath("//article[.//h2[contains(.,'Public Post')]]//form[contains(@action,'/publish')]"));
         publishForm.findElement(By.cssSelector("button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
         // Now access as anonymous user via slug
         driver.get(baseUrl + "/posts/public-post");
         assertThat(driver.getPageSource()).contains("Public Post");

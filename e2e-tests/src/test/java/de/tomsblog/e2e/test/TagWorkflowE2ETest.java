@@ -8,9 +8,9 @@ import de.tomsblog.e2e.config.WebDriverProvider;
 import de.tomsblog.e2e.page.admin.TagAdminPage;
 import de.tomsblog.e2e.page.blog.PostDetailPage;
 import de.tomsblog.e2e.page.blog.PostListPage;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Map;
-import java.time.Duration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -54,8 +54,9 @@ class TagWorkflowE2ETest implements WebDriverProvider {
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine");
 
     @Container
-    static final BrowserWebDriverContainer<?> chrome =
-            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions()).withAccessToHost(true);
+    static final BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>()
+            .withCapabilities(new ChromeOptions())
+            .withAccessToHost(true);
 
     @LocalServerPort
     private int port;
@@ -100,14 +101,14 @@ class TagWorkflowE2ETest implements WebDriverProvider {
         var devTools = ((HasDevTools) driver).getDevTools();
         devTools.createSession();
         devTools.send(new org.openqa.selenium.devtools.Command<>("Network.enable", Map.of()));
-        devTools.send(new org.openqa.selenium.devtools.Command<>("Network.setExtraHTTPHeaders",
-                Map.of("headers", Map.of("Authorization", "Basic " + credentials))));
+        devTools.send(new org.openqa.selenium.devtools.Command<>(
+                "Network.setExtraHTTPHeaders", Map.of("headers", Map.of("Authorization", "Basic " + credentials))));
     }
 
     private void clearAuthentication() {
         var devTools = ((HasDevTools) driver).getDevTools();
-        devTools.send(new org.openqa.selenium.devtools.Command<>("Network.setExtraHTTPHeaders",
-                Map.of("headers", Map.of())));
+        devTools.send(
+                new org.openqa.selenium.devtools.Command<>("Network.setExtraHTTPHeaders", Map.of("headers", Map.of())));
     }
 
     @AfterEach
@@ -223,7 +224,11 @@ class TagWorkflowE2ETest implements WebDriverProvider {
         }
 
         driver.findElement(By.cssSelector("main button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
         assertThat(driver.getCurrentUrl()).contains("/posts");
     }
 
@@ -239,7 +244,11 @@ class TagWorkflowE2ETest implements WebDriverProvider {
         driver.findElement(By.id("newTagName")).sendKeys("DevOps");
 
         driver.findElement(By.cssSelector("main button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
         assertThat(driver.getCurrentUrl()).contains("/posts");
 
         // Verify the tag was created in the admin page
@@ -271,12 +280,21 @@ class TagWorkflowE2ETest implements WebDriverProvider {
         }
 
         driver.findElement(By.cssSelector("main button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
 
         // Publish the post
-        var publishForm = driver.findElement(By.xpath("//article[.//h2[contains(.,'Tag Display Post')]]//form[contains(@action,'/publish')]"));
+        var publishForm = driver.findElement(
+                By.xpath("//article[.//h2[contains(.,'Tag Display Post')]]//form[contains(@action,'/publish')]"));
         publishForm.findElement(By.cssSelector("button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
 
         // View the published post as anonymous user
         PostDetailPage detailPage = new PostDetailPage(driver, baseUrl).open("tag-display-post");
@@ -308,12 +326,21 @@ class TagWorkflowE2ETest implements WebDriverProvider {
         }
 
         driver.findElement(By.cssSelector("main button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
 
         // Publish the post
-        var publishForm = driver.findElement(By.xpath("//article[.//h2[contains(.,'Listed Tag Post')]]//form[contains(@action,'/publish')]"));
+        var publishForm = driver.findElement(
+                By.xpath("//article[.//h2[contains(.,'Listed Tag Post')]]//form[contains(@action,'/publish')]"));
         publishForm.findElement(By.cssSelector("button[type='submit']")).click();
-        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.urlContains("/posts"),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/new")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/edit")),
+                ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
 
         // Check public post list
         PostListPage listPage = new PostListPage(driver, baseUrl).open();
