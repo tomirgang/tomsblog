@@ -118,7 +118,7 @@
 - [x] Event-Schema-Design (Avro/Protobuf oder JSON Schema)
 - [x] Events produzieren (Post erstellt, aktualisiert, veröffentlicht) via Kafka
 - [x] RabbitMQ-Queues für Task-Verteilung (Übersetzung, TTS, Snapshots)
-- [ ] Consumer für nachgelagerte Prozesse (Feeds)
+- [x] Consumer für nachgelagerte Prozesse (Feeds)
 - [x] Infra: Kafka Deployment (Strimzi Operator via Helm, siehe ADR-0026)
 - [x] Infra: RabbitMQ Deployment (RabbitMQ Cluster Operator via Helm, siehe ADR-0026)
 - [ ] Infra: MongoDB Deployment (Community Operator via Helm, siehe ADR-0026)

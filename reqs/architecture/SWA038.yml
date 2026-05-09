@@ -1,0 +1,37 @@
+active: true
+derived: false
+header: |
+  Feed Service Kafka Consumer Architektur
+level: 38.0
+links:
+- SWR090: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Der Feed-Service folgt der hexagonalen Architektur:
+
+  Inbound Adapter:
+  - PostEventConsumer: Kafka Consumer mit @KafkaListener fuer
+    post.published und post.updated Topics. Nur aktiv unter
+    Spring-Profil kafka. Consumer Group: feed-service.
+
+  Domain:
+  - FeedEntry: Entity mit id, tenantId, postId, title, slug,
+    locale, publishedAt, updatedAt. Unique Constraint auf
+    (tenantId, postId).
+
+  Application Layer:
+  - FeedEntryUseCase: Inbound Port mit onPostPublished() und
+    onPostUpdated() Methoden
+  - FeedEntryService: Implementierung, orchestriert Persistenz
+  - FeedEntryRepository: Outbound Port
+
+  Outbound Adapter:
+  - SpringDataFeedEntryRepository: JPA/PostgreSQL Implementierung
+  - FeedEntryJpaEntity: JPA Entity mit Flyway-Migration
+  - FeedEntryMapper: Domain zu JPA Konvertierung
+
+  Datenhaltung: Eigene PostgreSQL-Instanz (Database per Service,
+  ADR-0019). Fehlerhafte Events werden geloggt, blockieren aber
+  nicht die Verarbeitung weiterer Events.

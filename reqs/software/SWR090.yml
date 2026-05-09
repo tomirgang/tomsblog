@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: |
+  Feed Event Consumer
+level: 90.0
+links:
+- SWR008: null
+normative: true
+ref: ''
+reviewed: null
+text: |
+  Der Feed-Service konsumiert PostPublishedEvent und PostUpdatedEvent
+  via Kafka (Consumer Group feed-service). Beim Empfang eines
+  PostPublishedEvent wird ein FeedEntry erstellt oder aktualisiert.
+  Beim Empfang eines PostUpdatedEvent wird ein bestehender FeedEntry
+  aktualisiert (Titel, Slug, Locale). Alle Eintraege sind
+  tenant-isoliert. Nicht publizierte Posts werden bei PostUpdatedEvent
+  ignoriert (kein FeedEntry vorhanden).

@@ -1,0 +1,13 @@
+apiVersion: policy.linkerd.io/v1beta1
+kind: Server
+metadata:
+  name: feed-http
+  namespace: tomsblog
+  labels:
+    app: feed
+spec:
+  podSelector:
+    matchLabels:
+      app: feed
+  port: http
+  proxyProtocol: HTTP/1

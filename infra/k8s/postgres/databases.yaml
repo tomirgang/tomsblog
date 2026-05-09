@@ -33,3 +33,15 @@ spec:
   databaseReclaimPolicy: retain
   cluster:
     name: postgres-cluster
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: feed-db
+  namespace: postgres
+spec:
+  name: feed
+  owner: app
+  databaseReclaimPolicy: retain
+  cluster:
+    name: postgres-cluster

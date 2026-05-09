@@ -27,6 +27,7 @@
         <module>services/blog-content</module>
         <module>services/user-management</module>
         <module>services/tenant-management</module>
+        <module>services/feed</module>
     </modules>
 
     <properties>

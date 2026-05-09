@@ -16,4 +16,5 @@ resources:
   - blog-content
   - user-management
   - tenant-management
+  - feed
   - routing

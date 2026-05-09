@@ -99,6 +99,24 @@ services:
       timeout: 3s
       retries: 5
 
+  # Database per Service: Feed Service gets its own PostgreSQL instance (ADR-0019)
+  postgres-feed:
+    image: postgres:17
+    container_name: tomsblog-postgres-feed
+    environment:
+      POSTGRES_DB: feed
+      POSTGRES_USER: ${FEED_DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${FEED_DB_PASSWORD:-postgres}
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_feed_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   rabbitmq:
     image: rabbitmq:4-management-alpine
     container_name: tomsblog-rabbitmq
@@ -121,4 +139,5 @@ volumes:
   postgres_blog_content_data:
   postgres_user_management_data:
   postgres_tenant_management_data:
+  postgres_feed_data:
   rabbitmq_data:
