@@ -77,7 +77,7 @@ class TenantSettingsGrpcServiceTest {
 
         assertThat(result.get()).isNotNull();
         assertThat(result.get().getTenantId()).isEqualTo(TENANT_ID.toString());
-        assertThat(result.get().getLoginMode()).isEqualTo("BOTH");
+        assertThat(result.get().getLoginMode()).isEqualTo("INTERNAL");
     }
 
     @Test

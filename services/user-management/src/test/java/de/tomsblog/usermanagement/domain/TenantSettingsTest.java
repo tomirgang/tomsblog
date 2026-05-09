@@ -26,7 +26,7 @@ class TenantSettingsTest {
             var settings = TenantSettings.create(TENANT_ID);
 
             assertThat(settings.getTenantId()).isEqualTo(TENANT_ID);
-            assertThat(settings.getLoginMode()).isEqualTo(LoginMode.BOTH);
+            assertThat(settings.getLoginMode()).isEqualTo(LoginMode.INTERNAL);
             assertThat(settings.isAutoApproveOidc()).isFalse();
             assertThat(settings.getAutoApproveEmailDomains()).isEmpty();
         }

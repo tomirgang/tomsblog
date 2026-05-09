@@ -8,6 +8,7 @@ import de.tomsblog.e2e.config.WebDriverProvider;
 import de.tomsblog.e2e.page.blog.LandingPage;
 import de.tomsblog.e2e.page.blog.LegalPage;
 import de.tomsblog.e2e.page.blog.PostListPage;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +42,7 @@ class BlogPublicViewE2ETest implements WebDriverProvider {
 
     @Container
     static final BrowserWebDriverContainer<?> chrome =
-            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions());
+            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions()).withAccessToHost(true);
 
     @LocalServerPort
     private int port;
@@ -56,6 +57,7 @@ class BlogPublicViewE2ETest implements WebDriverProvider {
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
         registry.add("spring.flyway.enabled", () -> "true");
+        registry.add("spring.flyway.locations", () -> "classpath:db/migration/blog");
         registry.add("spring.session.store-type", () -> "none");
         registry.add("spring.data.redis.repositories.enabled", () -> "false");
         registry.add(
@@ -65,6 +67,7 @@ class BlogPublicViewE2ETest implements WebDriverProvider {
         registry.add("spring.thymeleaf.check-template-location", () -> "false");
         registry.add("grpc.client.user-management.address", () -> "static://localhost:9090");
         registry.add("grpc.client.user-management.negotiation-type", () -> "plaintext");
+        registry.add("grpc.server.port", () -> "0");
         registry.add("blog.admin.password", () -> "e2e-test-admin-password-12345");
     }
 
@@ -80,6 +83,13 @@ class BlogPublicViewE2ETest implements WebDriverProvider {
         driver = new RemoteWebDriver(chrome.getSeleniumAddress(), new ChromeOptions());
     }
 
+    @AfterEach
+    void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
     @Override
     public WebDriver getWebDriver() {
         return driver;
@@ -89,7 +99,7 @@ class BlogPublicViewE2ETest implements WebDriverProvider {
     @DisplayName("SWR-079: Landing page loads with heading")
     void landingPageLoads() {
         LandingPage page = new LandingPage(driver, baseUrl).open();
-        assertThat(page.getHeading()).isEqualTo("Willkommen");
+        assertThat(page.getHeading()).isEqualTo("Blog Posts");
     }
 
     @Test
@@ -131,7 +141,7 @@ class BlogPublicViewE2ETest implements WebDriverProvider {
     @DisplayName("SWR-079: Unknown slug returns 404 page")
     void unknownSlugReturns404() {
         driver.get(baseUrl + "/posts/this-slug-does-not-exist-xyz");
-        assertThat(driver.getPageSource()).containsIgnoringCase("404");
+        assertThat(driver.getPageSource()).containsIgnoringCase("nicht gefunden");
     }
 
     @Test

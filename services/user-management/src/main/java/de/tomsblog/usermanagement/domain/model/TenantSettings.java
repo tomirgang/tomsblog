@@ -56,7 +56,7 @@ public class TenantSettings {
 
     public static TenantSettings create(TenantId tenantId) {
         return new TenantSettings(
-                tenantId, LoginMode.BOTH, false, Set.of(), "Toms Blog", null, null, null, null, null, null);
+                tenantId, LoginMode.INTERNAL, false, Set.of(), "Toms Blog", null, null, null, null, null, null);
     }
 
     public static TenantSettings reconstitute(

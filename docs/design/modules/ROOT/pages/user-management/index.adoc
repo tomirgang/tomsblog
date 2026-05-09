@@ -157,6 +157,9 @@ classDiagram
 * `OIDC`: Nur Login über den konfigurierten OIDC Provider. Die reguläre Login-Seite zeigt nur den OIDC-Button. In diesem Modus müssen `oidcIssuerUrl` und `oidcClientId` gesetzt sein.
 * `BOTH`: Sowohl formbasierter als auch OIDC-Login stehen zur Verfügung. Auch hier müssen die OIDC-Felder konfiguriert sein.
 
+Bei Neuanlage eines Tenants wird der LoginMode auf `INTERNAL` gesetzt (SWR-044).
+Die Umstellung auf `OIDC` oder `BOTH` erfordert die vorherige Konfiguration der OIDC-Felder (`oidcIssuerUrl`, `oidcClientId`).
+
 Unabhängig vom LoginMode ist unter `/admin/login` ein separates formbasiertes Admin-Login-Formular verfügbar (Break-Glass-Lösung).
 Nur Benutzer mit der Rolle ADMIN können sich dort anmelden.
 

@@ -9,6 +9,7 @@ import de.tomsblog.e2e.page.admin.TenantListPage;
 import de.tomsblog.e2e.page.auth.AdminLoginPage;
 import de.tomsblog.tenantmanagement.TenantManagementApplication;
 import java.time.Duration;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ class SuperAdminE2ETest implements WebDriverProvider {
 
     @Container
     static final BrowserWebDriverContainer<?> chrome =
-            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions());
+            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions()).withAccessToHost(true);
 
     @LocalServerPort
     private int port;
@@ -58,6 +59,7 @@ class SuperAdminE2ETest implements WebDriverProvider {
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
         registry.add("spring.flyway.enabled", () -> "true");
+        registry.add("spring.flyway.locations", () -> "classpath:db/migration/tenant");
         registry.add("spring.session.store-type", () -> "none");
         registry.add("spring.data.redis.repositories.enabled", () -> "false");
         registry.add(
@@ -65,6 +67,7 @@ class SuperAdminE2ETest implements WebDriverProvider {
                 () -> "org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration,"
                         + "org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration");
         registry.add("grpc.server.port", () -> "0");
+        registry.add("blog.admin.username", () -> "superadmin");
         registry.add("blog.admin.password", () -> "e2e-test-admin-password-12345");
     }
 
@@ -73,6 +76,13 @@ class SuperAdminE2ETest implements WebDriverProvider {
         Testcontainers.exposeHostPorts(port);
         baseUrl = "http://host.testcontainers.internal:" + port;
         driver = new RemoteWebDriver(chrome.getSeleniumAddress(), new ChromeOptions());
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
     @Override
@@ -190,7 +200,7 @@ class SuperAdminE2ETest implements WebDriverProvider {
             driver.findElement(By.id("privacyPolicyContent")).clear();
             driver.findElement(By.id("privacyPolicyContent")).sendKeys("E2E Privacy");
         }
-        driver.findElement(By.cssSelector("button[type='submit']")).click();
+        driver.findElement(By.cssSelector(".tab-content.active button[type='submit']")).click();
         wait.until(ExpectedConditions.urlContains("/tenant/admin/settings"));
         assertThat(driver.getCurrentUrl()).contains("/tenant/admin/settings");
     }

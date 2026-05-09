@@ -8,16 +8,25 @@ import de.tomsblog.e2e.config.WebDriverProvider;
 import de.tomsblog.e2e.page.admin.TagAdminPage;
 import de.tomsblog.e2e.page.blog.PostDetailPage;
 import de.tomsblog.e2e.page.blog.PostListPage;
+import java.util.Base64;
+import java.util.Map;
 import java.time.Duration;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.devtools.HasDevTools;
+import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -38,6 +47,7 @@ import org.testcontainers.junit.jupiter.Container;
 @SpringBootTest(classes = BlogContentApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @org.testcontainers.junit.jupiter.Testcontainers
 @ExtendWith(ScreenshotOnFailureExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TagWorkflowE2ETest implements WebDriverProvider {
 
     @Container
@@ -45,14 +55,13 @@ class TagWorkflowE2ETest implements WebDriverProvider {
 
     @Container
     static final BrowserWebDriverContainer<?> chrome =
-            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions());
+            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions()).withAccessToHost(true);
 
     @LocalServerPort
     private int port;
 
     private WebDriver driver;
     private String baseUrl;
-    private String authBaseUrl;
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -61,6 +70,7 @@ class TagWorkflowE2ETest implements WebDriverProvider {
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
         registry.add("spring.flyway.enabled", () -> "true");
+        registry.add("spring.flyway.locations", () -> "classpath:db/migration/blog");
         registry.add("spring.session.store-type", () -> "none");
         registry.add("spring.data.redis.repositories.enabled", () -> "false");
         registry.add(
@@ -70,6 +80,7 @@ class TagWorkflowE2ETest implements WebDriverProvider {
         registry.add("spring.thymeleaf.check-template-location", () -> "false");
         registry.add("grpc.client.user-management.address", () -> "static://localhost:9090");
         registry.add("grpc.client.user-management.negotiation-type", () -> "plaintext");
+        registry.add("grpc.server.port", () -> "0");
         registry.add("blog.admin.password", () -> "e2e-test-admin-password-12345");
         registry.add("spring.security.user.name", () -> "author");
         registry.add("spring.security.user.password", () -> "e2e-author-pass");
@@ -80,8 +91,30 @@ class TagWorkflowE2ETest implements WebDriverProvider {
     void setUp() {
         Testcontainers.exposeHostPorts(port);
         baseUrl = "http://host.testcontainers.internal:" + port;
-        authBaseUrl = "http://author:e2e-author-pass@host.testcontainers.internal:" + port;
-        driver = new RemoteWebDriver(chrome.getSeleniumAddress(), new ChromeOptions());
+        driver = new Augmenter().augment(new RemoteWebDriver(chrome.getSeleniumAddress(), new ChromeOptions()));
+        authenticateDriver();
+    }
+
+    private void authenticateDriver() {
+        String credentials = Base64.getEncoder().encodeToString("author:e2e-author-pass".getBytes());
+        var devTools = ((HasDevTools) driver).getDevTools();
+        devTools.createSession();
+        devTools.send(new org.openqa.selenium.devtools.Command<>("Network.enable", Map.of()));
+        devTools.send(new org.openqa.selenium.devtools.Command<>("Network.setExtraHTTPHeaders",
+                Map.of("headers", Map.of("Authorization", "Basic " + credentials))));
+    }
+
+    private void clearAuthentication() {
+        var devTools = ((HasDevTools) driver).getDevTools();
+        devTools.send(new org.openqa.selenium.devtools.Command<>("Network.setExtraHTTPHeaders",
+                Map.of("headers", Map.of())));
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
     @Override
@@ -92,6 +125,7 @@ class TagWorkflowE2ETest implements WebDriverProvider {
     @Test
     @DisplayName("SWR-084: Tag admin page requires authentication")
     void tagAdminRequiresAuth() {
+        clearAuthentication();
         driver.get(baseUrl + "/admin/tags");
         assertThat(driver.getCurrentUrl()).contains("login");
     }
@@ -99,22 +133,24 @@ class TagWorkflowE2ETest implements WebDriverProvider {
     @Test
     @DisplayName("SWR-084: Tag admin page loads for authenticated users")
     void tagAdminLoadsAuthenticated() {
-        TagAdminPage page = new TagAdminPage(driver, authBaseUrl).open();
+        TagAdminPage page = new TagAdminPage(driver, baseUrl).open();
         assertThat(page.getHeading()).isEqualTo("Tag-Verwaltung");
     }
 
     @Test
+    @Order(1)
     @DisplayName("SWR-084: Tag admin shows empty message when no tags exist")
     void tagAdminShowsEmptyMessage() {
-        TagAdminPage page = new TagAdminPage(driver, authBaseUrl).open();
+        TagAdminPage page = new TagAdminPage(driver, baseUrl).open();
         assertThat(page.hasEmptyMessage()).isTrue();
         assertThat(page.hasTagTable()).isFalse();
     }
 
     @Test
+    @Order(2)
     @DisplayName("SWR-084: Tag can be created via admin page")
     void tagCreation() {
-        TagAdminPage page = new TagAdminPage(driver, authBaseUrl).open();
+        TagAdminPage page = new TagAdminPage(driver, baseUrl).open();
         page.createTag("Java");
 
         assertThat(page.getTagNames()).contains("Java");
@@ -123,35 +159,37 @@ class TagWorkflowE2ETest implements WebDriverProvider {
     }
 
     @Test
+    @Order(3)
     @DisplayName("SWR-084: Tag can be renamed via admin page")
     void tagRenaming() {
-        TagAdminPage page = new TagAdminPage(driver, authBaseUrl).open();
+        TagAdminPage page = new TagAdminPage(driver, baseUrl).open();
         page.createTag("Jva");
-        page.renameTag("Jva", "Java");
+        page.renameTag("Jva", "JvaCorrected");
 
-        assertThat(page.getTagNames()).contains("Java");
+        assertThat(page.getTagNames()).contains("JvaCorrected");
         assertThat(page.getTagNames()).doesNotContain("Jva");
     }
 
     @Test
+    @Order(4)
     @DisplayName("SWR-084: Tag can be deleted via admin page")
     void tagDeletion() {
-        TagAdminPage page = new TagAdminPage(driver, authBaseUrl).open();
+        TagAdminPage page = new TagAdminPage(driver, baseUrl).open();
         page.createTag("Temporary");
         assertThat(page.getTagNames()).contains("Temporary");
 
         page.deleteTag("Temporary");
-        assertThat(page.hasEmptyMessage()).isTrue();
+        assertThat(page.getTagNames()).doesNotContain("Temporary");
     }
 
     @Test
     @DisplayName("SWR-085: Post form shows tag section with available tags")
     void postFormShowsTagSection() {
         // Create a tag first
-        new TagAdminPage(driver, authBaseUrl).open().createTag("Spring");
+        new TagAdminPage(driver, baseUrl).open().createTag("Spring");
 
         // Navigate to new post form
-        driver.get(authBaseUrl + "/posts/new");
+        driver.get(baseUrl + "/posts/new");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("title")));
 
@@ -164,14 +202,15 @@ class TagWorkflowE2ETest implements WebDriverProvider {
     @DisplayName("SWR-085: Post can be created with existing tag selected")
     void postCreationWithExistingTag() {
         // Create a tag
-        new TagAdminPage(driver, authBaseUrl).open().createTag("Kotlin");
+        new TagAdminPage(driver, baseUrl).open().createTag("Kotlin");
 
         // Create a post with the tag selected
-        driver.get(authBaseUrl + "/posts/new");
+        driver.get(baseUrl + "/posts/new");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("title")));
         driver.findElement(By.id("title")).sendKeys("Tagged Post");
         driver.findElement(By.id("content")).sendKeys("Content with tag");
+        new Select(driver.findElement(By.id("locale"))).selectByValue("de");
 
         // Select the tag checkbox
         var checkboxes = driver.findElements(By.cssSelector("input[name='tagIds']"));
@@ -183,27 +222,28 @@ class TagWorkflowE2ETest implements WebDriverProvider {
             }
         }
 
-        driver.findElement(By.cssSelector("button[type='submit']")).click();
-        wait.until(ExpectedConditions.urlContains("/posts"));
+        driver.findElement(By.cssSelector("main button[type='submit']")).click();
+        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
         assertThat(driver.getCurrentUrl()).contains("/posts");
     }
 
     @Test
     @DisplayName("SWR-085: Post can be created with inline new tag")
     void postCreationWithNewInlineTag() {
-        driver.get(authBaseUrl + "/posts/new");
+        driver.get(baseUrl + "/posts/new");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("title")));
         driver.findElement(By.id("title")).sendKeys("Inline Tag Post");
         driver.findElement(By.id("content")).sendKeys("Content with inline tag");
+        new Select(driver.findElement(By.id("locale"))).selectByValue("de");
         driver.findElement(By.id("newTagName")).sendKeys("DevOps");
 
-        driver.findElement(By.cssSelector("button[type='submit']")).click();
-        wait.until(ExpectedConditions.urlContains("/posts"));
+        driver.findElement(By.cssSelector("main button[type='submit']")).click();
+        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
         assertThat(driver.getCurrentUrl()).contains("/posts");
 
         // Verify the tag was created in the admin page
-        TagAdminPage tagPage = new TagAdminPage(driver, authBaseUrl).open();
+        TagAdminPage tagPage = new TagAdminPage(driver, baseUrl).open();
         assertThat(tagPage.getTagNames()).contains("DevOps");
     }
 
@@ -211,14 +251,15 @@ class TagWorkflowE2ETest implements WebDriverProvider {
     @DisplayName("SWR-086: Published post with tag shows tag labels on detail page")
     void publishedPostShowsTagsOnDetailPage() {
         // Create a tag
-        new TagAdminPage(driver, authBaseUrl).open().createTag("Testing");
+        new TagAdminPage(driver, baseUrl).open().createTag("Testing");
 
         // Create a post with the tag
-        driver.get(authBaseUrl + "/posts/new");
+        driver.get(baseUrl + "/posts/new");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("title")));
         driver.findElement(By.id("title")).sendKeys("Tag Display Post");
         driver.findElement(By.id("content")).sendKeys("Testing tag display");
+        new Select(driver.findElement(By.id("locale"))).selectByValue("de");
 
         var checkboxes = driver.findElements(By.cssSelector("input[name='tagIds']"));
         for (var cb : checkboxes) {
@@ -229,13 +270,13 @@ class TagWorkflowE2ETest implements WebDriverProvider {
             }
         }
 
-        driver.findElement(By.cssSelector("button[type='submit']")).click();
-        wait.until(ExpectedConditions.urlContains("/posts"));
+        driver.findElement(By.cssSelector("main button[type='submit']")).click();
+        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
 
         // Publish the post
-        var publishForm = driver.findElement(By.xpath("//form[contains(@action,'/publish')]"));
+        var publishForm = driver.findElement(By.xpath("//article[.//h2[contains(.,'Tag Display Post')]]//form[contains(@action,'/publish')]"));
         publishForm.findElement(By.cssSelector("button[type='submit']")).click();
-        wait.until(ExpectedConditions.urlContains("/posts"));
+        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
 
         // View the published post as anonymous user
         PostDetailPage detailPage = new PostDetailPage(driver, baseUrl).open("tag-display-post");
@@ -247,14 +288,15 @@ class TagWorkflowE2ETest implements WebDriverProvider {
     @DisplayName("SWR-086: Published post with tag shows tag labels in post list")
     void publishedPostShowsTagsInList() {
         // Create a tag
-        new TagAdminPage(driver, authBaseUrl).open().createTag("Architecture");
+        new TagAdminPage(driver, baseUrl).open().createTag("Architecture");
 
         // Create and publish a post with the tag
-        driver.get(authBaseUrl + "/posts/new");
+        driver.get(baseUrl + "/posts/new");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("title")));
         driver.findElement(By.id("title")).sendKeys("Listed Tag Post");
         driver.findElement(By.id("content")).sendKeys("<p>Post with tags in list</p>");
+        new Select(driver.findElement(By.id("locale"))).selectByValue("de");
 
         var checkboxes = driver.findElements(By.cssSelector("input[name='tagIds']"));
         for (var cb : checkboxes) {
@@ -265,13 +307,13 @@ class TagWorkflowE2ETest implements WebDriverProvider {
             }
         }
 
-        driver.findElement(By.cssSelector("button[type='submit']")).click();
-        wait.until(ExpectedConditions.urlContains("/posts"));
+        driver.findElement(By.cssSelector("main button[type='submit']")).click();
+        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
 
         // Publish the post
-        var publishForm = driver.findElement(By.xpath("//form[contains(@action,'/publish')]"));
+        var publishForm = driver.findElement(By.xpath("//article[.//h2[contains(.,'Listed Tag Post')]]//form[contains(@action,'/publish')]"));
         publishForm.findElement(By.cssSelector("button[type='submit']")).click();
-        wait.until(ExpectedConditions.urlContains("/posts"));
+        wait.until(ExpectedConditions.and(ExpectedConditions.urlContains("/posts"), ExpectedConditions.not(ExpectedConditions.urlContains("/new")), ExpectedConditions.not(ExpectedConditions.urlContains("/edit")), ExpectedConditions.not(ExpectedConditions.urlContains("/preview"))));
 
         // Check public post list
         PostListPage listPage = new PostListPage(driver, baseUrl).open();
@@ -282,7 +324,7 @@ class TagWorkflowE2ETest implements WebDriverProvider {
     @Test
     @DisplayName("SWR-084: Navigation includes Tags link for authenticated users")
     void navigationIncludesTagsLink() {
-        driver.get(authBaseUrl + "/posts");
+        driver.get(baseUrl + "/posts");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("h1")));
 

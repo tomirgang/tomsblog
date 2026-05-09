@@ -67,7 +67,7 @@ public class Tenant {
                 displayName,
                 null,
                 TenantStatus.ACTIVE,
-                LoginMode.BOTH,
+                LoginMode.INTERNAL,
                 false,
                 Set.of(),
                 null,

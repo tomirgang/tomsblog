@@ -36,7 +36,7 @@ public class TenantListPage extends BasePage {
     public TenantListPage createTenant(String slug, String displayName) {
         type(By.id("slug"), slug);
         type(By.id("displayName"), displayName);
-        click(By.cssSelector("form button[type='submit']"));
+        click(By.cssSelector("main form button[type='submit']"));
         waitForElement(By.tagName("h2"));
         return this;
     }

@@ -53,7 +53,7 @@ class JpaTenantRepositoryIntegrationTest {
         assertThat(found.get().getSlug()).isEqualTo("test-blog");
         assertThat(found.get().getDisplayName()).isEqualTo("Test Blog");
         assertThat(found.get().getStatus()).isEqualTo(TenantStatus.ACTIVE);
-        assertThat(found.get().getLoginMode()).isEqualTo(LoginMode.BOTH);
+        assertThat(found.get().getLoginMode()).isEqualTo(LoginMode.INTERNAL);
     }
 
     @Test

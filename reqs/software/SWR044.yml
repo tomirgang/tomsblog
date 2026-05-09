@@ -13,9 +13,11 @@ text: |
   Login-Methode (SWR-043) und stellt die zugehoerige Login-UI selbst
   bereit (ADR-0032):
   - LoginMode Enum: INTERNAL (nur formbasiert), OIDC (nur OIDC-Provider),
-    BOTH (formbasiert und OIDC).
+    BOTH (formbasiert und OIDC). Standard bei Neuanlage: INTERNAL.
   - Die Login-Methode wird als Tenant-Einstellung gespeichert und
     direkt beim Rendern der Login-Seite ausgewertet (kein gRPC-Umweg).
+  - Wird der LoginMode auf OIDC oder BOTH gesetzt, muessen oidcIssuerUrl
+    und oidcClientId konfiguriert sein (Validierung im Service).
   - Die Login-Seite wird unter /auth/login vom User-Management-Service
     bereitgestellt. Der Blog Content Service leitet unauthentifizierte
     Benutzer per Redirect dorthin weiter.

@@ -20,7 +20,7 @@ class TenantTest {
         assertThat(tenant.getSlug()).isEqualTo("my-blog");
         assertThat(tenant.getDisplayName()).isEqualTo("My Blog");
         assertThat(tenant.getStatus()).isEqualTo(TenantStatus.ACTIVE);
-        assertThat(tenant.getLoginMode()).isEqualTo(LoginMode.BOTH);
+        assertThat(tenant.getLoginMode()).isEqualTo(LoginMode.INTERNAL);
         assertThat(tenant.isAutoApproveOidc()).isFalse();
         assertThat(tenant.getAutoApproveEmailDomains()).isEmpty();
     }

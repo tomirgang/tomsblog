@@ -64,11 +64,11 @@ public class TenantSettingsPage extends BasePage {
     }
 
     public void submitForm() {
-        click(By.cssSelector("button[type='submit']"));
+        click(By.cssSelector(".tab-content.active button[type='submit']"));
         waitForElement(By.tagName("h2"));
     }
 
     public boolean hasSubmitButton() {
-        return isElementPresent(By.cssSelector("button[type='submit']"));
+        return isElementPresent(By.cssSelector(".tab-content.active button[type='submit']"));
     }
 }

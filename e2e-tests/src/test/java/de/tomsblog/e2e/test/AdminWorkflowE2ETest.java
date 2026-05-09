@@ -10,6 +10,7 @@ import de.tomsblog.e2e.page.auth.AdminLoginPage;
 import de.tomsblog.e2e.page.auth.RegisterPage;
 import de.tomsblog.usermanagement.UserManagementApplication;
 import java.time.Duration;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ class AdminWorkflowE2ETest implements WebDriverProvider {
 
     @Container
     static final BrowserWebDriverContainer<?> chrome =
-            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions());
+            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions()).withAccessToHost(true);
 
     @LocalServerPort
     private int port;
@@ -60,6 +61,7 @@ class AdminWorkflowE2ETest implements WebDriverProvider {
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
         registry.add("spring.flyway.enabled", () -> "true");
+        registry.add("spring.flyway.locations", () -> "classpath:db/migration/user");
         registry.add("spring.session.store-type", () -> "none");
         registry.add("spring.data.redis.repositories.enabled", () -> "false");
         registry.add(
@@ -74,7 +76,23 @@ class AdminWorkflowE2ETest implements WebDriverProvider {
         registry.add("spring.security.oauth2.client.registration.authentik.client-secret", () -> "e2e-test-secret");
         registry.add("spring.security.oauth2.client.registration.authentik.scope", () -> "openid,profile,email");
         registry.add(
-                "spring.security.oauth2.client.provider.authentik.issuer-uri", () -> "http://localhost:19999/dummy");
+                "spring.security.oauth2.client.registration.authentik.authorization-grant-type",
+                () -> "authorization_code");
+        registry.add(
+                "spring.security.oauth2.client.registration.authentik.redirect-uri",
+                () -> "{baseUrl}/login/oauth2/code/{registrationId}");
+        registry.add(
+                "spring.security.oauth2.client.provider.authentik.authorization-uri",
+                () -> "http://localhost:19999/authorize");
+        registry.add(
+                "spring.security.oauth2.client.provider.authentik.token-uri",
+                () -> "http://localhost:19999/token");
+        registry.add(
+                "spring.security.oauth2.client.provider.authentik.user-info-uri",
+                () -> "http://localhost:19999/userinfo");
+        registry.add(
+                "spring.security.oauth2.client.provider.authentik.jwk-set-uri",
+                () -> "http://localhost:19999/jwks");
     }
 
     @BeforeEach
@@ -82,6 +100,13 @@ class AdminWorkflowE2ETest implements WebDriverProvider {
         Testcontainers.exposeHostPorts(port);
         baseUrl = "http://host.testcontainers.internal:" + port;
         driver = new RemoteWebDriver(chrome.getSeleniumAddress(), new ChromeOptions());
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
     @Override
@@ -140,7 +165,7 @@ class AdminWorkflowE2ETest implements WebDriverProvider {
         // Login as admin and check user list
         loginAsAdmin();
         UserManagementPage page = new UserManagementPage(driver, baseUrl).open();
-        assertThat(page.getUserNames()).contains("pendinguser");
+        assertThat(page.getUserNames()).contains("Pending User");
     }
 
     @Test

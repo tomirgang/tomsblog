@@ -74,7 +74,7 @@ class TenantSettingsServiceTest {
 
             var result = service.getSettings(TENANT_ID);
 
-            assertThat(result.getLoginMode()).isEqualTo(LoginMode.BOTH);
+            assertThat(result.getLoginMode()).isEqualTo(LoginMode.INTERNAL);
             assertThat(result.isAutoApproveOidc()).isFalse();
             verify(repository).save(any(TenantSettings.class));
         }

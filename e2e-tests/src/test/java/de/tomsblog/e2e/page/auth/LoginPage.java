@@ -26,6 +26,11 @@ public class LoginPage extends BasePage {
     }
 
     public void login(String username, String password) {
+        // In BOTH mode, the internal login form is inside a collapsed <details> element
+        var summaries = driver.findElements(By.cssSelector("details summary"));
+        if (!summaries.isEmpty()) {
+            summaries.get(0).click();
+        }
         type(By.id("username"), username);
         type(By.id("password"), password);
         click(By.cssSelector("button[type='submit']"));

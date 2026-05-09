@@ -39,7 +39,7 @@ public class TenantAdminController {
 
     @GetMapping("/login")
     public String loginPage() {
-        return "admin-login";
+        return "tenant-admin-login";
     }
 
     @GetMapping("/tenants")
@@ -74,7 +74,7 @@ public class TenantAdminController {
             LOG.warn("Failed to load tenant settings for '{}'.", activeTenant, e);
         }
         model.addAttribute("activeTab", tab);
-        return "admin/settings";
+        return "tenant-admin/settings";
     }
 
     @PostMapping("/settings/general")

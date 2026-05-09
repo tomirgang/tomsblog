@@ -32,7 +32,7 @@ class TenantAdminControllerTest {
     @Test
     @DisplayName("SWR-073: loginPage returns login view")
     void loginPage() {
-        assertThat(controller.loginPage()).isEqualTo("admin-login");
+        assertThat(controller.loginPage()).isEqualTo("tenant-admin-login");
     }
 
     @Test
@@ -81,7 +81,7 @@ class TenantAdminControllerTest {
 
         var view = controller.showSettings(tenantId, new MockHttpSession(), "general", model);
 
-        assertThat(view).isEqualTo("admin/settings");
+        assertThat(view).isEqualTo("tenant-admin/settings");
         assertThat(model.get("tenant")).isNotNull();
         assertThat(model.get("activeTab")).isEqualTo("general");
     }
@@ -94,7 +94,7 @@ class TenantAdminControllerTest {
 
         var view = controller.showSettings(UUID.randomUUID(), new MockHttpSession(), "oidc", model);
 
-        assertThat(view).isEqualTo("admin/settings");
+        assertThat(view).isEqualTo("tenant-admin/settings");
         assertThat(model.get("activeTab")).isEqualTo("oidc");
     }
 

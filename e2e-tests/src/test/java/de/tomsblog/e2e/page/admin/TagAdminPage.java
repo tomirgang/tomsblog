@@ -62,8 +62,10 @@ public class TagAdminPage extends BasePage {
 
     public TagAdminPage deleteTag(String name) {
         WebElement row = findTagRow(name);
-        row.findElement(By.xpath(".//button[text()='Löschen']")).click();
-        driver.switchTo().alert().accept();
+        WebElement deleteButton = row.findElement(By.xpath(".//button[text()='Löschen']"));
+        // Submit the parent form directly via JS to bypass onclick confirm dialog
+        WebElement form = deleteButton.findElement(By.xpath("./.."));
+        ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].submit()", form);
         waitForElement(By.tagName("h1"));
         return this;
     }

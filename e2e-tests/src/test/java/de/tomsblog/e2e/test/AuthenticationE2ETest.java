@@ -8,6 +8,7 @@ import de.tomsblog.e2e.page.auth.AdminLoginPage;
 import de.tomsblog.e2e.page.auth.LoginPage;
 import de.tomsblog.e2e.page.auth.RegisterPage;
 import de.tomsblog.usermanagement.UserManagementApplication;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class AuthenticationE2ETest implements WebDriverProvider {
 
     @Container
     static final BrowserWebDriverContainer<?> chrome =
-            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions());
+            new BrowserWebDriverContainer<>().withCapabilities(new ChromeOptions()).withAccessToHost(true);
 
     @LocalServerPort
     private int port;
@@ -54,6 +55,7 @@ class AuthenticationE2ETest implements WebDriverProvider {
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
         registry.add("spring.flyway.enabled", () -> "true");
+        registry.add("spring.flyway.locations", () -> "classpath:db/migration/user");
         registry.add("spring.session.store-type", () -> "none");
         registry.add("spring.data.redis.repositories.enabled", () -> "false");
         registry.add(
@@ -64,12 +66,28 @@ class AuthenticationE2ETest implements WebDriverProvider {
         registry.add("blog.admin.username", () -> "admin");
         registry.add("blog.admin.password", () -> "e2e-test-admin-password-12345");
         registry.add("service.api-key", () -> "e2e-test-api-key");
-        // Minimal OIDC config to satisfy Spring auto-configuration
+        // Minimal OIDC config to satisfy Spring auto-configuration (no issuer-uri to avoid discovery)
         registry.add("spring.security.oauth2.client.registration.authentik.client-id", () -> "e2e-test");
         registry.add("spring.security.oauth2.client.registration.authentik.client-secret", () -> "e2e-test-secret");
         registry.add("spring.security.oauth2.client.registration.authentik.scope", () -> "openid,profile,email");
         registry.add(
-                "spring.security.oauth2.client.provider.authentik.issuer-uri", () -> "http://localhost:19999/dummy");
+                "spring.security.oauth2.client.registration.authentik.authorization-grant-type",
+                () -> "authorization_code");
+        registry.add(
+                "spring.security.oauth2.client.registration.authentik.redirect-uri",
+                () -> "{baseUrl}/login/oauth2/code/{registrationId}");
+        registry.add(
+                "spring.security.oauth2.client.provider.authentik.authorization-uri",
+                () -> "http://localhost:19999/authorize");
+        registry.add(
+                "spring.security.oauth2.client.provider.authentik.token-uri",
+                () -> "http://localhost:19999/token");
+        registry.add(
+                "spring.security.oauth2.client.provider.authentik.user-info-uri",
+                () -> "http://localhost:19999/userinfo");
+        registry.add(
+                "spring.security.oauth2.client.provider.authentik.jwk-set-uri",
+                () -> "http://localhost:19999/jwks");
     }
 
     @BeforeEach
@@ -77,6 +95,13 @@ class AuthenticationE2ETest implements WebDriverProvider {
         Testcontainers.exposeHostPorts(port);
         baseUrl = "http://host.testcontainers.internal:" + port;
         driver = new RemoteWebDriver(chrome.getSeleniumAddress(), new ChromeOptions());
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
     @Override

@@ -17,7 +17,7 @@ spring:
 
   flyway:
     enabled: true
-    locations: classpath:db/migration
+    locations: classpath:db/migration/tenant
 
 blog:
   default-tenant-id: "00000000-0000-0000-0000-000000000001"

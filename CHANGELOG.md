@@ -58,6 +58,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Fixed
 
+- Standard-LoginMode bei neuen Tenants/TenantSettings von BOTH auf INTERNAL geändert: Bei Neuanlage ohne explizite OIDC-Konfiguration schlug die Validierung fehl, da BOTH die Felder oidcIssuerUrl und oidcClientId erfordert (SWR-044, SWR-073)
+- Template-Namenskollision zwischen Tenant-Management und User-Management: admin-login.html und admin/settings.html in tenant-management umbenannt zu tenant-admin-login.html und tenant-admin/settings.html, da beide Services die Shared UI Library nutzen und identische Template-Namen zu Konflikten führten (SWR-073)
+- E2E-Tests repariert: 64 Tests in 6 Testklassen laufen stabil (SWR-078 bis SWR-086)
+  - CDP-basierte HTTP-Basic-Authentifizierung statt URL-Credentials (Chrome 135+ entfernt Credentials aus URLs)
+  - Locale-Auswahl in Post-Formularen ergänzt (Pflichtfeld, ohne Auswahl schlug Validierung fehl)
+  - Submit-Button-Selektoren auf main/tab-content eingeschränkt (Logout-Button im Header wurde fälschlich geklickt)
+  - XPath-Selektoren für Post-spezifische Edit/Publish/Preview-Links (Mehrfach-Posts in Liste)
+  - Test-Reihenfolge mit @Order für zustandsabhängige Tag-Tests
+  - JS-confirm-Dialog bei Tag-Löschung per form.submit() umgangen (Chrome auto-dismiss)
+  - Login-Formular: Collapsed details-Element wird vor Eingabe expandiert
+  - AdminLoginPage wartet nach Login auf URL-Änderung
 - Mermaid-Diagramme in Blog-Posts wurden als Roh-Codeblöcke angezeigt: Flexmark rendert Mermaid-Blöcke als `<pre><code class="language-mermaid">`, aber Mermaid.js erwartet `<pre class="mermaid">`. JavaScript wandelt die Elemente jetzt vor der Mermaid-Initialisierung um und highlight.js verarbeitet Mermaid-Blöcke nicht mehr.
 - Doorstop-Referenzen in IMP021 und IMP025 zeigten auf alte Pfade unter services/blog-content, obwohl layout/default.html, fragments/footer.html und static/css/custom.css nach libs/shared-ui verschoben wurden
 

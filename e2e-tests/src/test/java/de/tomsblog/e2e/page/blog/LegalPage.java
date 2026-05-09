@@ -17,18 +17,18 @@ public class LegalPage extends BasePage {
 
     public LegalPage openImpressum() {
         navigateTo("/impressum");
-        waitForElement(By.tagName("h1"));
+        waitForElement(By.tagName("h2"));
         return this;
     }
 
     public LegalPage openPrivacy() {
         navigateTo("/privacy");
-        waitForElement(By.tagName("h1"));
+        waitForElement(By.tagName("h2"));
         return this;
     }
 
     public String getHeading() {
-        return getText(By.tagName("h1"));
+        return getText(By.tagName("h2"));
     }
 
     public String getContent() {

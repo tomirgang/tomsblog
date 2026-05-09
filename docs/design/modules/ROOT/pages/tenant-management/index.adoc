@@ -72,7 +72,7 @@ Die Login-Mode-Konfiguration (SWR-044) steuert, ob Benutzer sich über interne A
 
 === LoginMode (Enum)
 
-Das LoginMode-Enum wird aus dem User Management Service migriert. Es bestimmt die verfügbaren Authentifizierungsmethoden pro Tenant.
+Das LoginMode-Enum wird aus dem User Management Service migriert. Es bestimmt die verfügbaren Authentifizierungsmethoden pro Tenant. Bei Neuanlage eines Tenants wird der LoginMode auf `INTERNAL` gesetzt (SWR-044). Die Umstellung auf `OIDC` oder `BOTH` erfordert die vorherige Konfiguration der OIDC-Felder.
 
 == Application Layer
 

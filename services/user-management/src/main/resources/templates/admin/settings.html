@@ -43,7 +43,7 @@
                     <legend>Login-Methode</legend>
                     <label>
                         <input type="radio" name="loginMode" value="INTERNAL"
-                               th:checked="${settings?.loginMode?.name() == 'INTERNAL'}">
+                               th:checked="${settings == null or settings.loginMode?.name() == 'INTERNAL'}">
                         Intern (formbasiert)
                     </label>
                     <label>
