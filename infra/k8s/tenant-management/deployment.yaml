@@ -26,7 +26,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: tenant-management
-          image: ghcr.io/tomirgang/tomsblog/tenant-management:0.9.4 # {"$imagepolicy": "flux-system:tenant-management"}
+          image: ghcr.io/tomirgang/tomsblog/tenant-management:0.9.5 # {"$imagepolicy": "flux-system:tenant-management"}
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
