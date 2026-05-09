@@ -2,6 +2,7 @@ package de.tomsblog.tenantmanagement.adapter.inbound.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -10,6 +11,7 @@ import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.tenantmanagement.application.port.inbound.TenantManagementUseCase;
 import de.tomsblog.tenantmanagement.domain.model.Tenant;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -123,6 +125,27 @@ class TenantAdminControllerTest {
                 controller.updateGeneralSettings(tenantId, new MockHttpSession(), "INTERNAL", false, "", "Name", null);
 
         assertThat(view).isEqualTo("redirect:/tenant/admin/settings?tab=general");
+    }
+
+    @Test
+    @DisplayName("SWR-073: updateGeneralSettings filters empty domain segments")
+    void updateGeneralSettingsEmptyDomainSegments() {
+        var tenantId = UUID.randomUUID();
+        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any()))
+                .thenReturn(Tenant.create(new TenantId(tenantId), "s", "N"));
+
+        var view = controller.updateGeneralSettings(
+                tenantId, new MockHttpSession(), "INTERNAL", false, "a,,b, ,c", "Name", null);
+
+        assertThat(view).isEqualTo("redirect:/tenant/admin/settings?tab=general");
+        verify(useCase)
+                .updateGeneralSettings(
+                        eq(new TenantId(tenantId)),
+                        eq("Name"),
+                        any(),
+                        eq("INTERNAL"),
+                        eq(false),
+                        eq(Set.of("a", "b", "c")));
     }
 
     @Test
