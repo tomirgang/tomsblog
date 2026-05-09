@@ -1,0 +1,23 @@
+active: true
+derived: false
+header: |
+  RabbitMQ-Cluster auf Kubernetes (RabbitMQ Cluster Operator)
+level: 16.0
+links:
+- STK038: KHiHAEznWHNPCQQnyqbVPELnG8zoeUVtXDno2cuyrjw=
+normative: true
+ref: ''
+reviewed: null
+text: |
+  RabbitMQ muss als Single-Node-Cluster auf Kubernetes betrieben werden.
+  Die Installation erfolgt über den RabbitMQ Cluster Operator (Bitnami
+  Helm Chart via Flux HelmRelease, ADR-0026). Der Cluster umfasst:
+  ein RabbitmqCluster-Replikat mit Management- und Prometheus-Plugin,
+  RabbitMQ 4.x (management-alpine) passend zur lokalen
+  Entwicklungsumgebung, Ressourcenlimits (256Mi/512Mi Memory,
+  100m/500m CPU), persistenten Storage (2Gi, hcloud-volumes),
+  Default-VHost "tomsblog" für Konsistenz mit Docker Compose.
+  Quorum Queues sichern Durability (SWA-014). Der RabbitMQ-Namespace
+  erhält eine Default-Deny-Ingress-NetworkPolicy mit Ausnahme für den
+  tomsblog-Namespace auf Port 5672 (AMQP) und 15672 (Management).
+  Die Kustomize-Manifeste liegen in infra/k8s/rabbitmq/.

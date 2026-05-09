@@ -1,0 +1,27 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rabbitmq-cluster
+  namespace: rabbitmq
+spec:
+  replicas: 1
+  image: rabbitmq:4-management-alpine
+  persistence:
+    storageClassName: hcloud-volumes
+    storage: 2Gi
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+    limits:
+      memory: 512Mi
+      cpu: 500m
+  rabbitmq:
+    additionalPlugins:
+      - rabbitmq_management
+      - rabbitmq_prometheus
+    additionalConfig: |
+      default_vhost = tomsblog
+      vm_memory_high_watermark.relative = 0.7
+      disk_free_limit.relative = 1.5
+      consumer_timeout = 3600000

@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- RabbitMQ-Cluster-Konfiguration für Kubernetes: RabbitMQ Cluster Operator (Bitnami Helm Chart v4.4.34) via Flux HelmRelease, Single-Node-Cluster (RabbitMQ 4.x management-alpine), Management- und Prometheus-Plugin, Quorum-Queue-ready, 2Gi persistenter Storage (hcloud-volumes), Default-VHost "tomsblog", NetworkPolicies mit Default-Deny und Ausnahme für tomsblog-Namespace (INF-016, SWA-014, ADR-0026)
 - Kafka-Cluster-Konfiguration für Kubernetes: Strimzi Operator (v0.45.0) via Flux HelmRelease, Single-Node KRaft-Cluster (Kafka 3.9.0), KafkaTopic-CRDs für post.created/post.updated/post.published, NetworkPolicies, Egress-Regel für tomsblog-Namespace (INF-015, SWA-005, ADR-0026)
 
 ## [0.9.6] - 2026-05-09

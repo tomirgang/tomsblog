@@ -11,6 +11,7 @@ resources:
   - postgres/scheduled-backup.yaml
   - redis
   - kafka
+  - rabbitmq
   - pvc.yaml
   - blog-content
   - user-management

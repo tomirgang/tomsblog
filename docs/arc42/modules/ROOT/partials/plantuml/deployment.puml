@@ -11,8 +11,14 @@ node "Hetzner K8s Cluster (3 Nodes)" {
     database "PostgreSQL\n(blog-content,\nCloudNativePG)" as db_blog
     database "PostgreSQL\n(user-mgmt,\nCloudNativePG)" as db_user
     [Redis] as redis
+  }
+
+  node "Namespace: kafka" {
     queue "Kafka\n(Strimzi)" as kafka
-    queue "RabbitMQ" as rabbitmq
+  }
+
+  node "Namespace: rabbitmq" {
+    queue "RabbitMQ\n(Cluster Operator)" as rabbitmq
   }
 
   node "Namespace: auth" {
