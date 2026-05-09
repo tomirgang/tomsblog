@@ -9,11 +9,11 @@ links:
 normative: true
 ref: ''
 references:
-- path: services/blog-content/src/main/resources/db/migration/V1__create_posts_schema.sql
+- path: services/blog-content/src/main/resources/db/migration/blog/V1__create_posts_schema.sql
   type: file
-- path: services/blog-content/src/main/resources/db/migration/V2__create_tags_schema.sql
+- path: services/blog-content/src/main/resources/db/migration/blog/V2__create_tags_schema.sql
   type: file
-- path: services/blog-content/src/main/resources/db/migration/V3__create_translations_schema.sql
+- path: services/blog-content/src/main/resources/db/migration/blog/V3__create_translations_schema.sql
   type: file
 reviewed: 0IpVSlb-tLFmzllLAUa7FfxPl8W3ozImrQ5ddAaTn9I=
 text: |

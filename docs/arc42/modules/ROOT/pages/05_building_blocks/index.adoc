@@ -13,7 +13,7 @@ Der Blog Content Service setzt die zentrale Blog-Funktionalität um (SWR-001, SW
 
 plantuml::partial$plantuml/building-blocks-l2.puml[format=svg]
 
-Das Detail Design des Blog Content Service mit Klassendiagrammen und Ablaufbeschreibungen ist in der xref:tomsblog-design::blog-content/index.adoc[Software Detail Design Dokumentation] beschrieben.
+Das Detail Design des Blog Content Service mit Klassendiagrammen und Ablaufbeschreibungen ist in der xref:{page-component-version}@tomsblog-design::blog-content/index.adoc[Software Detail Design Dokumentation] beschrieben.
 
 === Domain Layer (domain/)
 
@@ -221,7 +221,7 @@ Die Datenbank-Schema-Verwaltung des User Management Service erfolgt analog zum B
 
 Der Tenant Management Service verwaltet den Tenant-Lifecycle und die Tenant-Konfiguration (SWR-072, SWA-034, ADR-0031). Er uebernimmt die Verantwortlichkeiten, die bisher im User Management Service als TenantSettings modelliert waren, als eigenstaendiger Bounded Context.
 
-Das Detail Design des Tenant Management Service ist in der xref:tomsblog-design::tenant-management/index.adoc[Software Detail Design Dokumentation] beschrieben.
+Das Detail Design des Tenant Management Service ist in der xref:{page-component-version}@tomsblog-design::tenant-management/index.adoc[Software Detail Design Dokumentation] beschrieben.
 
 === Domain Layer (domain/)
 

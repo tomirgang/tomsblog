@@ -14,7 +14,7 @@ references:
   type: file
 - path: services/blog-content/src/main/java/de/tomsblog/blogcontent/adapter/outbound/persistence/PostMapper.java
   type: file
-- path: services/blog-content/src/main/resources/db/migration/V4__add_content_type_to_posts.sql
+- path: services/blog-content/src/main/resources/db/migration/blog/V4__add_content_type_to_posts.sql
   type: file
 reviewed: HQN6njySDHaOTshb-EvrerZrF3vlQX8DItDmhkqN5s8=
 text: |
