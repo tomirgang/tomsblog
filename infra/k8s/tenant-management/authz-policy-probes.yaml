@@ -23,3 +23,4 @@ spec:
   requiredAuthenticationRefs:
     - name: kubelet-probes-tenant-management
       kind: NetworkAuthentication
+      group: policy.linkerd.io
