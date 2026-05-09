@@ -149,6 +149,22 @@ class AuthAdminControllerTest {
     }
 
     @Test
+    @DisplayName("updateGeneralSettings filters empty segments from domain list")
+    void updateGeneralSettingsFiltersEmptyDomainSegments() {
+        MockHttpSession session = new MockHttpSession();
+        controller.updateGeneralSettings(TENANT_UUID, session, "INTERNAL", false, "a.com,,b.com", "Blog", null);
+
+        verify(tenantSettingsUseCase)
+                .updateGeneralSettings(
+                        eq(TENANT_ID),
+                        eq("Blog"),
+                        any(),
+                        eq(LoginMode.INTERNAL),
+                        eq(false),
+                        eq(Set.of("a.com", "b.com")));
+    }
+
+    @Test
     @DisplayName("updateOidcSettings delegates and redirects")
     void updateOidcSettings() {
         MockHttpSession session = new MockHttpSession();

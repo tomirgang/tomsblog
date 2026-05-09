@@ -165,4 +165,40 @@ class DefaultTenantFilterTest {
         var filteredRequest = (jakarta.servlet.http.HttpServletRequest) chain.getRequest();
         assertThat(filteredRequest.getHeader("X-Tenant-Id")).isEqualTo("11111111-1111-1111-1111-111111111111");
     }
+
+    @Test
+    @DisplayName("SWR-072: wrapper getHeaders falls back to original for non-injected names")
+    void wrapperGetHeaders_fallsBackToOriginal() throws ServletException, IOException {
+        var filter = new DefaultTenantFilter();
+        var request = new MockHttpServletRequest();
+        // No X-Tenant-Id header, so wrapper is created
+        request.addHeader("Accept", "application/json");
+        var response = new MockHttpServletResponse();
+        var chain = new MockFilterChain();
+
+        filter.doFilterInternal(request, response, chain);
+
+        var filteredRequest = (jakarta.servlet.http.HttpServletRequest) chain.getRequest();
+        // getHeaders for a non-injected header should delegate to the original
+        var acceptHeaders = filteredRequest.getHeaders("Accept");
+        assertThat(acceptHeaders.hasMoreElements()).isTrue();
+        assertThat(acceptHeaders.nextElement()).isEqualTo("application/json");
+    }
+
+    @Test
+    @DisplayName("SWR-072: wrapper getHeaderNames includes both injected and original names")
+    void wrapperGetHeaderNames_includesAll() throws ServletException, IOException {
+        var filter = new DefaultTenantFilter();
+        var request = new MockHttpServletRequest();
+        // No X-Tenant-Id header, so wrapper is created
+        request.addHeader("Accept", "text/html");
+        var response = new MockHttpServletResponse();
+        var chain = new MockFilterChain();
+
+        filter.doFilterInternal(request, response, chain);
+
+        var filteredRequest = (jakarta.servlet.http.HttpServletRequest) chain.getRequest();
+        var names = java.util.Collections.list(filteredRequest.getHeaderNames());
+        assertThat(names).contains("X-Tenant-Id", "Accept");
+    }
 }

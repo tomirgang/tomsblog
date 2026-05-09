@@ -2,6 +2,7 @@ package de.tomsblog.usermanagement.adapter.outbound.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -47,5 +48,15 @@ class TenantSettingsJpaEntityTest {
         entity.preUpdate();
 
         assertThat(entity.getUpdatedAt()).isAfterOrEqualTo(first);
+    }
+
+    @Test
+    @DisplayName("SWR-044: setUpdatedAt sets the updatedAt field")
+    void setUpdatedAt_setsField() {
+        var entity = new TenantSettingsJpaEntity();
+        Instant now = Instant.now();
+        entity.setUpdatedAt(now);
+
+        assertThat(entity.getUpdatedAt()).isEqualTo(now);
     }
 }

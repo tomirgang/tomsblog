@@ -292,6 +292,64 @@ class TenantSettingsGrpcServiceTest {
     }
 
     @Test
+    @DisplayName("SWR-053: listTenants handles null displayName")
+    void listTenants_nullDisplayName() {
+        var settings = TenantSettings.reconstitute(
+                TenantId.of(TENANT_ID), LoginMode.BOTH, false, Set.of(), null, null, null, null, null, null, null);
+        when(tenantSettingsUseCase.listAllTenants()).thenReturn(List.of(settings));
+
+        var request = ListTenantsRequest.newBuilder().build();
+
+        var result = new AtomicReference<ListTenantsResponse>();
+        StreamObserver<ListTenantsResponse> observer = new StreamObserver<>() {
+            @Override
+            public void onNext(ListTenantsResponse value) {
+                result.set(value);
+            }
+
+            @Override
+            public void onError(Throwable t) {}
+
+            @Override
+            public void onCompleted() {}
+        };
+
+        grpcService.listTenants(request, observer);
+
+        assertThat(result.get().getTenants(0).getDisplayName()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("SWR-044: getTenantSettings maps null displayName to default")
+    void getTenantSettings_nullDisplayName() {
+        var settings = TenantSettings.reconstitute(
+                TenantId.of(TENANT_ID), LoginMode.BOTH, false, Set.of(), null, null, null, null, null, null, null);
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        var request = GetTenantSettingsRequest.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .build();
+
+        var result = new AtomicReference<TenantSettingsResponse>();
+        StreamObserver<TenantSettingsResponse> observer = new StreamObserver<>() {
+            @Override
+            public void onNext(TenantSettingsResponse value) {
+                result.set(value);
+            }
+
+            @Override
+            public void onError(Throwable t) {}
+
+            @Override
+            public void onCompleted() {}
+        };
+
+        grpcService.getTenantSettings(request, observer);
+
+        assertThat(result.get().getDisplayName()).isEqualTo("Toms Blog");
+    }
+
+    @Test
     @DisplayName("SWR-055: updateTenantSettings passes impressum and privacy content")
     void updateTenantSettings_withLegalContent() {
         var settings = TenantSettings.reconstitute(

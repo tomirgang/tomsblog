@@ -153,6 +153,17 @@ class PostServiceTest {
     }
 
     @Test
+    @DisplayName("SWR-001: getPost returns post when found")
+    void getPost_returnsPost() {
+        Post post = Post.create(tenantId, authorId, "My Post", "Content", PostLocale.german());
+        when(postRepository.findByIdAndTenantId(post.getId(), tenantId)).thenReturn(Optional.of(post));
+
+        Post result = postService.getPost(post.getId(), tenantId);
+
+        assertThat(result).isEqualTo(post);
+    }
+
+    @Test
     @DisplayName("SWR-009: listPosts returns all posts for tenant")
     void listPosts_returnsAllForTenant() {
         Post post1 = Post.create(tenantId, authorId, "Post 1", "Content 1", PostLocale.german());
@@ -428,6 +439,16 @@ class PostServiceTest {
     }
 
     @Test
+    @DisplayName("SWR-039: findNextPublishedPost throws when slug not found")
+    void findNextPublishedPost_throwsWhenNotFound() {
+        Slug slug = new Slug("missing");
+        when(postRepository.findBySlugAndTenantId(slug, tenantId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> postService.findNextPublishedPost(slug, tenantId))
+                .isInstanceOf(PostNotFoundException.class);
+    }
+
+    @Test
     @DisplayName("SWR-040: getPostIfPublished returns published post")
     void getPostIfPublished_returnsPublishedPost() {
         Post post = Post.create(tenantId, authorId, "Published", "Content", PostLocale.german());
@@ -580,6 +601,23 @@ class PostServiceTest {
 
         assertThat(result.getTags()).containsExactly(newTag);
         verify(auditLogger).log(any());
+    }
+
+    @Test
+    @DisplayName("SWR-085: syncPostTags keeps overlapping tags unchanged")
+    void syncPostTags_overlappingTags_keptUnchanged() {
+        TagId kept = TagId.generate();
+        TagId removed = TagId.generate();
+        TagId added = TagId.generate();
+        Post post = Post.create(tenantId, authorId, "Tagged Post", "Content", PostLocale.german());
+        post.addTag(kept);
+        post.addTag(removed);
+        when(postRepository.findByIdAndTenantId(post.getId(), tenantId)).thenReturn(Optional.of(post));
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Post result = postService.syncPostTags(post.getId(), tenantId, Set.of(kept, added));
+
+        assertThat(result.getTags()).containsExactlyInAnyOrder(kept, added);
     }
 
     @Test

@@ -274,6 +274,28 @@ class TenantSettingsServiceTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("oidcClientId is required");
         }
+
+        @Test
+        @DisplayName("SWR-061: validates blank clientId for OIDC mode")
+        void validatesBlankClientIdForOidcMode() {
+            var settings = TenantSettings.create(TENANT_ID);
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+
+            assertThatThrownBy(() -> service.updateSettings(
+                            TENANT_ID,
+                            LoginMode.OIDC,
+                            false,
+                            Set.of(),
+                            "Blog",
+                            null,
+                            null,
+                            null,
+                            "https://auth.example.com",
+                            "  ",
+                            null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("oidcClientId is required");
+        }
     }
 
     @Nested
@@ -388,6 +410,19 @@ class TenantSettingsServiceTest {
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
             var result = service.updateOidcSettings(TENANT_ID, "https://auth.example.com", "client-id", "");
+
+            assertThat(result.getOidcClientSecret()).isEqualTo("existing-secret");
+        }
+
+        @Test
+        @DisplayName("SWR-071: preserves existing secret when input is null")
+        void preservesSecretWhenNull() {
+            var settings = TenantSettings.create(TENANT_ID);
+            settings.updateOidcClientSecret("existing-secret");
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            var result = service.updateOidcSettings(TENANT_ID, "https://auth.example.com", "client-id", null);
 
             assertThat(result.getOidcClientSecret()).isEqualTo("existing-secret");
         }

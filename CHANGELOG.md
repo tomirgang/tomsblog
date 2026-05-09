@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- Umfangreiche Testabdeckung erhöht (alle Services auf 97+ % Branch Coverage)
+  - blog-content: 100.0 % Instruction, 97.9 % Branch, 100.0 % Line Coverage
+  - tenant-management: 99.7 % Instruction, 98.0 % Branch, 99.6 % Line Coverage
+  - user-management: 99.8 % Instruction, 97.5 % Branch, 99.8 % Line Coverage
+  - Neue Tests für: GlobalExceptionHandler, SecurityAuditorAware, WebExceptionHandler,
+    GrpcExceptionInterceptor, PostFormData, DefaultTenantFilter, PostService,
+    UserManagementClient, TenantSettingsService, TenantManagementService,
+    BlogViewController (Serien-Navigation, Tag-Auflösung, Markdown-Excerpt),
+    AuthAdminController (Domain-Parsing), JpaPostRepository, JpaUserProfileRepository,
+    TenantSettingsJpaEntity, TenantSettingsGrpcService
+
 - Auditlog-Ansicht in der Admin-UI (STK-054, SWR-087, SWR-088, SWA-036)
   - Paginierte Auflistung aller Audit-Einträge pro Tenant (neueste zuerst)
   - Filterung nach Aktionstyp, Entitätstyp und Akteur per Dropdown-Selektor

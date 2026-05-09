@@ -818,6 +818,133 @@ class BlogViewControllerTest {
     }
 
     @Test
+    @DisplayName("SWR-040: Series prev same as chrono prev is suppressed")
+    void showPost_seriesPrevSameAsChronoPrev_notShown() throws Exception {
+        Post chronoPrev = Post.create(TenantId.of(tenantId), authorId, "Chrono Prev", "Content", PostLocale.german());
+        chronoPrev.publish();
+
+        Post current = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                authorId,
+                "Current",
+                Slug.fromTitle("Current"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                java.util.Set.of(),
+                List.of(),
+                List.of(),
+                java.time.Instant.now(),
+                null,
+                null,
+                chronoPrev.getId(),
+                null,
+                null,
+                null);
+
+        when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
+                .thenReturn(current);
+        when(postUseCase.findPreviousPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.of(chronoPrev));
+        when(postUseCase.findNextPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/posts/current").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeDoesNotExist("seriesPreviousPost"));
+
+        verify(postUseCase, never()).getPostIfPublished(any(), any());
+    }
+
+    @Test
+    @DisplayName("SWR-040: Series prev different from chrono prev is shown")
+    void showPost_seriesPrevDifferentFromChronoPrev_isShown() throws Exception {
+        Post chronoPrev = Post.create(TenantId.of(tenantId), authorId, "Chrono Prev", "Content", PostLocale.german());
+        chronoPrev.publish();
+
+        PostId seriesPrevId = PostId.generate();
+        Post seriesPrev = Post.create(TenantId.of(tenantId), authorId, "Series Prev", "Content", PostLocale.german());
+        seriesPrev.publish();
+
+        Post current = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                authorId,
+                "Current",
+                Slug.fromTitle("Current"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                java.util.Set.of(),
+                List.of(),
+                List.of(),
+                java.time.Instant.now(),
+                null,
+                null,
+                seriesPrevId,
+                null,
+                null,
+                null);
+
+        when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
+                .thenReturn(current);
+        when(postUseCase.findPreviousPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.of(chronoPrev));
+        when(postUseCase.findNextPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+        when(postUseCase.getPostIfPublished(eq(seriesPrevId), any(TenantId.class)))
+                .thenReturn(Optional.of(seriesPrev));
+
+        mockMvc.perform(get("/posts/current").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("seriesPreviousPost"));
+    }
+
+    @Test
+    @DisplayName("SWR-040: Series next same as chrono next is suppressed")
+    void showPost_seriesNextSameAsChronoNext_notShown() throws Exception {
+        Post chronoNext = Post.create(TenantId.of(tenantId), authorId, "Chrono Next", "Content", PostLocale.german());
+        chronoNext.publish();
+
+        Post current = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                authorId,
+                "Current",
+                Slug.fromTitle("Current"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                java.util.Set.of(),
+                List.of(),
+                List.of(),
+                java.time.Instant.now(),
+                null,
+                null,
+                null,
+                chronoNext.getId(),
+                null,
+                null);
+
+        when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
+                .thenReturn(current);
+        when(postUseCase.findPreviousPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+        when(postUseCase.findNextPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.of(chronoNext));
+
+        mockMvc.perform(get("/posts/current").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeDoesNotExist("seriesNextPost"));
+
+        verify(postUseCase, never()).getPostIfPublished(any(), any());
+    }
+
+    @Test
     @DisplayName("SWR-076: GET /posts/{id}/preview returns show view with preview flag for draft post")
     @WithMockUser(username = "author", roles = "AUTHOR")
     void previewPost_draftPost_returnsShowViewWithPreviewFlag() throws Exception {
@@ -887,16 +1014,17 @@ class BlogViewControllerTest {
     @WithMockUser(username = "admin", roles = "ADMIN")
     void editPostForm_includesAvailableTags() throws Exception {
         UUID postId = UUID.randomUUID();
+        Tag tag = Tag.create(TenantId.of(tenantId), "Spring");
         Post post =
                 Post.create(TenantId.of(tenantId), authorId, "Existing Post", "Existing content", PostLocale.german());
+        post.addTag(tag.getId());
         when(postUseCase.getPost(any(PostId.class), any(TenantId.class))).thenReturn(post);
-
-        Tag tag = Tag.create(TenantId.of(tenantId), "Spring");
         when(tagUseCase.listTags(any(TenantId.class))).thenReturn(List.of(tag));
 
         mockMvc.perform(get("/posts/{id}/edit", postId).header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("availableTags"));
+                .andExpect(model().attributeExists("availableTags"))
+                .andExpect(model().attribute("editMode", true));
     }
 
     @Test
@@ -961,6 +1089,44 @@ class BlogViewControllerTest {
     }
 
     @Test
+    @DisplayName("SWR-086: GET /posts/{slug} filters orphaned tags")
+    void showPost_orphanedTag_filtered() throws Exception {
+        TagId orphanedTagId = TagId.generate();
+        Tag existingTag = Tag.create(TenantId.of(tenantId), "Java");
+        Post post = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                authorId,
+                "Tagged Post",
+                Slug.fromTitle("Tagged Post"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                java.util.Set.of(orphanedTagId, existingTag.getId()),
+                List.of(),
+                List.of(),
+                java.time.Instant.now(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+        when(postUseCase.getPublishedPostBySlug(any(Slug.class), any(TenantId.class)))
+                .thenReturn(post);
+        when(postUseCase.findPreviousPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+        when(postUseCase.findNextPublishedPost(any(Slug.class), any(TenantId.class)))
+                .thenReturn(Optional.empty());
+        when(tagUseCase.listTags(any(TenantId.class))).thenReturn(List.of(existingTag));
+
+        mockMvc.perform(get("/posts/tagged-post").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("tags"));
+    }
+
+    @Test
     @DisplayName("SWR-086: GET /posts includes postTags map in model")
     void listPosts_includesPostTagsMap() throws Exception {
         Tag tag = Tag.create(TenantId.of(tenantId), "Java");
@@ -991,6 +1157,99 @@ class BlogViewControllerTest {
         mockMvc.perform(get("/posts").header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("postTags"));
+    }
+
+    @Test
+    @DisplayName("SWR-086: GET /posts filters orphaned tags in list view")
+    void listPosts_orphanedTag_filteredInPostTagsMap() throws Exception {
+        TagId orphanedTagId = TagId.generate();
+        Post post = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                authorId,
+                "Orphaned",
+                Slug.fromTitle("Orphaned"),
+                "Content",
+                ContentType.HTML,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                java.util.Set.of(orphanedTagId),
+                List.of(),
+                List.of(),
+                java.time.Instant.now(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of(post));
+        when(tagUseCase.listTags(any(TenantId.class))).thenReturn(List.of());
+
+        mockMvc.perform(get("/posts").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("postTags"));
+    }
+
+    @Test
+    @DisplayName("SWR-036: List view with blank content produces empty excerpt")
+    void listPosts_blankContent_producesEmptyExcerpt() throws Exception {
+        Post post = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                authorId,
+                "Empty",
+                Slug.fromTitle("Empty"),
+                "",
+                ContentType.HTML,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                java.util.Set.of(),
+                List.of(),
+                List.of(),
+                java.time.Instant.now(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of(post));
+
+        mockMvc.perform(get("/posts").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("excerpts"));
+    }
+
+    @Test
+    @DisplayName("SWR-035: List view with MARKDOWN content renders as HTML")
+    void listPosts_markdownContent_rendersExcerptAsHtml() throws Exception {
+        Post post = Post.reconstitute(
+                PostId.generate(),
+                TenantId.of(tenantId),
+                authorId,
+                "MD Post",
+                Slug.fromTitle("MD Post"),
+                "# Hello\n\nWorld",
+                ContentType.MARKDOWN,
+                PostStatus.PUBLISHED,
+                PostLocale.german(),
+                java.util.Set.of(),
+                List.of(),
+                List.of(),
+                java.time.Instant.now(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+        when(postUseCase.listPublishedPosts(any(TenantId.class))).thenReturn(List.of(post));
+        when(markdownRenderer.renderToHtml("# Hello\n\nWorld")).thenReturn("<h1>Hello</h1>\n\n<p>World</p>");
+
+        mockMvc.perform(get("/posts").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("excerpts"));
     }
 
     @Test
@@ -1036,6 +1295,30 @@ class BlogViewControllerTest {
                         .param("contentType", "HTML")
                         .param("locale", "de")
                         .param("tagIds", tagId.toString()))
+                .andExpect(status().is3xxRedirection());
+
+        verify(postUseCase).syncPostTags(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("SWR-085: POST /posts/{id} filters blank tag IDs during sync")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void updatePost_withBlankTagId_filtersBlankEntries() throws Exception {
+        UUID postId = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Updated", "Content", PostLocale.german());
+        when(postUseCase.updatePost(any(UpdatePostCommand.class))).thenReturn(post);
+        when(postUseCase.syncPostTags(any(), any(), any())).thenReturn(post);
+
+        UUID tagId = UUID.randomUUID();
+        mockMvc.perform(post("/posts/{id}", postId)
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .param("title", "Updated")
+                        .param("content", "Content")
+                        .param("contentType", "HTML")
+                        .param("locale", "de")
+                        .param("tagIds", tagId.toString())
+                        .param("tagIds", ""))
                 .andExpect(status().is3xxRedirection());
 
         verify(postUseCase).syncPostTags(any(), any(), any());

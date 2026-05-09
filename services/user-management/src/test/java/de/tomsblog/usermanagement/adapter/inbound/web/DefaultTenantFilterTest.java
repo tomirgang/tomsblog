@@ -139,4 +139,18 @@ class DefaultTenantFilterTest {
 
         filter.doFilter(request, response, chain);
     }
+
+    @Test
+    @DisplayName("wrapper delegates getHeader for non-injected header names")
+    void wrapperDelegatesGetHeaderForOtherNames() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Accept", "text/html");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        FilterChain chain = (req, resp) -> {
+            var httpReq = (jakarta.servlet.http.HttpServletRequest) req;
+            assertThat(httpReq.getHeader("Accept")).isEqualTo("text/html");
+        };
+
+        filter.doFilter(request, response, chain);
+    }
 }

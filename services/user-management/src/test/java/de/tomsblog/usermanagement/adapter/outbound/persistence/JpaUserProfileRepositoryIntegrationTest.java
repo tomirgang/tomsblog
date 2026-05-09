@@ -161,4 +161,34 @@ class JpaUserProfileRepositoryIntegrationTest {
 
         assertThat(found).isEmpty();
     }
+
+    @Test
+    @DisplayName("SWR-059: existsByUsername returns true for existing user")
+    void existsByUsername_returnsTrue() {
+        UserProfile profile = UserProfile.createInternal("existinguser", "hash", "existing@test.com", "Existing");
+        repository.save(profile);
+
+        assertThat(repository.existsByUsername("existinguser")).isTrue();
+    }
+
+    @Test
+    @DisplayName("SWR-059: existsByUsername returns false for unknown user")
+    void existsByUsername_returnsFalse() {
+        assertThat(repository.existsByUsername("nonexistent")).isFalse();
+    }
+
+    @Test
+    @DisplayName("SWR-059: existsByEmail returns true for existing email")
+    void existsByEmail_returnsTrue() {
+        UserProfile profile = UserProfile.createInternal("emailuser", "hash", "known@test.com", "Known");
+        repository.save(profile);
+
+        assertThat(repository.existsByEmail("known@test.com")).isTrue();
+    }
+
+    @Test
+    @DisplayName("SWR-059: existsByEmail returns false for unknown email")
+    void existsByEmail_returnsFalse() {
+        assertThat(repository.existsByEmail("unknown@test.com")).isFalse();
+    }
 }

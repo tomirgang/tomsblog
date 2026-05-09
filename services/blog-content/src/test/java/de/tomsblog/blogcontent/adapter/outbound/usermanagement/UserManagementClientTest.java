@@ -393,4 +393,87 @@ class UserManagementClientTest {
         assertThatThrownBy(() -> client.registerUser("existing", "securePassw0rd", "a@b.com", "User", TENANT_ID))
                 .isInstanceOf(StatusRuntimeException.class);
     }
+
+    @Test
+    @DisplayName("SWR-052: updateTenantSettings passes non-null impressum and privacy policy")
+    void updateTenantSettings_withNonNullLegalFields() {
+        var response = TenantSettingsResponse.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .setLoginMode("BOTH")
+                .setDisplayName("Blog")
+                .setTagline("Tagline")
+                .setImpressumContent("Impressum content")
+                .setPrivacyPolicyContent("Privacy content")
+                .build();
+        when(tenantSettingsStub.updateTenantSettings(any(UpdateTenantSettingsRequest.class)))
+                .thenReturn(response);
+
+        TenantSettingsDto result = client.updateTenantSettings(
+                TENANT_ID,
+                "BOTH",
+                false,
+                Set.of(),
+                "Blog",
+                "Tagline",
+                "Impressum content",
+                "Privacy content",
+                null,
+                null,
+                null);
+
+        assertThat(result.tagline()).isEqualTo("Tagline");
+        assertThat(result.impressumContent()).isEqualTo("Impressum content");
+        assertThat(result.privacyPolicyContent()).isEqualTo("Privacy content");
+    }
+
+    @Test
+    @DisplayName("SWR-043: toUserProfileDto maps tenant memberships")
+    void syncOidcUser_mapsTenantMemberships() {
+        UUID id = UUID.randomUUID();
+        var response = UserProfileResponse.newBuilder()
+                .setId(id.toString())
+                .setOidcSubject("sub-tm")
+                .setAuthSource("OIDC")
+                .setUsername("user-tm")
+                .setApprovalStatus("APPROVED")
+                .addTenantMemberships(de.tomsblog.grpc.usermanagement.TenantMembership.newBuilder()
+                        .setTenantId(TENANT_ID.toString())
+                        .setRole("ADMIN")
+                        .build())
+                .build();
+        when(userManagementStub.syncOidcUser(any(SyncOidcUserRequest.class))).thenReturn(response);
+
+        UserProfileDto result = client.syncOidcUser("sub-tm", "tm@test.com", "TM User", List.of(), TENANT_ID);
+
+        assertThat(result.tenantMemberships()).hasSize(1);
+        assertThat(result.tenantMemberships().get(0).tenantId()).isEqualTo(TENANT_ID.toString());
+        assertThat(result.tenantMemberships().get(0).role()).isEqualTo("ADMIN");
+    }
+
+    @Test
+    @DisplayName("SWR-046: toTenantSettingsDto maps non-empty OIDC fields")
+    void getTenantSettings_mapsNonEmptyOidcFields() {
+        var response = TenantSettingsResponse.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .setLoginMode("OIDC")
+                .setDisplayName("Blog")
+                .setTagline("A cool blog")
+                .setImpressumContent("Impressum")
+                .setPrivacyPolicyContent("Privacy")
+                .setOidcIssuerUrl("https://issuer.example.com")
+                .setOidcClientId("client-id")
+                .setOidcClientSecret("secret")
+                .build();
+        when(tenantSettingsStub.getTenantSettings(any(GetTenantSettingsRequest.class)))
+                .thenReturn(response);
+
+        TenantSettingsDto result = client.getTenantSettings(TENANT_ID);
+
+        assertThat(result.tagline()).isEqualTo("A cool blog");
+        assertThat(result.impressumContent()).isEqualTo("Impressum");
+        assertThat(result.privacyPolicyContent()).isEqualTo("Privacy");
+        assertThat(result.oidcIssuerUrl()).isEqualTo("https://issuer.example.com");
+        assertThat(result.oidcClientId()).isEqualTo("client-id");
+        assertThat(result.oidcClientSecret()).isEqualTo("secret");
+    }
 }

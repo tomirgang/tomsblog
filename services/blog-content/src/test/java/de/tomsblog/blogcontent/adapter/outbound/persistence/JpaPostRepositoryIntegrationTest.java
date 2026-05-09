@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import de.tomsblog.blogcontent.domain.model.*;
 import de.tomsblog.shared.domain.AuthorId;
 import de.tomsblog.shared.tenant.TenantId;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -230,5 +231,75 @@ class JpaPostRepositoryIntegrationTest {
         Optional<Post> found = repository.findByIdAndTenantId(saved.getId(), tenantId);
         assertThat(found).isPresent();
         assertThat(found.get().getContentType()).isEqualTo(ContentType.MARKDOWN);
+    }
+
+    @Test
+    @DisplayName("SWR-038: searchPublished returns matching published posts")
+    void searchPublished_returnsMatchingPosts() {
+        Post published =
+                Post.create(tenantId, authorId, "Spring Boot Tutorial", "Learn Spring Boot", PostLocale.german());
+        published.publish();
+        repository.save(published);
+
+        Post draft = Post.create(tenantId, authorId, "Spring Draft", "Draft about Spring", PostLocale.german());
+        repository.save(draft);
+
+        List<Post> result = repository.searchPublished("Spring Boot", tenantId);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().getTitle()).isEqualTo("Spring Boot Tutorial");
+    }
+
+    @Test
+    @DisplayName("SWR-039: findPreviousPublished returns the previous published post by publishedAt")
+    void findPreviousPublished_returnsPreviousPost() {
+        Post first = Post.create(tenantId, authorId, "First Post", "Content 1", PostLocale.german());
+        first.publish();
+        repository.save(first);
+
+        Post second = Post.create(tenantId, authorId, "Second Post", "Content 2", PostLocale.german());
+        second.publish();
+        Post savedSecond = repository.save(second);
+
+        Optional<Post> previous = repository.findPreviousPublished(tenantId, savedSecond.getPublishedAt());
+
+        assertThat(previous).isPresent();
+        assertThat(previous.get().getTitle()).isEqualTo("First Post");
+    }
+
+    @Test
+    @DisplayName("SWR-039: findNextPublished returns the next published post by publishedAt")
+    void findNextPublished_returnsNextPost() {
+        Post first = Post.create(tenantId, authorId, "First Post Next", "Content 1", PostLocale.german());
+        first.publish();
+        Post savedFirst = repository.save(first);
+
+        Post second = Post.create(tenantId, authorId, "Second Post Next", "Content 2", PostLocale.german());
+        second.publish();
+        repository.save(second);
+
+        Optional<Post> next = repository.findNextPublished(tenantId, savedFirst.getPublishedAt());
+
+        assertThat(next).isPresent();
+        assertThat(next.get().getTitle()).isEqualTo("Second Post Next");
+    }
+
+    @Test
+    @DisplayName("SWR-042: findFeaturedByTenantId returns featured posts for today")
+    void findFeaturedByTenantId_returnsFeaturedPosts() {
+        LocalDate today = LocalDate.now();
+        Post featured = Post.create(tenantId, authorId, "Featured Post", "Content", PostLocale.german());
+        featured.updateFeatured(today.minusDays(1), today.plusDays(1));
+        featured.publish();
+        repository.save(featured);
+
+        Post notFeatured = Post.create(tenantId, authorId, "Regular Post", "Content 2", PostLocale.german());
+        notFeatured.publish();
+        repository.save(notFeatured);
+
+        List<Post> result = repository.findFeaturedByTenantId(tenantId, today);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().getTitle()).isEqualTo("Featured Post");
     }
 }

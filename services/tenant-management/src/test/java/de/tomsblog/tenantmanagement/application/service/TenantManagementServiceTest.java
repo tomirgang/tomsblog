@@ -190,4 +190,31 @@ class TenantManagementServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("oidcIssuerUrl");
     }
+
+    @Test
+    @DisplayName("SWR-072: updateGeneralSettings validates OIDC config for BOTH login mode")
+    void updateGeneralSettingsValidatesOidcForBothMode() {
+        var tenantId = TenantId.generate();
+        var tenant = Tenant.create(tenantId, "s", "Name");
+        tenant.updateOidcSettings(null, null, null);
+        when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
+
+        assertThatThrownBy(() -> service.updateGeneralSettings(tenantId, "Name", null, "BOTH", false, Set.of()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("oidcIssuerUrl");
+    }
+
+    @Test
+    @DisplayName("SWR-072: updateOidcSettings validates when BOTH login mode")
+    void updateOidcSettingsValidatesForBothMode() {
+        var tenantId = TenantId.generate();
+        var tenant = Tenant.create(tenantId, "s", "Name");
+        tenant.updateGeneralSettings("Name", null, LoginMode.BOTH, false, Set.of());
+        tenant.updateOidcSettings("https://issuer", "cid", "cs");
+        when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
+
+        assertThatThrownBy(() -> service.updateOidcSettings(tenantId, "", "", ""))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("oidcIssuerUrl");
+    }
 }

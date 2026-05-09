@@ -114,4 +114,22 @@ class DefaultTenantFilterTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/list"));
     }
+
+    @Test
+    @DisplayName("setDefaultTenantId updates the default tenant ID")
+    void setDefaultTenantId_updatesValue() {
+        DefaultTenantFilter filter = new DefaultTenantFilter();
+        filter.setDefaultTenantId("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+        org.assertj.core.api.Assertions.assertThat(filter.getDefaultTenantId())
+                .isEqualTo("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+    }
+
+    @Test
+    @DisplayName("setDefaultAuthorId updates the default author ID")
+    void setDefaultAuthorId_updatesValue() {
+        DefaultTenantFilter filter = new DefaultTenantFilter();
+        filter.setDefaultAuthorId("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+        org.assertj.core.api.Assertions.assertThat(filter.getDefaultAuthorId())
+                .isEqualTo("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+    }
 }
