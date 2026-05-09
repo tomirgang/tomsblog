@@ -48,27 +48,45 @@ sequenceDiagram
 
 == Datenbanken
 
-Der Cluster folgt dem Database-per-Service-Pattern (ADR-0019). Beim Bootstrap werden alle benötigten Datenbanken automatisch erstellt:
+Der Cluster folgt dem Database-per-Service-Pattern (ADR-0019). Die Datenbanken werden deklarativ als eigenständige CloudNativePG Database-Ressourcen (CRD) verwaltet (ADR-0029, INF-013, SWA-030). Die Manifeste liegen unter `infra/k8s/postgres/databases.yaml`.
 
 [cols="1,2,1"]
 |===
 | Datenbank | Service | Owner
 
-| blog_content | blog-content | app (via initdb)
-| user_management | user-management | app (via postInitApplicationSQL)
+| blog_content | blog-content | app (Database CRD)
+| user_management | user-management | app (Database CRD)
+| tenant_management | tenant-management | app (Database CRD)
 |===
 
-Die `initdb`-Konfiguration erstellt die primäre Datenbank (`blog_content`). Weitere Datenbanken werden über `postInitApplicationSQL` angelegt:
+Die `initdb`-Konfiguration erstellt nur noch eine neutrale Platzhalter-Datenbank (`app`). Alle Service-Datenbanken werden über die Database CRD verwaltet:
 
 [source,yaml]
 ----
 bootstrap:
   initdb:
-    database: blog_content
-    owner: blog_content
-    postInitApplicationSQL:
-      - CREATE DATABASE user_management OWNER app;
+    database: app
+    owner: app
 ----
+
+Jede Service-Datenbank ist als eigenständige Kubernetes-Ressource definiert:
+
+[source,yaml]
+----
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: blog-content-db
+  namespace: postgres
+spec:
+  name: blog_content
+  owner: app
+  databaseReclaimPolicy: retain
+  cluster:
+    name: postgres-cluster
+----
+
+Der Operator reconciliert den Zustand und meldet Fehler im `.status`-Feld. Die `databaseReclaimPolicy: retain` verhindert versehentlichen Datenverlust beim Löschen der Ressource.
 
 == Credentials
 
@@ -82,7 +100,7 @@ Die Datenbank-Credentials werden vom Operator automatisch als Kubernetes Secret 
 | postgres-cluster-superuser | username, password (für Admin-Zugang)
 |===
 
-Beide Services (blog-content und user-management) referenzieren das `postgres-cluster-app` Secret in ihrer Deployment-Konfiguration.
+Alle drei Services (blog-content, user-management und tenant-management) referenzieren das `postgres-cluster-app` Secret in ihrer Deployment-Konfiguration.
 
 == Verbindung zum App-Repository
 

@@ -8,11 +8,8 @@ spec:
 
   bootstrap:
     initdb:
-      database: blog_content
-      owner: blog_content
-      postInitApplicationSQL:
-        - CREATE DATABASE user_management OWNER app;
-        - CREATE DATABASE tenant_management OWNER app;
+      database: app
+      owner: app
 
   postgresql:
     parameters:

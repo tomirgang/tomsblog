@@ -10,6 +10,7 @@ Die Blog-Plattform nutzt das Database-per-Service-Pattern (ADR-0019). Aktuell we
 
 - `blog_content` über die `initdb`-Konfiguration der Cluster-Ressource
 - `user_management` über `postInitApplicationSQL` (einmalig beim Bootstrap)
+- `tenant_management` über `postInitApplicationSQL` (einmalig beim Bootstrap)
 
 Diese Lösung hat mehrere Schwächen:
 
@@ -83,6 +84,18 @@ metadata:
   namespace: postgres
 spec:
   name: user_management
+  owner: app
+  cluster:
+    name: postgres-cluster
+  databaseReclaimPolicy: retain
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: tenant-management-db
+  namespace: postgres
+spec:
+  name: tenant_management
   owner: app
   cluster:
     name: postgres-cluster

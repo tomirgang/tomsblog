@@ -1,0 +1,35 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: blog-content-db
+  namespace: postgres
+spec:
+  name: blog_content
+  owner: app
+  databaseReclaimPolicy: retain
+  cluster:
+    name: postgres-cluster
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: user-management-db
+  namespace: postgres
+spec:
+  name: user_management
+  owner: app
+  databaseReclaimPolicy: retain
+  cluster:
+    name: postgres-cluster
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: tenant-management-db
+  namespace: postgres
+spec:
+  name: tenant_management
+  owner: app
+  databaseReclaimPolicy: retain
+  cluster:
+    name: postgres-cluster

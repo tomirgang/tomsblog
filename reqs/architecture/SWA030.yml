@@ -15,6 +15,7 @@ text: |
   Aktuelle Datenbanken:
   - blog_content (blog-content Service)
   - user_management (user-management Service)
+  - tenant_management (tenant-management Service)
   Die Cluster-Definition nutzt einen neutralen Platzhalter (database: app)
   im initdb-Block. Weitere Service-Datenbanken werden durch Hinzufuegen
   weiterer Database-Manifeste erstellt. Die Migration bestehender Datenbanken

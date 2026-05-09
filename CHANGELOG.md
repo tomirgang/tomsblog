@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Deklarative Database CRDs für alle drei Service-Datenbanken (blog_content, user_management, tenant_management) in `infra/k8s/postgres/databases.yaml` (ADR-0029, INF-013, SWA-030)
+- `databaseReclaimPolicy: retain` auf allen Database-Ressourcen zum Schutz vor versehentlichem Datenverlust
+
+### Changed
+
+- Rolling-Update-Strategie aller Service-Deployments auf `maxSurge: 0, maxUnavailable: 1` geändert, um Deadlocks bei knappen Cluster-Ressourcen zu vermeiden (blog-content, user-management, tenant-management)
+- Cluster-Bootstrap-Datenbank auf neutralen Platzhalter `app` umgestellt (statt `blog_content`)
+- `postInitApplicationSQL` aus der Cluster-Definition entfernt (durch Database CRDs ersetzt)
+
+### Fixed
+
+- Fehlendes `group: policy.linkerd.io` in der AuthorizationPolicy `allow-probes-to-tenant-management` ergänzt (blockierte Flux Kustomization-Reconciliation)
+
 ## [0.9.5] - 2026-05-09
 
 ## [0.9.4] - 2026-05-09
