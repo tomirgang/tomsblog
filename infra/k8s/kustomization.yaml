@@ -10,6 +10,7 @@ resources:
   - postgres/databases.yaml
   - postgres/scheduled-backup.yaml
   - redis
+  - kafka
   - pvc.yaml
   - blog-content
   - user-management

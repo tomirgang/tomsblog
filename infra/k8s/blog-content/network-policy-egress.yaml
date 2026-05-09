@@ -34,6 +34,14 @@ spec:
       ports:
         - protocol: TCP
           port: 6379
+    # Kafka (event streaming in kafka namespace)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kafka
+      ports:
+        - protocol: TCP
+          port: 9092
     # Linkerd control plane (identity, destination, policy)
     - to:
         - namespaceSelector:

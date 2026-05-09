@@ -113,13 +113,13 @@
 - [x] E2E-Selenium-Tests für alle UI-Use-Cases (STK-052, SWR-078 bis SWR-083, ADR-0033)
 - [x] Tags
 - [x] Auditlog View
-- [ ] Kafka-Cluster-Konfiguration definieren
+- [x] Kafka-Cluster-Konfiguration definieren
 - [ ] RabbitMQ-Cluster-Konfiguration definieren
 - [ ] Event-Schema-Design (Avro/Protobuf oder JSON Schema)
 - [ ] Events produzieren (Post erstellt, aktualisiert, veröffentlicht) via Kafka
 - [ ] RabbitMQ-Queues für Task-Verteilung (Übersetzung, TTS, Snapshots)
 - [ ] Consumer für nachgelagerte Prozesse (Feeds)
-- [ ] Infra: Kafka Deployment (Strimzi Operator via Helm, siehe ADR-0026)
+- [x] Infra: Kafka Deployment (Strimzi Operator via Helm, siehe ADR-0026)
 - [ ] Infra: RabbitMQ Deployment (RabbitMQ Cluster Operator via Helm, siehe ADR-0026)
 - [ ] Infra: MongoDB Deployment (Community Operator via Helm, siehe ADR-0026)
 - [ ] Migration auf Helm Charts für Operator-managed Services (ADR-0026)

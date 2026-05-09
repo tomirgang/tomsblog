@@ -1,0 +1,25 @@
+active: true
+derived: false
+header: |
+  Kafka-Cluster auf Kubernetes (Strimzi Operator)
+level: 15.0
+links:
+- STK038: KHiHAEznWHNPCQQnyqbVPELnG8zoeUVtXDno2cuyrjw=
+normative: true
+ref: ''
+reviewed: jnQ4uNFTfzs2nakv1FoSVuL4cFIG2N063NYnofyO0jI=
+text: |
+  Apache Kafka muss als Single-Node-Cluster im KRaft-Modus auf
+  Kubernetes betrieben werden. Die Installation erfolgt über den
+  Strimzi Operator (Helm Chart via Flux HelmRelease, ADR-0026).
+  Der Cluster umfasst: einen kombinierten Controller/Broker-Node
+  (KRaft, kein ZooKeeper), Kafka-Version 3.9.0 passend zur lokalen
+  Entwicklungsumgebung, Ressourcenlimits (512Mi/1Gi Memory,
+  250m/1000m CPU), persistenten Storage (5Gi, hcloud-volumes),
+  7 Tage Log-Retention für Event-Replay (SWA-005).
+  KafkaTopic-CRDs werden für die drei initialen Event-Typen angelegt:
+  post.created, post.updated, post.published (je 3 Partitionen,
+  Replication-Faktor 1). Der Kafka-Namespace erhält eine
+  Default-Deny-Ingress-NetworkPolicy mit Ausnahme für den
+  tomsblog-Namespace auf Port 9092. Die Kustomize-Manifeste liegen
+  in infra/k8s/kafka/.
