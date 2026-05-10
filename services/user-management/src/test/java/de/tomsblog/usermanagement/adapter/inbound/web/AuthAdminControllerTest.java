@@ -53,6 +53,7 @@ class AuthAdminControllerTest {
 
         assertThat(view).isEqualTo("admin/users");
         assertThat(((List<?>) model.getAttribute("users"))).hasSize(1);
+        assertThat(model.getAttribute("tenantId")).isEqualTo(TENANT_UUID);
     }
 
     @Test
@@ -65,6 +66,7 @@ class AuthAdminControllerTest {
 
         assertThat(view).isEqualTo("admin/users");
         assertThat(((List<?>) model.getAttribute("users"))).isEmpty();
+        assertThat(model.getAttribute("tenantId")).isEqualTo(TENANT_UUID);
     }
 
     @Test

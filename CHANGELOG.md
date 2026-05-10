@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Fixed
 
+- Admin-UI Rollenverwaltung: Angezeigte Rolle war `globalRoles` statt der Tenant-spezifischen Rolle, Dropdown hat aktuelle Rolle nicht vorausgewählt. Jetzt wird die Tenant-Membership-Rolle korrekt angezeigt und vorausgewählt.
 - `PostService.updatePost()` hat keine Domain-Events publiziert (fehlender `eventPublisher.publish()` Aufruf)
 
 ### Security

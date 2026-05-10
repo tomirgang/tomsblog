@@ -61,6 +61,7 @@ public class AuthAdminController {
             LOG.warn("Failed to load users for tenant '{}'.", activeTenant, e);
             model.addAttribute("users", List.of());
         }
+        model.addAttribute("tenantId", activeTenant);
         return "admin/users";
     }
 
