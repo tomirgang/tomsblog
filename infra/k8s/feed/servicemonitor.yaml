@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: feed
+  namespace: tomsblog
+  labels:
+    app: feed
+spec:
+  selector:
+    matchLabels:
+      app: feed
+  endpoints:
+    - port: http
+      path: /actuator/prometheus
+      interval: 30s

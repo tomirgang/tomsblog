@@ -13,6 +13,7 @@ resources:
   - kafka
   - rabbitmq
   - mongodb
+  - observability
   - pvc.yaml
   - blog-content
   - user-management

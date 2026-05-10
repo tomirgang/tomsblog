@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-05-10
+
 ### Added
 
 - Kafka Event-Produktion für Blog-Posts: `KafkaEventPublisher` Outbound-Adapter sendet `PostCreatedEvent`, `PostUpdatedEvent`, `PostPublishedEvent` als JSON an Kafka-Topics. Domain-Events um `title`, `slug`, `locale` erweitert. `DomainEventMapper` mappt interne Domain-Events auf externe Contract-Events. Profil-basierte Steuerung (`kafka` Profil für Produktion, `LoggingEventPublisher` als Fallback). K8s-Deployment mit `SPRING_KAFKA_BOOTSTRAP_SERVERS` konfiguriert. (SWR-009, SWA-005, ADR-0018)

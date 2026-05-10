@@ -16,3 +16,5 @@ resources:
   - server.yaml
   - authz-policy-traefik.yaml
   - authz-policy-probes.yaml
+  - network-policy-observability.yaml
+  - servicemonitor.yaml

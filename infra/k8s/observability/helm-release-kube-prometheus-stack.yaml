@@ -1,0 +1,122 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+  namespace: observability
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      # Verify latest version: helm search repo prometheus-community/kube-prometheus-stack --versions
+      version: "72.6.2"
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+  values:
+    # --- Prometheus ---
+    prometheus:
+      prometheusSpec:
+        retention: 15d
+        # Discover ServiceMonitors/PodMonitors/Rules across all namespaces
+        serviceMonitorSelectorNilUsesHelmValues: false
+        podMonitorSelectorNilUsesHelmValues: false
+        ruleSelectorNilUsesHelmValues: false
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: hcloud-volumes
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 10Gi
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 250m
+          limits:
+            memory: 2Gi
+            cpu: 1000m
+
+    # --- Grafana ---
+    grafana:
+      admin:
+        existingSecret: grafana-admin-credentials
+        userKey: admin-user
+        passwordKey: admin-password
+      persistence:
+        enabled: true
+        storageClassName: hcloud-volumes
+        size: 2Gi
+      ingress:
+        enabled: true
+        ingressClassName: traefik
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-prod
+          traefik.ingress.kubernetes.io/router.middlewares: observability-redirect-https@kubernetescrd
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure
+        hosts:
+          - grafana.tomirgang.de
+        tls:
+          - secretName: grafana-tls
+            hosts:
+              - grafana.tomirgang.de
+      additionalDataSources:
+        - name: Loki
+          type: loki
+          url: http://loki.observability.svc.cluster.local:3100
+          access: proxy
+          isDefault: false
+        - name: Tempo
+          type: tempo
+          url: http://tempo.observability.svc.cluster.local:3100
+          access: proxy
+          isDefault: false
+      resources:
+        requests:
+          memory: 128Mi
+          cpu: 100m
+        limits:
+          memory: 256Mi
+          cpu: 500m
+
+    # --- Alertmanager (minimal, no notification channels) ---
+    alertmanager:
+      alertmanagerSpec:
+        storage:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: hcloud-volumes
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 1Gi
+        resources:
+          requests:
+            memory: 64Mi
+            cpu: 50m
+          limits:
+            memory: 128Mi
+            cpu: 100m
+
+    # --- Node Exporter ---
+    nodeExporter:
+      resources:
+        requests:
+          memory: 32Mi
+          cpu: 20m
+        limits:
+          memory: 64Mi
+          cpu: 100m
+
+    # --- kube-state-metrics ---
+    kube-state-metrics:
+      resources:
+        requests:
+          memory: 64Mi
+          cpu: 20m
+        limits:
+          memory: 128Mi
+          cpu: 100m

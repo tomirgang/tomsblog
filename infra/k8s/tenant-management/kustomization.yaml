@@ -12,3 +12,4 @@ resources:
   - authz-policy-grpc.yaml
   - authz-policy-probes.yaml
   - authz-policy-traefik.yaml
+  - servicemonitor.yaml
