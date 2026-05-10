@@ -1,0 +1,22 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: feed
+  namespace: flux-system
+spec:
+  image: ghcr.io/tomirgang/tomsblog/feed
+  interval: 5m
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: feed
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: feed
+  filterTags:
+    pattern: '^\d+\.\d+\.\d+$'
+  policy:
+    semver:
+      range: '>=0.1.0'
