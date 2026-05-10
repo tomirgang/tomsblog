@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  # Kafka (Strimzi Operator)
+  - kafka/namespace.yaml
+  - kafka/helm-repository.yaml
+  - kafka/helm-release-operator.yaml
+  # MongoDB (Community Operator)
+  - mongodb/namespace.yaml
+  - mongodb/helm-repository.yaml
+  - mongodb/helm-release-operator.yaml
+  # RabbitMQ (Cluster Operator)
+  - rabbitmq/namespace.yaml
+  - rabbitmq/helm-repository.yaml
+  - rabbitmq/helm-release-operator.yaml

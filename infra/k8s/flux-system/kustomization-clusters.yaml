@@ -1,0 +1,18 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tomsblog-clusters
+  namespace: flux-system
+spec:
+  interval: 10m
+  sourceRef:
+    kind: GitRepository
+    name: tomsblog
+  path: ./infra/k8s/clusters
+  prune: true
+  dependsOn:
+    - name: tomsblog
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age

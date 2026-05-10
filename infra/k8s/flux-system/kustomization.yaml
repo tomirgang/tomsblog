@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - git-repository.yaml
   - kustomization-app.yaml
+  - kustomization-clusters.yaml
   - blog-content-image.yaml
   - user-management-image.yaml
   - tenant-management-image.yaml

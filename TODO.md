@@ -133,9 +133,9 @@
 
 ### Phase 6: Observability
 
-- [ ] Prometheus + Grafana aufsetzen
-- [ ] Loki für Log-Aggregation
-- [ ] Tempo für Distributed Tracing
+- [x] Prometheus + Grafana aufsetzen
+- [x] Loki für Log-Aggregation
+- [x] Tempo für Distributed Tracing
 - [ ] Dashboards und Alerting
 - [ ] Health-Checks und Readiness/Liveness Probes
 - [ ] Chaos Testing: Resilience-Szenarien definieren (Netzwerkausfälle, Pod-Crashes, Latenz)

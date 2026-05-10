@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Flux-Deployment blockiert: Kafka/MongoDB/RabbitMQ Operator-HelmReleases und CRD-abhängige Ressourcen (Kafka-Cluster, KafkaTopics, MongoDBCommunity, RabbitmqCluster) in derselben Kustomization verursachten Dry-Run-Fehler (`no matches for kind "Kafka" in version "kafka.strimzi.io/v1beta2"`). Operator-Installationen in `infra/k8s/operators/` und CRD-Ressourcen in `infra/k8s/clusters/` aufgeteilt, neue Flux-Kustomization `tomsblog-clusters` mit `dependsOn: [tomsblog]` erstellt. Operatoren werden nun vor den CRD-Ressourcen installiert.
+
+### Added
+
+- Observability-Stack für Kubernetes: kube-prometheus-stack (Prometheus, Grafana, Alertmanager, Node Exporter, kube-state-metrics) via Flux HelmRelease (v72.6.2), Loki SingleBinary für Log-Aggregation (v6.29.0), Promtail als Log-Collector (v6.16.6), Tempo für Distributed Tracing (v1.18.3). Grafana unter grafana.tomirgang.de mit TLS (Let's Encrypt), vorkonfigurierte Datasources (Prometheus, Loki, Tempo). ServiceMonitors für alle Services (blog-content, user-management, tenant-management, feed) mit Prometheus-Actuator-Scraping. NetworkPolicies (Default-Deny, Intra-Namespace, Traefik-Ingress, ACME-Solver). Micrometer Prometheus Registry in allen Services, Prometheus-Endpoint via application-k8s.yml freigeschaltet. (INF-010, SWR-011, STK-008, ADR-0026)
+
 ## [0.10.0] - 2026-05-10
 
 ### Added
