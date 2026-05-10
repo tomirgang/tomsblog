@@ -12,3 +12,8 @@ resources:
   # RabbitMQ cluster (requires RabbitMQ Cluster Operator CRDs)
   - rabbitmq/cluster.yaml
   - rabbitmq/network-policy.yaml
+  # ServiceMonitors (requires kube-prometheus-stack CRDs)
+  - monitoring/blog-content-servicemonitor.yaml
+  - monitoring/user-management-servicemonitor.yaml
+  - monitoring/tenant-management-servicemonitor.yaml
+  - monitoring/feed-servicemonitor.yaml

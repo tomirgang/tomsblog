@@ -6,4 +6,3 @@ resources:
   - service.yaml
   - server.yaml
   - authz-policy-probes.yaml
-  - servicemonitor.yaml
