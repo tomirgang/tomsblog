@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Reflector-Annotations auf `postgres-cluster-app` Secret persistent gemacht: `inheritedMetadata` im CNPG Cluster-Spec sorgt dafür, dass die Annotations auch nach Secret-Neuerstellung erhalten bleiben.
+
 ## [0.10.4] - 2026-05-10
 
 ### Added
