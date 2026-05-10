@@ -21,6 +21,8 @@ spec:
         registry: docker.io
         repository: rabbitmqoperator/cluster-operator
         tag: "2.16.1"
+      command:
+        - /manager
       watchAllNamespaces: false
       watchNamespaces:
         - rabbitmq
