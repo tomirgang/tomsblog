@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="header">
+        <nav>
+            <ul>
+                <li><strong><a th:href="@{/tenant/admin/tenants}">Tenant-Verwaltung</a></strong></li>
+            </ul>
+            <ul>
+                <li><a th:href="@{/tenant/admin/tenants}">Tenants</a></li>
+                <li><a th:href="@{/tenant/admin/settings}">Einstellungen</a></li>
+            </ul>
+        </nav>
+    </div>
+</body>
+</html>
