@@ -13,6 +13,9 @@ spec:
         kind: HelmRepository
         name: bitnami
   values:
+    global:
+      security:
+        allowInsecureImages: true
     clusterOperator:
       image:
         registry: docker.io

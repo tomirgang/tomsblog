@@ -13,8 +13,6 @@ spec:
         kind: HelmRepository
         name: strimzi
   values:
-    watchNamespaces:
-      - kafka
     resources:
       requests:
         memory: 256Mi
