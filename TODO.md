@@ -143,6 +143,11 @@
 - [ ] Chaos Testing: Steady-State-Hypothesen und Experimente formulieren
 - [ ] Chaos Testing: Automatisierte Chaos-Experimente in CI/CD integrieren
 - [ ] Chaos Testing: Ergebnisse auswerten und Resilience-Verbesserungen umsetzen
+- [ ] Stakeholder Requirement: Logo und FavIcon
+- [ ] Stakeholder Requirement: Authentik Button Text soll über Admin UI konfigurierbar sein.
+- [ ] Stakeholder Requirement: Nutzer sollen über die Admin UI gelöscht werden können.
+- [ ] Stakeholder Requirement: Die Default Rolle neuer Nutzer soll über das Admin UI einstellbar sein.
+- [ ] Stakeholder Requirement: Nutzer Rollen sollen über OIDC gesetzt werden können.
 - [ ] Security-Reviews (OWASP)
 - [ ] Architecture Review
 

@@ -8,15 +8,22 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.ClientRegistrations;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
 /**
  * Tenant-aware client registration repository that resolves OIDC provider configuration
  * per tenant from the local database (ADR-0032).
+ *
+ * <p>Uses OIDC Discovery ({@code .well-known/openid-configuration}) to automatically resolve
+ * the correct authorization, token, userinfo and JWKS endpoints from the issuer URL.
+ * This is required because different OIDC providers (e.g. Authentik, Keycloak) use
+ * different URL structures that cannot be derived from a single base URL.
  *
  * <p>Falls back to a global registration (from application.yml) when no tenant-specific
  * OIDC configuration exists.
@@ -31,15 +38,25 @@ public class TenantAwareClientRegistrationRepository implements ClientRegistrati
     private final TenantSettingsUseCase tenantSettingsUseCase;
     private final ClientRegistration fallbackRegistration;
     private final String defaultTenantId;
+    private final Function<String, ClientRegistration.Builder> issuerResolver;
     private final Map<String, CachedRegistration> cache = new ConcurrentHashMap<>();
 
     public TenantAwareClientRegistrationRepository(
             TenantSettingsUseCase tenantSettingsUseCase,
             ClientRegistration fallbackRegistration,
             String defaultTenantId) {
+        this(tenantSettingsUseCase, fallbackRegistration, defaultTenantId, ClientRegistrations::fromIssuerLocation);
+    }
+
+    TenantAwareClientRegistrationRepository(
+            TenantSettingsUseCase tenantSettingsUseCase,
+            ClientRegistration fallbackRegistration,
+            String defaultTenantId,
+            Function<String, ClientRegistration.Builder> issuerResolver) {
         this.tenantSettingsUseCase = tenantSettingsUseCase;
         this.fallbackRegistration = fallbackRegistration;
         this.defaultTenantId = defaultTenantId;
+        this.issuerResolver = issuerResolver;
     }
 
     @Override
@@ -66,23 +83,21 @@ public class TenantAwareClientRegistrationRepository implements ClientRegistrati
     }
 
     private ClientRegistration buildRegistration(String registrationId, TenantSettings settings) {
-        String issuerUrl = settings.getOidcIssuerUrl().endsWith("/")
-                ? settings.getOidcIssuerUrl()
-                : settings.getOidcIssuerUrl() + "/";
+        String issuerUrl = settings.getOidcIssuerUrl();
+        if (issuerUrl.endsWith("/")) {
+            issuerUrl = issuerUrl.substring(0, issuerUrl.length() - 1);
+        }
 
-        validateIssuerUrl(issuerUrl);
+        validateIssuerUrl(issuerUrl + "/");
 
-        return ClientRegistration.withRegistrationId(registrationId)
+        return issuerResolver
+                .apply(issuerUrl)
+                .registrationId(registrationId)
                 .clientId(settings.getOidcClientId())
                 .clientSecret(settings.getOidcClientSecret() != null ? settings.getOidcClientSecret() : "")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
                 .scope("openid", "profile", "email")
-                .authorizationUri(issuerUrl + "authorize/")
-                .tokenUri(issuerUrl + "token/")
-                .userInfoUri(issuerUrl + "userinfo/")
-                .jwkSetUri(issuerUrl + "jwks/")
-                .providerConfigurationMetadata(Map.of("issuer", issuerUrl))
                 .build();
     }
 

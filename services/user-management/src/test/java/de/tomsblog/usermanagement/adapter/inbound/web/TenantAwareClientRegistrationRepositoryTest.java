@@ -10,6 +10,7 @@ import de.tomsblog.usermanagement.domain.model.LoginMode;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,21 @@ class TenantAwareClientRegistrationRepositoryTest {
     private ClientRegistration fallbackRegistration;
     private TenantAwareClientRegistrationRepository repository;
 
+    /**
+     * Mock issuer resolver that simulates OIDC Discovery by returning a builder
+     * with endpoints derived from the issuer URL (similar to what a real
+     * {@code .well-known/openid-configuration} response would provide).
+     */
+    private static final Function<String, ClientRegistration.Builder> MOCK_ISSUER_RESOLVER =
+            issuerUrl -> ClientRegistration.withRegistrationId("discovered")
+                    .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                    .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+                    .authorizationUri(issuerUrl + "/authorize")
+                    .tokenUri(issuerUrl + "/token")
+                    .userInfoUri(issuerUrl + "/userinfo")
+                    .jwkSetUri(issuerUrl + "/jwks")
+                    .clientId("placeholder");
+
     @BeforeEach
     void setUp() {
         tenantSettingsUseCase = mock(TenantSettingsUseCase.class);
@@ -37,7 +53,7 @@ class TenantAwareClientRegistrationRepositoryTest {
                 .tokenUri("https://fallback.example.com/token")
                 .build();
         repository = new TenantAwareClientRegistrationRepository(
-                tenantSettingsUseCase, fallbackRegistration, DEFAULT_TENANT);
+                tenantSettingsUseCase, fallbackRegistration, DEFAULT_TENANT, MOCK_ISSUER_RESOLVER);
     }
 
     @Test
@@ -61,7 +77,7 @@ class TenantAwareClientRegistrationRepositoryTest {
 
         assertThat(reg.getClientId()).isEqualTo("tenant-client-id");
         assertThat(reg.getClientSecret()).isEqualTo("tenant-secret");
-        assertThat(reg.getProviderDetails().getAuthorizationUri()).isEqualTo("https://auth.tenant.com/authorize/");
+        assertThat(reg.getProviderDetails().getAuthorizationUri()).isEqualTo("https://auth.tenant.com/authorize");
     }
 
     @Test
@@ -138,7 +154,7 @@ class TenantAwareClientRegistrationRepositoryTest {
 
         ClientRegistration reg = repository.findByRegistrationId("authentik");
 
-        assertThat(reg.getProviderDetails().getTokenUri()).isEqualTo("https://auth.tenant.com/token/");
+        assertThat(reg.getProviderDetails().getTokenUri()).isEqualTo("https://auth.tenant.com/token");
         assertThat(reg.getClientSecret()).isEmpty();
     }
 
@@ -161,7 +177,7 @@ class TenantAwareClientRegistrationRepositoryTest {
 
         ClientRegistration reg = repository.findByRegistrationId("authentik");
 
-        assertThat(reg.getProviderDetails().getTokenUri()).isEqualTo("https://auth.tenant.com/token/");
+        assertThat(reg.getProviderDetails().getTokenUri()).isEqualTo("https://auth.tenant.com/token");
     }
 
     @Test
