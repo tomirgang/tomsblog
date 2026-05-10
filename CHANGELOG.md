@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-05-10
+
 ### Fixed
 
 - Flux-Deployment blockiert: Kafka/MongoDB/RabbitMQ Operator-HelmReleases und CRD-abhängige Ressourcen (Kafka-Cluster, KafkaTopics, MongoDBCommunity, RabbitmqCluster) in derselben Kustomization verursachten Dry-Run-Fehler (`no matches for kind "Kafka" in version "kafka.strimzi.io/v1beta2"`). Operator-Installationen in `infra/k8s/operators/` und CRD-Ressourcen in `infra/k8s/clusters/` aufgeteilt, neue Flux-Kustomization `tomsblog-clusters` mit `dependsOn: [tomsblog]` erstellt. Operatoren werden nun vor den CRD-Ressourcen installiert.
