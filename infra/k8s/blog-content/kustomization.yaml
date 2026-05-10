@@ -8,13 +8,10 @@ resources:
   - ingress.yaml
   - middleware-redirect-https.yaml
   - secret.yaml
+  - pdb.yaml
   - network-policy-deny.yaml
   - network-policy-ingress.yaml
   - network-policy-acme-solver.yaml
   - network-policy-intra.yaml
   - network-policy-egress.yaml
-  - server.yaml
-  - authz-policy-traefik.yaml
-  - authz-policy-probes.yaml
   - network-policy-observability.yaml
-  - servicemonitor.yaml
