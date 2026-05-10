@@ -16,14 +16,15 @@ Flux validates all resources via dry-run before applying. If a Custom Resource (
 | Layer | Path | Content | Flux Kustomization |
 | --- | --- | --- | --- |
 | Infrastructure + Apps | `./infra/k8s` | Namespaces, Operator HelmReleases, App Deployments, Observability HelmReleases | `tomsblog` |
-| CRD Instances | `./infra/k8s/clusters` | Kafka/MongoDB/RabbitMQ clusters, KafkaTopics, ServiceMonitors | `tomsblog-clusters` (dependsOn: tomsblog) |
+| CRD Instances | `./infra/k8s/clusters` | Kafka/MongoDB/RabbitMQ clusters, KafkaTopics, ServiceMonitors, Linkerd policies (Server, AuthorizationPolicy, MeshTLSAuthentication, NetworkAuthentication) | `tomsblog-clusters` (dependsOn: tomsblog) |
 
 ### File Placement Rules
 
 - **Operator HelmRelease + HelmRepository + Namespace** → `infra/k8s/operators/<name>/`
 - **CR instances** (clusters, topics, queues) → `infra/k8s/clusters/<name>/`
 - **ServiceMonitors** → `infra/k8s/clusters/monitoring/` (requires kube-prometheus-stack CRDs)
-- **App Deployments** (Deployment, Service, Ingress, NetworkPolicy, Secret, AuthzPolicy) → `infra/k8s/<service-name>/`
+- **Linkerd policies** (Server, AuthorizationPolicy, MeshTLSAuthentication, NetworkAuthentication) → `infra/k8s/clusters/linkerd/<service>/` (requires Linkerd CRDs)
+- **App Deployments** (Deployment, Service, Ingress, NetworkPolicy, Secret, ServiceAccount) → `infra/k8s/<service-name>/`
 
 ### Adding a New Operator-Managed Component
 
@@ -39,17 +40,24 @@ Flux validates all resources via dry-run before applying. If a Custom Resource (
 2. Add it to `infra/k8s/clusters/kustomization.yaml`
 3. Do NOT place it in `infra/k8s/<service>/kustomization.yaml`
 
+### Adding Linkerd Policies for a Service
+
+1. Create `infra/k8s/clusters/linkerd/<service>/` with: `server.yaml`, `authz-policy-probes.yaml`, and any additional policies (e.g., `authz-policy-grpc.yaml`, `authz-policy-traefik.yaml`)
+2. Add all files to `infra/k8s/clusters/kustomization.yaml`
+3. Do NOT place Linkerd CRD resources (Server, AuthorizationPolicy, MeshTLSAuthentication, NetworkAuthentication) in `infra/k8s/<service>/`
+
 ## New Service Deployment Checklist
 
 When adding a new microservice to Kubernetes:
 
-1. Create `infra/k8s/<service>/` with: `serviceaccount.yaml`, `deployment.yaml`, `service.yaml`, `ingress.yaml`, `secret.yaml`, `server.yaml` (Linkerd), network policies, authorization policies
+1. Create `infra/k8s/<service>/` with: `serviceaccount.yaml`, `deployment.yaml`, `service.yaml`, `ingress.yaml`, `secret.yaml`, network policies
 2. Add to `infra/k8s/kustomization.yaml`
 3. Add environment variables for inter-service communication (gRPC host/port) to deployment.yaml
-4. ServiceMonitor goes to `infra/k8s/clusters/monitoring/`, NOT in the service directory
-5. Add `ImagePolicy` + `ImageRepository` to `infra/k8s/flux-system/`
-6. Add healthCheck entry to `infra/k8s/flux-system/kustomization-app.yaml` if needed
-7. Update `infra/k8s/flux-system/kustomization.yaml` with the new image policy file
+4. Linkerd policies (Server, AuthorizationPolicy) go to `infra/k8s/clusters/linkerd/<service>/`, NOT in the service directory
+5. ServiceMonitor goes to `infra/k8s/clusters/monitoring/`, NOT in the service directory
+6. Add `ImagePolicy` + `ImageRepository` to `infra/k8s/flux-system/`
+7. Add healthCheck entry to `infra/k8s/flux-system/kustomization-app.yaml` if needed
+8. Update `infra/k8s/flux-system/kustomization.yaml` with the new image policy file
 
 ## Validation
 

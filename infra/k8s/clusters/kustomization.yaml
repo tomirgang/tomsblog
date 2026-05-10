@@ -17,3 +17,17 @@ resources:
   - monitoring/user-management-servicemonitor.yaml
   - monitoring/tenant-management-servicemonitor.yaml
   - monitoring/feed-servicemonitor.yaml
+  # Linkerd policies (requires Linkerd CRDs)
+  - linkerd/blog-content/server.yaml
+  - linkerd/blog-content/authz-policy-traefik.yaml
+  - linkerd/blog-content/authz-policy-probes.yaml
+  - linkerd/user-management/server.yaml
+  - linkerd/user-management/authz-policy-grpc.yaml
+  - linkerd/user-management/authz-policy-probes.yaml
+  - linkerd/user-management/authz-policy-traefik.yaml
+  - linkerd/tenant-management/server.yaml
+  - linkerd/tenant-management/authz-policy-grpc.yaml
+  - linkerd/tenant-management/authz-policy-probes.yaml
+  - linkerd/tenant-management/authz-policy-traefik.yaml
+  - linkerd/feed/server.yaml
+  - linkerd/feed/authz-policy-probes.yaml

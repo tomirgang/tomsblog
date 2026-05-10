@@ -4,5 +4,3 @@ resources:
   - serviceaccount.yaml
   - deployment.yaml
   - service.yaml
-  - server.yaml
-  - authz-policy-probes.yaml

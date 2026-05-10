@@ -6,8 +6,4 @@ resources:
   - service.yaml
   - ingress.yaml
   - secret.yaml
-  - server.yaml
   - network-policy-ingress.yaml
-  - authz-policy-grpc.yaml
-  - authz-policy-probes.yaml
-  - authz-policy-traefik.yaml

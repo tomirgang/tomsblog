@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Flux-Deployment blockiert durch Linkerd-CRDs: `Server`, `AuthorizationPolicy`, `MeshTLSAuthentication`, `NetworkAuthentication` (policy.linkerd.io) in den Service-Kustomizations verursachten Dry-Run-Fehler, da die CRDs erst durch den Linkerd HelmRelease bereitgestellt werden. Linkerd-Policy-Ressourcen aller Services nach `infra/k8s/clusters/linkerd/` verschoben, werden nun über die `tomsblog-clusters` Flux-Kustomization (mit `dependsOn: [tomsblog]`) angewendet. `tomsblog-infra` Kustomization (manuell erstelltes Duplikat) aus Cluster entfernt.
+
 ## [0.10.2] - 2026-05-10
 
 ### Fixed
