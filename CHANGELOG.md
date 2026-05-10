@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.10.4] - 2026-05-10
+
 ### Added
 
 - Feed-Service in CI-Pipeline: Container-Image wird jetzt gebaut und in GHCR gepusht (fehlte in `container` Job-Matrix und `release-assets`). Dockerfile und Flux ImagePolicy/ImageRepository für automatische Image-Updates hinzugefügt.
