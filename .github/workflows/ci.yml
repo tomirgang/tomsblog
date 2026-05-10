@@ -92,6 +92,12 @@ jobs:
     permissions:
       contents: write
 
+    services:
+      kroki:
+        image: yuzutech/kroki
+        ports:
+          - 8000:8000
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -231,6 +237,12 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
+
+    services:
+      kroki:
+        image: yuzutech/kroki
+        ports:
+          - 8000:8000
 
     steps:
       - uses: actions/checkout@v4
