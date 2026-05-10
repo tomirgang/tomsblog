@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.10.2] - 2026-05-10
+
 ### Fixed
 
 - Flux-Deployment blockiert durch ServiceMonitor-CRDs: `ServiceMonitor`-Ressourcen (monitoring.coreos.com/v1) in den Service-Kustomizations verursachten Dry-Run-Fehler, da die CRDs erst durch den kube-prometheus-stack HelmRelease bereitgestellt werden. ServiceMonitors aus den Service-Verzeichnissen nach `infra/k8s/clusters/monitoring/` verschoben, werden nun über die `tomsblog-clusters` Flux-Kustomization (mit `dependsOn: [tomsblog]`) angewendet.
