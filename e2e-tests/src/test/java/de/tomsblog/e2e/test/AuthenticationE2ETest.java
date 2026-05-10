@@ -143,7 +143,7 @@ class AuthenticationE2ETest implements WebDriverProvider {
     @DisplayName("SWR-081: Registration form submits and shows success")
     void registrationFormSubmits() {
         RegisterPage page = new RegisterPage(driver, baseUrl).open();
-        page.fillForm("testuser", "test@example.com", "Test User", "securepassword123");
+        page.fillForm("testuser", "test@example.com", "Test User", "SecurePassword123");
         page.submit();
         // Should redirect to success page or show confirmation
         assertThat(driver.getPageSource()).containsAnyOf("erfolgreich", "Registrierung", "registration");

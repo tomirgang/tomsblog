@@ -26,6 +26,9 @@ public class SecurityConfiguration {
     @Value("${blog.auth-login-url:/auth/login}")
     private String authLoginUrl;
 
+    @Value("${blog.security.http-basic-enabled:false}")
+    private boolean httpBasicEnabled;
+
     /**
      * Single filter chain: session-based auth from shared Redis, public read access.
      */
@@ -80,7 +83,11 @@ public class SecurityConfiguration {
                     }
                 }))
                 .logout(logout -> logout.logoutSuccessUrl("/posts").permitAll())
-                .httpBasic(basic -> basic.disable())
+                .httpBasic(basic -> {
+                    if (!httpBasicEnabled) {
+                        basic.disable();
+                    }
+                })
                 .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .headers(headers -> headers.contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; "
                                 + "script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; "

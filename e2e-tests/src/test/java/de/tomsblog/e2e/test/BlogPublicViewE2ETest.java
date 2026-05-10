@@ -68,7 +68,7 @@ class BlogPublicViewE2ETest implements WebDriverProvider {
         registry.add("spring.thymeleaf.check-template-location", () -> "false");
         registry.add("grpc.client.user-management.address", () -> "static://localhost:9090");
         registry.add("grpc.client.user-management.negotiation-type", () -> "plaintext");
-        registry.add("grpc.server.port", () -> "0");
+        registry.add("grpc.server.port", () -> "-1");
         registry.add("blog.admin.password", () -> "e2e-test-admin-password-12345");
     }
 

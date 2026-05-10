@@ -73,8 +73,9 @@ class BlogAuthorWorkflowE2ETest implements WebDriverProvider {
         registry.add("spring.thymeleaf.check-template-location", () -> "false");
         registry.add("grpc.client.user-management.address", () -> "static://localhost:9090");
         registry.add("grpc.client.user-management.negotiation-type", () -> "plaintext");
-        registry.add("grpc.server.port", () -> "0");
+        registry.add("grpc.server.port", () -> "-1");
         registry.add("blog.admin.password", () -> "e2e-test-admin-password-12345");
+        registry.add("blog.security.http-basic-enabled", () -> "true");
         // Auto-configured UserDetailsService for HTTP Basic auth in blog-content
         registry.add("spring.security.user.name", () -> "author");
         registry.add("spring.security.user.password", () -> "e2e-author-pass");

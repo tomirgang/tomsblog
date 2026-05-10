@@ -121,7 +121,7 @@ class AdminWorkflowE2ETest implements WebDriverProvider {
 
     private void registerUser(String username, String email, String displayName) {
         RegisterPage page = new RegisterPage(driver, baseUrl).open();
-        page.fillForm(username, email, displayName, "securepassword123");
+        page.fillForm(username, email, displayName, "SecurePassword123");
         page.submit();
     }
 
