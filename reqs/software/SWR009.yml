@@ -7,7 +7,7 @@ links:
 - STK009: aLH7PauDSKgFlGVN5q2KZCmXo34ZoLgQhI9QzSOy05g=
 normative: true
 ref: ''
-reviewed: DWXp8IA0R0F4FksiJ3m6RMZbN0T4SNNcxyJoTnCphHM=
+reviewed: -OtGvmhW69KpqvAXnTTsgxqZ4GO2OAWno_Te0vbbVDc=
 text: |
   Domain Events (PostCreated, PostUpdated, PostPublished) müssen
   über Kafka publiziert werden. Jedes Event traegt EventMetadata

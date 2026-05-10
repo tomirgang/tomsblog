@@ -7,7 +7,7 @@ links:
 - STK011: o_m75UlgAWAP0038nlXS6SaXhlTYZWKhkxctqtvV2nU=
 normative: true
 ref: ''
-reviewed: nttk9rE0jm3PW79cq4uB8u5uu4LpcfKSFHtRhVx3yVc=
+reviewed: wknIkwv9_GB_zLGAfdvmWX7egdTaxyKK9x0WLWuUPFk=
 text: |
   Bei Nichterreichbarkeit des KI-Providers (OpenRouter) muss das System
   eine aussagekräftige Fehlermeldung anzeigen. Alle nicht-KI-Funktionen

@@ -153,4 +153,19 @@ class DefaultTenantFilterTest {
 
         filter.doFilter(request, response, chain);
     }
+
+    @Test
+    @DisplayName("session without activeTenantId attribute does not override tenant")
+    void sessionWithoutActiveTenantId() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("X-Tenant-Id", "11111111-1111-1111-1111-111111111111");
+        // Create a session without activeTenantId
+        request.getSession(true);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        FilterChain chain = mock(FilterChain.class);
+
+        filter.doFilter(request, response, chain);
+
+        verify(chain).doFilter(request, response);
+    }
 }

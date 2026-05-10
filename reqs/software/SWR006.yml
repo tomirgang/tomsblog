@@ -7,7 +7,7 @@ links:
 - STK004: JJO6mCJFnnR-Sd365V2Uo4kcRGSoNH6TGS2OaQ7TIV0=
 normative: true
 ref: ''
-reviewed: m_eHrOG9FhtYpidguc1IrIg_yhp6fssrdOiD28yoANg=
+reviewed: jVNcAM0P__CVb0NKRA1eqpKPyPpugSrhGKc0kSxd6AQ=
 text: |
   Jede Post-Entity muss createdAt, updatedAt, createdBy und updatedBy
   führen. Diese Felder werden automatisch beim Persistieren gesetzt.

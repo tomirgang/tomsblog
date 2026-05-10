@@ -56,6 +56,8 @@ public class TenantAwareClientRegistrationRepository implements ClientRegistrati
                 cache.put(defaultTenantId, new CachedRegistration(registration, Instant.now()));
                 return registration;
             }
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             LOG.warn("Failed to load tenant OIDC config for '{}', using fallback.", defaultTenantId, e);
         }
@@ -67,6 +69,8 @@ public class TenantAwareClientRegistrationRepository implements ClientRegistrati
         String issuerUrl = settings.getOidcIssuerUrl().endsWith("/")
                 ? settings.getOidcIssuerUrl()
                 : settings.getOidcIssuerUrl() + "/";
+
+        validateIssuerUrl(issuerUrl);
 
         return ClientRegistration.withRegistrationId(registrationId)
                 .clientId(settings.getOidcClientId())
@@ -80,6 +84,25 @@ public class TenantAwareClientRegistrationRepository implements ClientRegistrati
                 .jwkSetUri(issuerUrl + "jwks/")
                 .providerConfigurationMetadata(Map.of("issuer", issuerUrl))
                 .build();
+    }
+
+    private static void validateIssuerUrl(String issuerUrl) {
+        var uri = java.net.URI.create(issuerUrl);
+        if (!"https".equals(uri.getScheme()) && !"http".equals(uri.getScheme())) {
+            throw new IllegalArgumentException("OIDC issuer URL must use HTTP(S) scheme");
+        }
+        String host = uri.getHost();
+        if (host == null) {
+            throw new IllegalArgumentException("OIDC issuer URL must have a host");
+        }
+        if (host.endsWith(".svc.cluster.local")
+                || "localhost".equals(host)
+                || host.startsWith("10.")
+                || host.startsWith("192.168.")
+                || host.startsWith("172.16.")
+                || host.startsWith("127.")) {
+            throw new IllegalArgumentException("OIDC issuer URL must not point to internal services");
+        }
     }
 
     private record CachedRegistration(ClientRegistration registration, Instant createdAt) {

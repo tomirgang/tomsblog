@@ -4,10 +4,10 @@ header: |
   Feed Event Consumer
 level: 90.0
 links:
-- SWR008: null
+- SWR008: c3UgnYKMASlhHOLqhoDFjMwDfRXk7-iBKe3Zb-yW9Yg=
 normative: true
 ref: ''
-reviewed: null
+reviewed: e4NJFp3DJM9YMlH9MVCqz2OZGm--dc-yUHf4GJVP5T4=
 text: |
   Der Feed-Service konsumiert PostPublishedEvent und PostUpdatedEvent
   via Kafka (Consumer Group feed-service). Beim Empfang eines

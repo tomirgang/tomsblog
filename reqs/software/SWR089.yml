@@ -4,10 +4,10 @@ header: |
   TaskPublisher als Outbound Port für RabbitMQ-Task-Verteilung
 level: 89.0
 links:
-- STK038: null
+- STK038: KHiHAEznWHNPCQQnyqbVPELnG8zoeUVtXDno2cuyrjw=
 normative: true
 ref: ''
-reviewed: null
+reviewed: YdfrdsAIfVMrZbrPCXhHrEUTKtXo0nZP1jhUgQdwVuM=
 text: |
   Der Blog Content Service erhält einen Outbound Port TaskPublisher
   im Application Layer, der Task-Nachrichten an RabbitMQ-Queues

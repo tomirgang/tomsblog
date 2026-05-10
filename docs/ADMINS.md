@@ -5,28 +5,34 @@ auf einem generischen Kubernetes Cluster.
 
 ## Voraussetzungen
 
-| Komponente         | Mindestversion | Zweck                              |
-| ------------------ | -------------- | ---------------------------------- |
-| Kubernetes         | 1.28+          | Container-Orchestrierung           |
-| kubectl            | 1.28+          | Cluster-Verwaltung                 |
-| Helm               | 3.x            | Optional, für Operator-Installtion |
-| PostgreSQL         | 16+            | Datenbank (pro Service)            |
-| Ingress-Controller | Traefik / Nginx| HTTP(S)-Routing                    |
-| cert-manager       | 1.x            | TLS-Zertifikate (Let's Encrypt)    |
-| OIDC Provider      | OIDC 1.0       | Authentifizierung (z.B. Authentik) |
-| S3-Storage (Garage) | 1.x           | Backup-Ziel (externe Netcup VM)    |
+| Komponente          | Mindestversion  | Zweck                              |
+| ------------------- | --------------- | ---------------------------------- |
+| Kubernetes          | 1.28+           | Container-Orchestrierung           |
+| kubectl             | 1.28+           | Cluster-Verwaltung                 |
+| Helm                | 3.x             | Optional, für Operator-Installation|
+| PostgreSQL          | 16+             | Datenbank (pro Service)            |
+| Redis               | 7+              | Session Store (shared)             |
+| Apache Kafka        | 3.9+            | Event-Streaming                    |
+| RabbitMQ            | 4.x             | Task-Queues                        |
+| Ingress-Controller  | Traefik / Nginx | HTTP(S)-Routing                    |
+| cert-manager        | 1.x             | TLS-Zertifikate (Let's Encrypt)    |
+| OIDC Provider       | OIDC 1.0        | Authentifizierung (z.B. Authentik) |
+| S3-Storage (Garage) | 1.x             | Backup-Ziel (externe Netcup VM)    |
 
 ## Architekturübersicht
 
-Die Plattform besteht aus zwei Services:
+Die Plattform besteht aus vier Services:
 
-| Service            | Port | Datenbank                | Beschreibung                          |
-| ------------------ | ---- | ------------------------ | ------------------------------------- |
-| blog-content       | 8080 | PostgreSQL (eigene DB)   | Blog-Inhalte, Thymeleaf-UI, SSR      |
-| user-management    | 8081 | PostgreSQL (eigene DB)   | Benutzerverwaltung, Rollen, Tenants   |
+| Service            | Port | gRPC | Datenbank              | Beschreibung                                       |
+| ------------------ | ---- | ---- | ---------------------- | -------------------------------------------------- |
+| blog-content       | 8080 |      | PostgreSQL (eigene DB) | Blog-Inhalte, Thymeleaf-UI, REST-API               |
+| user-management    | 8081 | 9090 | PostgreSQL (eigene DB) | Benutzerverwaltung, OIDC-Login, Rollen             |
+| tenant-management  | 8082 | 9090 | PostgreSQL (eigene DB) | Tenant-Verwaltung, gRPC-Schnittstelle              |
+| feed               | 8080 |      | PostgreSQL (eigene DB) | Feed-Aggregation (Kafka-Consumer, kein UI)          |
 
-Beide Services folgen der hexagonalen Architektur und kommunizieren über gRPC (synchron)
+Alle Services folgen der hexagonalen Architektur und kommunizieren über gRPC (synchron)
 sowie Kafka/RabbitMQ (asynchron). REST-APIs dienen ausschließlich der Client-Kommunikation.
+Sessions werden über Redis zwischen den Services geteilt.
 
 ## Deployment
 
@@ -55,14 +61,16 @@ spec:
   bootstrap:
     initdb:
       database: blog_content
-      owner: blog_content
+      owner: app
       postInitApplicationSQL:
         - CREATE DATABASE user_management OWNER app;
+        - CREATE DATABASE tenant_management OWNER app;
+        - CREATE DATABASE feed OWNER app;
   storage:
     size: 10Gi
 ```
 
-Beim Bootstrap werden automatisch alle Service-Datenbanken angelegt (`blog_content` via initdb, `user_management` via postInitApplicationSQL).
+Beim Bootstrap werden automatisch alle Service-Datenbanken angelegt (`blog_content` via initdb, die übrigen via postInitApplicationSQL).
 
 Die Datenbankverbindung wird über Umgebungsvariablen konfiguriert (siehe unten).
 
@@ -73,14 +81,17 @@ Die Images werden über die GitHub Container Registry bereitgestellt:
 ```
 ghcr.io/tomirgang/tomsblog/blog-content:<tag>
 ghcr.io/tomirgang/tomsblog/user-management:<tag>
+ghcr.io/tomirgang/tomsblog/tenant-management:<tag>
+ghcr.io/tomirgang/tomsblog/feed:<tag>
 ```
 
-Als Tag wird Semantic Versioning im Format `<major>.<minor>.<patch>` verwendet (z.B. `0.8.4`).
+Als Tag wird Semantic Versioning im Format `<major>.<minor>.<patch>` verwendet (z.B. `0.9.6`).
 Flux Image Automation aktualisiert das Deployment-Manifest automatisch bei neuen Releases.
 
 ### Secrets
 
-Secrets für die Applikation müssen im Namespace `tomsblog` bereitgestellt werden:
+Secrets für die Applikation müssen im Namespace `tomsblog` bereitgestellt werden.
+Jeder Service hat ein eigenes Secret:
 
 ```yaml
 apiVersion: v1
@@ -91,13 +102,29 @@ metadata:
 type: Opaque
 stringData:
   admin-password: "<SuperAdmin-Passwort>"
-  oidc-client-id: "<OIDC Client ID>"
-  oidc-client-secret: "<OIDC Client Secret>"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: user-management-secrets
+  namespace: tomsblog
+type: Opaque
+stringData:
+  admin-password: "<SuperAdmin-Passwort>"
   service-api-key: "<Gemeinsamer API-Key für Service-Kommunikation>"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tenant-management-secrets
+  namespace: tomsblog
+type: Opaque
+stringData:
+  admin-password: "<SuperAdmin-Passwort>"
 ```
 
-Der `service-api-key` muss identisch in beiden Services konfiguriert sein
-(blog-content als Client, user-management als Server).
+Der `service-api-key` muss identisch in blog-content (als Client-Umgebungsvariable)
+und user-management (als Server-Secret) konfiguriert sein.
 
 Für die Verschlüsselung der Secrets im Git-Repository wird SOPS empfohlen (ADR-0025).
 
@@ -121,30 +148,122 @@ Die Anwendung nutzt Spring Boot, daher können alle `application.yml`-Werte
 #### SuperAdmin (Break-Glass Login)
 
 Der SuperAdmin-Account wird beim Start automatisch als In-Memory-Benutzer angelegt.
-Der Login ist ausschließlich über `/admin/login` (formbasiert) möglich.
+Der blog-content Service hat keine eigene Login-Seite. Nicht authentifizierte Benutzer
+werden zum user-management Service weitergeleitet (siehe `AUTH_LOGIN_URL`).
 
-| Variable              | Beschreibung              | Default      |
-| --------------------- | ------------------------- | ------------ |
+| Variable              | Beschreibung              | Default        |
+| --------------------- | ------------------------- | -------------- |
 | `BLOG_ADMIN_PASSWORD` | Passwort des SuperAdmin   | (erforderlich) |
 
 Der Benutzername ist fest auf `admin` konfiguriert.
 `BLOG_ADMIN_PASSWORD` ist eine Pflichtangabe ohne Default-Wert. Der Service startet nicht,
 wenn die Variable fehlt oder leer ist. In Kubernetes wird der Wert über ein Secret gesetzt.
 
+#### Authentifizierung
+
+| Variable           | Beschreibung                                    | Default        |
+| ------------------ | ----------------------------------------------- | -------------- |
+| `AUTH_LOGIN_URL`   | URL der Login-Seite (user-management Service)   | `/auth/login`  |
+
+Unauthentifizierte Benutzer werden auf diese URL weitergeleitet.
+Im Kubernetes-Cluster zeigt diese auf den user-management Service.
+
+#### User Management Service Verbindung (gRPC)
+
+| Variable                      | Beschreibung                           | Default                    |
+| ----------------------------- | -------------------------------------- | -------------------------- |
+| `USER_MANAGEMENT_GRPC_HOST`   | Hostname des User Management Service   | `localhost`                |
+| `USER_MANAGEMENT_GRPC_PORT`   | gRPC-Port des User Management Service  | `9090`                     |
+
+Im Kubernetes-Cluster typischerweise:
+
+```yaml
+- name: USER_MANAGEMENT_GRPC_HOST
+  value: "user-management.tomsblog.svc.cluster.local"
+- name: USER_MANAGEMENT_GRPC_PORT
+  value: "9090"
+```
+
+#### Redis (Session Store)
+
+| Variable               | Beschreibung       | Default     |
+| ---------------------- | ------------------ | ----------- |
+| `SPRING_REDIS_HOST`    | Redis-Hostname     | `localhost` |
+| `SPRING_REDIS_PORT`    | Redis-Port         | `6379`      |
+| `SPRING_REDIS_PASSWORD`| Redis-Passwort     | (leer)      |
+
+Redis wird für die gemeinsame Session-Verwaltung zwischen allen Services benötigt.
+
+#### Kafka (Event-Streaming)
+
+| Variable                          | Beschreibung                | Default            |
+| --------------------------------- | --------------------------- | ------------------ |
+| `SPRING_KAFKA_BOOTSTRAP_SERVERS`  | Kafka-Bootstrap-Server      | `localhost:9092`   |
+
+Kafka wird für die Veröffentlichung von Domain-Events (PostCreated, PostUpdated, PostPublished) benötigt.
+
+#### Sonstige
+
+| Variable                   | Beschreibung                     | Default                                      |
+| -------------------------- | -------------------------------- | -------------------------------------------- |
+| `BLOG_DEFAULT_TENANT_ID`   | Standard-Tenant-ID               | `00000000-0000-0000-0000-000000000001`       |
+| `BLOG_DEFAULT_AUTHOR_ID`   | Standard-Autor-ID                | `00000000-0000-0000-0000-000000000001`       |
+| `SPRING_PROFILES_ACTIVE`   | Aktive Spring-Profile            | (keines)                                     |
+
+In Kubernetes: `k8s,kafka`
+
+### user-management Service
+
+#### Datenbank
+
+Der User Management Service benötigt eine eigene PostgreSQL-Datenbank.
+
+| Variable                      | Beschreibung                      | Beispiel                                         |
+| ----------------------------- | --------------------------------- | ------------------------------------------------ |
+| `SPRING_DATASOURCE_URL`      | JDBC-URL zur PostgreSQL-Datenbank | `jdbc:postgresql://postgres:5432/user_management`|
+| `SPRING_DATASOURCE_USERNAME` | Datenbankbenutzer                 | `app`                                            |
+| `SPRING_DATASOURCE_PASSWORD` | Datenbankpasswort                 | (aus Secret)                                     |
+
+#### SuperAdmin (Break-Glass Login)
+
+Der SuperAdmin-Account wird beim Start als In-Memory-Benutzer angelegt.
+Der Login ist über `/auth/admin/login` (formbasiert) möglich.
+
+| Variable              | Beschreibung              | Default        |
+| --------------------- | ------------------------- | -------------- |
+| `BLOG_ADMIN_PASSWORD` | Passwort des SuperAdmin   | (erforderlich) |
+
+Der Benutzername ist fest auf `admin` konfiguriert.
+
+#### Service-Authentifizierung
+
+Der User Management Service ist durch API-Key-Authentifizierung geschützt.
+Alle API-Anfragen (`/api/**`) müssen den Header `X-API-Key` enthalten.
+
+| Variable          | Beschreibung                             | Default        |
+| ----------------- | ---------------------------------------- | -------------- |
+| `SERVICE_API_KEY` | API-Key für Service-zu-Service-Zugriff   | (erforderlich) |
+
+Der blog-content Service muss denselben API-Key als Umgebungsvariable erhalten,
+um den User Management Service aufrufen zu können.
+
 #### OIDC Konfiguration
 
 Die OIDC-Anbindung an einen externen Identity Provider (z.B. Authentik, Keycloak, Entra ID)
-wird vollständig über Umgebungsvariablen oder Kubernetes Secrets konfiguriert.
-Eine Änderung der OIDC-Konfiguration erfordert kein Neubauen des Container-Images.
+wird über Umgebungsvariablen konfiguriert. Die Konfiguration betrifft den user-management
+Service, da dieser den OAuth2-Login-Flow verwaltet.
 
 | Variable                  | Beschreibung                              | Default                                                          |
 | ------------------------- | ----------------------------------------- | ---------------------------------------------------------------- |
-| `OIDC_CLIENT_ID`          | Client-ID der OIDC-Registrierung          | `blog-content`                                                   |
+| `OIDC_CLIENT_ID`          | Client-ID der OIDC-Registrierung          | `user-management`                                                |
 | `OIDC_CLIENT_SECRET`      | Client-Secret der OIDC-Registrierung      | (leer)                                                           |
 | `OIDC_AUTHORIZATION_URI`  | Authorization-Endpunkt des OIDC-Providers | `https://auth.do9ita.de/application/o/authorize/`                |
 | `OIDC_TOKEN_URI`          | Token-Endpunkt des OIDC-Providers         | `https://auth.do9ita.de/application/o/tomsblog/token/`           |
 | `OIDC_USERINFO_URI`       | UserInfo-Endpunkt des OIDC-Providers      | `https://auth.do9ita.de/application/o/tomsblog/userinfo/`        |
 | `OIDC_JWKSET_URI`         | JWK-Set-Endpunkt des OIDC-Providers       | `https://auth.do9ita.de/application/o/tomsblog/jwks/`            |
+
+Die OAuth2 Redirect URI wird automatisch aus der Basis-URL des Services gebildet:
+`{baseUrl}/login/oauth2/code/authentik`
 
 **Beispiel: Authentik**
 
@@ -153,12 +272,12 @@ env:
   - name: OIDC_CLIENT_ID
     valueFrom:
       secretKeyRef:
-        name: blog-content-secrets
+        name: user-management-secrets
         key: oidc-client-id
   - name: OIDC_CLIENT_SECRET
     valueFrom:
       secretKeyRef:
-        name: blog-content-secrets
+        name: user-management-secrets
         key: oidc-client-secret
   - name: OIDC_AUTHORIZATION_URI
     value: "https://auth.example.com/application/o/authorize/"
@@ -184,53 +303,84 @@ env:
     value: "https://keycloak.example.com/realms/myrealm/protocol/openid-connect/certs"
 ```
 
-#### User Management Service Verbindung
+#### Redis (Session Store)
 
-| Variable                      | Beschreibung                           | Default                    |
-| ----------------------------- | -------------------------------------- | -------------------------- |
-| `USER_MANAGEMENT_GRPC_HOST`   | Hostname des User Management Service   | `localhost`                |
-| `USER_MANAGEMENT_GRPC_PORT`   | gRPC-Port des User Management Service  | `9090`                     |
-
-Im Kubernetes-Cluster typischerweise:
-
-```yaml
-- name: USER_MANAGEMENT_GRPC_HOST
-  value: "user-management.tomsblog.svc.cluster.local"
-- name: USER_MANAGEMENT_GRPC_PORT
-  value: "9090"
-```
+| Variable               | Beschreibung       | Default     |
+| ---------------------- | ------------------ | ----------- |
+| `SPRING_REDIS_HOST`    | Redis-Hostname     | `localhost` |
+| `SPRING_REDIS_PORT`    | Redis-Port         | `6379`      |
+| `SPRING_REDIS_PASSWORD`| Redis-Passwort     | (leer)      |
 
 #### Sonstige
 
-| Variable                   | Beschreibung                     | Default                                      |
-| -------------------------- | -------------------------------- | -------------------------------------------- |
-| `BLOG_DEFAULT_TENANT_ID`   | Standard-Tenant-ID               | `00000000-0000-0000-0000-000000000001`       |
-| `BLOG_DEFAULT_AUTHOR_ID`   | Standard-Autor-ID                | `00000000-0000-0000-0000-000000000001`       |
-| `SPRING_PROFILES_ACTIVE`   | Aktive Spring-Profile            | (keines)                                     |
+| Variable                 | Beschreibung          | Default  |
+| ------------------------ | --------------------- | -------- |
+| `SPRING_PROFILES_ACTIVE` | Aktive Spring-Profile | (keines) |
 
-### user-management Service
+In Kubernetes: `k8s`
+
+### tenant-management Service
 
 #### Datenbank
 
-Der User Management Service benötigt eine eigene PostgreSQL-Datenbank.
+| Variable                      | Beschreibung                      | Beispiel                                              |
+| ----------------------------- | --------------------------------- | ----------------------------------------------------- |
+| `SPRING_DATASOURCE_URL`      | JDBC-URL zur PostgreSQL-Datenbank | `jdbc:postgresql://postgres:5432/tenant_management`   |
+| `SPRING_DATASOURCE_USERNAME` | Datenbankbenutzer                 | `app`                                                 |
+| `SPRING_DATASOURCE_PASSWORD` | Datenbankpasswort                 | (aus Secret)                                          |
 
-| Variable                    | Beschreibung                        | Beispiel                                                       |
-| --------------------------- | ----------------------------------- | -------------------------------------------------------------- |
-| `SPRING_DATASOURCE_URL`    | JDBC-URL zur PostgreSQL-Datenbank   | `jdbc:postgresql://postgres:5433/usermanagement`               |
-| `SPRING_DATASOURCE_USERNAME` | Datenbankbenutzer                 | `app`                                                          |
-| `SPRING_DATASOURCE_PASSWORD` | Datenbankpasswort                 | (aus Secret)                                                   |
+#### SuperAdmin (Break-Glass Login)
 
-#### Service-Authentifizierung
+Der Login ist über `/tenant/admin/login` (formbasiert) möglich.
 
-Der User Management Service ist durch API-Key-Authentifizierung geschützt.
-Alle Anfragen (außer Health-Checks) müssen den Header `X-API-Key` enthalten.
+| Variable              | Beschreibung              | Default        |
+| --------------------- | ------------------------- | -------------- |
+| `BLOG_ADMIN_PASSWORD` | Passwort des SuperAdmin   | (erforderlich) |
 
-| Variable          | Beschreibung                             | Default        |
-| ----------------- | ---------------------------------------- | -------------- |
-| `SERVICE_API_KEY` | API-Key für Service-zu-Service-Zugriff   | (erforderlich) |
+Der Benutzername ist fest auf `admin` konfiguriert.
 
-Der blog-content Service muss denselben API-Key als Umgebungsvariable erhalten,
-um den User Management Service aufrufen zu können.
+#### Redis (Session Store)
+
+| Variable               | Beschreibung       | Default     |
+| ---------------------- | ------------------ | ----------- |
+| `SPRING_REDIS_HOST`    | Redis-Hostname     | `localhost` |
+| `SPRING_REDIS_PORT`    | Redis-Port         | `6379`      |
+| `SPRING_REDIS_PASSWORD`| Redis-Passwort     | (leer)      |
+
+#### Sonstige
+
+| Variable                 | Beschreibung          | Default  |
+| ------------------------ | --------------------- | -------- |
+| `SPRING_PROFILES_ACTIVE` | Aktive Spring-Profile | (keines) |
+
+In Kubernetes: `k8s`
+
+### feed Service
+
+Der Feed Service hat kein Web-UI. Er konsumiert Kafka-Events und speichert
+Feed-Einträge in einer eigenen PostgreSQL-Datenbank.
+
+#### Datenbank
+
+| Variable                      | Beschreibung                      | Beispiel                                    |
+| ----------------------------- | --------------------------------- | ------------------------------------------- |
+| `SPRING_DATASOURCE_URL`      | JDBC-URL zur PostgreSQL-Datenbank | `jdbc:postgresql://postgres:5432/feed`      |
+| `SPRING_DATASOURCE_USERNAME` | Datenbankbenutzer                 | `app`                                       |
+| `SPRING_DATASOURCE_PASSWORD` | Datenbankpasswort                 | (aus Secret)                                |
+
+#### Kafka (Event-Streaming)
+
+| Variable                          | Beschreibung                | Default            |
+| --------------------------------- | --------------------------- | ------------------ |
+| `SPRING_KAFKA_BOOTSTRAP_SERVERS`  | Kafka-Bootstrap-Server      | `localhost:9092`   |
+
+#### Sonstige
+
+| Variable                 | Beschreibung          | Default  |
+| ------------------------ | --------------------- | -------- |
+| `SPRING_PROFILES_ACTIVE` | Aktive Spring-Profile | (keines) |
+
+In Kubernetes: `k8s,kafka`
 
 ## Deployment-Manifest (Beispiel)
 
@@ -257,7 +407,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: blog-content
-          image: ghcr.io/tomirgang/tomsblog/blog-content:0.8.4
+          image: ghcr.io/tomirgang/tomsblog/blog-content:0.9.6
           ports:
             - containerPort: 8080
           securityContext:
@@ -268,43 +418,40 @@ spec:
               drop:
                 - ALL
           env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "k8s,kafka"
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://postgres:5432/blogcontent"
+              value: "jdbc:postgresql://postgres-cluster-rw.postgres.svc.cluster.local:5432/app"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: db-credentials
+                  name: postgres-cluster-app
                   key: username
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-credentials
+                  name: postgres-cluster-app
                   key: password
             - name: BLOG_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: blog-content-secrets
                   key: admin-password
-            - name: OIDC_CLIENT_ID
+            - name: USER_MANAGEMENT_GRPC_HOST
+              value: "user-management.tomsblog.svc.cluster.local"
+            - name: USER_MANAGEMENT_GRPC_PORT
+              value: "9090"
+            - name: SPRING_REDIS_HOST
+              value: "redis.redis.svc.cluster.local"
+            - name: SPRING_REDIS_PORT
+              value: "6379"
+            - name: SPRING_REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: blog-content-secrets
-                  key: oidc-client-id
-            - name: OIDC_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: blog-content-secrets
-                  key: oidc-client-secret
-            - name: OIDC_AUTHORIZATION_URI
-              value: "https://auth.example.com/authorize"
-            - name: OIDC_TOKEN_URI
-              value: "https://auth.example.com/token"
-            - name: OIDC_USERINFO_URI
-              value: "https://auth.example.com/userinfo"
-            - name: OIDC_JWKSET_URI
-              value: "https://auth.example.com/jwks"
-            - name: USER_MANAGEMENT_URL
-              value: "http://user-management.tomsblog.svc.cluster.local:8081"
+                  name: redis-password
+                  key: password
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
@@ -359,9 +506,64 @@ spec:
                   number: 8080
 ```
 
+## Admin-UIs und Login-Seiten
+
+### blog-content Service (Port 8080)
+
+| URL                       | Zugang               | Beschreibung                    |
+| ------------------------- | -------------------- | ------------------------------- |
+| `/`                       | Öffentlich           | Landing-Page mit Blog-Beiträgen |
+| `/posts`                  | Öffentlich           | Blog-Übersicht                  |
+| `/posts/{slug}`           | Öffentlich           | Einzelner Blog-Beitrag          |
+| `/posts/new`              | Authentifiziert       | Neuen Beitrag erstellen         |
+| `/posts/{id}/edit`        | Authentifiziert       | Beitrag bearbeiten              |
+| `/posts/{id}/preview`     | Authentifiziert       | Beitragsvorschau                |
+| `/admin/tags`             | ADMIN, SUPERADMIN    | Tag-Verwaltung                  |
+| `/admin/audit-logs`       | ADMIN, SUPERADMIN    | Audit-Log-Ansicht               |
+| `/impressum`              | Öffentlich           | Impressum                       |
+| `/privacy`                | Öffentlich           | Datenschutzerklärung            |
+| `/swagger-ui.html`        | Nur lokal (nicht k8s)| API-Dokumentation               |
+
+Der blog-content Service hat keine eigene Login-Seite.
+Unauthentifizierte Benutzer werden auf `/auth/login` (user-management) weitergeleitet.
+Der Logout-Erfolg leitet auf `/posts` weiter.
+
+### user-management Service (Port 8081)
+
+| URL                             | Zugang            | Beschreibung                       |
+| ------------------------------- | ----------------- | ---------------------------------- |
+| `/auth/login`                   | Öffentlich        | Login-Seite (OIDC und Formular)    |
+| `/auth/register`                | Öffentlich        | Registrierungs-Formular            |
+| `/auth/admin/login`             | Öffentlich        | Break-Glass SuperAdmin-Login       |
+| `/auth/admin/users`             | SUPERADMIN        | Benutzerverwaltung                 |
+| `/auth/admin/settings`          | SUPERADMIN        | Admin-Einstellungen (Tabs)         |
+| `/auth/admin/settings/general`  | SUPERADMIN        | Allgemeine Einstellungen           |
+| `/auth/admin/settings/oidc`     | SUPERADMIN        | OIDC-Konfiguration                 |
+| `/auth/admin/settings/legal`    | SUPERADMIN        | Impressum/Datenschutz              |
+| `/auth/admin/switch-tenant`     | SUPERADMIN        | Tenant wechseln                    |
+| `/auth/logout`                  | Authentifiziert   | Abmeldung                          |
+| `/login/oauth2/code/authentik`  | System (Callback) | OAuth2-Callback vom OIDC-Provider  |
+
+### tenant-management Service (Port 8082)
+
+| URL                                 | Zugang     | Beschreibung                   |
+| ----------------------------------- | ---------- | ------------------------------ |
+| `/tenant/admin/login`               | Öffentlich | SuperAdmin-Login               |
+| `/tenant/admin/tenants`             | SUPERADMIN | Tenant-Übersicht               |
+| `/tenant/admin/settings`            | SUPERADMIN | Tenant-Einstellungen bearbeiten|
+| `/tenant/admin/settings/general`    | SUPERADMIN | Allgemeine Einstellungen       |
+| `/tenant/admin/settings/oidc`       | SUPERADMIN | OIDC-Konfiguration pro Tenant  |
+| `/tenant/admin/settings/legal`      | SUPERADMIN | Impressum/Datenschutz          |
+| `/tenant/admin/switch-tenant`       | SUPERADMIN | Tenant wechseln                |
+| `/tenant/admin/logout`              | System     | Abmeldung                      |
+
+### feed Service (Port 8080)
+
+Der Feed Service hat kein Web-UI. Er verarbeitet nur Kafka-Events im Hintergrund.
+
 ## Health Checks
 
-Beide Services stellen Spring Boot Actuator Endpunkte bereit:
+Alle Services stellen Spring Boot Actuator Endpunkte bereit:
 
 | Endpunkt                      | Zweck            | Beschreibung                              |
 | ----------------------------- | ---------------- | ----------------------------------------- |
@@ -369,7 +571,7 @@ Beide Services stellen Spring Boot Actuator Endpunkte bereit:
 | `/actuator/health/readiness`  | Readiness-Probe  | Prüft App-Lifecycle und Datenbankzugang   |
 | `/actuator/health`            | Gesamtstatus     | Aggregiert alle Health-Indikatoren        |
 
-IMPORTANT: Die Liveness-Probe muss `/actuator/health/liveness` verwenden (nicht `/actuator/health`), da der aggregierte Endpunkt externe Dependencies einschließt (z.B. gRPC zu user-management) und bei deren Ausfall den Pod unnötig neu startet.
+**Wichtig:** Die Liveness-Probe muss `/actuator/health/liveness` verwenden (nicht `/actuator/health`), da der aggregierte Endpunkt externe Dependencies einschließt (z.B. gRPC zu user-management) und bei deren Ausfall den Pod unnötig neu startet.
 
 ## Backup-Storage (Garage / S3)
 
@@ -500,7 +702,7 @@ Für eine Wiederherstellung auf einen bestimmten Zeitpunkt:
 
 ## Datenbank-Migrationen
 
-Beide Services verwenden Flyway für automatische Datenbank-Migrationen.
+Alle Services verwenden Flyway für automatische Datenbank-Migrationen.
 Die Migrationen werden beim Start des Services automatisch ausgeführt.
 Ein manueller Eingriff ist nicht erforderlich.
 
@@ -509,16 +711,16 @@ Ein manueller Eingriff ist nicht erforderlich.
 ### Allgemeine Schritte
 
 1. Im OIDC Provider eine neue OAuth2/OIDC Application anlegen
-2. Redirect URI konfigurieren: `https://<blog-domain>/login/oauth2/code/authentik`
+2. Redirect URI konfigurieren: `https://<user-management-domain>/login/oauth2/code/authentik`
 3. Scopes aktivieren: `openid`, `profile`, `email`
 4. Client-ID und Client-Secret notieren
 5. Die Endpunkt-URLs des Providers ermitteln (Authorization, Token, UserInfo, JWKS)
-6. Werte als Kubernetes Secrets und Umgebungsvariablen konfigurieren (siehe oben)
+6. Werte als Kubernetes Secrets und Umgebungsvariablen im user-management Service konfigurieren (siehe oben)
 
 ### Authentik
 
 1. Unter *Applications* eine neue *OAuth2/OpenID Provider* erstellen
-2. Redirect URI: `https://<blog-domain>/login/oauth2/code/authentik`
+2. Redirect URI: `https://<user-management-domain>/login/oauth2/code/authentik`
 3. Signing Key auswählen
 4. Die Application mit dem Provider verknüpfen
 5. Client-ID und Client-Secret aus der Provider-Konfiguration übernehmen
@@ -543,7 +745,7 @@ Das Beispiel-Deployment-Manifest oben zeigt die empfohlene Konfiguration.
 
 ### Rate Limiting
 
-Der blog-content Service enthält einen integrierten Login-Rate-Limiter:
+Der user-management Service enthält einen integrierten Login-Rate-Limiter:
 maximal 10 Anmeldeversuche pro IP-Adresse innerhalb von 5 Minuten.
 Bei Überschreitung wird HTTP 429 zurückgegeben.
 
@@ -552,8 +754,9 @@ Für produktive Umgebungen wird zusätzlich ein Ingress-Level Rate Limiting empf
 
 ### Service-zu-Service-Kommunikation
 
-Die Kommunikation zwischen blog-content und user-management erfolgt über gRPC.
-Die Verbindung ist im Cluster als Plaintext konfiguriert, da Linkerd (Service Mesh)
+Die Kommunikation zwischen blog-content und user-management sowie zwischen
+blog-content und tenant-management erfolgt über gRPC.
+Die Verbindungen sind im Cluster als Plaintext konfiguriert, da Linkerd (Service Mesh)
 automatisch mTLS zwischen den Pods bereitstellt (ADR-0021).
 
 ### Swagger/OpenAPI
@@ -565,10 +768,10 @@ Für lokale Entwicklung bleibt sie unter `/swagger-ui.html` zugänglich.
 
 Folgende Secrets sollten regelmäßig rotiert werden:
 
-| Secret                | Betroffene Services          | Hinweis                                    |
-| --------------------- | ---------------------------- | ------------------------------------------ |
-| `BLOG_ADMIN_PASSWORD` | blog-content                 | Restart erforderlich                       |
-| `SERVICE_API_KEY`     | blog-content, user-management| Beide Services gleichzeitig aktualisieren  |
-| `OIDC_CLIENT_SECRET`  | blog-content                 | Im OIDC Provider gleichzeitig ändern       |
-| DB-Passwörter         | Alle Services                | Restart erforderlich                       |
-| S3 Access/Secret Key  | Backup-Jobs                  | In Backup-Secret und Garage aktualisieren  |
+| Secret                | Betroffene Services                             | Hinweis                                    |
+| --------------------- | ----------------------------------------------- | ------------------------------------------ |
+| `BLOG_ADMIN_PASSWORD` | blog-content, user-management, tenant-management| Restart erforderlich                       |
+| `SERVICE_API_KEY`     | blog-content, user-management                   | Beide Services gleichzeitig aktualisieren  |
+| `OIDC_CLIENT_SECRET`  | user-management                                 | Im OIDC Provider gleichzeitig ändern       |
+| DB-Passwörter         | Alle Services                                   | Restart erforderlich                       |
+| S3 Access/Secret Key  | Backup-Jobs                                     | In Backup-Secret und Garage aktualisieren  |

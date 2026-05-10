@@ -7,7 +7,7 @@ links:
 - STK001: 7nIt6jQu61g0LN6dl90kyg6r_lOlDzLfbV88NMUGVZQ=
 normative: true
 ref: ''
-reviewed: 4KCcUrO6Lq3H-cE4D1AGqBVRw1F9txc_FMEUPtRvxz0=
+reviewed: z6kMWOoeb48JaVzuwGqiLtc951rbShJnA1pzFi4_GP0=
 text: |
   Der Blog Content Service muss eine öffentliche Thymeleaf-basierte Blog-Ansicht bereitstellen:
   - Die Landing Page (/) und /posts zeigen beide dieselbe Post-Liste mit allen veröffentlichten Posts des Tenants in absteigender chronologischer Reihenfolge (neueste zuerst).

@@ -1,23 +1,28 @@
 @startuml
 actor Benutzer
 participant "Blog Content\nService" as blog
-participant "Authentik\n(OIDC Provider)" as authentik
 participant "User Management\nService" as usermgmt
+participant "Authentik\n(OIDC Provider)" as authentik
 database "PostgreSQL\n(user-mgmt)" as db
+database "Redis\n(Session Store)" as redis
 
 Benutzer -> blog : GET /posts/new\n(geschuetzt)
 blog -> blog : Nicht authentifiziert
-blog -> Benutzer : 302 Redirect zu\nAuthentik /authorize
+blog -> Benutzer : 302 Redirect zu\n/auth/login
+Benutzer -> usermgmt : GET /auth/login
+usermgmt -> Benutzer : 302 Redirect zu\nAuthentik /authorize
 Benutzer -> authentik : Login-Seite
 authentik -> authentik : Passwort + MFA pruefen
 authentik -> Benutzer : 302 Redirect mit\nAuthorization Code
-Benutzer -> blog : GET /login/oauth2/code/authentik\n?code=...
-blog -> authentik : POST /token\n(Code + PKCE Verifier)
-authentik -> blog : ID Token + Access Token
-blog -> usermgmt : POST /api/users/sync\n{oidcSubject, email, name}
+Benutzer -> usermgmt : GET /login/oauth2/code/authentik\n?code=...
+usermgmt -> authentik : POST /token\n(Code + PKCE Verifier)
+authentik -> usermgmt : ID Token + Access Token
 usermgmt -> db : Upsert UserProfile
 db -> usermgmt : UserProfile mit Rollen
-usermgmt -> blog : UserProfile\n{roles, tenantMemberships}
-blog -> blog : Session erstellen\nmit Rollen als Authorities
-blog -> Benutzer : 302 Redirect zu /posts
+usermgmt -> redis : Session erstellen\nmit Rollen als Authorities
+usermgmt -> Benutzer : 302 Redirect zu\nBlog Content Service
+Benutzer -> blog : GET /posts/new
+blog -> redis : Session lesen
+redis -> blog : Authentifizierter Benutzer
+blog -> Benutzer : 200 OK (Seite)
 @enduml

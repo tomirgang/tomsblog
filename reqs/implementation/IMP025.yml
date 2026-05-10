@@ -12,7 +12,7 @@ references:
   type: file
 - path: libs/shared-ui/src/main/resources/templates/shared/fragments/footer.html
   type: file
-reviewed: quIQKJhW8ERsezBK-HnmvVmdCd4odtVHggkDP1vKYsY=
+reviewed: -OLHgmuaxNI9_nVUgUKKOoXG-5xT3EkSuV9BKFZr8Vk=
 text: |
   Implementierung des VersionModelAdvice als @ControllerAdvice. Die Klasse
   liest die Version aus BuildProperties (generiert durch spring-boot-maven-plugin

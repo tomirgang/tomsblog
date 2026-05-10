@@ -1,5 +1,6 @@
 package de.tomsblog.feed.application.port.inbound;
 
+import de.tomsblog.shared.tenant.TenantId;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -13,10 +14,10 @@ public interface FeedEntryUseCase {
     /**
      * Handles a post-published event by creating or updating a feed entry.
      */
-    void onPostPublished(UUID tenantId, UUID postId, String slug, String locale, Instant publishedAt);
+    void onPostPublished(TenantId tenantId, UUID postId, String slug, String locale, Instant publishedAt);
 
     /**
      * Handles a post-updated event by updating an existing feed entry.
      */
-    void onPostUpdated(UUID tenantId, UUID postId, String title, String slug, String locale);
+    void onPostUpdated(TenantId tenantId, UUID postId, String title, String slug, String locale);
 }

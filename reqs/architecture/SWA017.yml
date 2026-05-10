@@ -7,7 +7,7 @@ links:
 - SWR010: RkKQEXHFLRqRORbxSNSaFfEZnztwmUMANQIc-J2LatE=
 normative: true
 ref: ''
-reviewed: 4gbOAiezuvIiB_Lij738q5yI3Tyz-CWqDFB4byx21ic=
+reviewed: -vNLBXy7dpx5eX8x9PDntu9nztXRNumt9KipwNU30fs=
 text: |
   Das Kubernetes-Cluster wird mit dem kube-hetzner Terraform-Modul und OpenTofu
   auf Hetzner Cloud provisioniert. Konfiguration: 1 Control-Plane-Node (CX33, 4 vCPU, 8 GB),

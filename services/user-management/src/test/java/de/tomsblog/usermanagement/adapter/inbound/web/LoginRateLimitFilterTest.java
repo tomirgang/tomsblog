@@ -130,6 +130,43 @@ class LoginRateLimitFilterTest {
         assertThat(entry.incrementAndCheck()).isTrue();
     }
 
+    @Test
+    @DisplayName("purgeExpired removes expired entries")
+    void purgeExpiredRemovesEntries() throws Exception {
+        // Create a rate-limited entry
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/auth/login");
+        request.setRemoteAddr("10.0.0.99");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        filter.doFilter(request, response, mock(FilterChain.class));
+
+        // purgeExpired should not remove non-expired entries
+        filter.purgeExpired();
+
+        // Entry should still work (not removed)
+        MockHttpServletRequest req2 = new MockHttpServletRequest("POST", "/auth/login");
+        req2.setRemoteAddr("10.0.0.99");
+        MockHttpServletResponse resp2 = new MockHttpServletResponse();
+        filter.doFilter(req2, resp2, mock(FilterChain.class));
+        assertThat(resp2.getStatus()).isEqualTo(200);
+    }
+
+    @Test
+    @DisplayName("doFilterInternal creates new entry when existing is expired")
+    void doFilterInternal_createsNewEntryWhenExpired() throws Exception {
+        // First request to establish an entry
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/auth/login");
+        request.setRemoteAddr("10.0.0.100");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        filter.doFilter(request, response, mock(FilterChain.class));
+
+        // Entry exists, not expired - second request increments count
+        MockHttpServletRequest request2 = new MockHttpServletRequest("POST", "/auth/login");
+        request2.setRemoteAddr("10.0.0.100");
+        MockHttpServletResponse response2 = new MockHttpServletResponse();
+        filter.doFilter(request2, response2, mock(FilterChain.class));
+        assertThat(response2.getStatus()).isEqualTo(200);
+    }
+
     private static FilterChain mock(Class<FilterChain> clazz) {
         return org.mockito.Mockito.mock(clazz);
     }

@@ -8,7 +8,7 @@ links:
 - STK011: o_m75UlgAWAP0038nlXS6SaXhlTYZWKhkxctqtvV2nU=
 normative: true
 ref: ''
-reviewed: ZfmhmiThtHsDjnLCM9R6BM_RoeOI9nf2Z4kEQY5VgGo=
+reviewed: 4daUS9NtLMdNdsktC0AS44Ux156-QSZ9F0_kpUlh04Y=
 text: |
   Der Autor kann über POST /api/posts/{id}/translate eine KI-Übersetzung
   ausloesen. Das Ergebnis wird als Entwurf gespeichert und dem Autor

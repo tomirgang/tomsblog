@@ -9,13 +9,13 @@ Jede Domain-Entity trägt eine `TenantId`. Die Tenant-Zuordnung eines Requests e
 
 == Database per Service
 
-Jeder Microservice besitzt seine eigene, dedizierte Datenbank-Instanz (SWA-015, ADR-0019). Die Technologiewahl (PostgreSQL oder MongoDB) erfolgt pro Service anhand des Datenmodells. Kein Service darf direkt auf die Datenbank eines anderen Services zugreifen.
+Jeder Microservice besitzt seine eigene, logisch dedizierte Datenbank innerhalb eines gemeinsamen CloudNativePG-Clusters (SWA-015, ADR-0019). Die Isolation erfolgt auf Datenbankebene (separate Datenbanken und Benutzer), nicht auf Prozessebene. Die Technologiewahl (PostgreSQL oder MongoDB) erfolgt pro Service anhand des Datenmodells. Kein Service darf direkt auf die Datenbank eines anderen Services zugreifen.
 
 * Blog Content Service: PostgreSQL (relationale Daten, Flyway-Migrationen)
 * Auth Service: PostgreSQL (User/Role-Management)
 * Service-übergreifender Datenzugriff ausschließlich über gRPC (SWA-009) oder Domain Events (SWA-005)
 * Lokale Entwicklung: dedizierte Datenbank-Container pro Service
-* Kubernetes: CloudNativePG Operator (PostgreSQL), MongoDB Community Operator
+* Kubernetes: CloudNativePG Operator mit Database CRDs (ADR-0029) für deklarative Datenbankverwaltung
 
 == Audit
 

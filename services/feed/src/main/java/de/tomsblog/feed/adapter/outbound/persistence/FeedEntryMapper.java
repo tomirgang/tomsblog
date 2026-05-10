@@ -1,6 +1,7 @@
 package de.tomsblog.feed.adapter.outbound.persistence;
 
 import de.tomsblog.feed.domain.model.FeedEntry;
+import de.tomsblog.shared.tenant.TenantId;
 
 final class FeedEntryMapper {
 
@@ -9,7 +10,7 @@ final class FeedEntryMapper {
     static FeedEntryJpaEntity toJpa(FeedEntry domain) {
         return new FeedEntryJpaEntity(
                 domain.getId(),
-                domain.getTenantId(),
+                domain.getTenantId().value(),
                 domain.getPostId(),
                 domain.getTitle(),
                 domain.getSlug(),
@@ -21,7 +22,7 @@ final class FeedEntryMapper {
     static FeedEntry toDomain(FeedEntryJpaEntity jpa) {
         return FeedEntry.reconstitute(
                 jpa.getId(),
-                jpa.getTenantId(),
+                TenantId.of(jpa.getTenantId()),
                 jpa.getPostId(),
                 jpa.getTitle(),
                 jpa.getSlug(),

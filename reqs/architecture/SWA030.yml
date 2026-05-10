@@ -7,7 +7,7 @@ links:
 - SWR010: RkKQEXHFLRqRORbxSNSaFfEZnztwmUMANQIc-J2LatE=
 normative: true
 ref: ''
-reviewed: udgdnGKo3aydtDJYYhTsNcPTmr35qTJ8iuS9_nQJGPQ=
+reviewed: denGJ9_EUwttOK9q6Som7i0rkz8xl3MnLo8QSYkgJP8=
 text: |
   Jeder Service, der eine PostgreSQL-Datenbank benoetigt, erhaelt eine
   dedizierte CloudNativePG Database-Ressource (CRD). Die Database-Ressource

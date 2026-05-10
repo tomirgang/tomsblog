@@ -34,7 +34,7 @@ public class PostEventConsumer {
                 event.postId(),
                 event.metadata().tenantId());
         feedEntryUseCase.onPostPublished(
-                event.metadata().tenantId().value(), event.postId(), event.slug(), event.locale(), event.publishedAt());
+                event.metadata().tenantId(), event.postId(), event.slug(), event.locale(), event.publishedAt());
     }
 
     @KafkaListener(topics = "post.updated", groupId = "feed-service")
@@ -44,6 +44,6 @@ public class PostEventConsumer {
                 event.postId(),
                 event.metadata().tenantId());
         feedEntryUseCase.onPostUpdated(
-                event.metadata().tenantId().value(), event.postId(), event.title(), event.slug(), event.locale());
+                event.metadata().tenantId(), event.postId(), event.title(), event.slug(), event.locale());
     }
 }

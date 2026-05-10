@@ -3,12 +3,14 @@ actor Author
 participant "REST API" as api
 participant "PostUseCase" as uc
 participant "PostRepository" as repo
+participant "AuditLogger" as audit
 participant "EventPublisher" as events
 
 Author -> api : POST /api/posts
 api -> uc : createPost(command)
 uc -> repo : save(post)
 repo --> uc : Post
+uc -> audit : log(AuditLogEntry)
 uc -> events : publish(PostCreatedEvent)
 uc --> api : Post
 api --> Author : 201 Created

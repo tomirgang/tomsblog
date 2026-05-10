@@ -296,6 +296,28 @@ class TenantSettingsServiceTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("oidcClientId is required");
         }
+
+        @Test
+        @DisplayName("SWR-061: validates blank issuerUrl for OIDC mode")
+        void validatesBlankIssuerUrlForOidcMode() {
+            var settings = TenantSettings.create(TENANT_ID);
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+
+            assertThatThrownBy(() -> service.updateSettings(
+                            TENANT_ID,
+                            LoginMode.OIDC,
+                            false,
+                            Set.of(),
+                            "Blog",
+                            null,
+                            null,
+                            null,
+                            "  ",
+                            "client-id",
+                            null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("oidcIssuerUrl is required");
+        }
     }
 
     @Nested

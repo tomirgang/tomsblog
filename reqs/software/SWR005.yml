@@ -7,7 +7,7 @@ links:
 - STK003: Jfv4gntaQucZkaLjBMry42kizBTS-yt67FJUO_zYATc=
 normative: true
 ref: ''
-reviewed: 3sUsvl5ohqpfRz8SsrgUTttzTxSnAzB5ZnLUEB_2QnA=
+reviewed: AjB0GsX5XZFY1o86S2B8kjFraHxKtHmk-9Pzmhv1Ya0=
 text: |
   Der Autor kann über PUT /api/posts/{id}/translation eine manuelle
   Übersetzung direkt eingeben und speichern.

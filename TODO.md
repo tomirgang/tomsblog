@@ -122,12 +122,12 @@
 - [x] Infra: Kafka Deployment (Strimzi Operator via Helm, siehe ADR-0026)
 - [x] Infra: RabbitMQ Deployment (RabbitMQ Cluster Operator via Helm, siehe ADR-0026)
 - [x] Infra: MongoDB Deployment (Community Operator via Helm, siehe ADR-0026)
-- [ ] Migration auf Helm Charts für Operator-managed Services (ADR-0026)
+- [x] Migration auf Helm Charts für Operator-managed Services (ADR-0026)
 - [x] CloudNativePG auf ≥ 1.25 upgraden (Voraussetzung für Database CRD, ADR-0029)
 - [x] Migration auf deklarative Database CRD für alle Service-Datenbanken (INF-013, SWA-030)
 - [x] Dedizierte Rollen pro Service evaluieren (DatabaseRole CRD erst ab CNPG 1.30, warten)
-- [ ] Security-Reviews (OWASP)
-- [ ] Architecture Review
+- [x] Security-Reviews (OWASP)
+- [x] Architecture Review
 
 > **MVP nach Phase 5:** Asynchrone Verarbeitung aktiv, Events fließen zwischen Services.
 

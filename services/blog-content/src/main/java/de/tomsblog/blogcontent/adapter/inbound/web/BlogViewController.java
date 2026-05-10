@@ -26,6 +26,9 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -204,9 +207,14 @@ public class BlogViewController {
 
     /** @req SWR-027 @req SWR-085 */
     @GetMapping("/posts/{id}/edit")
-    public String editPostForm(@PathVariable UUID id, @RequestHeader("X-Tenant-Id") UUID tenantId, Model model) {
+    public String editPostForm(
+            @PathVariable UUID id,
+            @RequestHeader("X-Tenant-Id") UUID tenantId,
+            @RequestHeader(value = "X-Author-Id", required = false) UUID authorId,
+            Model model) {
         TenantId tenant = new TenantId(tenantId);
         Post post = postUseCase.getPost(new PostId(id), tenant);
+        verifyOwnership(post, authorId);
         List<String> existingTagIds =
                 post.getTags().stream().map(tagId -> tagId.value().toString()).toList();
         PostFormData form = new PostFormData(
@@ -240,8 +248,13 @@ public class BlogViewController {
             @Valid @ModelAttribute("postForm") PostFormData form,
             BindingResult bindingResult,
             @RequestHeader("X-Tenant-Id") UUID tenantId,
+            @RequestHeader(value = "X-Author-Id", required = false) UUID authorId,
             Model model) {
         TenantId tenant = new TenantId(tenantId);
+        {
+            Post existing = postUseCase.getPost(new PostId(id), tenant);
+            verifyOwnership(existing, authorId);
+        }
         if (bindingResult.hasErrors()) {
             model.addAttribute("editMode", true);
             model.addAttribute("postId", id);
@@ -268,9 +281,30 @@ public class BlogViewController {
 
     /** @req SWR-002 */
     @PostMapping("/posts/{id}/publish")
-    public String publishPost(@PathVariable UUID id, @RequestHeader("X-Tenant-Id") UUID tenantId) {
+    public String publishPost(
+            @PathVariable UUID id,
+            @RequestHeader("X-Tenant-Id") UUID tenantId,
+            @RequestHeader(value = "X-Author-Id", required = false) UUID authorId) {
+        Post post = postUseCase.getPost(new PostId(id), new TenantId(tenantId));
+        verifyOwnership(post, authorId);
         postUseCase.publishPost(new PostId(id), new TenantId(tenantId));
         return "redirect:/posts";
+    }
+
+    private static void verifyOwnership(Post post, UUID authorId) {
+        if (authorId == null) {
+            return;
+        }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null
+                && auth.getAuthorities().stream()
+                        .anyMatch(a ->
+                                "ROLE_ADMIN".equals(a.getAuthority()) || "ROLE_SUPERADMIN".equals(a.getAuthority()))) {
+            return;
+        }
+        if (!post.getAuthorId().value().equals(authorId)) {
+            throw new AccessDeniedException("Not the post author");
+        }
     }
 
     /**

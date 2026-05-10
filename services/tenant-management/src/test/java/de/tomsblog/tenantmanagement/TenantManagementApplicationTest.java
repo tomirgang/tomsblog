@@ -1,10 +1,12 @@
 package de.tomsblog.tenantmanagement;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mockStatic;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -38,5 +40,14 @@ class TenantManagementApplicationTest {
     @DisplayName("SWR-072: application context loads successfully")
     void contextLoads() {
         assertThat(applicationContext).isNotNull();
+    }
+
+    @Test
+    @DisplayName("SWR-072: main method delegates to SpringApplication.run")
+    void mainMethod() {
+        try (var mocked = mockStatic(SpringApplication.class)) {
+            TenantManagementApplication.main(new String[] {});
+            mocked.verify(() -> SpringApplication.run(TenantManagementApplication.class, new String[] {}));
+        }
     }
 }

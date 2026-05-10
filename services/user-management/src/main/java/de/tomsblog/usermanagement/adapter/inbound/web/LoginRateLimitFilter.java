@@ -7,6 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -17,6 +20,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
  *
  * <p>Limits each IP to a configurable number of login attempts per time window.
  * Adapted for /auth/* paths (ADR-0032).
+ *
+ * <p>Expired entries are periodically purged to prevent memory leaks from distributed
+ * IP addresses.
  */
 @Component
 public class LoginRateLimitFilter extends OncePerRequestFilter {
@@ -25,6 +31,21 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
     private static final long WINDOW_SECONDS = 300; // 5 minutes
 
     private final ConcurrentHashMap<String, RateEntry> attempts = new ConcurrentHashMap<>();
+
+    @SuppressWarnings("java:S2245") // ScheduledExecutorService is fine here
+    private final ScheduledExecutorService cleaner = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r, "rate-limit-cleaner");
+        t.setDaemon(true);
+        return t;
+    });
+
+    public LoginRateLimitFilter() {
+        cleaner.scheduleAtFixedRate(this::purgeExpired, WINDOW_SECONDS, WINDOW_SECONDS, TimeUnit.SECONDS);
+    }
+
+    void purgeExpired() {
+        attempts.entrySet().removeIf(entry -> entry.getValue().isExpired());
+    }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {

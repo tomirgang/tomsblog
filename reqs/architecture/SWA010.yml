@@ -8,7 +8,7 @@ links:
 - SWR016: ExkjqXs8FWf_jsZRobxBrk9xE9iDBRKYBU46eDsmhIA=
 normative: true
 ref: ''
-reviewed: 34sMDpUrh37fKEHWJ3OoClk5jSh-qPbQzN7RUoCi75o=
+reviewed: eU1VsOk6n9gZFEnchycOe5jIZTtbCuGpRZHsbUGv8eg=
 text: |
   Die Authentifizierung erfolgt über Authentik (https://auth.do9ita.de)
   als externem OIDC Provider (ADR-0027). Ein leichtgewichtiger interner

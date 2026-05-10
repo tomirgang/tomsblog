@@ -217,4 +217,19 @@ class TenantManagementServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("oidcIssuerUrl");
     }
+
+    @Test
+    @DisplayName("SWR-072: updateGeneralSettings succeeds with valid OIDC config")
+    void updateGeneralSettingsOidcSuccess() {
+        var tenantId = TenantId.generate();
+        var tenant = Tenant.create(tenantId, "s", "Name");
+        tenant.updateOidcSettings("https://issuer", "cid", "cs");
+        when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
+        when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        var result = service.updateGeneralSettings(tenantId, "Name", "Tag", "OIDC", false, Set.of());
+
+        assertThat(result.getLoginMode()).isEqualTo(LoginMode.OIDC);
+        verify(auditLogger).log(any(AuditLogEntry.class));
+    }
 }

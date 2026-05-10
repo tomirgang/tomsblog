@@ -44,8 +44,12 @@ public class SyncingOidcUserService extends OidcUserService {
 
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
-        OidcUser oidcUser = super.loadUser(userRequest);
+        OidcUser oidcUser = delegateLoadUser(userRequest);
         return enrichWithRoles(oidcUser);
+    }
+
+    OidcUser delegateLoadUser(OidcUserRequest userRequest) {
+        return super.loadUser(userRequest);
     }
 
     OidcUser enrichWithRoles(OidcUser oidcUser) {

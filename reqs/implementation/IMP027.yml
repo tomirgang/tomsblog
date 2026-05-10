@@ -16,7 +16,7 @@ references:
   type: file
 - path: services/blog-content/src/main/resources/db/migration/blog/V4__add_content_type_to_posts.sql
   type: file
-reviewed: HQN6njySDHaOTshb-EvrerZrF3vlQX8DItDmhkqN5s8=
+reviewed: kfUFW3K16jKrhTxTiN4loWP6eeQRMm56FB3QEiWbDCs=
 text: |
   Das ContentType-Enum (HTML, MARKDOWN) wird im Domain-Modell definiert.
   Die PostJpaEntity bildet es als VARCHAR-Spalte ab. Der PostMapper

@@ -1,5 +1,6 @@
 package de.tomsblog.feed.domain.model;
 
+import de.tomsblog.shared.tenant.TenantId;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
@@ -11,7 +12,7 @@ import java.util.UUID;
 public class FeedEntry {
 
     private final UUID id;
-    private final UUID tenantId;
+    private final TenantId tenantId;
     private final UUID postId;
     private String title;
     private String slug;
@@ -21,7 +22,7 @@ public class FeedEntry {
 
     private FeedEntry(
             UUID id,
-            UUID tenantId,
+            TenantId tenantId,
             UUID postId,
             String title,
             String slug,
@@ -41,7 +42,7 @@ public class FeedEntry {
     /**
      * Creates a new feed entry from a post-published event.
      */
-    public static FeedEntry create(UUID tenantId, UUID postId, String slug, String locale, Instant publishedAt) {
+    public static FeedEntry create(TenantId tenantId, UUID postId, String slug, String locale, Instant publishedAt) {
         return new FeedEntry(UUID.randomUUID(), tenantId, postId, null, slug, locale, publishedAt, Instant.now());
     }
 
@@ -50,7 +51,7 @@ public class FeedEntry {
      */
     public static FeedEntry reconstitute(
             UUID id,
-            UUID tenantId,
+            TenantId tenantId,
             UUID postId,
             String title,
             String slug,
@@ -74,7 +75,7 @@ public class FeedEntry {
         return id;
     }
 
-    public UUID getTenantId() {
+    public TenantId getTenantId() {
         return tenantId;
     }
 

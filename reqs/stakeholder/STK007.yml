@@ -6,7 +6,7 @@ level: 7.0
 links: []
 normative: true
 ref: ''
-reviewed: iX2S6pgvpMwvRMwltgGIZzM5UsFLFrkUx0xnk-fa1CU=
+reviewed: Nwd-mVuiQVakHJYWDxXDmwxpAWV_SwK47nZ0Yjoypvc=
 text: |
   Die Plattform muss containerisiert auf Kubernetes betrieben werden können.
   Deployment erfolgt via GitOps (Flux).

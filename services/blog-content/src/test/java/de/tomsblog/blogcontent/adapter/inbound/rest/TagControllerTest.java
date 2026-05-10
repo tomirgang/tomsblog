@@ -2,6 +2,7 @@ package de.tomsblog.blogcontent.adapter.inbound.rest;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -48,6 +49,7 @@ class TagControllerTest {
         when(tagUseCase.createTag(any())).thenReturn(tag);
 
         mockMvc.perform(post("/api/tags")
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -101,6 +103,7 @@ class TagControllerTest {
         when(tagUseCase.renameTag(any())).thenReturn(tag);
 
         mockMvc.perform(put("/api/tags/{id}", tag.getId().value())
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -117,7 +120,7 @@ class TagControllerTest {
         UUID tagId = UUID.randomUUID();
         doNothing().when(tagUseCase).deleteTag(any(), any());
 
-        mockMvc.perform(delete("/api/tags/{id}", tagId).header("X-Tenant-Id", tenantId.toString()))
+        mockMvc.perform(delete("/api/tags/{id}", tagId).with(csrf()).header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isNoContent());
     }
 
@@ -125,6 +128,7 @@ class TagControllerTest {
     @DisplayName("POST /api/tags with blank name returns 400")
     void createTag_returns400WhenNameBlank() throws Exception {
         mockMvc.perform(post("/api/tags")
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""

@@ -8,7 +8,7 @@ links:
 - SWR009: dAvonN-IloOm4QiqwKMPhvRKa7gNGqqAvl6lr99HC34=
 normative: true
 ref: ''
-reviewed: sFvvxFNyX7UHya5mL03A2_VeVOlxEoxaPMlWy0ERnxA=
+reviewed: CYpW0FTvL_P2dMiQvGPfUcUcG4aHIro_P_i-LwJBDL0=
 text: |
   Jeder Microservice folgt der hexagonalen Architektur mit den Schichten:
   domain/ (reine Fachlogik, keine Framework-Abhängigkeiten),

@@ -2,6 +2,7 @@ package de.tomsblog.tenantmanagement.adapter.inbound.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import de.tomsblog.tenantmanagement.TenantManagementConfiguration;
 import de.tomsblog.tenantmanagement.adapter.outbound.persistence.JpaAuditLogger;
 import de.tomsblog.tenantmanagement.adapter.outbound.persistence.JpaTenantRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +39,7 @@ class SecurityConfigurationIntegrationTest {
     private SecurityFilterChain[] filterChains;
 
     @Autowired
-    private SecurityConfiguration securityConfiguration;
+    private TenantManagementConfiguration tenantManagementConfiguration;
 
     @Autowired
     private JpaTenantRepository tenantRepository;
@@ -55,7 +56,7 @@ class SecurityConfigurationIntegrationTest {
     @Test
     @DisplayName("SWR-073: tenantManagementUseCase bean is created")
     void tenantManagementUseCaseBeanCreated() {
-        var useCase = securityConfiguration.tenantManagementUseCase(tenantRepository, auditLogger);
+        var useCase = tenantManagementConfiguration.tenantManagementUseCase(tenantRepository, auditLogger);
         assertThat(useCase).isNotNull();
     }
 }

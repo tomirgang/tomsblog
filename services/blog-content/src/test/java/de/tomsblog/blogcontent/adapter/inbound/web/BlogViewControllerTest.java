@@ -1323,4 +1323,152 @@ class BlogViewControllerTest {
 
         verify(postUseCase).syncPostTags(any(), any(), any());
     }
+
+    @Test
+    @DisplayName("PUT /posts/{id} returns 403 when non-admin author does not match")
+    @WithMockUser(username = "user", roles = "USER")
+    void editPostForm_returns403WhenAuthorMismatch() throws Exception {
+        UUID postId = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Test", "Content", PostLocale.german());
+        when(postUseCase.getPost(any(), any())).thenReturn(post);
+
+        mockMvc.perform(get("/posts/{id}/edit", postId)
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", UUID.randomUUID().toString()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("GET /posts/{id}/edit allows when author matches")
+    @WithMockUser(username = "user", roles = "USER")
+    void editPostForm_allowsWhenAuthorMatches() throws Exception {
+        UUID postId = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Test", "Content", PostLocale.german());
+        when(postUseCase.getPost(any(), any())).thenReturn(post);
+        when(tagUseCase.listTags(any())).thenReturn(List.of());
+
+        mockMvc.perform(get("/posts/{id}/edit", postId)
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", authorId.value().toString()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("POST /posts/{id}/publish returns 403 when non-admin author does not match")
+    @WithMockUser(username = "user", roles = "USER")
+    void publishPost_returns403WhenAuthorMismatch() throws Exception {
+        UUID postId = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Test", "Content", PostLocale.german());
+        when(postUseCase.getPost(any(), any())).thenReturn(post);
+
+        mockMvc.perform(post("/posts/{id}/publish", postId)
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", UUID.randomUUID().toString()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("GET /posts/{id}/edit allows superadmin even with different author")
+    @WithMockUser(username = "superadmin", roles = "SUPERADMIN")
+    void editPostForm_allowsSuperadmin() throws Exception {
+        UUID postId = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Test", "Content", PostLocale.german());
+        when(postUseCase.getPost(any(), any())).thenReturn(post);
+        when(tagUseCase.listTags(any())).thenReturn(List.of());
+
+        mockMvc.perform(get("/posts/{id}/edit", postId)
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", UUID.randomUUID().toString()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("GET / returns empty excerpt for post with blank content")
+    void index_returnsEmptyExcerptForBlankContent() throws Exception {
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Blank Post", "   ", PostLocale.german());
+        post.publish();
+        when(postUseCase.listRecentPublishedPosts(any(TenantId.class), eq(3))).thenReturn(List.of(post));
+
+        mockMvc.perform(get("/").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("excerpts"));
+    }
+
+    @Test
+    @DisplayName("SWR-085: POST /posts creates post with new tag")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void createPost_withNewTag() throws Exception {
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Tagged", "Content", PostLocale.german());
+        when(postUseCase.createPost(any())).thenReturn(post);
+        Tag newTag = Tag.create(TenantId.of(tenantId), "NewTag");
+        when(tagUseCase.createTag(any())).thenReturn(newTag);
+
+        mockMvc.perform(post("/posts")
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", authorId.value().toString())
+                        .param("title", "Tagged")
+                        .param("content", "Content")
+                        .param("contentType", "HTML")
+                        .param("locale", "de")
+                        .param("newTagName", "NewTag"))
+                .andExpect(status().is3xxRedirection());
+
+        verify(tagUseCase).createTag(any());
+        verify(postUseCase).syncPostTags(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("SWR-040: POST /posts creates post with series links and featured dates")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void createPost_withSeriesAndFeatured() throws Exception {
+        UUID prevId = UUID.randomUUID();
+        UUID nextId = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Series", "Content", PostLocale.german());
+        when(postUseCase.createPost(any())).thenReturn(post);
+
+        mockMvc.perform(post("/posts")
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", authorId.value().toString())
+                        .param("title", "Series")
+                        .param("content", "Content")
+                        .param("contentType", "HTML")
+                        .param("locale", "de")
+                        .param("seriesPreviousPostId", prevId.toString())
+                        .param("seriesNextPostId", nextId.toString())
+                        .param("featuredFrom", "2026-06-01")
+                        .param("featuredUntil", "2026-06-30")
+                        .param("newTagName", ""))
+                .andExpect(status().is3xxRedirection());
+
+        verify(postUseCase).createPost(any(CreatePostCommand.class));
+    }
+
+    @Test
+    @DisplayName("SWR-040: POST /posts treats blank UUIDs, dates and tag IDs as absent")
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void createPost_withBlankOptionalParams() throws Exception {
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Blank", "Content", PostLocale.german());
+        when(postUseCase.createPost(any())).thenReturn(post);
+
+        mockMvc.perform(post("/posts")
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", authorId.value().toString())
+                        .param("title", "Blank")
+                        .param("content", "Content")
+                        .param("contentType", "HTML")
+                        .param("locale", "de")
+                        .param("seriesPreviousPostId", " ")
+                        .param("seriesNextPostId", " ")
+                        .param("featuredFrom", " ")
+                        .param("featuredUntil", " ")
+                        .param("tagIds", "")
+                        .param("newTagName", ""))
+                .andExpect(status().is3xxRedirection());
+
+        verify(postUseCase).createPost(any(CreatePostCommand.class));
+    }
 }

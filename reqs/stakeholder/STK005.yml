@@ -6,7 +6,7 @@ level: 5.0
 links: []
 normative: true
 ref: ''
-reviewed: mDS-DAHBR4nu0Joa0VgI6H2rQWz8hx3yLAYv8ahqIcg=
+reviewed: v8g_bEs32zgnwkF20CyrITDlYxQIKJo8g9z7cl9fpnA=
 text: |
   Das System muss verschiedene Benutzerrollen unterstützen:
   Super-Administrator (Plattform- und Tenant-Verwaltung),

@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.List;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -32,7 +34,11 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String providedKey = request.getHeader(API_KEY_HEADER);
 
-        if (expectedApiKey != null && expectedApiKey.equals(providedKey)) {
+        if (expectedApiKey != null
+                && providedKey != null
+                && MessageDigest.isEqual(
+                        expectedApiKey.getBytes(StandardCharsets.UTF_8),
+                        providedKey.getBytes(StandardCharsets.UTF_8))) {
             var auth = new ApiKeyAuthentication(expectedApiKey);
             SecurityContextHolder.getContext().setAuthentication(auth);
         }

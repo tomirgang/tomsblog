@@ -199,6 +199,20 @@ class TenantAdminControllerTest {
     }
 
     @Test
+    @DisplayName("switchTenant redirects to default when referer is external URL (open redirect protection)")
+    void switchTenantExternalReferer() {
+        var session = new MockHttpSession();
+        var request = new MockHttpServletRequest();
+        request.setServerName("myapp.example.com");
+        request.addHeader("Referer", "https://evil.example.com/attack");
+        var tid = UUID.randomUUID();
+
+        var view = controller.switchTenant(tid, session, request);
+
+        assertThat(view).isEqualTo("redirect:/tenant/admin/tenants");
+    }
+
+    @Test
     @DisplayName("SWR-073: resolveActiveTenant prefers session over header")
     void resolveActiveTenantSession() {
         var headerTenant = UUID.randomUUID();
@@ -227,5 +241,32 @@ class TenantAdminControllerTest {
         controller.showSettings(headerTenant, session, "general", model);
 
         verify(useCase).getTenant(new TenantId(headerTenant));
+    }
+
+    @Test
+    @DisplayName("switchTenant redirects to default when referer is malformed URL")
+    void switchTenantMalformedReferer() {
+        var session = new MockHttpSession();
+        var request = new MockHttpServletRequest();
+        request.addHeader("Referer", "://invalid-url");
+        var tid = UUID.randomUUID();
+
+        var view = controller.switchTenant(tid, session, request);
+
+        assertThat(view).isEqualTo("redirect:/tenant/admin/tenants");
+    }
+
+    @Test
+    @DisplayName("switchTenant allows redirect to absolute URL on same host")
+    void switchTenantSameHostAbsoluteUrl() {
+        var session = new MockHttpSession();
+        var request = new MockHttpServletRequest();
+        request.setServerName("myapp.example.com");
+        request.addHeader("Referer", "https://myapp.example.com/tenant/admin/settings");
+        var tid = UUID.randomUUID();
+
+        var view = controller.switchTenant(tid, session, request);
+
+        assertThat(view).isEqualTo("redirect:https://myapp.example.com/tenant/admin/settings");
     }
 }

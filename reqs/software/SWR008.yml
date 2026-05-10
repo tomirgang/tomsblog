@@ -7,7 +7,7 @@ links:
 - STK006: umxdVPSHWZFVOqcmDWuoz-iwycyK-yR1gpJh8L0p4iY=
 normative: true
 ref: ''
-reviewed: Y24aTlUOJLfp0jGZ9UGOK0qZ3iVtYQrn3G0vTA2RaQk=
+reviewed: z_NHgNJJmd6Q9-w2mJcO5K0IVa-qzjm1qHtYR_7a9_E=
 text: |
   Das System muss bei Veröffentlichung eines Posts automatisch den
   RSS/Atom Feed aktualisieren. Feeds müssen nach Tags filterbar sein.

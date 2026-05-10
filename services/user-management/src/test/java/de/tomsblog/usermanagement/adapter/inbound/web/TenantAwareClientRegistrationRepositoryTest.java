@@ -185,4 +185,207 @@ class TenantAwareClientRegistrationRepositoryTest {
 
         assertThat(reg.getClientId()).isEqualTo("fallback-client");
     }
+
+    @Test
+    @DisplayName("rejects OIDC issuer with non-HTTP scheme")
+    void rejectsNonHttpScheme() {
+        var settings = TenantSettings.reconstitute(
+                TENANT_ID,
+                LoginMode.OIDC,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                "ftp://evil.example.com",
+                "client-id",
+                "secret");
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("HTTP(S) scheme");
+    }
+
+    @Test
+    @DisplayName("rejects OIDC issuer pointing to localhost")
+    void rejectsLocalhostIssuer() {
+        var settings = TenantSettings.reconstitute(
+                TENANT_ID,
+                LoginMode.OIDC,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                "https://localhost/auth",
+                "client-id",
+                "secret");
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("internal services");
+    }
+
+    @Test
+    @DisplayName("rejects OIDC issuer pointing to internal Kubernetes service")
+    void rejectsInternalK8sService() {
+        var settings = TenantSettings.reconstitute(
+                TENANT_ID,
+                LoginMode.OIDC,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                "https://auth.default.svc.cluster.local",
+                "client-id",
+                "secret");
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("internal services");
+    }
+
+    @Test
+    @DisplayName("rejects OIDC issuer pointing to private IP range 10.x")
+    void rejectsPrivateIp10() {
+        var settings = TenantSettings.reconstitute(
+                TENANT_ID,
+                LoginMode.OIDC,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                "https://10.0.0.1/auth",
+                "client-id",
+                "secret");
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("internal services");
+    }
+
+    @Test
+    @DisplayName("rejects OIDC issuer pointing to private IP range 192.168.x")
+    void rejectsPrivateIp192() {
+        var settings = TenantSettings.reconstitute(
+                TENANT_ID,
+                LoginMode.OIDC,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                "https://192.168.1.1/auth",
+                "client-id",
+                "secret");
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("internal services");
+    }
+
+    @Test
+    @DisplayName("rejects OIDC issuer pointing to private IP range 172.16.x")
+    void rejectsPrivateIp172() {
+        var settings = TenantSettings.reconstitute(
+                TENANT_ID,
+                LoginMode.OIDC,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                "https://172.16.0.1/auth",
+                "client-id",
+                "secret");
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("internal services");
+    }
+
+    @Test
+    @DisplayName("rejects OIDC issuer pointing to loopback 127.x")
+    void rejectsLoopbackIp() {
+        var settings = TenantSettings.reconstitute(
+                TENANT_ID,
+                LoginMode.OIDC,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                "https://127.0.0.1/auth",
+                "client-id",
+                "secret");
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("internal services");
+    }
+
+    @Test
+    @DisplayName("rejects OIDC issuer URL without host")
+    void rejectsIssuerWithoutHost() {
+        var settings = TenantSettings.reconstitute(
+                TENANT_ID,
+                LoginMode.OIDC,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                "http:///path-only",
+                "client-id",
+                "secret");
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("must have a host");
+    }
+
+    @Test
+    @DisplayName("uses cached registration when still valid")
+    void usesCacheHit() {
+        var settings = TenantSettings.reconstitute(
+                TENANT_ID,
+                LoginMode.OIDC,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                "https://auth.tenant.com",
+                "tenant-client-id",
+                "tenant-secret");
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        // First call populates cache
+        ClientRegistration reg1 = repository.findByRegistrationId("authentik");
+        // Second call should use cache
+        ClientRegistration reg2 = repository.findByRegistrationId("authentik");
+
+        assertThat(reg1.getClientId()).isEqualTo("tenant-client-id");
+        assertThat(reg2.getClientId()).isEqualTo("tenant-client-id");
+        verify(tenantSettingsUseCase, times(1)).getSettings(any());
+    }
 }

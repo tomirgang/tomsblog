@@ -45,6 +45,7 @@ package "Blog Content Service" {
     [TagRepository] <<Port>>
     [TranslationRepository] <<Port>>
     [EventPublisher] <<Port>>
+    [TaskPublisher] <<Port>>
     [MarkdownRenderer] <<Port>>
   }
 
@@ -68,16 +69,14 @@ package "Blog Content Service" {
 
   package "adapter/inbound/web" {
     [BlogViewController]
-    [AdminController]
-    [LoginController]
+    [TagAdminController]
+    [AuditLogAdminController]
     [LegalController]
     [SecurityConfiguration]
     [DefaultTenantFilter]
-    [LoginRateLimitFilter]
-    [SyncingOidcUserService]
-    [AdminProperties]
     [TenantBrandingAdvice]
     [VersionModelAdvice]
+    [WebExceptionHandler]
     [PostFormData]
   }
 
@@ -88,13 +87,26 @@ package "Blog Content Service" {
     [SpringDataPostRepository]
     [SpringDataTagRepository]
     [SpringDataTranslationRepository]
+    [JpaAuditLogger]
     [PostJpaEntity]
     [TagJpaEntity]
     [TranslationJpaEntity]
+    [AuditLogJpaEntity]
     [PostMapper]
     [TagMapper]
     [TranslationMapper]
     [LoggingEventPublisher]
+  }
+
+  package "adapter/outbound/kafka" {
+    [KafkaEventPublisher]
+    [DomainEventMapper]
+  }
+
+  package "adapter/outbound/rabbitmq" {
+    [RabbitMqTaskPublisher]
+    [RabbitMqConfiguration]
+    [LoggingTaskPublisher]
   }
 
   package "adapter/outbound/markdown" {
@@ -123,7 +135,7 @@ end note
 [SourceController] --> [PostUseCase]
 [BlogViewController] --> [PostUseCase]
 [BlogViewController] --> [MarkdownRenderer]
-[AdminController] --> [UserManagementGrpcClient]
+[TagAdminController] --> [TagUseCase]
 [PostService] ..|> [PostUseCase]
 [TagService] ..|> [TagUseCase]
 [TranslationService] ..|> [TranslationUseCase]
@@ -137,12 +149,14 @@ end note
 [JpaTagRepository] ..|> [TagRepository]
 [JpaTranslationRepository] ..|> [TranslationRepository]
 [LoggingEventPublisher] ..|> [EventPublisher]
+[KafkaEventPublisher] ..|> [EventPublisher]
+[RabbitMqTaskPublisher] ..|> [TaskPublisher]
+[LoggingTaskPublisher] ..|> [TaskPublisher]
 [FlexmarkMarkdownRenderer] ..|> [MarkdownRenderer]
+[KafkaEventPublisher] --> [DomainEventMapper]
 [Post] --> [PostCreatedEvent]
 [Post] --> [PostPublishedEvent]
 [Post] --> [PostUpdatedEvent]
-[Translation] --> [TranslationCreatedEvent]
-[Translation] --> [TranslationApprovedEvent]
 [Translation] --> [TranslationCreatedEvent]
 [Translation] --> [TranslationApprovedEvent]
 @enduml

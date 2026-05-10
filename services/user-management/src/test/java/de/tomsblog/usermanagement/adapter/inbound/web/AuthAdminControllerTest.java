@@ -212,6 +212,31 @@ class AuthAdminControllerTest {
     }
 
     @Test
+    @DisplayName("switchTenant redirects to / when referer is external URL (open redirect protection)")
+    void switchTenantExternalReferer() {
+        MockHttpSession session = new MockHttpSession();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setServerName("myapp.example.com");
+        request.addHeader("Referer", "https://evil.example.com/attack");
+
+        String view = controller.switchTenant(OTHER_TENANT, session, request);
+
+        assertThat(view).isEqualTo("redirect:/");
+    }
+
+    @Test
+    @DisplayName("switchTenant redirects to / when referer is malformed URL")
+    void switchTenantMalformedReferer() {
+        MockHttpSession session = new MockHttpSession();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Referer", "://invalid-url");
+
+        String view = controller.switchTenant(OTHER_TENANT, session, request);
+
+        assertThat(view).isEqualTo("redirect:/");
+    }
+
+    @Test
     @DisplayName("uses session tenant override when present")
     void sessionTenantOverride() {
         MockHttpSession session = new MockHttpSession();
@@ -237,5 +262,18 @@ class AuthAdminControllerTest {
         controller.listUsers(TENANT_UUID, session, model);
 
         verify(userProfileUseCase).listByTenantId(TENANT_ID);
+    }
+
+    @Test
+    @DisplayName("switchTenant allows redirect to absolute URL on same host")
+    void switchTenantSameHostAbsoluteUrl() {
+        MockHttpSession session = new MockHttpSession();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setServerName("myapp.example.com");
+        request.addHeader("Referer", "https://myapp.example.com/admin/settings");
+
+        String view = controller.switchTenant(OTHER_TENANT, session, request);
+
+        assertThat(view).isEqualTo("redirect:https://myapp.example.com/admin/settings");
     }
 }

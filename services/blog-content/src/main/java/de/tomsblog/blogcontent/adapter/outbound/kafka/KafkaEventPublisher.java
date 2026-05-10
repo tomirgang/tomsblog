@@ -29,39 +29,28 @@ public class KafkaEventPublisher implements EventPublisher {
     @Override
     public void publish(List<DomainEvent> events) {
         for (DomainEvent event : events) {
-            Object contractEvent = DomainEventMapper.toContractEvent(event);
-            String topic = event.eventType();
-            String key = extractTenantKey(event);
+            DomainEventMapper.toMappedEvent(event).ifPresent(mapped -> {
+                String topic = event.eventType();
+                String key = mapped.tenantKey();
 
-            kafkaTemplate.send(topic, key, contractEvent).whenComplete((result, ex) -> {
-                if (ex != null) {
-                    log.error(
-                            "Failed to publish event {} [{}] to topic {}: {}",
-                            event.eventType(),
-                            event.eventId(),
-                            topic,
-                            ex.getMessage());
-                } else {
-                    log.info(
-                            "Published event {} [{}] to topic {} partition {}",
-                            event.eventType(),
-                            event.eventId(),
-                            topic,
-                            result.getRecordMetadata().partition());
-                }
+                kafkaTemplate.send(topic, key, mapped.contractEvent()).whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error(
+                                "Failed to publish event {} [{}] to topic {}: {}",
+                                event.eventType(),
+                                event.eventId(),
+                                topic,
+                                ex.getMessage());
+                    } else {
+                        log.info(
+                                "Published event {} [{}] to topic {} partition {}",
+                                event.eventType(),
+                                event.eventId(),
+                                topic,
+                                result.getRecordMetadata().partition());
+                    }
+                });
             });
         }
-    }
-
-    private String extractTenantKey(DomainEvent event) {
-        return switch (event) {
-            case de.tomsblog.blogcontent.domain.event.PostCreatedEvent e ->
-                e.tenantId().toString();
-            case de.tomsblog.blogcontent.domain.event.PostUpdatedEvent e ->
-                e.tenantId().toString();
-            case de.tomsblog.blogcontent.domain.event.PostPublishedEvent e ->
-                e.tenantId().toString();
-            default -> null;
-        };
     }
 }

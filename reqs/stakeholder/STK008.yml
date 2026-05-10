@@ -6,7 +6,7 @@ level: 8.0
 links: []
 normative: true
 ref: ''
-reviewed: acTLdAT1g5m99wDmzbfir_cKw2FU0-cbQS4U0d-vOjc=
+reviewed: qql4lrC-E1gwhi-ZhPuHEjnbrjsFuTsuYYKWTkxaSCk=
 text: |
   Das System muss überwachbar sein: Metriken (Prometheus), Logs (Loki),
   Traces (Tempo) und Dashboards (Grafana) müssen integriert werden.

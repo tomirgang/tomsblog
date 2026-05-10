@@ -6,7 +6,7 @@ level: 2.0
 links: []
 normative: true
 ref: ''
-reviewed: evLZsjXR3mxOQtxmkgANEz_UWhgFAzRbCaOHAIHRsvk=
+reviewed: odeKEu9UpzjY59ggwZDKZdlqWK1cS1Kv8d51BZR8Kg4=
 text: |
   Die Plattform muss mehrere Mandanten (Tenants) unterstützen.
   Jeder Tenant hat eigene Inhalte, Benutzer und Konfiguration.

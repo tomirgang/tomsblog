@@ -2,6 +2,7 @@ package de.tomsblog.feed.domain.model;
 
 import static org.assertj.core.api.Assertions.*;
 
+import de.tomsblog.shared.tenant.TenantId;
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -9,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 class FeedEntryTest {
 
-    private final UUID tenantId = UUID.randomUUID();
+    private final TenantId tenantId = TenantId.generate();
     private final UUID postId = UUID.randomUUID();
 
     @Test

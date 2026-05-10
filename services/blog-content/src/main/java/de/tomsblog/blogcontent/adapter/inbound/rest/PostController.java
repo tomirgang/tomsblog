@@ -16,6 +16,9 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -102,8 +105,10 @@ public class PostController {
     @ApiResponse(responseCode = "404", description = "Post not found")
     public ResponseEntity<PostResponse> updatePost(
             @Parameter(hidden = true) @RequestHeader("X-Tenant-Id") UUID tenantId,
+            @Parameter(hidden = true) @RequestHeader(value = "X-Author-Id", required = false) UUID authorId,
             @PathVariable UUID id,
             @Valid @RequestBody UpdatePostRequest request) {
+        verifyOwnership(PostId.of(id), TenantId.of(tenantId), authorId);
         UpdatePostCommand command = new UpdatePostCommand(
                 PostId.of(id),
                 TenantId.of(tenantId),
@@ -126,7 +131,10 @@ public class PostController {
     @ApiResponse(responseCode = "404", description = "Post not found")
     @ApiResponse(responseCode = "409", description = "Post is already published or archived")
     public ResponseEntity<Void> publishPost(
-            @Parameter(hidden = true) @RequestHeader("X-Tenant-Id") UUID tenantId, @PathVariable UUID id) {
+            @Parameter(hidden = true) @RequestHeader("X-Tenant-Id") UUID tenantId,
+            @Parameter(hidden = true) @RequestHeader(value = "X-Author-Id", required = false) UUID authorId,
+            @PathVariable UUID id) {
+        verifyOwnership(PostId.of(id), TenantId.of(tenantId), authorId);
         postUseCase.publishPost(PostId.of(id), TenantId.of(tenantId));
         return ResponseEntity.ok().build();
     }
@@ -138,5 +146,22 @@ public class PostController {
             @Parameter(hidden = true) @RequestHeader("X-Tenant-Id") UUID tenantId, @PathVariable UUID id) {
         postUseCase.deletePost(PostId.of(id), TenantId.of(tenantId));
         return ResponseEntity.noContent().build();
+    }
+
+    private void verifyOwnership(PostId postId, TenantId tenantId, UUID authorId) {
+        if (authorId == null) {
+            return;
+        }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null
+                && auth.getAuthorities().stream()
+                        .anyMatch(a ->
+                                "ROLE_ADMIN".equals(a.getAuthority()) || "ROLE_SUPERADMIN".equals(a.getAuthority()))) {
+            return;
+        }
+        Post post = postUseCase.getPost(postId, tenantId);
+        if (!post.getAuthorId().value().equals(authorId)) {
+            throw new AccessDeniedException("Not the post author");
+        }
     }
 }

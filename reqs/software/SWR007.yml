@@ -9,7 +9,7 @@ links:
 - STK029: G_SsYhiKuBzA3WoVpl0qIwlHKAWjrmE0aaQ7a5FeoRE=
 normative: true
 ref: ''
-reviewed: _idI4rzQ2_WbYBmTwEWCjZjMSMtm1vzQ4tgSzjXWqI4=
+reviewed: EpRHc748KzwRYF145DgbvHfJNjXXHLYK746oJ0WwjBY=
 text: |
   Das System muss fünf Rollen unterstützen: SUPERADMIN, ADMIN, AUTHOR,
   REVIEWER, READER.

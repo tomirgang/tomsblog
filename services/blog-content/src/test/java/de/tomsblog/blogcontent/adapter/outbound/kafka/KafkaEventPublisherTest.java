@@ -8,7 +8,11 @@ import static org.mockito.Mockito.*;
 import de.tomsblog.blogcontent.domain.event.PostCreatedEvent;
 import de.tomsblog.blogcontent.domain.event.PostPublishedEvent;
 import de.tomsblog.blogcontent.domain.event.PostUpdatedEvent;
+import de.tomsblog.blogcontent.domain.event.TranslationCreatedEvent;
 import de.tomsblog.blogcontent.domain.model.PostId;
+import de.tomsblog.blogcontent.domain.model.PostLocale;
+import de.tomsblog.blogcontent.domain.model.TranslationId;
+import de.tomsblog.blogcontent.domain.model.TranslationSource;
 import de.tomsblog.shared.tenant.TenantId;
 import java.time.Instant;
 import java.util.List;
@@ -139,5 +143,16 @@ class KafkaEventPublisherTest {
         assertThatCode(() -> publisher.publish(List.of(event))).doesNotThrowAnyException();
 
         verify(kafkaTemplate).send(eq("post.created"), eq(tenantId.toString()), any());
+    }
+
+    @Test
+    @DisplayName("SWR-009: skips local-only translation events without sending to Kafka")
+    void skipsTranslationEvents() {
+        TranslationCreatedEvent event = TranslationCreatedEvent.of(
+                TranslationId.generate(), postId, tenantId, PostLocale.of("de"), TranslationSource.MANUAL);
+
+        assertThatCode(() -> publisher.publish(List.of(event))).doesNotThrowAnyException();
+
+        verifyNoInteractions(kafkaTemplate);
     }
 }

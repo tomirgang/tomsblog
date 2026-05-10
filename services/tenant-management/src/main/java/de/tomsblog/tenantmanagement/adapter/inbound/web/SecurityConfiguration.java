@@ -1,9 +1,5 @@
 package de.tomsblog.tenantmanagement.adapter.inbound.web;
 
-import de.tomsblog.shared.audit.AuditLogger;
-import de.tomsblog.tenantmanagement.application.port.inbound.TenantManagementUseCase;
-import de.tomsblog.tenantmanagement.application.port.outbound.TenantRepository;
-import de.tomsblog.tenantmanagement.application.service.TenantManagementService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -90,10 +86,5 @@ public class SecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public TenantManagementUseCase tenantManagementUseCase(TenantRepository tenantRepository, AuditLogger auditLogger) {
-        return new TenantManagementService(tenantRepository, auditLogger);
     }
 }

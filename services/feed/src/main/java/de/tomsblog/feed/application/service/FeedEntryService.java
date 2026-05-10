@@ -3,6 +3,7 @@ package de.tomsblog.feed.application.service;
 import de.tomsblog.feed.application.port.inbound.FeedEntryUseCase;
 import de.tomsblog.feed.application.port.outbound.FeedEntryRepository;
 import de.tomsblog.feed.domain.model.FeedEntry;
+import de.tomsblog.shared.tenant.TenantId;
 import java.time.Instant;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ public class FeedEntryService implements FeedEntryUseCase {
     }
 
     @Override
-    public void onPostPublished(UUID tenantId, UUID postId, String slug, String locale, Instant publishedAt) {
+    public void onPostPublished(TenantId tenantId, UUID postId, String slug, String locale, Instant publishedAt) {
         feedEntryRepository
                 .findByTenantIdAndPostId(tenantId, postId)
                 .ifPresentOrElse(
@@ -41,7 +42,7 @@ public class FeedEntryService implements FeedEntryUseCase {
     }
 
     @Override
-    public void onPostUpdated(UUID tenantId, UUID postId, String title, String slug, String locale) {
+    public void onPostUpdated(TenantId tenantId, UUID postId, String title, String slug, String locale) {
         feedEntryRepository.findByTenantIdAndPostId(tenantId, postId).ifPresent(entry -> {
             entry.update(title, slug, locale);
             feedEntryRepository.save(entry);

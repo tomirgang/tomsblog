@@ -7,7 +7,7 @@ links:
 - STK001: xaUM16J5pKtdWpOq47OSFLWJHqcw82ItCEztSBh2uSs=
 normative: true
 ref: ''
-reviewed: fr4m8SZ_GmYKU9Bw9-XGnqOLM3d9JZTxoUAgrfVI02E=
+reviewed: cKVCpGtMOBKUcNEksA5H4Z7RkY1brtYaxnMAZF_O2jk=
 text: |
   Ein Post kann über POST /api/posts/{id}/publish veröffentlicht werden.
   Dabei wird der Status auf PUBLISHED gesetzt und ein PostPublishedEvent erzeugt.

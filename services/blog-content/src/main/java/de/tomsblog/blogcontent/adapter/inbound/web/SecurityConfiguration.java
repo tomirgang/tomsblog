@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 /**
  * Spring Security configuration for the Blog Content Service (ADR-0032).
@@ -54,6 +55,8 @@ public class SecurityConfiguration {
                         // Protected: admin-only paths (evaluated before public slug pattern)
                         .requestMatchers("/admin/audit-logs")
                         .hasAnyRole("ADMIN", "SUPERADMIN")
+                        .requestMatchers("/admin/tags", "/admin/tags/**")
+                        .hasAnyRole("ADMIN", "SUPERADMIN")
                         .requestMatchers("/posts/new", "/posts/*/edit", "/posts/*/preview")
                         .authenticated()
                         // Public: blog reading (GET only)
@@ -77,8 +80,8 @@ public class SecurityConfiguration {
                     }
                 }))
                 .logout(logout -> logout.logoutSuccessUrl("/posts").permitAll())
-                .httpBasic(basic -> {})
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+                .httpBasic(basic -> basic.disable())
+                .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .headers(headers -> headers.contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; "
                                 + "script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; "
                                 + "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://unpkg.com; "

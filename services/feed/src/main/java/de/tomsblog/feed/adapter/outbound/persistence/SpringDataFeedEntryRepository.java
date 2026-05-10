@@ -2,6 +2,7 @@ package de.tomsblog.feed.adapter.outbound.persistence;
 
 import de.tomsblog.feed.application.port.outbound.FeedEntryRepository;
 import de.tomsblog.feed.domain.model.FeedEntry;
+import de.tomsblog.shared.tenant.TenantId;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Repository;
@@ -23,7 +24,7 @@ public class SpringDataFeedEntryRepository implements FeedEntryRepository {
     }
 
     @Override
-    public Optional<FeedEntry> findByTenantIdAndPostId(UUID tenantId, UUID postId) {
-        return jpaRepository.findByTenantIdAndPostId(tenantId, postId).map(FeedEntryMapper::toDomain);
+    public Optional<FeedEntry> findByTenantIdAndPostId(TenantId tenantId, UUID postId) {
+        return jpaRepository.findByTenantIdAndPostId(tenantId.value(), postId).map(FeedEntryMapper::toDomain);
     }
 }

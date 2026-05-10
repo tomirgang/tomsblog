@@ -7,7 +7,7 @@ links:
 - STK046: Y2k7QwHGfWltslimY8Up42M-AKu2HLMiytQ4r_kvqyI=
 normative: true
 ref: ''
-reviewed: YgBnilU7SpUHahc5XdUjtgqLYeEukLEgX1CRM1zC__E=
+reviewed: 6rUwTO8Ufc-iTcVgJNC80F-SgJec3A-3ed0fkLbfPS8=
 text: |
   Der User-Management-Service muss einen oeffentlichen REST-Endpunkt fuer
   die lokale Benutzerregistrierung bereitstellen:

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import de.tomsblog.feed.application.port.outbound.FeedEntryRepository;
 import de.tomsblog.feed.domain.model.FeedEntry;
+import de.tomsblog.shared.tenant.TenantId;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,7 +26,7 @@ class FeedEntryServiceTest {
 
     private FeedEntryService service;
 
-    private final UUID tenantId = UUID.randomUUID();
+    private final TenantId tenantId = TenantId.generate();
     private final UUID postId = UUID.randomUUID();
 
     @BeforeEach

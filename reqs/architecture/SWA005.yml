@@ -8,7 +8,7 @@ links:
 - SWR009: dAvonN-IloOm4QiqwKMPhvRKa7gNGqqAvl6lr99HC34=
 normative: true
 ref: ''
-reviewed: ZbGbkFW6WUmajcmn3Uoku77ImU0A-plzW7Cln_1inAw=
+reviewed: 1cWD3t46iJfQcj8aeGQ8Kw-WzAbCeQP5sOfyRoKhEJM=
 text: |
   Apache Kafka (KRaft Mode) dient als Event-Broker für Domain Events
   (Event Sourcing, Audit-Trail, Replay). Topics werden pro Event-Typ

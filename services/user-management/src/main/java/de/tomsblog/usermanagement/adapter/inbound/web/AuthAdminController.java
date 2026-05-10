@@ -153,7 +153,19 @@ public class AuthAdminController {
     public String switchTenant(@RequestParam UUID tenantId, HttpSession session, HttpServletRequest request) {
         session.setAttribute("activeTenantId", tenantId.toString());
         String referer = request.getHeader("Referer");
-        return "redirect:" + (referer != null ? referer : "/");
+        if (referer != null && isSafeRedirect(referer, request)) {
+            return "redirect:" + referer;
+        }
+        return "redirect:/";
+    }
+
+    private static boolean isSafeRedirect(String url, HttpServletRequest request) {
+        try {
+            var uri = java.net.URI.create(url);
+            return !uri.isAbsolute() || request.getServerName().equals(uri.getHost());
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private UUID resolveActiveTenant(UUID headerTenantId, HttpSession session) {

@@ -7,7 +7,7 @@ links:
 - STK038: KHiHAEznWHNPCQQnyqbVPELnG8zoeUVtXDno2cuyrjw=
 normative: true
 ref: ''
-reviewed: null
+reviewed: 5GQjWJQd6Kek0CBG-mHfpX1Qumgx8bZR6s2E2jF8S4c=
 text: |
   RabbitMQ muss als Single-Node-Cluster auf Kubernetes betrieben werden.
   Die Installation erfolgt über den RabbitMQ Cluster Operator (Bitnami

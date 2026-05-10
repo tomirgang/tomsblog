@@ -41,7 +41,7 @@ class PostEventConsumerTest {
 
         consumer.onPostPublished(event);
 
-        verify(feedEntryUseCase).onPostPublished(tenantId.value(), postId, "my-post", "de", publishedAt);
+        verify(feedEntryUseCase).onPostPublished(tenantId, postId, "my-post", "de", publishedAt);
     }
 
     @Test
@@ -52,6 +52,6 @@ class PostEventConsumerTest {
 
         consumer.onPostUpdated(event);
 
-        verify(feedEntryUseCase).onPostUpdated(tenantId.value(), postId, "Updated Title", "updated-slug", "en");
+        verify(feedEntryUseCase).onPostUpdated(tenantId, postId, "Updated Title", "updated-slug", "en");
     }
 }

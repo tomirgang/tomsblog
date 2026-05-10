@@ -5,6 +5,8 @@ import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementCli
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.UUID;
+import org.owasp.html.HtmlPolicyBuilder;
+import org.owasp.html.PolicyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,18 @@ public class LegalController {
 
     private static final Logger LOG = LoggerFactory.getLogger(LegalController.class);
 
+    private static final PolicyFactory LEGAL_HTML_POLICY = new HtmlPolicyBuilder()
+            .allowCommonBlockElements()
+            .allowCommonInlineFormattingElements()
+            .allowElements("a", "img", "table", "thead", "tbody", "tr", "th", "td", "br", "hr")
+            .allowAttributes("href")
+            .onElements("a")
+            .allowAttributes("src", "alt")
+            .onElements("img")
+            .allowUrlProtocols("http", "https", "mailto")
+            .requireRelNofollowOnLinks()
+            .toFactory();
+
     private final UserManagementClient userManagementClient;
 
     public LegalController(UserManagementClient userManagementClient) {
@@ -34,7 +48,7 @@ public class LegalController {
         if (settings != null
                 && settings.impressumContent() != null
                 && !settings.impressumContent().isBlank()) {
-            model.addAttribute("customContent", settings.impressumContent());
+            model.addAttribute("customContent", LEGAL_HTML_POLICY.sanitize(settings.impressumContent()));
         }
         return "legal/impressum";
     }
@@ -45,7 +59,7 @@ public class LegalController {
         if (settings != null
                 && settings.privacyPolicyContent() != null
                 && !settings.privacyPolicyContent().isBlank()) {
-            model.addAttribute("customContent", settings.privacyPolicyContent());
+            model.addAttribute("customContent", LEGAL_HTML_POLICY.sanitize(settings.privacyPolicyContent()));
         }
         return "legal/privacy";
     }

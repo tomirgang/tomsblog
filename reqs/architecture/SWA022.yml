@@ -7,7 +7,7 @@ links:
 - SWR029: Vysm2FDIdONyetFa7k1ZjvsuCpslt1NRw9mAcaUzfmg=
 normative: true
 ref: ''
-reviewed: H7e3d1G7Ejss-9pm4pr9dMvtzFNfcvIuhOLkX42pFBw=
+reviewed: 8TskYLiMX6g_Sjg9QQAp4iFKM2k-myz7Rf-F8cBqS5o=
 text: |
   Linkerd wird als Service Mesh im Kubernetes-Cluster installiert und ueber
   Flux GitOps verwaltet. Die Installation besteht aus zwei Helm Charts

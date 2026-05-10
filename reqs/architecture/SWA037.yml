@@ -4,10 +4,10 @@ header: |
   RabbitMQ-Adapter mit Quorum Queues und Dead-Letter-Handling
 level: 37.0
 links:
-- SWR089: null
+- SWR089: tXiqZkfQD9SCZcPH1__hGbGRFrabfslkfYuJD3FdIp8=
 normative: true
 ref: ''
-reviewed: null
+reviewed: Dp16JLFfDjDfLPUHK5kCqBOHgzdultAkwPLVpaFp5jQ=
 text: |
   Der RabbitMQ Outbound Adapter konfiguriert eine Topic Exchange
   (tomsblog.tasks) mit folgenden Quorum Queues:

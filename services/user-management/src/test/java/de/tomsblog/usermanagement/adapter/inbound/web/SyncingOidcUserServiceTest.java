@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -92,5 +93,36 @@ class SyncingOidcUserServiceTest {
         OidcUser result = service.enrichWithRoles(oidcUser);
         assertThat(result).isNotNull();
         verify(userProfileUseCase).syncFromOidc(any());
+    }
+
+    @Test
+    @DisplayName("loadUser delegates to super.loadUser and enriches with roles")
+    void loadUserDelegatesToSuperAndEnriches() {
+        var profile = UserProfile.createFromOidc("sub-1", "user@test.com", "User");
+        when(userProfileUseCase.syncFromOidc(any())).thenReturn(profile);
+
+        OidcUser mockOidcUser = createOidcUser("sub-1", "user@test.com", "User", List.of());
+        SyncingOidcUserService spyService = spy(service);
+        doReturn(mockOidcUser).when(spyService).delegateLoadUser(any(OidcUserRequest.class));
+
+        OidcUser result = spyService.loadUser(mock(OidcUserRequest.class));
+
+        assertThat(result).isNotNull();
+        assertThat(result.getAuthorities()).anyMatch(a -> a.getAuthority().equals("ROLE_READER"));
+        verify(spyService).delegateLoadUser(any());
+    }
+
+    @Test
+    @DisplayName("enrichWithRoles handles profile with null globalRoles")
+    void enrichWithRolesNullGlobalRoles() {
+        var profile = mock(UserProfile.class);
+        when(profile.getGlobalRoles()).thenReturn(null);
+        when(userProfileUseCase.syncFromOidc(any())).thenReturn(profile);
+
+        OidcUser oidcUser = createOidcUser("sub-1", "user@test.com", "User", List.of());
+        OidcUser result = service.enrichWithRoles(oidcUser);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getAuthorities()).anyMatch(a -> a.getAuthority().equals("ROLE_USER"));
     }
 }

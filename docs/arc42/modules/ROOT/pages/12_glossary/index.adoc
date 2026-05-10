@@ -8,12 +8,27 @@
 | Aggregate Root | DDD-Muster: Einstiegspunkt in ein Cluster von Domain-Objekten
 | ADR | Architecture Decision Record, eine dokumentierte Architekturentscheidung
 | Adapter | Technische Implementierung eines Ports (z.B. JPA, REST, Kafka)
+| BFF | Backend for Frontend: dedizierter Backend-Service pro Client-Typ (Web, Mobile, Media)
 | Bounded Context | DDD: Abgegrenzter fachlicher Bereich mit eigenem Modell
+| Break-Glass-Login | Notfall-Login mit lokalem Admin-Account, falls OIDC-Provider nicht erreichbar ist
+| CloudNativePG | Kubernetes-Operator für PostgreSQL-Cluster mit deklarativer Datenbankverwaltung
+| ContentType | Aufzählung der Inhaltstypen eines Blog-Posts (ARTICLE, NOTE, LINK)
 | Domain Event | Fachliches Ereignis (z.B. "Post veröffentlicht")
+| Flux | GitOps-Toolkit für deklaratives Kubernetes-Deployment aus Git-Repositories
+| gRPC | Hochperformantes RPC-Framework für synchrone Service-zu-Service-Kommunikation
 | Hexagonale Architektur | Architekturstil mit Ports (Interfaces) und Adaptern (Implementierungen)
 | KRaft | Kafka Raft, also Kafka ohne ZooKeeper
+| Linkerd | Leichtgewichtiges Service Mesh für mTLS und Zero-Trust-Netzwerk
 | Multi-Tenant | System, das mehrere Mandanten (Kunden) isoliert bedient
 | Port | Interface zwischen Domain/Application und der Außenwelt
+| RabbitMQ | Message Broker für Task-Queues (Übersetzungen, TTS, Snapshots)
+| Redis | In-Memory-Datenspeicher, verwendet als externer Session-Store für horizontale Skalierung
 | Shared Kernel | Geteilte Library mit Domain Primitives (EntityId, TenantId etc.)
+| Slug | URL-freundliche Kurzform eines Titels (z.B. "mein-erster-post")
+| SOPS | Secrets OPerationS: Tool zur Verschlüsselung von Secrets in Git-Repositories
 | STK, SWR, SWA, TST | Doorstop-Dokument-Prefixes (Stakeholder, Software Req, Architecture, Test)
+| Strimzi | Kubernetes-Operator für Apache Kafka
+| Tenant | Mandant: ein isolierter Kundenbereich innerhalb der Plattform
+| Thymeleaf | Java-Template-Engine für serverseitig gerenderte HTML-Views
+| Value Object | DDD: Unveränderliches Objekt ohne eigene Identität, definiert über seine Attribute
 |===

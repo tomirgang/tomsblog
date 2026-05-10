@@ -2,6 +2,7 @@ package de.tomsblog.blogcontent.adapter.inbound.rest;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -57,6 +58,7 @@ class SourceControllerTest {
                 """;
 
         mockMvc.perform(post("/api/posts/{postId}/sources", postId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -76,6 +78,7 @@ class SourceControllerTest {
                 """;
 
         mockMvc.perform(post("/api/posts/{postId}/sources", postId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -93,6 +96,7 @@ class SourceControllerTest {
                 """;
 
         mockMvc.perform(post("/api/posts/{postId}/sources", postId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -112,6 +116,7 @@ class SourceControllerTest {
                 """;
 
         mockMvc.perform(post("/api/posts/{postId}/sources", postId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -168,6 +173,7 @@ class SourceControllerTest {
                 """;
 
         mockMvc.perform(delete("/api/posts/{postId}/sources", postId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -185,6 +191,7 @@ class SourceControllerTest {
                 """;
 
         mockMvc.perform(delete("/api/posts/{postId}/sources", postId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -204,6 +211,7 @@ class SourceControllerTest {
                 """;
 
         mockMvc.perform(delete("/api/posts/{postId}/sources", postId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))

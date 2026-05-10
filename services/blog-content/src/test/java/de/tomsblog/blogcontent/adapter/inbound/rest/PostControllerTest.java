@@ -2,6 +2,7 @@ package de.tomsblog.blogcontent.adapter.inbound.rest;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -60,6 +61,7 @@ class PostControllerTest {
                 """.formatted(authorId);
 
         mockMvc.perform(post("/api/posts")
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -147,7 +149,7 @@ class PostControllerTest {
         UUID postId = UUID.randomUUID();
         doNothing().when(postUseCase).publishPost(any(), any());
 
-        mockMvc.perform(post("/api/posts/{id}/publish", postId).header("X-Tenant-Id", tenantId.toString()))
+        mockMvc.perform(post("/api/posts/{id}/publish", postId).with(csrf()).header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isOk());
     }
 
@@ -163,6 +165,7 @@ class PostControllerTest {
                 """.formatted(authorId);
 
         mockMvc.perform(post("/api/posts")
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -187,6 +190,7 @@ class PostControllerTest {
                 """;
 
         mockMvc.perform(put("/api/posts/{id}", postId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -200,7 +204,7 @@ class PostControllerTest {
         UUID postId = UUID.randomUUID();
         doNothing().when(postUseCase).deletePost(any(), any());
 
-        mockMvc.perform(delete("/api/posts/{id}", postId).header("X-Tenant-Id", tenantId.toString()))
+        mockMvc.perform(delete("/api/posts/{id}", postId).with(csrf()).header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isNoContent());
     }
 
@@ -212,7 +216,7 @@ class PostControllerTest {
                 .when(postUseCase)
                 .publishPost(any(), any());
 
-        mockMvc.perform(post("/api/posts/{id}/publish", postId).header("X-Tenant-Id", tenantId.toString()))
+        mockMvc.perform(post("/api/posts/{id}/publish", postId).with(csrf()).header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isConflict());
     }
 
@@ -230,6 +234,7 @@ class PostControllerTest {
                 """.formatted(authorId);
 
         mockMvc.perform(post("/api/posts")
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -304,5 +309,131 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.seriesPreviousPostId").doesNotExist())
                 .andExpect(jsonPath("$.seriesNextPostId").doesNotExist());
+    }
+
+    @Test
+    @WithMockUser(roles = "AUTHOR")
+    @DisplayName("PUT /api/posts/{id} allows update when author matches")
+    void updatePost_allowsWhenAuthorMatches() throws Exception {
+        UUID postIdValue = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), AuthorId.of(authorId), "Test", "Content", PostLocale.german());
+        when(postUseCase.getPost(any(), any())).thenReturn(post);
+        when(postUseCase.updatePost(any())).thenReturn(post);
+
+        String body = """
+                    {"title": "Updated", "content": "Updated Content"}
+                    """;
+
+        mockMvc.perform(put("/api/posts/{id}", postIdValue)
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", post.getAuthorId().value().toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "AUTHOR")
+    @DisplayName("PUT /api/posts/{id} returns 403 when author does not match")
+    void updatePost_returns403WhenAuthorMismatch() throws Exception {
+        UUID postIdValue = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), AuthorId.of(authorId), "Test", "Content", PostLocale.german());
+        when(postUseCase.getPost(any(), any())).thenReturn(post);
+
+        String body = """
+                    {"title": "Updated", "content": "Updated Content"}
+                    """;
+
+        mockMvc.perform(put("/api/posts/{id}", postIdValue)
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", UUID.randomUUID().toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "AUTHOR")
+    @DisplayName("POST /api/posts/{id}/publish returns 403 when author does not match")
+    void publishPost_returns403WhenAuthorMismatch() throws Exception {
+        UUID postIdValue = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), AuthorId.of(authorId), "Test", "Content", PostLocale.german());
+        when(postUseCase.getPost(any(), any())).thenReturn(post);
+
+        mockMvc.perform(post("/api/posts/{id}/publish", postIdValue)
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", UUID.randomUUID().toString()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("PUT /api/posts/{id} allows admin even with different author")
+    void updatePost_allowsAdmin() throws Exception {
+        UUID postIdValue = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), AuthorId.of(authorId), "Test", "Content", PostLocale.german());
+        when(postUseCase.updatePost(any())).thenReturn(post);
+
+        String body = """
+                    {"title": "Updated", "content": "Updated Content"}
+                    """;
+
+        mockMvc.perform(put("/api/posts/{id}", postIdValue)
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", UUID.randomUUID().toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("POST /api/posts/{id}/publish allows admin even with different author")
+    void publishPost_allowsAdmin() throws Exception {
+        UUID postIdValue = UUID.randomUUID();
+
+        mockMvc.perform(post("/api/posts/{id}/publish", postIdValue)
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", UUID.randomUUID().toString()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "SUPERADMIN")
+    @DisplayName("PUT /api/posts/{id} allows superadmin even with different author")
+    void updatePost_allowsSuperadmin() throws Exception {
+        UUID postIdValue = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), AuthorId.of(authorId), "Test", "Content", PostLocale.german());
+        when(postUseCase.updatePost(any())).thenReturn(post);
+
+        String body = """
+                    {"title": "Updated", "content": "Updated Content"}
+                    """;
+
+        mockMvc.perform(put("/api/posts/{id}", postIdValue)
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", UUID.randomUUID().toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "SUPERADMIN")
+    @DisplayName("POST /api/posts/{id}/publish allows superadmin even with different author")
+    void publishPost_allowsSuperadmin() throws Exception {
+        UUID postIdValue = UUID.randomUUID();
+
+        mockMvc.perform(post("/api/posts/{id}/publish", postIdValue)
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", UUID.randomUUID().toString()))
+                .andExpect(status().isOk());
     }
 }

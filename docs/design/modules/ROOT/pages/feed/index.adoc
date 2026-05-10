@@ -1,0 +1,168 @@
+= Feed Service: Detail Design
+:toc: left
+:toclevels: 3
+:sectnums:
+
+== Überblick
+
+Der Feed Service ist ein event-konsumierender Microservice, der denormalisierte Feed-Einträge aus veröffentlichten Blog-Posts erstellt und verwaltet (SWR-090). Er konsumiert Domain Events des Blog Content Service über Kafka und materialisiert eine lesoptimierte Sicht auf veröffentlichte Posts.
+
+Der Service folgt der hexagonalen Architektur (SWA-001) mit klarer Trennung von Domain, Application und Adapter Layer. Er besitzt eine eigene PostgreSQL-Datenbank (Database per Service, ADR-0019, SWA-015) und wird mit eigenen Kubernetes-Ressourcen deployt.
+
+== Domain-Modell
+
+Das Domain-Modell ist bewusst schlank gehalten. Ein `FeedEntry` repräsentiert einen denormalisierten, veröffentlichten Blog-Post mit den für die Feed-Anzeige relevanten Metadaten.
+
+Das folgende Klassendiagramm zeigt die Struktur des Domain Layers:
+
+[mermaid]
+----
+classDiagram
+    class FeedEntry {
+        -UUID id
+        -TenantId tenantId
+        -UUID postId
+        -String title
+        -String slug
+        -String locale
+        -Instant publishedAt
+        -Instant updatedAt
+        +create(tenantId, postId, slug, locale, publishedAt) FeedEntry
+        +reconstitute(...) FeedEntry
+        +update(title, slug, locale) void
+    }
+----
+
+Die `TenantId` stammt aus dem Shared Kernel (`libs/shared-kernel`) und gewährleistet konsistente Tenant-Isolation über alle Services hinweg (SWR-003).
+
+== Application Layer
+
+Der Application Layer definiert die Ports für eingehende Events und ausgehende Persistenz.
+
+Das folgende Diagramm zeigt die Ports und den Application Service:
+
+[mermaid]
+----
+classDiagram
+    class FeedEntryUseCase {
+        <<interface>>
+        +onPostPublished(tenantId, postId, slug, locale, publishedAt) void
+        +onPostUpdated(tenantId, postId, title, slug, locale) void
+    }
+
+    class FeedEntryRepository {
+        <<interface>>
+        +save(feedEntry) FeedEntry
+        +findByTenantIdAndPostId(tenantId, postId) Optional~FeedEntry~
+    }
+
+    class FeedEntryService {
+        -FeedEntryRepository feedEntryRepository
+        +onPostPublished(...) void
+        +onPostUpdated(...) void
+    }
+
+    FeedEntryService ..|> FeedEntryUseCase
+    FeedEntryService --> FeedEntryRepository
+    FeedEntryService --> FeedEntry
+----
+
+Der `FeedEntryService` implementiert das Upsert-Pattern: Bei `onPostPublished` wird ein bestehender Eintrag aktualisiert oder ein neuer erstellt. Bei `onPostUpdated` werden nur bestehende Einträge aktualisiert (SWR-090).
+
+== Adapter Layer
+
+=== Inbound: Kafka Consumer
+
+Der `PostEventConsumer` empfängt `PostPublishedEvent` und `PostUpdatedEvent` aus den Kafka-Topics `post.published` und `post.updated` und delegiert an den `FeedEntryUseCase`.
+
+Das folgende Diagramm zeigt den Datenfluss vom Kafka-Topic zum Domain-Modell:
+
+[mermaid]
+----
+sequenceDiagram
+    participant Kafka
+    participant PostEventConsumer
+    participant FeedEntryUseCase
+    participant FeedEntryRepository
+    participant PostgreSQL
+
+    Kafka->>PostEventConsumer: PostPublishedEvent
+    PostEventConsumer->>FeedEntryUseCase: onPostPublished(tenantId, postId, ...)
+    FeedEntryUseCase->>FeedEntryRepository: findByTenantIdAndPostId(...)
+    FeedEntryRepository->>PostgreSQL: SELECT
+    PostgreSQL-->>FeedEntryRepository: Optional~FeedEntry~
+    FeedEntryUseCase->>FeedEntryRepository: save(feedEntry)
+    FeedEntryRepository->>PostgreSQL: INSERT/UPDATE
+----
+
+=== Outbound: JPA Persistence
+
+Die Persistenz wird über Spring Data JPA implementiert. Der `FeedEntryMapper` konvertiert zwischen Domain-Modell (`FeedEntry` mit `TenantId`) und JPA-Entity (`FeedEntryJpaEntity` mit `UUID`).
+
+Das folgende Komponentendiagramm zeigt die Adapter-Struktur:
+
+[mermaid]
+----
+classDiagram
+    class SpringDataFeedEntryRepository {
+        -JpaFeedEntryRepository jpaRepository
+        +save(feedEntry) FeedEntry
+        +findByTenantIdAndPostId(tenantId, postId) Optional~FeedEntry~
+    }
+
+    class JpaFeedEntryRepository {
+        <<interface>>
+        +findByTenantIdAndPostId(tenantId, postId) Optional~FeedEntryJpaEntity~
+    }
+
+    class FeedEntryMapper {
+        +toJpa(domain) FeedEntryJpaEntity
+        +toDomain(jpa) FeedEntry
+    }
+
+    class FeedEntryJpaEntity {
+        -UUID id
+        -UUID tenantId
+        -UUID postId
+        -String title
+        -String slug
+        -String locale
+        -Instant publishedAt
+        -Instant updatedAt
+    }
+
+    SpringDataFeedEntryRepository ..|> FeedEntryRepository
+    SpringDataFeedEntryRepository --> JpaFeedEntryRepository
+    SpringDataFeedEntryRepository --> FeedEntryMapper
+    FeedEntryMapper --> FeedEntryJpaEntity
+----
+
+== Konfiguration
+
+Die Bean-Verdrahtung erfolgt in der `FeedConfiguration`-Klasse, konsistent mit dem Muster der anderen Services (`BlogContentConfiguration`, `TenantManagementConfiguration`):
+
+[source,java]
+----
+@Configuration
+public class FeedConfiguration {
+    @Bean
+    public FeedEntryUseCase feedEntryUseCase(FeedEntryRepository feedEntryRepository) {
+        return new FeedEntryService(feedEntryRepository);
+    }
+}
+----
+
+== Anforderungsverfolgung
+
+Die folgende Tabelle zeigt die Zuordnung der implementierten Anforderungen zu den Komponenten:
+
+[cols="1,2,2"]
+|===
+| Anforderung | Beschreibung | Implementierung
+
+| SWR-090 | Feed-Einträge aus Post-Events materialisieren | `FeedEntryService`, `PostEventConsumer`, `FeedEntry`
+| SWR-003 | Tenant-Isolation auf Datenebene | `TenantId` in `FeedEntry`, `findByTenantIdAndPostId`
+| SWA-001 | Hexagonale Architektur | Package-Struktur domain/application/adapter
+| SWA-005 | Domain Events über Kafka | `PostEventConsumer` konsumiert Event Contracts
+| SWA-015 | Database per Service | Eigene PostgreSQL-Datenbank `feed`
+|===

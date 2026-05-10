@@ -7,7 +7,7 @@ links:
 - STK012: ckQcXaP3v0kHxqLaapMqDFKCPmEqjufWwk-C8ABem1g=
 normative: true
 ref: ''
-reviewed: 7RueIrCKgVSH-45QEKXFx0FUFMK0Z7xi7zPpNv6Qo9w=
+reviewed: CtjwmpOLgVFC2xKBXxcGeXsTHNzCkMEqR-8RAbiEFb0=
 text: |
   Alle API-Eingaben müssen serverseitig validiert werden (Bean Validation).
   XSS-Schutz bei der Ausgabe von User-Content. CSRF-Schutz fuer

@@ -80,6 +80,13 @@ public class AuthRegistrationController {
             return "register";
         }
 
+        if (!isPasswordComplex(password)) {
+            model.addAttribute(
+                    "error",
+                    "Das Passwort muss mindestens einen Großbuchstaben, einen Kleinbuchstaben und eine Ziffer enthalten.");
+            return "register";
+        }
+
         if (username.isBlank() || email.isBlank()) {
             model.addAttribute("error", "Benutzername und E-Mail sind Pflichtfelder.");
             return "register";
@@ -100,6 +107,13 @@ public class AuthRegistrationController {
             model.addAttribute("error", "Die Registrierung ist fehlgeschlagen. Bitte versuchen Sie es erneut.");
             return "register";
         }
+    }
+
+    private static boolean isPasswordComplex(String password) {
+        boolean hasUpper = password.chars().anyMatch(Character::isUpperCase);
+        boolean hasLower = password.chars().anyMatch(Character::isLowerCase);
+        boolean hasDigit = password.chars().anyMatch(Character::isDigit);
+        return hasUpper && hasLower && hasDigit;
     }
 
     private String resolveLoginMode(UUID tenantId) {

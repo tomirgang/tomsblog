@@ -133,9 +133,9 @@ class SecurityConfigurationTest {
         }
 
         @Test
-        @DisplayName("DELETE /api/posts/{id} returns 401 when not authenticated")
-        void deletePostApi_returns401() throws Exception {
-            mockMvc.perform(delete("/api/posts/" + UUID.randomUUID())).andExpect(status().isUnauthorized());
+        @DisplayName("DELETE /api/posts/{id} returns 403 when not authenticated (CSRF rejection)")
+        void deletePostApi_returns403() throws Exception {
+            mockMvc.perform(delete("/api/posts/" + UUID.randomUUID())).andExpect(status().isForbidden());
         }
     }
 }

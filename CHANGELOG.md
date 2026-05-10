@@ -14,10 +14,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - RabbitMQ Task-Verteilung: `TaskPublisher` Outbound Port mit `RabbitMqTaskPublisher` Adapter für asynchrone Arbeitsaufträge. Drei Queues (`translation.requests`, `tts.generation`, `snapshot.requests`) als Quorum Queues mit Dead-Letter-Exchange und DLQs. Topic Exchange `tomsblog.tasks` mit Routing Keys. `PostService` dispatcht `SnapshotTaskMessage` für alle Quellen beim Veröffentlichen. Profil-basierte Steuerung (`rabbitmq` Profil, `LoggingTaskPublisher` als Fallback). (SWR-089, SWA-037, ADR-0018)
 - Feed Service als Kafka Event Consumer: Neuer Microservice `services/feed/` konsumiert `PostPublishedEvent` und `PostUpdatedEvent` via Kafka (Consumer Group `feed-service`). Hexagonale Architektur mit `FeedEntry` Domain-Entity, `FeedEntryUseCase` Inbound Port, `PostEventConsumer` Kafka-Adapter und JPA/PostgreSQL Persistence-Adapter. Eigene PostgreSQL-Instanz (Database per Service). Profil-basierte Steuerung (`kafka` Profil). (SWR-090, SWA-038, SWR-008)
 - MongoDB-Cluster-Konfiguration für Kubernetes: MongoDB Community Operator (v0.11.0) via Flux HelmRelease, Single-Node ReplicaSet (MongoDB 7.0.17), SCRAM-Authentifizierung, 5Gi persistenter Storage (hcloud-volumes), NetworkPolicies mit Default-Deny und Ausnahme für tomsblog-Namespace (ADR-0026)
+- Umfangreiche Test-Coverage-Verbesserungen über alle Service-Module: RabbitMQ-Binding-Tests, main()-Tests für Feed/Tenant-Service, LoginRateLimitFilter-Tests, SyncingOidcUserService-Refactoring mit delegateLoadUser() für Testbarkeit, BlogViewController-Tests für Series/Featured/Tags/Blank-Parameter, PostController-Ownership-Tests, TenantManagementConfiguration-Bean-Test, OIDC-Validierung-Erfolgspfad-Test, diverse Branch-Coverage-Verbesserungen
+
+### Changed
+
+- `SyncingOidcUserService`: `super.loadUser()` in eigene `delegateLoadUser()` Methode extrahiert für bessere Testbarkeit via Spy-Pattern
 
 ### Fixed
 
 - `PostService.updatePost()` hat keine Domain-Events publiziert (fehlender `eventPublisher.publish()` Aufruf)
+
+### Security
+
+- Open-Redirect-Schutz in `switchTenant()` (AuthAdminController, TenantAdminController): Referer-Header wird gegen Same-Origin validiert
+- gRPC API-Key-Authentifizierung: `GrpcApiKeyInterceptor` (Server) und `GrpcApiKeyClientInterceptor` (Client) für Inter-Service-Kommunikation, timing-safe Vergleich via `MessageDigest.isEqual()`
+- Tag-Admin-Endpunkte nur für ADMIN/SUPERADMIN-Rollen zugänglich (SecurityConfiguration)
+- Post-Ownership-Prüfung: Autoren können nur eigene Beiträge bearbeiten/publizieren, Admins sind ausgenommen (PostController, BlogViewController)
+- Timing-safe API-Key-Vergleich in `ApiKeyAuthenticationFilter` via `MessageDigest.isEqual()`
+- HTML-Sanitization für benutzerdefinierte Legal-Seiten-Inhalte (LegalController, OWASP HTML Sanitizer)
+- HTTP Basic Authentication deaktiviert (SecurityConfiguration)
+- CSRF-Schutz für API-Endpunkte via `CookieCsrfTokenRepository`
+- Passwort-Komplexitätsanforderungen: Großbuchstabe, Kleinbuchstabe, Ziffer (AuthRegistrationController, RegisterUserRequest)
+- Login-Rate-Limiter: Automatische Bereinigung abgelaufener Einträge gegen Memory-Leaks (LoginRateLimitFilter)
+- SSRF-Schutz für OIDC-Issuer-URLs: Validierung gegen interne Adressen (TenantAwareClientRegistrationRepository)
+- Audit-Logging für fehlgeschlagene Login-Versuche (AuthFailureAuditListener)
+- AccessDeniedException-Behandlung in GlobalExceptionHandler (403 statt 500) und WebExceptionHandler mit 403-Fehlerseite
 
 ## [0.9.6] - 2026-05-09
 

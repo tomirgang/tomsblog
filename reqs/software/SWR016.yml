@@ -7,7 +7,7 @@ links:
 - STK005: mDS-DAHBR4nu0Joa0VgI6H2rQWz8hx3yLAYv8ahqIcg=
 normative: true
 ref: ''
-reviewed: Z9cMYhhgo-iqsmtuTxU2lipMibMR46AFwdfbJpIWsoo=
+reviewed: WAOEOL_QIz1xq2pw3XVZLZCGl9BOKKSgnsoPdIuEtL0=
 text: |
   Das System muss OpenID Connect (OIDC) Login über Authentik
   (https://auth.do9ita.de) als externen Identity Provider unterstützen

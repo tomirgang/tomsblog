@@ -1,5 +1,6 @@
 package de.tomsblog.blogcontent.adapter.inbound.rest;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -47,6 +48,7 @@ class TranslationControllerFuzzTest {
         UUID postId = UUID.randomUUID();
 
         mockMvc.perform(post("/api/posts/{postId}/translations", postId)
+                        .with(csrf())
                         .header("X-Tenant-Id", UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -61,6 +63,7 @@ class TranslationControllerFuzzTest {
         UUID translationId = UUID.randomUUID();
 
         mockMvc.perform(put("/api/posts/{postId}/translations/{id}", postId, translationId)
+                        .with(csrf())
                         .header("X-Tenant-Id", UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))

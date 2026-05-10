@@ -15,7 +15,7 @@ references:
   type: file
 - path: services/blog-content/src/main/resources/db/migration/blog/V3__create_translations_schema.sql
   type: file
-reviewed: 0IpVSlb-tLFmzllLAUa7FfxPl8W3ozImrQ5ddAaTn9I=
+reviewed: jlxyzKq7dgpJLLpEUsMEVWU30de_zWASaKfvr0H8Hks=
 text: |
   Flyway SQL-Migrationen für den Blog Content Service.
   V1: posts (mit post_tags, post_sources, post_attachments Tabellen).

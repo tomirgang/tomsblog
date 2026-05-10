@@ -15,4 +15,7 @@ plantuml::partial$plantuml/quality-tree.puml[format=svg]
 | QS-02 | Wartbarkeit | Neuer Adapter (z.B. MongoDB statt JPA) erfordert keine Domain-Änderung | 0 Domain-Dateien geändert
 | QS-03 | Nachvollziehbarkeit | Jede fachliche Aktion ist im Audit-Log nachvollziehbar | Audit-Coverage 100%
 | QS-04 | Verfügbarkeit | Service startet nach Neustart innerhalb 30s | Startup < 30s
+| QS-05 | Sicherheit | Tenant A kann keine Daten von Tenant B lesen oder verändern | 0 Cross-Tenant-Zugriffe in Security-Tests
+| QS-06 | Performance | Blog-Seite wird für authentifizierte Benutzer in akzeptabler Zeit ausgeliefert | P95 Antwortzeit < 500ms
+| QS-07 | Skalierbarkeit | Rolling Update des Blog Content Service erfolgt ohne Downtime | 0 fehlgeschlagene Requests während Update
 |===

@@ -2,6 +2,7 @@ package de.tomsblog.blogcontent.adapter.inbound.rest;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -49,6 +50,7 @@ class TranslationControllerTest {
         when(translationUseCase.createManualTranslation(any())).thenReturn(translation);
 
         mockMvc.perform(post("/api/posts/{postId}/translations", postId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -91,6 +93,7 @@ class TranslationControllerTest {
         doNothing().when(translationUseCase).approveTranslation(any(), any());
 
         mockMvc.perform(post("/api/posts/{postId}/translations/{id}/approve", postId, translationId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isNoContent());
     }
@@ -102,6 +105,7 @@ class TranslationControllerTest {
         doNothing().when(translationUseCase).deleteTranslation(any(), any());
 
         mockMvc.perform(delete("/api/posts/{postId}/translations/{id}", postId, translationId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isNoContent());
     }
@@ -114,6 +118,7 @@ class TranslationControllerTest {
         when(translationUseCase.createAiTranslation(any())).thenReturn(translation);
 
         mockMvc.perform(post("/api/posts/{postId}/translations", postId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -133,6 +138,7 @@ class TranslationControllerTest {
 
         UUID translationId = UUID.randomUUID();
         mockMvc.perform(put("/api/posts/{postId}/translations/{id}", postId, translationId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -149,6 +155,7 @@ class TranslationControllerTest {
         doNothing().when(translationUseCase).rejectTranslation(any(), any());
 
         mockMvc.perform(post("/api/posts/{postId}/translations/{id}/reject", postId, translationId)
+                        .with(csrf())
                         .header("X-Tenant-Id", tenantId.toString()))
                 .andExpect(status().isNoContent());
     }

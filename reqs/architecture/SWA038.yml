@@ -4,10 +4,10 @@ header: |
   Feed Service Kafka Consumer Architektur
 level: 38.0
 links:
-- SWR090: null
+- SWR090: IuJn084C3i35iD-mTAyYGv8CLZai5XpYGyVjM1Sawzc=
 normative: true
 ref: ''
-reviewed: null
+reviewed: CeXYpVe9rtW2yx-cd0IWyLCAvHrLmORXja3sqJu5q8E=
 text: |
   Der Feed-Service folgt der hexagonalen Architektur:
 

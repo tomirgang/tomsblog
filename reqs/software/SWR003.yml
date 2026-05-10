@@ -7,7 +7,7 @@ links:
 - STK002: evLZsjXR3mxOQtxmkgANEz_UWhgFAzRbCaOHAIHRsvk=
 normative: true
 ref: ''
-reviewed: HcvwMUkzXgsvNmY2jRjulG90zdxmQl_edK01ZmqjOX4=
+reviewed: ndQkwNUWqLnoD_tUsV9e0nYBcvZfNPC5veBGlV76M-8=
 text: |
   Jede Domain-Entity muss eine TenantId tragen.
   Datenbankabfragen müssen immer nach TenantId filtern.

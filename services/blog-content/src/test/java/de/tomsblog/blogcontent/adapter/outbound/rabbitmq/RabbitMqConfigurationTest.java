@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 
@@ -64,5 +65,65 @@ class RabbitMqConfigurationTest {
     @DisplayName("SWA-037: jsonMessageConverter is Jackson-based")
     void jsonMessageConverter_isJacksonBased() {
         assertThat(config.jsonMessageConverter()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("SWA-037: translationBinding binds queue to exchange with correct routing key")
+    void translationBinding_isCorrect() {
+        Queue queue = config.translationQueue();
+        TopicExchange exchange = config.taskExchange();
+        Binding binding = config.translationBinding(queue, exchange);
+        assertThat(binding.getRoutingKey()).isEqualTo("task.translation");
+        assertThat(binding.getExchange()).isEqualTo("tomsblog.tasks");
+    }
+
+    @Test
+    @DisplayName("SWA-037: ttsBinding binds queue to exchange with correct routing key")
+    void ttsBinding_isCorrect() {
+        Queue queue = config.ttsQueue();
+        TopicExchange exchange = config.taskExchange();
+        Binding binding = config.ttsBinding(queue, exchange);
+        assertThat(binding.getRoutingKey()).isEqualTo("task.tts");
+        assertThat(binding.getExchange()).isEqualTo("tomsblog.tasks");
+    }
+
+    @Test
+    @DisplayName("SWA-037: snapshotBinding binds queue to exchange with correct routing key")
+    void snapshotBinding_isCorrect() {
+        Queue queue = config.snapshotQueue();
+        TopicExchange exchange = config.taskExchange();
+        Binding binding = config.snapshotBinding(queue, exchange);
+        assertThat(binding.getRoutingKey()).isEqualTo("task.snapshot");
+        assertThat(binding.getExchange()).isEqualTo("tomsblog.tasks");
+    }
+
+    @Test
+    @DisplayName("SWA-037: translationDlqBinding binds DLQ to DLX with correct routing key")
+    void translationDlqBinding_isCorrect() {
+        Queue dlq = config.translationDlq();
+        TopicExchange dlx = config.deadLetterExchange();
+        Binding binding = config.translationDlqBinding(dlq, dlx);
+        assertThat(binding.getRoutingKey()).isEqualTo("task.translation");
+        assertThat(binding.getExchange()).isEqualTo("tomsblog.tasks.dlx");
+    }
+
+    @Test
+    @DisplayName("SWA-037: ttsDlqBinding binds DLQ to DLX with correct routing key")
+    void ttsDlqBinding_isCorrect() {
+        Queue dlq = config.ttsDlq();
+        TopicExchange dlx = config.deadLetterExchange();
+        Binding binding = config.ttsDlqBinding(dlq, dlx);
+        assertThat(binding.getRoutingKey()).isEqualTo("task.tts");
+        assertThat(binding.getExchange()).isEqualTo("tomsblog.tasks.dlx");
+    }
+
+    @Test
+    @DisplayName("SWA-037: snapshotDlqBinding binds DLQ to DLX with correct routing key")
+    void snapshotDlqBinding_isCorrect() {
+        Queue dlq = config.snapshotDlq();
+        TopicExchange dlx = config.deadLetterExchange();
+        Binding binding = config.snapshotDlqBinding(dlq, dlx);
+        assertThat(binding.getRoutingKey()).isEqualTo("task.snapshot");
+        assertThat(binding.getExchange()).isEqualTo("tomsblog.tasks.dlx");
     }
 }

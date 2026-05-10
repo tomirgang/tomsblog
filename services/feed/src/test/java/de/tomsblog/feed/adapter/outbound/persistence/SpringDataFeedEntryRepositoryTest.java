@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import de.tomsblog.feed.application.port.outbound.FeedEntryRepository;
 import de.tomsblog.feed.domain.model.FeedEntry;
+import de.tomsblog.shared.tenant.TenantId;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,7 +43,7 @@ class SpringDataFeedEntryRepositoryTest {
     @Autowired
     private FeedEntryRepository repository;
 
-    private final UUID tenantId = UUID.randomUUID();
+    private final TenantId tenantId = TenantId.generate();
     private final UUID postId = UUID.randomUUID();
 
     @Test
@@ -86,7 +87,7 @@ class SpringDataFeedEntryRepositoryTest {
     @Test
     @DisplayName("SWR-090: isolates feed entries by tenant")
     void isolatesByTenant() {
-        UUID otherTenantId = UUID.randomUUID();
+        TenantId otherTenantId = TenantId.generate();
         FeedEntry entry1 = FeedEntry.create(tenantId, postId, "slug-1", "de", Instant.now());
         FeedEntry entry2 = FeedEntry.create(otherTenantId, postId, "slug-2", "en", Instant.now());
         repository.save(entry1);

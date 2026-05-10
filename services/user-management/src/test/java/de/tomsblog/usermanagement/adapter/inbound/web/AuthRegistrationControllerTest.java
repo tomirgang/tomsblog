@@ -100,6 +100,18 @@ class AuthRegistrationControllerTest {
     }
 
     @Test
+    @DisplayName("POST /register shows error when password lacks complexity")
+    void passwordNotComplex() {
+        setupLoginMode(LoginMode.BOTH);
+        Model model = new ConcurrentModel();
+        String view = controller.register(
+                TENANT_UUID, "newuser", "new@test.com", "New User", "alllowercaselong", "alllowercaselong", model);
+
+        assertThat(view).isEqualTo("register");
+        assertThat(model.getAttribute("error")).asString().contains("Großbuchstaben");
+    }
+
+    @Test
     @DisplayName("POST /register shows error when username is blank")
     void blankUsername() {
         setupLoginMode(LoginMode.BOTH);
@@ -193,5 +205,29 @@ class AuthRegistrationControllerTest {
         String view = controller.showRegistrationForm(TENANT_UUID, model);
         assertThat(view).isEqualTo("register");
         assertThat(model.getAttribute("loginMode")).isEqualTo("BOTH");
+    }
+
+    @Test
+    @DisplayName("POST /register shows error when password has no lowercase")
+    void passwordNoLowercase() {
+        setupLoginMode(LoginMode.BOTH);
+        Model model = new ConcurrentModel();
+        String view = controller.register(
+                TENANT_UUID, "newuser", "new@test.com", "New User", "ABCDEFGHIJK123", "ABCDEFGHIJK123", model);
+
+        assertThat(view).isEqualTo("register");
+        assertThat(model.getAttribute("error")).asString().contains("Großbuchstaben");
+    }
+
+    @Test
+    @DisplayName("POST /register shows error when password has no digits")
+    void passwordNoDigits() {
+        setupLoginMode(LoginMode.BOTH);
+        Model model = new ConcurrentModel();
+        String view = controller.register(
+                TENANT_UUID, "newuser", "new@test.com", "New User", "UpperLowerOnly", "UpperLowerOnly", model);
+
+        assertThat(view).isEqualTo("register");
+        assertThat(model.getAttribute("error")).asString().contains("Großbuchstaben");
     }
 }
