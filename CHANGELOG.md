@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Diagramm-Rendering in der Architekturdokumentation repariert: Externe kroki.io-Abhängigkeit durch lokalen Kroki-Container ersetzt. `asciidoctor-plantuml` entfernt (redundant, `asciidoctor-kroki` deckt alle Diagrammtypen ab). `kroki-fetch-diagram` aktiviert für Build-Time SVG-Embedding. Kroki-Mermaid-Companion-Service in CI hinzugefügt für Mermaid-Diagramme. PlantUML- und Mermaid-Diagramme werden jetzt zuverlässig als lokale SVGs eingebettet.
+- Reflector-Annotations auf `postgres-cluster-app` Secret persistent gemacht: `inheritedMetadata` im CNPG Cluster-Spec statt manueller `kubectl annotate`-Befehle. Annotations überleben Secret-Rotation automatisch.
+
 ## [0.10.5] - 2026-05-10
 
 ### Added

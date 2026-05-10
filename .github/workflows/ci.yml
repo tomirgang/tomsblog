@@ -97,6 +97,10 @@ jobs:
         image: yuzutech/kroki
         ports:
           - 8000:8000
+        env:
+          KROKI_MERMAID_HOST: kroki-mermaid
+      kroki-mermaid:
+        image: yuzutech/kroki-mermaid
 
     steps:
       - uses: actions/checkout@v4
@@ -243,6 +247,10 @@ jobs:
         image: yuzutech/kroki
         ports:
           - 8000:8000
+        env:
+          KROKI_MERMAID_HOST: kroki-mermaid
+      kroki-mermaid:
+        image: yuzutech/kroki-mermaid
 
     steps:
       - uses: actions/checkout@v4
