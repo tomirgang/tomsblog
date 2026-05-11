@@ -56,16 +56,16 @@ spec:
     topicOperator:
       resources:
         requests:
-          memory: 64Mi
+          memory: 128Mi
           cpu: 15m
         limits:
-          memory: 128Mi
+          memory: 256Mi
           cpu: 125m
     userOperator:
       resources:
         requests:
-          memory: 64Mi
+          memory: 128Mi
           cpu: 15m
         limits:
-          memory: 128Mi
+          memory: 256Mi
           cpu: 125m
