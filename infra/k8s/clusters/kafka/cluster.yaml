@@ -57,15 +57,15 @@ spec:
       resources:
         requests:
           memory: 128Mi
-          cpu: 15m
+          cpu: 25m
         limits:
           memory: 256Mi
-          cpu: 125m
+          cpu: 500m
     userOperator:
       resources:
         requests:
           memory: 128Mi
-          cpu: 15m
+          cpu: 25m
         limits:
           memory: 256Mi
-          cpu: 125m
+          cpu: 500m
