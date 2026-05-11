@@ -4,7 +4,7 @@ metadata:
   name: postgres-cluster
   namespace: postgres
 spec:
-  instances: 2
+  instances: 1
 
   inheritedMetadata:
     annotations:
@@ -20,8 +20,8 @@ spec:
 
   postgresql:
     parameters:
-      shared_buffers: "256MB"
-      effective_cache_size: "512MB"
+      shared_buffers: "128MB"
+      effective_cache_size: "256MB"
 
   storage:
     size: 10Gi
@@ -29,11 +29,11 @@ spec:
 
   resources:
     requests:
-      memory: "512Mi"
-      cpu: "250m"
+      memory: "384Mi"
+      cpu: "200m"
     limits:
-      memory: "1Gi"
-      cpu: "1000m"
+      memory: "768Mi"
+      cpu: "500m"
 
   backup:
     barmanObjectStore:

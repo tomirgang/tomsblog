@@ -92,12 +92,12 @@ Aktuelle Konfiguration (Phase 3 / MVP):
 |===
 | Parameter | Wert
 
-| Instanzen | 2 (Primary + Replica, automatisches Failover)
+| Instanzen | 1 (Single Instance, kein Failover)
 | Storage | 10 Gi (hcloud-volumes)
-| shared_buffers | 256 MB
-| effective_cache_size | 512 MB
-| Memory | 512 Mi Request / 1 Gi Limit
-| CPU | 250m Request / 1000m Limit
+| shared_buffers | 128 MB
+| effective_cache_size | 256 MB
+| Memory | 384 Mi Request / 768 Mi Limit
+| CPU | 200m Request / 500m Limit
 | Namespace | postgres
 | Service-Endpunkt | postgres-cluster-rw.postgres.svc.cluster.local:5432
 |===
