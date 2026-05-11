@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+
+- Cluster-Provisionierung von kube-hetzner/OpenTofu auf hetzner-k3s umgestellt (ADR-0034 supersedes ADR-0022). Einheitliches Node-Sizing: alle Nodes CPX22 (2 vCPU, 4 GB). WireGuard-Verschlüsselung entfällt zugunsten von privatem Hetzner-Netzwerk + Linkerd mTLS.
+
 ### Fixed
 
 - Diagramm-Rendering in der Architekturdokumentation repariert: Externe kroki.io-Abhängigkeit durch lokalen Kroki-Container ersetzt. `asciidoctor-plantuml` entfernt (redundant, `asciidoctor-kroki` deckt alle Diagrammtypen ab). `kroki-fetch-diagram` aktiviert für Build-Time SVG-Embedding. Kroki-Mermaid-Companion-Service in CI hinzugefügt für Mermaid-Diagramme. PlantUML- und Mermaid-Diagramme werden jetzt zuverlässig als lokale SVGs eingebettet.

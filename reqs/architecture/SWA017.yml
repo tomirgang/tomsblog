@@ -1,7 +1,7 @@
 active: true
 derived: false
 header: |
-  Kubernetes-Cluster-Provisionierung mit kube-hetzner
+  Kubernetes-Cluster-Provisionierung mit hetzner-k3s
 level: 17.0
 links:
 - SWR010: RkKQEXHFLRqRORbxSNSaFfEZnztwmUMANQIc-J2LatE=
@@ -9,11 +9,10 @@ normative: true
 ref: ''
 reviewed: -vNLBXy7dpx5eX8x9PDntu9nztXRNumt9KipwNU30fs=
 text: |
-  Das Kubernetes-Cluster wird mit dem kube-hetzner Terraform-Modul und OpenTofu
-  auf Hetzner Cloud provisioniert. Konfiguration: 1 Control-Plane-Node (CX33, 4 vCPU, 8 GB),
-  2 Worker-Nodes (CX23, 2 vCPU, 4 GB), Load Balancer (LB11), Standort Nuernberg (nbg1).
-  WireGuard-Verschluesselung ist zwischen allen Nodes aktiviert.
-  Hetzner CSI (hcloud-volumes) und CCM sind integriert.
-  Automatische Upgrades sind deaktiviert; Updates erfolgen manuell.
-  Die Cluster-Provisionierung liegt in einem separaten IaC-Repository,
+  Das Kubernetes-Cluster wird mit dem CLI-Tool hetzner-k3s
+  auf Hetzner Cloud provisioniert. Konfiguration: 1 Controller (CPX22, 2 vCPU, 4 GB),
+  2 Worker-Nodes (CPX22, 2 vCPU, 4 GB), Standort Nuernberg (nbg1).
+  CNI: Flannel (k3s-Standard). Hetzner CSI (hcloud-volumes) und CCM sind integriert.
+  Updates erfolgen manuell via hetzner-k3s upgrade.
+  Die Cluster-Provisionierung liegt in einem separaten Repository (kubernetes-playground/k3s/),
   getrennt von den applikationsspezifischen Kubernetes-Ressourcen.

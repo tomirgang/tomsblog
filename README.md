@@ -23,7 +23,7 @@ Das System folgt einer **hexagonalen Architektur** (Ports & Adapters) und ist al
 
 | Komponente     | Technologie                                          |
 | -------------- | ---------------------------------------------------- |
-| Orchestrierung | Hetzner Kubernetes (3-Node-Cluster via kube-hetzner) |
+| Orchestrierung | Hetzner Kubernetes (3-Node-Cluster via hetzner-k3s) |
 | Messaging      | Apache Kafka (Event-Streaming), RabbitMQ (Task-Queues) |
 | Relationale DB | PostgreSQL (CloudNativePG Operator) - Database per Service   |
 | Dokument-DB    | MongoDB (per Service, wo passend)                            |

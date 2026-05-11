@@ -6,7 +6,7 @@ Diese Manifeste werden zukünftig von Flux (GitOps) verwaltet.
 ## Voraussetzungen
 
 Das Kubernetes-Cluster und die Basis-Operatoren (CloudNativePG, Hetzner CSI/CCM) werden
-im separaten IaC-Repository (`kubernetes-playground/K8nCluster`) mit OpenTofu provisioniert.
+im separaten Repository (`kubernetes-playground/k3s/`) mit hetzner-k3s provisioniert.
 
 ## Verzeichnisstruktur
 
@@ -102,8 +102,8 @@ kubectl apply -k .
 
 | Verantwortung                                            | Repository                       |
 | -------------------------------------------------------- | -------------------------------- |
-| Cluster-Provisionierung (Nodes, Netzwerk, CSI/CCM)       | `kubernetes-playground/K8nCluster` |
-| Operator-Installation (CloudNativePG, Reflector, cert-manager) | `kubernetes-playground/flux/`    |
+| Cluster-Provisionierung (Nodes, Netzwerk, CSI/CCM)       | `kubernetes-playground/k3s/`     |
+| Operator-Installation (CloudNativePG, Reflector, cert-manager) | `kubernetes-playground/k3s/` + Flux |
 | Applikationsspezifische Ressourcen (DB-Instanzen, PVCs)  | `tomsblog/infra/k8s/`            |
 | Kustomize-Manifeste für Blog-Services                    | `tomsblog/infra/k8s/`            |
 | cert-manager ClusterIssuer + Ingress-Ressourcen          | `tomsblog/infra/k8s/`            |

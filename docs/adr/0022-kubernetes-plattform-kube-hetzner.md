@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Superseded by [ADR-0034](0034-hetzner-k3s-provisioning.md)
 
 ## Context
 

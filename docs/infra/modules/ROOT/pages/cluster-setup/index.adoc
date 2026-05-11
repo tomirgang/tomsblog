@@ -3,9 +3,9 @@
 
 == Überblick
 
-Das Kubernetes-Cluster bildet die Laufzeitumgebung für alle Toms-Blog-Services (INF-001). Es wird auf Hetzner Cloud mit dem Terraform-Modul https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner[kube-hetzner] und OpenTofu provisioniert (ADR-0022).
+Das Kubernetes-Cluster bildet die Laufzeitumgebung für alle Toms-Blog-Services (INF-001). Es wird auf Hetzner Cloud mit dem CLI-Tool https://github.com/vitobotta/hetzner-k3s[hetzner-k3s] provisioniert (ADR-0034).
 
-Die Cluster-Provisionierung liegt in einem separaten IaC-Repository (`kubernetes-playground/K8nCluster`), getrennt von den applikationsspezifischen Ressourcen in diesem Repository.
+Die Cluster-Provisionierung liegt in einem separaten Repository (`kubernetes-playground/k3s/`), getrennt von den applikationsspezifischen Ressourcen in diesem Repository.
 
 === Cluster-Parameter
 
@@ -13,15 +13,15 @@ Die Cluster-Provisionierung liegt in einem separaten IaC-Repository (`kubernetes
 |===
 | Parameter | Wert
 
-| Distribution | k3s (via kube-hetzner)
-| Control Plane | 1x CX33 (4 vCPU, 8 GB), Nürnberg (nbg1)
-| Worker Nodes | 2x CX23 (2 vCPU, 4 GB), Nürnberg (nbg1)
-| Load Balancer | LB11, Nürnberg
-| Netzwerk-Verschlüsselung | WireGuard
+| Distribution | k3s (via hetzner-k3s)
+| Controller | 1x CPX22 (2 vCPU, 4 GB), Nürnberg (nbg1)
+| Worker Nodes | 2x CPX22 (2 vCPU, 4 GB), Nürnberg (nbg1)
+| CNI | Flannel (k3s-Standard)
+| Privates Netzwerk | 10.0.0.0/16
 | Storage | Hetzner CSI (hcloud-volumes)
 | Ingress | Traefik (k3s-Standard)
 | Basis-Domain | cluster.tomirgang.de
-| Kosten | ca. 30 EUR/Monat (1x CX33 + 2x CX23 + LB11 + Volumes + IPs)
+| Kosten | ca. 26 EUR/Monat (3x CPX22 + Volumes + IPs)
 |===
 
 === Namespace-Aufteilung
@@ -57,5 +57,5 @@ graph LR
 
 == Weiterführend
 
-* xref:cluster-setup/provisioning.adoc[Provisionierung (IaC)] -- OpenTofu-Workflow und IaC-Repository
-* xref:cluster-setup/networking.adoc[Netzwerk & DNS] -- WireGuard, Load Balancer, DNS-Konfiguration
+* xref:cluster-setup/provisioning.adoc[Provisionierung] -- hetzner-k3s Workflow und Repository
+* xref:cluster-setup/networking.adoc[Netzwerk & DNS] -- Flannel, Load Balancer, DNS-Konfiguration

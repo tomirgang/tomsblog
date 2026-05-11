@@ -11,13 +11,12 @@ Infrastructure-as-Code für die Toms-Blog-Plattform.
 
 ## Cluster-Provisionierung
 
-Das Kubernetes-Cluster (Hetzner Cloud, 3 Nodes, k3s) wird im separaten IaC-Repository
-provisioniert: `kubernetes-playground/K8nCluster` (OpenTofu + kube-hetzner).
+Das Kubernetes-Cluster (Hetzner Cloud, 3 Nodes, k3s) wird im separaten Repository
+provisioniert: `kubernetes-playground/k3s/` (hetzner-k3s CLI).
 
 Dort werden verwaltet:
-- Cluster-Nodes (Control Plane + Worker)
-- Netzwerk und Load Balancer
-- Hetzner CSI/CCM
-- Basis-Operatoren (CloudNativePG, künftig Strimzi etc.)
+- Cluster-Nodes (Controller + Worker)
+- Netzwerk (privates Hetzner-Netzwerk)
+- Hetzner CSI/CCM (automatisch durch hetzner-k3s)
 
-Siehe ADR-0022 und ADR-0023 für die Architekturentscheidungen.
+Siehe ADR-0034 und ADR-0023 für die Architekturentscheidungen.

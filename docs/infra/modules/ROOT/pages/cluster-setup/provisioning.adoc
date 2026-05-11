@@ -1,14 +1,12 @@
-= Provisionierung (IaC)
+= Provisionierung
 :sectnums:
 
-== IaC-Repository
+== Repository
 
-Die Cluster-Provisionierung erfolgt im Repository `kubernetes-playground/K8nCluster` mit OpenTofu (INF-001, SWA-017). Dieses Repository enthält:
+Die Cluster-Provisionierung erfolgt im Repository `kubernetes-playground/k3s/` mit dem CLI-Tool https://github.com/vitobotta/hetzner-k3s[hetzner-k3s] (INF-001, SWA-017). Dieses Repository enthält:
 
-* OpenTofu-Konfiguration für Hetzner Cloud Ressourcen
-* kube-hetzner Modul-Konfiguration (Nodes, Netzwerk, Load Balancer)
-* Basis-Operatoren (CloudNativePG, Linkerd)
-* Flux-Bootstrap-Konfiguration
+* `cluster.yaml` -- Deklarative Cluster-Konfiguration (Nodes, Netzwerk, k3s-Version)
+* `README.md` -- Anleitung zur Installation und Verwaltung
 
 === Provisionierungs-Workflow
 
@@ -18,17 +16,16 @@ Der folgende Ablauf beschreibt die initiale Cluster-Erstellung und Updates:
 ----
 sequenceDiagram
     participant Dev as Entwickler
-    participant TF as OpenTofu
+    participant CLI as hetzner-k3s CLI
     participant HC as Hetzner Cloud API
     participant K8s as K8s Cluster
 
-    Dev->>TF: tofu apply
-    TF->>HC: Erstelle Nodes, LB, Netzwerk
-    HC-->>TF: Ressourcen erstellt
-    TF->>K8s: k3s Bootstrap (via SSH)
-    K8s-->>TF: Cluster bereit
-    TF->>K8s: Helm Releases (Operatoren)
-    TF->>K8s: Flux Bootstrap
+    Dev->>CLI: hetzner-k3s create --config cluster.yaml
+    CLI->>HC: Erstelle Nodes, Netzwerk
+    HC-->>CLI: Ressourcen erstellt
+    CLI->>K8s: k3s Bootstrap (via SSH)
+    K8s-->>CLI: Cluster bereit (kubeconfig)
+    Note over Dev: Flux Bootstrap manuell
     Note over K8s: Flux übernimmt App-Deployment
 ----
 
@@ -38,33 +35,39 @@ sequenceDiagram
 |===
 | Schicht | Verantwortung | Repository
 
-| Plattform | Nodes, Netzwerk, LB, Basis-Operatoren | IaC-Repo
-| Applikation | DB-Instanzen, Services, Ingress, Policies | App-Repo (infra/k8s/)
+| Plattform | Nodes, Netzwerk, k3s, Hetzner CSI/CCM | kubernetes-playground/k3s/
+| Applikation | DB-Instanzen, Services, Ingress, Policies | tomsblog/infra/k8s/
 |===
 
 Diese Trennung stellt sicher, dass Plattform-Änderungen (z.B. Node-Upgrade) unabhängig von Applikations-Deployments durchgeführt werden können.
 
 == Node-Konfiguration
 
-Alle Nodes verwenden Ubuntu 22.04 mit automatischen Security-Updates. k3s wird in der aktuellen stabilen Version installiert.
+k3s wird in Version v1.33.1+k3s1 installiert. Workloads werden nicht auf dem Controller gescheduled (`schedule_workloads_on_masters: false`).
 
 [cols="1,1,1,1"]
 |===
 | Rolle | Typ | vCPU | RAM
 
-| Control Plane | CX33 | 4 | 8 GB
-| Worker 1 | CX23 | 2 | 4 GB
-| Worker 2 | CX23 | 2 | 4 GB
+| Controller | CPX22 | 2 | 4 GB
+| Worker 1 | CPX22 | 2 | 4 GB
+| Worker 2 | CPX22 | 2 | 4 GB
 |===
 
-== Basis-Operatoren (via IaC)
+== Cluster-Verwaltung
 
-Die folgenden Operatoren werden im IaC-Repository via Helm installiert:
+Das `hetzner-k3s` CLI bietet idempotente Befehle für die Cluster-Verwaltung:
+
+* **Erstellen/Skalieren**: `hetzner-k3s create --config cluster.yaml` (idempotent, kann beliebig oft ausgeführt werden)
+* **Upgrades**: k3s-Version in `cluster.yaml` ändern, dann `hetzner-k3s upgrade --config cluster.yaml`
+* **Löschen**: `hetzner-k3s delete --config cluster.yaml`
+
+== Basis-Operatoren
+
+Nach der Cluster-Erstellung werden die folgenden Operatoren manuell oder via Flux installiert:
 
 * **CloudNativePG** -- PostgreSQL-Operator (CRDs + Controller)
 * **Linkerd** -- Service Mesh (CRDs + Control Plane)
 * **Reflector** -- Cross-Namespace Secret-Synchronisation
-
-cert-manager wird über Flux verwaltet (siehe `flux/cert-manager-release.yaml`).
 
 Die applikationsspezifischen Custom Resources (z.B. PostgreSQL-Cluster-Definition, ClusterIssuer) liegen im App-Repository unter `infra/k8s/`.

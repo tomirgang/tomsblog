@@ -35,7 +35,7 @@ graph TB
     end
 
     subgraph "Hetzner Cloud"
-        LB[Load Balancer LB11]
+        LB[Load Balancer]
         subgraph "K8s Cluster (k3s, 3 Nodes)"
             TRAEFIK[Traefik Ingress]
             LINKERD[Linkerd Service Mesh]

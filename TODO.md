@@ -38,7 +38,7 @@
 
 ### Phase 3: Infrastruktur & erstes Deployment
 
-- [x] Hetzner Kubernetes Cluster aufsetzen (kube-hetzner / OpenTofu)
+- [x] Hetzner Kubernetes Cluster aufsetzen (hetzner-k3s)
 - [x] CloudNativePG Operator für PostgreSQL
 - [x] GitOps einrichten (Flux, siehe ADR-0020)
 - [x] Kustomize-Manifeste für blog-content Service
