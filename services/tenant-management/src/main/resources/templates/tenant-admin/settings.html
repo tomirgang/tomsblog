@@ -126,7 +126,7 @@
                         Rollenzuordnung aktivieren
                     </label>
                     <small>Ordnet OIDC-Gruppen den Blog-Rollen zu. Die höchste Rolle gewinnt.</small>
-                    <div th:if="${tenant?.oidcRoleMappings != null}" th:each="entry : ${tenant.oidcRoleMappings}">
+                    <div th:each="entry : ${tenant?.oidcRoleMappings}">
                         <label th:text="'Gruppe: ' + ${entry.key}"></label>
                         <select th:name="'oidcRoleMapping_' + ${entry.key}">
                             <option value="READER" th:selected="${entry.value == 'READER'}">Reader</option>
