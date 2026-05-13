@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.10.6] - 2026-05-13
+
 ### Changed
 
 - Chaos Testing: Umfang reduziert und auf begrenzte Ressourcen angepasst. Schwergewichtige Chaos-Tools (Chaos Mesh, Litmus) und CI/CD-Integration entfernt. Stattdessen leichtgewichtige Resilience-Tests mit Testcontainers (Phase 6) und manuelle Chaos-Experimente (kubectl delete pod, kubectl drain node) eingeplant.
