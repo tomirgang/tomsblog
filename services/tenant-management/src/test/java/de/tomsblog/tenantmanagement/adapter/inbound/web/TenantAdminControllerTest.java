@@ -10,7 +10,9 @@ import static org.mockito.Mockito.when;
 import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.tenantmanagement.application.port.inbound.TenantManagementUseCase;
 import de.tomsblog.tenantmanagement.domain.model.Tenant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -104,25 +106,35 @@ class TenantAdminControllerTest {
     @DisplayName("SWR-073: updateGeneralSettings delegates and redirects")
     void updateGeneralSettings() {
         var tenantId = UUID.randomUUID();
-        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any()))
+        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any(), any(), any(), any()))
                 .thenReturn(Tenant.create(new TenantId(tenantId), "s", "N"));
 
         var view = controller.updateGeneralSettings(
-                tenantId, new MockHttpSession(), "INTERNAL", false, "example.com, test.org", "Name", "Tag");
+                tenantId,
+                new MockHttpSession(),
+                "INTERNAL",
+                false,
+                "example.com, test.org",
+                "Name",
+                "Tag",
+                null,
+                null,
+                null);
 
         assertThat(view).isEqualTo("redirect:/tenant/admin/settings?tab=general");
-        verify(useCase).updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any());
+        verify(useCase)
+                .updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any(), any(), any(), any());
     }
 
     @Test
     @DisplayName("SWR-073: updateGeneralSettings handles blank domains")
     void updateGeneralSettingsBlankDomains() {
         var tenantId = UUID.randomUUID();
-        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any()))
+        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any(), any(), any(), any()))
                 .thenReturn(Tenant.create(new TenantId(tenantId), "s", "N"));
 
-        var view =
-                controller.updateGeneralSettings(tenantId, new MockHttpSession(), "INTERNAL", false, "", "Name", null);
+        var view = controller.updateGeneralSettings(
+                tenantId, new MockHttpSession(), "INTERNAL", false, "", "Name", null, null, null, null);
 
         assertThat(view).isEqualTo("redirect:/tenant/admin/settings?tab=general");
     }
@@ -131,11 +143,11 @@ class TenantAdminControllerTest {
     @DisplayName("SWR-073: updateGeneralSettings filters empty domain segments")
     void updateGeneralSettingsEmptyDomainSegments() {
         var tenantId = UUID.randomUUID();
-        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any()))
+        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any(), any(), any(), any()))
                 .thenReturn(Tenant.create(new TenantId(tenantId), "s", "N"));
 
         var view = controller.updateGeneralSettings(
-                tenantId, new MockHttpSession(), "INTERNAL", false, "a,,b, ,c", "Name", null);
+                tenantId, new MockHttpSession(), "INTERNAL", false, "a,,b, ,c", "Name", null, null, null, null);
 
         assertThat(view).isEqualTo("redirect:/tenant/admin/settings?tab=general");
         verify(useCase)
@@ -145,17 +157,21 @@ class TenantAdminControllerTest {
                         any(),
                         eq("INTERNAL"),
                         eq(false),
-                        eq(Set.of("a", "b", "c")));
+                        eq(Set.of("a", "b", "c")),
+                        any(),
+                        any(),
+                        any());
     }
 
     @Test
     @DisplayName("SWR-073: updateOidcSettings delegates and redirects")
     void updateOidcSettings() {
         var tenantId = UUID.randomUUID();
-        when(useCase.updateOidcSettings(any(), any(), any(), any()))
+        when(useCase.updateOidcSettings(any(), any(), any(), any(), any(), any(boolean.class), any()))
                 .thenReturn(Tenant.create(new TenantId(tenantId), "s", "N"));
 
-        var view = controller.updateOidcSettings(tenantId, new MockHttpSession(), "https://iss", "cid", "cs");
+        var view = controller.updateOidcSettings(
+                tenantId, new MockHttpSession(), "https://iss", "cid", "cs", null, false, Map.of());
 
         assertThat(view).isEqualTo("redirect:/tenant/admin/settings?tab=oidc");
     }
@@ -268,5 +284,126 @@ class TenantAdminControllerTest {
         var view = controller.switchTenant(tid, session, request);
 
         assertThat(view).isEqualTo("redirect:https://myapp.example.com/tenant/admin/settings");
+    }
+
+    @Test
+    @DisplayName("SWR-094: updateGeneralSettings passes defaultRole, logoUrl, faviconUrl")
+    void updateGeneralSettingsWithNewFields() {
+        var tenantId = UUID.randomUUID();
+        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any(), any(), any(), any()))
+                .thenReturn(Tenant.create(new TenantId(tenantId), "s", "N"));
+
+        var view = controller.updateGeneralSettings(
+                tenantId,
+                new MockHttpSession(),
+                "INTERNAL",
+                false,
+                "",
+                "Name",
+                "Tag",
+                "AUTHOR",
+                "https://logo.png",
+                "https://favicon.ico");
+
+        assertThat(view).isEqualTo("redirect:/tenant/admin/settings?tab=general");
+        verify(useCase)
+                .updateGeneralSettings(
+                        eq(new TenantId(tenantId)),
+                        eq("Name"),
+                        eq("Tag"),
+                        eq("INTERNAL"),
+                        eq(false),
+                        eq(Set.of()),
+                        eq("AUTHOR"),
+                        eq("https://logo.png"),
+                        eq("https://favicon.ico"));
+    }
+
+    @Test
+    @DisplayName("SWR-092: updateOidcSettings passes oidcButtonText and role mapping enabled")
+    void updateOidcSettingsWithButtonTextAndRoleMappingEnabled() {
+        var tenantId = UUID.randomUUID();
+        when(useCase.updateOidcSettings(any(), any(), any(), any(), any(), any(boolean.class), any()))
+                .thenReturn(Tenant.create(new TenantId(tenantId), "s", "N"));
+
+        var view = controller.updateOidcSettings(
+                tenantId,
+                new MockHttpSession(),
+                "https://iss",
+                "cid",
+                "cs",
+                "Login with SSO",
+                true,
+                Map.of(
+                        "oidcIssuerUrl", "https://iss",
+                        "oidcRoleMapping_admins", "ADMIN",
+                        "oidcRoleMapping_editors", "AUTHOR"));
+
+        assertThat(view).isEqualTo("redirect:/tenant/admin/settings?tab=oidc");
+        verify(useCase)
+                .updateOidcSettings(
+                        eq(new TenantId(tenantId)),
+                        eq("https://iss"),
+                        eq("cid"),
+                        eq("cs"),
+                        eq("Login with SSO"),
+                        eq(true),
+                        eq(Map.of("admins", "ADMIN", "editors", "AUTHOR")));
+    }
+
+    @Test
+    @DisplayName("SWR-095: extractRoleMappings ignores non-mapping params")
+    void updateOidcSettingsIgnoresNonMappingParams() {
+        var tenantId = UUID.randomUUID();
+        when(useCase.updateOidcSettings(any(), any(), any(), any(), any(), any(boolean.class), any()))
+                .thenReturn(Tenant.create(new TenantId(tenantId), "s", "N"));
+
+        controller.updateOidcSettings(
+                tenantId,
+                new MockHttpSession(),
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of("otherParam", "value", "oidcClientId", "cid"));
+
+        verify(useCase).updateOidcSettings(any(), any(), any(), any(), any(), eq(false), eq(Map.of()));
+    }
+
+    @Test
+    @DisplayName("SWR-095: extractRoleMappings skips blank values")
+    void updateOidcSettingsSkipsBlankValues() {
+        var tenantId = UUID.randomUUID();
+        when(useCase.updateOidcSettings(any(), any(), any(), any(), any(), any(boolean.class), any()))
+                .thenReturn(Tenant.create(new TenantId(tenantId), "s", "N"));
+
+        controller.updateOidcSettings(
+                tenantId,
+                new MockHttpSession(),
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of("oidcRoleMapping_admins", " ", "oidcRoleMapping_editors", "AUTHOR"));
+
+        verify(useCase)
+                .updateOidcSettings(any(), any(), any(), any(), any(), eq(false), eq(Map.of("editors", "AUTHOR")));
+    }
+
+    @Test
+    @DisplayName("SWR-095: extractRoleMappings skips blank group name")
+    void updateOidcSettingsSkipsBlankGroupName() {
+        var tenantId = UUID.randomUUID();
+        when(useCase.updateOidcSettings(any(), any(), any(), any(), any(), any(boolean.class), any()))
+                .thenReturn(Tenant.create(new TenantId(tenantId), "s", "N"));
+
+        var params = new HashMap<String, String>();
+        params.put("oidcRoleMapping_", "ADMIN");
+        params.put("oidcRoleMapping_valid", "AUTHOR");
+        controller.updateOidcSettings(tenantId, new MockHttpSession(), null, null, null, null, false, params);
+
+        verify(useCase).updateOidcSettings(any(), any(), any(), any(), any(), eq(false), eq(Map.of("valid", "AUTHOR")));
     }
 }

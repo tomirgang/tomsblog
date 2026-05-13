@@ -5,7 +5,9 @@
     <div th:fragment="header">
         <nav>
             <ul>
-                <li><strong><a th:href="@{/}" href="/" th:text="${tenantName} ?: 'Toms Blog'">Toms Blog</a></strong>
+                <li>
+                    <img th:if="${logoUrl}" th:src="${logoUrl}" alt="Logo" style="height:2rem;vertical-align:middle;margin-right:0.5rem">
+                    <strong><a th:href="@{/}" href="/" th:text="${tenantName} ?: 'Toms Blog'">Toms Blog</a></strong>
                     <small th:if="${tenantTagline}" th:text="${tenantTagline}" style="display:block;font-weight:normal;font-size:0.75rem"></small>
                 </li>
             </ul>

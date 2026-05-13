@@ -62,4 +62,13 @@ public class JpaUserProfileRepository implements UserProfileRepository {
     public boolean existsByEmail(String email) {
         return springDataRepository.existsByEmail(email);
     }
+
+    @Override
+    public void delete(UserProfile userProfile) {
+        springDataRepository
+                .findByOidcSubject(userProfile.getOidcSubject() != null ? userProfile.getOidcSubject() : "")
+                .or(() -> springDataRepository.findByUsername(
+                        userProfile.getUsername() != null ? userProfile.getUsername() : ""))
+                .ifPresent(springDataRepository::delete);
+    }
 }

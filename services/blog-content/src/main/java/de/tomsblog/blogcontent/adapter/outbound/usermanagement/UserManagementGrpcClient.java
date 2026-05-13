@@ -14,6 +14,7 @@ import de.tomsblog.grpc.usermanagement.TenantSettingsServiceGrpc;
 import de.tomsblog.grpc.usermanagement.UpdateTenantSettingsRequest;
 import de.tomsblog.grpc.usermanagement.UserManagementServiceGrpc;
 import de.tomsblog.grpc.usermanagement.UserProfileResponse;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -121,7 +122,13 @@ public class UserManagementGrpcClient implements UserManagementClient {
             String privacyPolicyContent,
             String oidcIssuerUrl,
             String oidcClientId,
-            String oidcClientSecret) {
+            String oidcClientSecret,
+            String oidcButtonText,
+            String defaultRole,
+            String logoUrl,
+            String faviconUrl,
+            boolean oidcRoleMappingEnabled,
+            java.util.Map<String, String> oidcRoleMappings) {
         var request = UpdateTenantSettingsRequest.newBuilder()
                 .setTenantId(tenantId.toString())
                 .setLoginMode(loginMode)
@@ -134,6 +141,12 @@ public class UserManagementGrpcClient implements UserManagementClient {
                 .setOidcIssuerUrl(oidcIssuerUrl != null ? oidcIssuerUrl : "")
                 .setOidcClientId(oidcClientId != null ? oidcClientId : "")
                 .setOidcClientSecret(oidcClientSecret != null ? oidcClientSecret : "")
+                .setOidcButtonText(oidcButtonText != null ? oidcButtonText : "")
+                .setDefaultRole(defaultRole != null ? defaultRole : "")
+                .setLogoUrl(logoUrl != null ? logoUrl : "")
+                .setFaviconUrl(faviconUrl != null ? faviconUrl : "")
+                .setOidcRoleMappingEnabled(oidcRoleMappingEnabled)
+                .putAllOidcRoleMappings(oidcRoleMappings != null ? oidcRoleMappings : java.util.Map.of())
                 .build();
         var response = tenantSettingsStub.updateTenantSettings(request);
         return toTenantSettingsDto(response);
@@ -151,7 +164,13 @@ public class UserManagementGrpcClient implements UserManagementClient {
                 response.getPrivacyPolicyContent().isEmpty() ? null : response.getPrivacyPolicyContent(),
                 response.getOidcIssuerUrl().isEmpty() ? null : response.getOidcIssuerUrl(),
                 response.getOidcClientId().isEmpty() ? null : response.getOidcClientId(),
-                response.getOidcClientSecret().isEmpty() ? null : response.getOidcClientSecret());
+                response.getOidcClientSecret().isEmpty() ? null : response.getOidcClientSecret(),
+                response.getOidcButtonText().isEmpty() ? null : response.getOidcButtonText(),
+                response.getDefaultRole().isEmpty() ? null : response.getDefaultRole(),
+                response.getLogoUrl().isEmpty() ? null : response.getLogoUrl(),
+                response.getFaviconUrl().isEmpty() ? null : response.getFaviconUrl(),
+                response.getOidcRoleMappingEnabled(),
+                new HashMap<>(response.getOidcRoleMappingsMap()));
     }
 
     @Override

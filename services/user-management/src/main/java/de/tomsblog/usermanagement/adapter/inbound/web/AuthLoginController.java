@@ -37,6 +37,7 @@ public class AuthLoginController {
     public String login(@RequestHeader("X-Tenant-Id") UUID tenantId, Model model) {
         String loginMode = resolveLoginMode(tenantId);
         model.addAttribute("loginMode", loginMode);
+        model.addAttribute("oidcButtonText", resolveOidcButtonText(tenantId));
         return "login";
     }
 
@@ -53,5 +54,19 @@ public class AuthLoginController {
             LOG.warn("Failed to retrieve tenant settings for tenant '{}'. Defaulting to BOTH.", tenantId, e);
             return "BOTH";
         }
+    }
+
+    private String resolveOidcButtonText(UUID tenantId) {
+        try {
+            TenantSettings settings = tenantSettingsUseCase.getSettings(new TenantId(tenantId));
+            if (settings != null
+                    && settings.getOidcButtonText() != null
+                    && !settings.getOidcButtonText().isBlank()) {
+                return settings.getOidcButtonText();
+            }
+        } catch (Exception e) {
+            LOG.warn("Failed to retrieve OIDC button text for tenant '{}'.", tenantId, e);
+        }
+        return "Mit OIDC anmelden";
     }
 }

@@ -6,8 +6,10 @@ import de.tomsblog.tenantmanagement.domain.model.Tenant;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -85,11 +87,22 @@ public class TenantAdminController {
             @RequestParam(defaultValue = "false") boolean autoApproveOidc,
             @RequestParam(defaultValue = "") String autoApproveEmailDomains,
             @RequestParam String displayName,
-            @RequestParam(required = false) String tagline) {
+            @RequestParam(required = false) String tagline,
+            @RequestParam(defaultValue = "READER") String defaultRole,
+            @RequestParam(required = false) String logoUrl,
+            @RequestParam(required = false) String faviconUrl) {
         UUID activeTenant = resolveActiveTenant(tenantId, session);
         Set<String> domains = parseDomains(autoApproveEmailDomains);
         tenantManagementUseCase.updateGeneralSettings(
-                new TenantId(activeTenant), displayName, tagline, loginMode, autoApproveOidc, domains);
+                new TenantId(activeTenant),
+                displayName,
+                tagline,
+                loginMode,
+                autoApproveOidc,
+                domains,
+                defaultRole,
+                logoUrl,
+                faviconUrl);
         return "redirect:/tenant/admin/settings?tab=general";
     }
 
@@ -99,10 +112,20 @@ public class TenantAdminController {
             HttpSession session,
             @RequestParam(required = false) String oidcIssuerUrl,
             @RequestParam(required = false) String oidcClientId,
-            @RequestParam(required = false) String oidcClientSecret) {
+            @RequestParam(required = false) String oidcClientSecret,
+            @RequestParam(required = false) String oidcButtonText,
+            @RequestParam(defaultValue = "false") boolean oidcRoleMappingEnabled,
+            @RequestParam Map<String, String> allParams) {
         UUID activeTenant = resolveActiveTenant(tenantId, session);
+        Map<String, String> roleMappings = extractRoleMappings(allParams);
         tenantManagementUseCase.updateOidcSettings(
-                new TenantId(activeTenant), oidcIssuerUrl, oidcClientId, oidcClientSecret);
+                new TenantId(activeTenant),
+                oidcIssuerUrl,
+                oidcClientId,
+                oidcClientSecret,
+                oidcButtonText,
+                oidcRoleMappingEnabled,
+                roleMappings);
         return "redirect:/tenant/admin/settings?tab=oidc";
     }
 
@@ -157,5 +180,18 @@ public class TenantAdminController {
                     .forEach(domains::add);
         }
         return domains;
+    }
+
+    private Map<String, String> extractRoleMappings(Map<String, String> allParams) {
+        Map<String, String> mappings = new HashMap<>();
+        allParams.forEach((key, value) -> {
+            if (key.startsWith("oidcRoleMapping_") && value != null && !value.isBlank()) {
+                String group = key.substring("oidcRoleMapping_".length());
+                if (!group.isBlank()) {
+                    mappings.put(group, value);
+                }
+            }
+        });
+        return mappings;
     }
 }

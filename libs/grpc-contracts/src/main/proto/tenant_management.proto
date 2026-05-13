@@ -45,6 +45,9 @@ message UpdateGeneralSettingsRequest {
   string login_mode = 4;
   bool auto_approve_oidc = 5;
   repeated string auto_approve_email_domains = 6;
+  string default_role = 7;
+  string logo_url = 8;
+  string favicon_url = 9;
 }
 
 message UpdateOidcSettingsRequest {
@@ -52,6 +55,9 @@ message UpdateOidcSettingsRequest {
   string oidc_issuer_url = 2;
   string oidc_client_id = 3;
   string oidc_client_secret = 4;
+  string oidc_button_text = 5;
+  bool oidc_role_mapping_enabled = 6;
+  map<string, string> oidc_role_mappings = 7;
 }
 
 message UpdateLegalSettingsRequest {
@@ -77,6 +83,12 @@ message TenantResponse {
   string oidc_issuer_url = 11;
   string oidc_client_id = 12;
   string oidc_client_secret = 13;
+  string oidc_button_text = 14;
+  string default_role = 15;
+  string logo_url = 16;
+  string favicon_url = 17;
+  bool oidc_role_mapping_enabled = 18;
+  map<string, string> oidc_role_mappings = 19;
 }
 
 message TenantInfoResponse {

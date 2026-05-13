@@ -22,6 +22,7 @@ import de.tomsblog.tenantmanagement.domain.model.TenantStatus;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -115,7 +116,7 @@ class TenantManagementGrpcServiceTest {
     void updateGeneralSettingsSuccess() {
         var tenantId = TenantId.generate();
         var tenant = createFullTenant(tenantId);
-        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any()))
+        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any(), any(), any(), any()))
                 .thenReturn(tenant);
 
         var response = new AtomicReference<TenantResponse>();
@@ -128,7 +129,8 @@ class TenantManagementGrpcServiceTest {
                 captureResponse(response));
 
         assertThat(response.get()).isNotNull();
-        verify(useCase).updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any());
+        verify(useCase)
+                .updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any(), any(), any(), any());
     }
 
     @Test
@@ -136,7 +138,8 @@ class TenantManagementGrpcServiceTest {
     void updateOidcSettingsSuccess() {
         var tenantId = TenantId.generate();
         var tenant = createFullTenant(tenantId);
-        when(useCase.updateOidcSettings(any(), any(), any(), any())).thenReturn(tenant);
+        when(useCase.updateOidcSettings(any(), any(), any(), any(), any(), any(boolean.class), any()))
+                .thenReturn(tenant);
 
         var response = new AtomicReference<TenantResponse>();
         grpcService.updateOidcSettings(
@@ -154,7 +157,7 @@ class TenantManagementGrpcServiceTest {
     @Test
     @DisplayName("SWR-074: updateOidcSettings returns error for invalid")
     void updateOidcSettingsError() {
-        when(useCase.updateOidcSettings(any(), any(), any(), any()))
+        when(useCase.updateOidcSettings(any(), any(), any(), any(), any(), any(boolean.class), any()))
                 .thenThrow(new IllegalArgumentException("bad oidc"));
 
         var error = new AtomicReference<Throwable>();
@@ -204,7 +207,7 @@ class TenantManagementGrpcServiceTest {
     @Test
     @DisplayName("SWR-074: updateGeneralSettings returns error for invalid")
     void updateGeneralSettingsError() {
-        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any()))
+        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any(), any(), any(), any()))
                 .thenThrow(new IllegalArgumentException("bad general"));
 
         var error = new AtomicReference<Throwable>();
@@ -249,7 +252,7 @@ class TenantManagementGrpcServiceTest {
     void updateGeneralSettingsEmptyTagline() {
         var tenantId = TenantId.generate();
         var tenant = createFullTenant(tenantId);
-        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any()))
+        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any(), any(), any(), any()))
                 .thenReturn(tenant);
 
         var response = new AtomicReference<TenantResponse>();
@@ -264,7 +267,15 @@ class TenantManagementGrpcServiceTest {
 
         verify(useCase)
                 .updateGeneralSettings(
-                        any(), any(), org.mockito.ArgumentMatchers.isNull(), any(), any(boolean.class), any());
+                        any(),
+                        any(),
+                        org.mockito.ArgumentMatchers.isNull(),
+                        any(),
+                        any(boolean.class),
+                        any(),
+                        any(),
+                        any(),
+                        any());
     }
 
     @Test
@@ -272,7 +283,7 @@ class TenantManagementGrpcServiceTest {
     void updateGeneralSettingsNonEmptyTagline() {
         var tenantId = TenantId.generate();
         var tenant = createFullTenant(tenantId);
-        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any()))
+        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any(), any(), any(), any()))
                 .thenReturn(tenant);
 
         var response = new AtomicReference<TenantResponse>();
@@ -287,7 +298,223 @@ class TenantManagementGrpcServiceTest {
 
         verify(useCase)
                 .updateGeneralSettings(
-                        any(), any(), org.mockito.ArgumentMatchers.eq("My tagline"), any(), any(boolean.class), any());
+                        any(),
+                        any(),
+                        org.mockito.ArgumentMatchers.eq("My tagline"),
+                        any(),
+                        any(boolean.class),
+                        any(),
+                        any(),
+                        any(),
+                        any());
+    }
+
+    @Test
+    @DisplayName("SWR-074: toResponse maps non-null oidcButtonText, logoUrl, faviconUrl, roleMappings")
+    void toResponseMapsNewFields() {
+        var tenantId = TenantId.generate();
+        var tenant = Tenant.reconstitute(
+                tenantId,
+                "test",
+                "Test Blog",
+                "A tag",
+                TenantStatus.ACTIVE,
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "imp",
+                "priv",
+                "https://issuer",
+                "cid",
+                "cs",
+                "Login with SSO",
+                "AUTHOR",
+                "https://logo.png",
+                "https://fav.ico",
+                true,
+                Map.of("admins", "ADMIN"));
+        when(useCase.getTenant(tenantId)).thenReturn(tenant);
+
+        var response = new AtomicReference<TenantResponse>();
+        grpcService.getTenant(
+                GetTenantRequest.newBuilder()
+                        .setTenantId(tenantId.value().toString())
+                        .build(),
+                captureResponse(response));
+
+        assertThat(response.get().getOidcButtonText()).isEqualTo("Login with SSO");
+        assertThat(response.get().getDefaultRole()).isEqualTo("AUTHOR");
+        assertThat(response.get().getLogoUrl()).isEqualTo("https://logo.png");
+        assertThat(response.get().getFaviconUrl()).isEqualTo("https://fav.ico");
+        assertThat(response.get().getOidcRoleMappingEnabled()).isTrue();
+        assertThat(response.get().getOidcRoleMappingsMap()).containsEntry("admins", "ADMIN");
+    }
+
+    @Test
+    @DisplayName("SWR-074: toResponse defaults null defaultRole to READER")
+    void toResponseDefaultsNullDefaultRole() {
+        var tenantId = TenantId.generate();
+        var tenant = Tenant.reconstitute(
+                tenantId,
+                "test",
+                "Test",
+                null,
+                TenantStatus.ACTIVE,
+                LoginMode.INTERNAL,
+                false,
+                Set.of(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
+        when(useCase.getTenant(tenantId)).thenReturn(tenant);
+
+        var response = new AtomicReference<TenantResponse>();
+        grpcService.getTenant(
+                GetTenantRequest.newBuilder()
+                        .setTenantId(tenantId.value().toString())
+                        .build(),
+                captureResponse(response));
+
+        assertThat(response.get().getDefaultRole()).isEqualTo("READER");
+        assertThat(response.get().getOidcButtonText()).isEmpty();
+        assertThat(response.get().getLogoUrl()).isEmpty();
+        assertThat(response.get().getFaviconUrl()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("SWR-094: updateGeneralSettings passes non-empty defaultRole, logoUrl, faviconUrl")
+    void updateGeneralSettingsNewFields() {
+        var tenantId = TenantId.generate();
+        var tenant = createFullTenant(tenantId);
+        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any(), any(), any(), any()))
+                .thenReturn(tenant);
+
+        var response = new AtomicReference<TenantResponse>();
+        grpcService.updateGeneralSettings(
+                UpdateGeneralSettingsRequest.newBuilder()
+                        .setTenantId(tenantId.value().toString())
+                        .setDisplayName("Name")
+                        .setLoginMode("INTERNAL")
+                        .setDefaultRole("AUTHOR")
+                        .setLogoUrl("https://logo.png")
+                        .setFaviconUrl("https://fav.ico")
+                        .build(),
+                captureResponse(response));
+
+        verify(useCase)
+                .updateGeneralSettings(
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any(boolean.class),
+                        any(),
+                        org.mockito.ArgumentMatchers.eq("AUTHOR"),
+                        org.mockito.ArgumentMatchers.eq("https://logo.png"),
+                        org.mockito.ArgumentMatchers.eq("https://fav.ico"));
+    }
+
+    @Test
+    @DisplayName("SWR-094: updateGeneralSettings passes null for empty defaultRole, logoUrl, faviconUrl")
+    void updateGeneralSettingsEmptyNewFields() {
+        var tenantId = TenantId.generate();
+        var tenant = createFullTenant(tenantId);
+        when(useCase.updateGeneralSettings(any(), any(), any(), any(), any(boolean.class), any(), any(), any(), any()))
+                .thenReturn(tenant);
+
+        var response = new AtomicReference<TenantResponse>();
+        grpcService.updateGeneralSettings(
+                UpdateGeneralSettingsRequest.newBuilder()
+                        .setTenantId(tenantId.value().toString())
+                        .setDisplayName("Name")
+                        .setLoginMode("INTERNAL")
+                        .setDefaultRole("")
+                        .setLogoUrl("")
+                        .setFaviconUrl("")
+                        .build(),
+                captureResponse(response));
+
+        verify(useCase)
+                .updateGeneralSettings(
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any(boolean.class),
+                        any(),
+                        org.mockito.ArgumentMatchers.isNull(),
+                        org.mockito.ArgumentMatchers.isNull(),
+                        org.mockito.ArgumentMatchers.isNull());
+    }
+
+    @Test
+    @DisplayName("SWR-092: updateOidcSettings passes non-empty oidcButtonText and role mappings")
+    void updateOidcSettingsNewFields() {
+        var tenantId = TenantId.generate();
+        var tenant = createFullTenant(tenantId);
+        when(useCase.updateOidcSettings(any(), any(), any(), any(), any(), any(boolean.class), any()))
+                .thenReturn(tenant);
+
+        var response = new AtomicReference<TenantResponse>();
+        grpcService.updateOidcSettings(
+                UpdateOidcSettingsRequest.newBuilder()
+                        .setTenantId(tenantId.value().toString())
+                        .setOidcIssuerUrl("https://issuer")
+                        .setOidcClientId("cid")
+                        .setOidcClientSecret("cs")
+                        .setOidcButtonText("Login with SSO")
+                        .setOidcRoleMappingEnabled(true)
+                        .putOidcRoleMappings("admins", "ADMIN")
+                        .build(),
+                captureResponse(response));
+
+        verify(useCase)
+                .updateOidcSettings(
+                        any(),
+                        org.mockito.ArgumentMatchers.eq("https://issuer"),
+                        org.mockito.ArgumentMatchers.eq("cid"),
+                        org.mockito.ArgumentMatchers.eq("cs"),
+                        org.mockito.ArgumentMatchers.eq("Login with SSO"),
+                        org.mockito.ArgumentMatchers.eq(true),
+                        org.mockito.ArgumentMatchers.eq(Map.of("admins", "ADMIN")));
+    }
+
+    @Test
+    @DisplayName("SWR-092: updateOidcSettings passes null for empty oidcButtonText")
+    void updateOidcSettingsEmptyButtonText() {
+        var tenantId = TenantId.generate();
+        var tenant = createFullTenant(tenantId);
+        when(useCase.updateOidcSettings(any(), any(), any(), any(), any(), any(boolean.class), any()))
+                .thenReturn(tenant);
+
+        var response = new AtomicReference<TenantResponse>();
+        grpcService.updateOidcSettings(
+                UpdateOidcSettingsRequest.newBuilder()
+                        .setTenantId(tenantId.value().toString())
+                        .setOidcIssuerUrl("https://issuer")
+                        .setOidcClientId("cid")
+                        .setOidcClientSecret("cs")
+                        .setOidcButtonText("")
+                        .build(),
+                captureResponse(response));
+
+        verify(useCase)
+                .updateOidcSettings(
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        org.mockito.ArgumentMatchers.isNull(),
+                        org.mockito.ArgumentMatchers.eq(false),
+                        any());
     }
 
     private Tenant createFullTenant(TenantId tenantId) {
@@ -304,7 +531,13 @@ class TenantManagementGrpcServiceTest {
                 "priv",
                 "https://issuer",
                 "cid",
-                "cs");
+                "cs",
+                null,
+                "READER",
+                null,
+                null,
+                false,
+                Map.of());
     }
 
     @SuppressWarnings("unchecked")

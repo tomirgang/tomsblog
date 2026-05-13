@@ -26,6 +26,7 @@ import de.tomsblog.grpc.usermanagement.UserProfileResponse;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -246,7 +247,23 @@ class UserManagementClientTest {
                 .thenReturn(response);
 
         TenantSettingsDto result = client.updateTenantSettings(
-                TENANT_ID, "OIDC", true, Set.of("test.com"), "My Blog", "Cool blog", null, null, null, null, null);
+                TENANT_ID,
+                "OIDC",
+                true,
+                Set.of("test.com"),
+                "My Blog",
+                "Cool blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
 
         assertThat(result.loginMode()).isEqualTo("OIDC");
         assertThat(result.displayName()).isEqualTo("My Blog");
@@ -266,7 +283,8 @@ class UserManagementClientTest {
                 .thenReturn(response);
 
         TenantSettingsDto result = client.updateTenantSettings(
-                TENANT_ID, "BOTH", false, Set.of(), null, null, null, null, null, null, null);
+                TENANT_ID, "BOTH", false, Set.of(), null, null, null, null, null, null, null, null, null, null, null,
+                false, Map.of());
 
         assertThat(result.tagline()).isNull();
     }
@@ -314,7 +332,13 @@ class UserManagementClientTest {
                 null,
                 "https://auth.example.com",
                 "client-123",
-                "secret-456");
+                "secret-456",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
 
         assertThat(result.oidcIssuerUrl()).isEqualTo("https://auth.example.com");
         assertThat(result.oidcClientId()).isEqualTo("client-123");
@@ -419,7 +443,13 @@ class UserManagementClientTest {
                 "Privacy content",
                 null,
                 null,
-                null);
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
 
         assertThat(result.tagline()).isEqualTo("Tagline");
         assertThat(result.impressumContent()).isEqualTo("Impressum content");

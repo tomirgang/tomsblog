@@ -56,6 +56,11 @@
                                 </select>
                                 <button type="submit" class="outline" style="padding:0.25rem 0.5rem;margin:0">Set</button>
                             </form>
+                            <form th:action="@{/auth/admin/users/{id}/delete(id=${user.oidcSubject ?: user.username})}"
+                                  method="post" style="margin:0"
+                                  onsubmit="return confirm('Benutzer wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.');">
+                                <button type="submit" class="outline secondary" style="padding:0.25rem 0.5rem;margin:0">Löschen</button>
+                            </form>
                         </div>
                     </td>
                 </tr>

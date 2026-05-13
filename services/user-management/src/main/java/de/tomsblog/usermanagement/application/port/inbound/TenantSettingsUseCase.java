@@ -4,6 +4,7 @@ import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.domain.model.LoginMode;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -37,7 +38,13 @@ public interface TenantSettingsUseCase {
             String privacyPolicyContent,
             String oidcIssuerUrl,
             String oidcClientId,
-            String oidcClientSecret);
+            String oidcClientSecret,
+            String oidcButtonText,
+            String defaultRole,
+            String logoUrl,
+            String faviconUrl,
+            boolean oidcRoleMappingEnabled,
+            Map<String, String> oidcRoleMappings);
 
     /** @req SWR-071 */
     TenantSettings updateGeneralSettings(
@@ -46,11 +53,20 @@ public interface TenantSettingsUseCase {
             String tagline,
             LoginMode loginMode,
             boolean autoApproveOidc,
-            Set<String> autoApproveEmailDomains);
+            Set<String> autoApproveEmailDomains,
+            String defaultRole,
+            String logoUrl,
+            String faviconUrl);
 
     /** @req SWR-071 */
     TenantSettings updateOidcSettings(
-            TenantId tenantId, String oidcIssuerUrl, String oidcClientId, String oidcClientSecret);
+            TenantId tenantId,
+            String oidcIssuerUrl,
+            String oidcClientId,
+            String oidcClientSecret,
+            String oidcButtonText,
+            boolean oidcRoleMappingEnabled,
+            Map<String, String> oidcRoleMappings);
 
     /** @req SWR-071 */
     TenantSettings updateLegalSettings(TenantId tenantId, String impressumContent, String privacyPolicyContent);

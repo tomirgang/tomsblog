@@ -1,0 +1,24 @@
+active: true
+derived: false
+header: |
+  Logo und FavIcon pro Tenant konfigurierbar
+level: 55.0
+links: []
+normative: true
+ref: ''
+reviewed: MM92V5I2D9etUCsHadP8wcwniuI2t-ziIuOvsokCOV0=
+text: |
+  Als Tenant-Administrator möchte ich ein Logo und ein FavIcon für meinen
+  Tenant hochladen können, damit der Blog ein individuelles
+  Erscheinungsbild erhält.
+
+  Der Upload erfolgt über die Admin-UI in den Tenant-Einstellungen
+  (Branding-Bereich). Unterstützte Formate: PNG, SVG, ICO, JPEG, WebP.
+  Die maximale Dateigröße beträgt 512 KB für Logos und 64 KB für FavIcons.
+
+  Das Logo wird im Header der Blog-Ansicht neben dem Tenant-Namen angezeigt.
+  Das FavIcon erscheint im Browser-Tab. Wenn kein Logo oder FavIcon
+  konfiguriert ist, wird ein Standard-Platzhalter verwendet.
+
+  Ein bereits hochgeladenes Logo oder FavIcon kann durch erneuten Upload
+  ersetzt oder über einen Löschen-Button entfernt werden.

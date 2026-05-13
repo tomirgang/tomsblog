@@ -2,7 +2,9 @@ package de.tomsblog.usermanagement.domain.model;
 
 import de.tomsblog.shared.tenant.TenantId;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -14,6 +16,10 @@ import java.util.Set;
  * @req SWR-045
  * @req SWR-050
  * @req SWR-061
+ * @req SWR-091
+ * @req SWR-092
+ * @req SWR-094
+ * @req SWR-095
  */
 public class TenantSettings {
 
@@ -28,6 +34,12 @@ public class TenantSettings {
     private String oidcIssuerUrl;
     private String oidcClientId;
     private String oidcClientSecret;
+    private String oidcButtonText;
+    private String defaultRole;
+    private String logoUrl;
+    private String faviconUrl;
+    private boolean oidcRoleMappingEnabled;
+    private final Map<String, String> oidcRoleMappings;
 
     private TenantSettings(
             TenantId tenantId,
@@ -40,7 +52,13 @@ public class TenantSettings {
             String privacyPolicyContent,
             String oidcIssuerUrl,
             String oidcClientId,
-            String oidcClientSecret) {
+            String oidcClientSecret,
+            String oidcButtonText,
+            String defaultRole,
+            String logoUrl,
+            String faviconUrl,
+            boolean oidcRoleMappingEnabled,
+            Map<String, String> oidcRoleMappings) {
         this.tenantId = Objects.requireNonNull(tenantId, "tenantId must not be null");
         this.loginMode = Objects.requireNonNull(loginMode, "loginMode must not be null");
         this.autoApproveOidc = autoApproveOidc;
@@ -52,11 +70,33 @@ public class TenantSettings {
         this.oidcIssuerUrl = oidcIssuerUrl;
         this.oidcClientId = oidcClientId;
         this.oidcClientSecret = oidcClientSecret;
+        this.oidcButtonText = oidcButtonText;
+        this.defaultRole = defaultRole;
+        this.logoUrl = logoUrl;
+        this.faviconUrl = faviconUrl;
+        this.oidcRoleMappingEnabled = oidcRoleMappingEnabled;
+        this.oidcRoleMappings = oidcRoleMappings != null ? new HashMap<>(oidcRoleMappings) : new HashMap<>();
     }
 
     public static TenantSettings create(TenantId tenantId) {
         return new TenantSettings(
-                tenantId, LoginMode.INTERNAL, false, Set.of(), "Toms Blog", null, null, null, null, null, null);
+                tenantId,
+                LoginMode.INTERNAL,
+                false,
+                Set.of(),
+                "Toms Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "READER",
+                null,
+                null,
+                false,
+                Map.of());
     }
 
     public static TenantSettings reconstitute(
@@ -70,7 +110,13 @@ public class TenantSettings {
             String privacyPolicyContent,
             String oidcIssuerUrl,
             String oidcClientId,
-            String oidcClientSecret) {
+            String oidcClientSecret,
+            String oidcButtonText,
+            String defaultRole,
+            String logoUrl,
+            String faviconUrl,
+            boolean oidcRoleMappingEnabled,
+            Map<String, String> oidcRoleMappings) {
         return new TenantSettings(
                 tenantId,
                 loginMode,
@@ -82,7 +128,13 @@ public class TenantSettings {
                 privacyPolicyContent,
                 oidcIssuerUrl,
                 oidcClientId,
-                oidcClientSecret);
+                oidcClientSecret,
+                oidcButtonText,
+                defaultRole,
+                logoUrl,
+                faviconUrl,
+                oidcRoleMappingEnabled,
+                oidcRoleMappings);
     }
 
     public void updateLoginMode(LoginMode loginMode) {
@@ -207,5 +259,67 @@ public class TenantSettings {
     /** @req SWR-061 */
     public void updateOidcClientSecret(String oidcClientSecret) {
         this.oidcClientSecret = oidcClientSecret;
+    }
+
+    /** @req SWR-092 */
+    public String getOidcButtonText() {
+        return oidcButtonText;
+    }
+
+    /** @req SWR-092 */
+    public void updateOidcButtonText(String oidcButtonText) {
+        this.oidcButtonText = oidcButtonText;
+    }
+
+    /** @req SWR-094 */
+    public String getDefaultRole() {
+        return defaultRole;
+    }
+
+    /** @req SWR-094 */
+    public void updateDefaultRole(String defaultRole) {
+        this.defaultRole = defaultRole;
+    }
+
+    /** @req SWR-091 */
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
+    /** @req SWR-091 */
+    public void updateLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
+
+    /** @req SWR-091 */
+    public String getFaviconUrl() {
+        return faviconUrl;
+    }
+
+    /** @req SWR-091 */
+    public void updateFaviconUrl(String faviconUrl) {
+        this.faviconUrl = faviconUrl;
+    }
+
+    /** @req SWR-095 */
+    public boolean isOidcRoleMappingEnabled() {
+        return oidcRoleMappingEnabled;
+    }
+
+    /** @req SWR-095 */
+    public void updateOidcRoleMappingEnabled(boolean oidcRoleMappingEnabled) {
+        this.oidcRoleMappingEnabled = oidcRoleMappingEnabled;
+    }
+
+    /** @req SWR-095 */
+    public Map<String, String> getOidcRoleMappings() {
+        return Collections.unmodifiableMap(oidcRoleMappings);
+    }
+
+    /** @req SWR-095 */
+    public void setOidcRoleMappings(Map<String, String> mappings) {
+        Objects.requireNonNull(mappings, "mappings must not be null");
+        this.oidcRoleMappings.clear();
+        this.oidcRoleMappings.putAll(mappings);
     }
 }

@@ -8,6 +8,7 @@ import de.tomsblog.blogcontent.adapter.outbound.usermanagement.TenantInfoDto;
 import de.tomsblog.blogcontent.adapter.outbound.usermanagement.TenantSettingsDto;
 import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +42,23 @@ class TenantBrandingAdviceTest {
     @DisplayName("SWR-050: tenantName returns display name from settings")
     void tenantNameReturnsDisplayName() {
         var settings = new TenantSettingsDto(
-                TENANT_ID, "BOTH", false, Set.of(), "My Custom Blog", null, null, null, null, null, null);
+                TENANT_ID,
+                "BOTH",
+                false,
+                Set.of(),
+                "My Custom Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(userManagementClient.getTenantSettings(TENANT_ID)).thenReturn(settings);
 
         var request = new MockHttpServletRequest();
@@ -56,8 +73,9 @@ class TenantBrandingAdviceTest {
     @Test
     @DisplayName("SWR-050: tenantName returns default when display name is blank")
     void tenantNameDefaultsWhenBlank() {
-        var settings =
-                new TenantSettingsDto(TENANT_ID, "BOTH", false, Set.of(), "  ", null, null, null, null, null, null);
+        var settings = new TenantSettingsDto(
+                TENANT_ID, "BOTH", false, Set.of(), "  ", null, null, null, null, null, null, null, null, null, null,
+                false, Map.of());
         when(userManagementClient.getTenantSettings(TENANT_ID)).thenReturn(settings);
 
         var request = new MockHttpServletRequest();
@@ -72,8 +90,9 @@ class TenantBrandingAdviceTest {
     @Test
     @DisplayName("SWR-050: tenantName returns default when display name is null")
     void tenantNameDefaultsWhenNull() {
-        var settings =
-                new TenantSettingsDto(TENANT_ID, "BOTH", false, Set.of(), null, null, null, null, null, null, null);
+        var settings = new TenantSettingsDto(
+                TENANT_ID, "BOTH", false, Set.of(), null, null, null, null, null, null, null, null, null, null, null,
+                false, Map.of());
         when(userManagementClient.getTenantSettings(TENANT_ID)).thenReturn(settings);
 
         var request = new MockHttpServletRequest();
@@ -117,7 +136,23 @@ class TenantBrandingAdviceTest {
     @DisplayName("SWR-050: tenantTagline returns tagline from settings")
     void tenantTaglineReturnsValue() {
         var settings = new TenantSettingsDto(
-                TENANT_ID, "BOTH", false, Set.of(), "Blog", "A cool tagline", null, null, null, null, null);
+                TENANT_ID,
+                "BOTH",
+                false,
+                Set.of(),
+                "Blog",
+                "A cool tagline",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(userManagementClient.getTenantSettings(TENANT_ID)).thenReturn(settings);
 
         var request = new MockHttpServletRequest();

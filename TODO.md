@@ -138,16 +138,14 @@
 - [x] Tempo für Distributed Tracing
 - [ ] Dashboards und Alerting
 - [ ] Health-Checks und Readiness/Liveness Probes
-- [ ] Chaos Testing: Resilience-Szenarien definieren (Netzwerkausfälle, Pod-Crashes, Latenz)
-- [ ] Chaos Testing: Chaos Mesh oder Litmus auf K8s einrichten
-- [ ] Chaos Testing: Steady-State-Hypothesen und Experimente formulieren
-- [ ] Chaos Testing: Automatisierte Chaos-Experimente in CI/CD integrieren
-- [ ] Chaos Testing: Ergebnisse auswerten und Resilience-Verbesserungen umsetzen
-- [ ] Stakeholder Requirement: Logo und FavIcon
-- [ ] Stakeholder Requirement: Authentik Button Text soll über Admin UI konfigurierbar sein.
-- [ ] Stakeholder Requirement: Nutzer sollen über die Admin UI gelöscht werden können.
-- [ ] Stakeholder Requirement: Die Default Rolle neuer Nutzer soll über das Admin UI einstellbar sein.
-- [ ] Stakeholder Requirement: Nutzer Rollen sollen über OIDC gesetzt werden können.
+- [ ] Resilience-Tests: Timeout- und Retry-Verhalten mit Testcontainers verifizieren (DB/Kafka/Redis stoppen)
+- [ ] Resilience-Tests: Graceful Degradation bei Redis-Ausfall prüfen (Session Fallback)
+- [ ] Resilience-Tests: Manuelle Chaos-Experimente dokumentieren (kubectl delete pod, kubectl drain node)
+- [ ] Logo und FavIcon pro Tenant konfigurierbar (STK-055, SWR-091)
+- [ ] OIDC-Button-Text über Admin-UI konfigurierbar (STK-056, SWR-092)
+- [ ] Nutzer über die Admin-UI löschen (STK-057, SWR-093)
+- [ ] Standard-Rolle für neue Benutzer pro Tenant einstellbar (STK-058, SWR-094)
+- [ ] Benutzer-Rollen über OIDC-Claims automatisch setzen (STK-059, SWR-095)
 - [ ] Security-Reviews (OWASP)
 - [ ] Architecture Review
 
@@ -168,7 +166,7 @@
 
 > **MVP nach Phase 7:** Autoren schreiben mit WYSIWYG-Editor und nutzen KI-Übersetzung mit Review-Schritt.
 
-### Phase 8: Feed-Service & Chaos Testing
+### Phase 8: Feed-Service
 
 - [ ] RSS/Atom Feed-Generierung
 - [ ] Tag-basierte Feeds
@@ -177,7 +175,7 @@
 - [ ] Security-Reviews (OWASP)
 - [ ] Architecture Review
 
-> **MVP nach Phase 8:** Blog mit RSS-Feeds, navigierbaren Tag-Seiten und nachgewiesener Resilience durch Chaos Testing.
+> **MVP nach Phase 8:** Blog mit RSS-Feeds und navigierbaren Tag-Seiten.
 
 ### Phase 9: Web-Snapshots & Attachments
 

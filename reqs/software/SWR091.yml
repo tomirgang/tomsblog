@@ -1,0 +1,49 @@
+active: true
+derived: false
+header: |
+  Logo und FavIcon in Tenant-Branding-Einstellungen
+level: 91.0
+links:
+- STK055: MM92V5I2D9etUCsHadP8wcwniuI2t-ziIuOvsokCOV0=
+normative: true
+ref: ''
+reviewed: yfVPGqjYkfLMh6-U_X5qEL0IsQOc1XO9Svk8plE5O0M=
+text: |
+  Der Tenant-Service erhält einen neuen Upload-Endpunkt
+  POST /admin/settings/branding/logo (multipart/form-data) und
+  POST /admin/settings/branding/favicon (multipart/form-data),
+  der die hochgeladene Datei im S3-kompatiblen Storage (Garage)
+  unter dem Pfad tenants/{tenantId}/logo bzw. tenants/{tenantId}/favicon
+  ablegt.
+
+  Das Domain-Modell TenantSettings wird um die Felder logoUrl (String,
+  optional) und faviconUrl (String, optional) erweitert. Nach
+  erfolgreichem Upload wird die generierte S3-URL im TenantSettings
+  gespeichert.
+
+  Validierung:
+  - Erlaubte MIME-Types: image/png, image/svg+xml, image/x-icon,
+    image/jpeg, image/webp
+  - Maximale Dateigröße: 512 KB (Logo), 64 KB (FavIcon)
+  - Content-Type-Validierung gegen tatsächlichen Dateiinhalt
+    (nicht nur Header)
+
+  DELETE /admin/settings/branding/logo und
+  DELETE /admin/settings/branding/favicon entfernen die Datei aus S3
+  und setzen das entsprechende Feld in TenantSettings auf null.
+
+  Der Blog-Content-Service ruft die Branding-Daten über gRPC vom
+  Tenant-Service ab und stellt logoUrl und faviconUrl als
+  Model-Attribute für die Thymeleaf-Templates bereit.
+
+  Das Header-Fragment zeigt das Logo neben dem Tenant-Namen an, wenn
+  eine logoUrl konfiguriert ist. Das Layout-Template setzt das FavIcon
+  im HTML-Head, wenn eine faviconUrl konfiguriert ist.
+
+  Die Admin-UI zeigt im Branding-Bereich der Tenant-Einstellungen
+  Upload-Felder für Logo und FavIcon mit Vorschau des aktuellen Bildes
+  und einem Löschen-Button.
+
+  Fallback: Wenn kein Logo konfiguriert ist, wird kein Logo angezeigt.
+  Wenn kein FavIcon konfiguriert ist, wird das Browser-Standardverhalten
+  beibehalten.

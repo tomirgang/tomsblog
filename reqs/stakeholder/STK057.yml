@@ -1,0 +1,21 @@
+active: true
+derived: false
+header: |
+  Nutzer über die Admin-UI löschen
+level: 57.0
+links: []
+normative: true
+ref: ''
+reviewed: FNI7njnGPp7eaNto_O2zeA4m2yF4Cx18lnHszm9ei3o=
+text: |
+  Als Tenant-Administrator möchte ich Benutzer meines Tenants über die
+  Admin-UI löschen können, um Konten zu entfernen, die nicht mehr benötigt
+  werden.
+
+  Das Löschen eines Benutzers entfernt die Tenant-Mitgliedschaft und die
+  zugehörigen Benutzerdaten. Posts des gelöschten Benutzers bleiben
+  erhalten, der Autorenname wird beibehalten.
+
+  Es muss eine Sicherheitsabfrage (Bestätigungsdialog) vor dem Löschen
+  geben. Der eigene Account und der SUPERADMIN-Account dürfen nicht
+  gelöscht werden.

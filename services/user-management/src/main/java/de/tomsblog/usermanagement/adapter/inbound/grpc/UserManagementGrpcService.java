@@ -2,6 +2,8 @@ package de.tomsblog.usermanagement.adapter.inbound.grpc;
 
 import de.tomsblog.grpc.usermanagement.ApproveUserRequest;
 import de.tomsblog.grpc.usermanagement.ChangeUserRoleRequest;
+import de.tomsblog.grpc.usermanagement.DeleteUserRequest;
+import de.tomsblog.grpc.usermanagement.DeleteUserResponse;
 import de.tomsblog.grpc.usermanagement.FindByOidcSubjectRequest;
 import de.tomsblog.grpc.usermanagement.FindByUsernameRequest;
 import de.tomsblog.grpc.usermanagement.ListUsersByTenantRequest;
@@ -169,6 +171,24 @@ public class UserManagementGrpcService extends UserManagementServiceGrpc.UserMan
             responseObserver.onError(
                     Status.ALREADY_EXISTS.withDescription(e.getMessage()).asRuntimeException());
         } catch (IllegalArgumentException e) {
+            responseObserver.onError(
+                    Status.INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
+    }
+
+    /** @req SWR-093 */
+    @Override
+    public void deleteUser(DeleteUserRequest request, StreamObserver<DeleteUserResponse> responseObserver) {
+        try {
+            TenantId tenantId = TenantId.of(UUID.fromString(request.getTenantId()));
+            userProfileUseCase.deleteUser(request.getIdentifier(), tenantId, request.getRequestingUser());
+            responseObserver.onNext(
+                    DeleteUserResponse.newBuilder().setSuccess(true).build());
+            responseObserver.onCompleted();
+        } catch (UserProfileNotFoundException e) {
+            responseObserver.onError(
+                    Status.NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
+        } catch (IllegalArgumentException | IllegalStateException e) {
             responseObserver.onError(
                     Status.INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
         }

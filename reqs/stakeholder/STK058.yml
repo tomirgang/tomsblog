@@ -1,0 +1,22 @@
+active: true
+derived: false
+header: |
+  Standard-Rolle für neue Benutzer über Admin-UI einstellbar
+level: 58.0
+links: []
+normative: true
+ref: ''
+reviewed: UCvGOyiuSylWeoJGa-vVEX8AHfXwYM6ybE_Hx4KZCes=
+text: |
+  Als Tenant-Administrator möchte ich die Standard-Rolle, die neuen
+  Benutzern bei der Registrierung oder beim ersten OIDC-Login
+  zugewiesen wird, pro Tenant konfigurieren können.
+
+  Aktuell erhalten alle neuen Benutzer die Rolle READER. Der
+  Tenant-Administrator soll über die Admin-UI eine andere
+  Standard-Rolle (READER, REVIEWER, AUTHOR) auswählen können.
+
+  Die Rollen ADMIN und SUPERADMIN dürfen nicht als Standard-Rolle
+  wählbar sein.
+
+  Die Konfiguration erfolgt über die Admin-UI in den Tenant-Einstellungen.

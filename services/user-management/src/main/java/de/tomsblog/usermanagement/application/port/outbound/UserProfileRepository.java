@@ -27,4 +27,7 @@ public interface UserProfileRepository {
 
     /** @req SWR-059 */
     boolean existsByEmail(String email);
+
+    /** @req SWR-093 */
+    void delete(UserProfile userProfile);
 }

@@ -1,0 +1,26 @@
+active: true
+derived: false
+header: |
+  Benutzer-Löschung über Admin-UI
+level: 93.0
+links:
+- STK057: FNI7njnGPp7eaNto_O2zeA4m2yF4Cx18lnHszm9ei3o=
+normative: true
+ref: ''
+reviewed: uiSVJ6fXlfYtew8rmsaejhJFSjtn9VWbwQMXjKJ00yM=
+text: |
+  Der User-Management-Service erhält einen neuen Endpunkt
+  DELETE /admin/users/{userId} (nur ADMIN und SUPERADMIN),
+  der die Tenant-Mitgliedschaft und die Benutzerdaten löscht.
+
+  Geschäftsregeln:
+  - Der eigene Account darf nicht gelöscht werden (HTTP 409 Conflict).
+  - Der SUPERADMIN-Account darf nicht gelöscht werden (HTTP 409 Conflict).
+  - Nur Benutzer des eigenen Tenants dürfen gelöscht werden
+    (Tenant-Isolation).
+  - Das Löschen wird im Audit-Log protokolliert.
+
+  Die Admin-UI zeigt in der Benutzerliste einen Lösch-Button pro
+  Benutzer (außer für den eigenen Account und SUPERADMIN). Beim Klick
+  erscheint ein Bestätigungsdialog. Nach erfolgreichem Löschen wird
+  die Benutzerliste aktualisiert und eine Erfolgsmeldung angezeigt.

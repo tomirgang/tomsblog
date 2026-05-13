@@ -166,9 +166,13 @@ public class SecurityConfiguration {
 
     @Bean
     public SyncingOidcUserService syncingOidcUserService(
-            UserProfileUseCase userProfileUseCase, DefaultTenantFilter defaultTenantFilter) {
+            UserProfileUseCase userProfileUseCase,
+            TenantSettingsUseCase tenantSettingsUseCase,
+            DefaultTenantFilter defaultTenantFilter) {
         return new SyncingOidcUserService(
-                userProfileUseCase, java.util.UUID.fromString(defaultTenantFilter.getDefaultTenantId()));
+                userProfileUseCase,
+                tenantSettingsUseCase,
+                java.util.UUID.fromString(defaultTenantFilter.getDefaultTenantId()));
     }
 
     /**

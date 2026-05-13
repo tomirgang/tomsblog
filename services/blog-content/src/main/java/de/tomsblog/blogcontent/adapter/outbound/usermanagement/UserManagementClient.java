@@ -66,7 +66,13 @@ public interface UserManagementClient {
             String privacyPolicyContent,
             String oidcIssuerUrl,
             String oidcClientId,
-            String oidcClientSecret);
+            String oidcClientSecret,
+            String oidcButtonText,
+            String defaultRole,
+            String logoUrl,
+            String faviconUrl,
+            boolean oidcRoleMappingEnabled,
+            java.util.Map<String, String> oidcRoleMappings);
 
     /**
      * Lists all tenants.

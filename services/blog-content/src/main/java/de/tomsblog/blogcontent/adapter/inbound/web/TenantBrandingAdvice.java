@@ -53,6 +53,26 @@ public class TenantBrandingAdvice {
         return null;
     }
 
+    /** @req SWR-091 */
+    @ModelAttribute("logoUrl")
+    public String logoUrl(HttpServletRequest request, HttpSession session) {
+        TenantSettingsDto settings = resolveSettings(request, session);
+        if (settings != null) {
+            return settings.logoUrl();
+        }
+        return null;
+    }
+
+    /** @req SWR-091 */
+    @ModelAttribute("faviconUrl")
+    public String faviconUrl(HttpServletRequest request, HttpSession session) {
+        TenantSettingsDto settings = resolveSettings(request, session);
+        if (settings != null) {
+            return settings.faviconUrl();
+        }
+        return null;
+    }
+
     @ModelAttribute("tenants")
     public List<TenantInfoDto> tenants(Authentication authentication) {
         if (isSuperAdmin(authentication)) {

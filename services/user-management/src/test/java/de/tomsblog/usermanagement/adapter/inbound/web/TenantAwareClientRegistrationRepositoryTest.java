@@ -8,6 +8,7 @@ import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.inbound.TenantSettingsUseCase;
 import de.tomsblog.usermanagement.domain.model.LoginMode;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
@@ -70,7 +71,13 @@ class TenantAwareClientRegistrationRepositoryTest {
                 null,
                 "https://auth.tenant.com",
                 "tenant-client-id",
-                "tenant-secret");
+                "tenant-secret",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         ClientRegistration reg = repository.findByRegistrationId("authentik");
@@ -84,7 +91,23 @@ class TenantAwareClientRegistrationRepositoryTest {
     @DisplayName("returns fallback when no OIDC config in tenant settings")
     void returnsFallbackWhenNoOidc() {
         var settings = TenantSettings.reconstitute(
-                TENANT_ID, LoginMode.BOTH, false, Set.of(), "Blog", null, null, null, null, null, null);
+                TENANT_ID,
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         ClientRegistration reg = repository.findByRegistrationId("authentik");
@@ -126,7 +149,13 @@ class TenantAwareClientRegistrationRepositoryTest {
                 null,
                 "https://auth.tenant.com",
                 "tenant-client-id",
-                "tenant-secret");
+                "tenant-secret",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         repository.findByRegistrationId("authentik");
@@ -149,7 +178,13 @@ class TenantAwareClientRegistrationRepositoryTest {
                 null,
                 "https://auth.tenant.com",
                 "client-id",
-                null);
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         ClientRegistration reg = repository.findByRegistrationId("authentik");
@@ -172,7 +207,13 @@ class TenantAwareClientRegistrationRepositoryTest {
                 null,
                 "https://auth.tenant.com/",
                 "client-id",
-                "secret");
+                "secret",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         ClientRegistration reg = repository.findByRegistrationId("authentik");
@@ -194,7 +235,13 @@ class TenantAwareClientRegistrationRepositoryTest {
                 null,
                 "https://auth.tenant.com",
                 null,
-                "secret");
+                "secret",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         ClientRegistration reg = repository.findByRegistrationId("authentik");
@@ -216,7 +263,13 @@ class TenantAwareClientRegistrationRepositoryTest {
                 null,
                 "ftp://evil.example.com",
                 "client-id",
-                "secret");
+                "secret",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
@@ -238,7 +291,13 @@ class TenantAwareClientRegistrationRepositoryTest {
                 null,
                 "https://localhost/auth",
                 "client-id",
-                "secret");
+                "secret",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
@@ -260,7 +319,13 @@ class TenantAwareClientRegistrationRepositoryTest {
                 null,
                 "https://auth.default.svc.cluster.local",
                 "client-id",
-                "secret");
+                "secret",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
@@ -282,7 +347,13 @@ class TenantAwareClientRegistrationRepositoryTest {
                 null,
                 "https://10.0.0.1/auth",
                 "client-id",
-                "secret");
+                "secret",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
@@ -304,7 +375,13 @@ class TenantAwareClientRegistrationRepositoryTest {
                 null,
                 "https://192.168.1.1/auth",
                 "client-id",
-                "secret");
+                "secret",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
@@ -326,7 +403,13 @@ class TenantAwareClientRegistrationRepositoryTest {
                 null,
                 "https://172.16.0.1/auth",
                 "client-id",
-                "secret");
+                "secret",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
@@ -348,7 +431,13 @@ class TenantAwareClientRegistrationRepositoryTest {
                 null,
                 "https://127.0.0.1/auth",
                 "client-id",
-                "secret");
+                "secret",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
@@ -370,7 +459,13 @@ class TenantAwareClientRegistrationRepositoryTest {
                 null,
                 "http:///path-only",
                 "client-id",
-                "secret");
+                "secret",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         assertThatThrownBy(() -> repository.findByRegistrationId("authentik"))
@@ -392,7 +487,13 @@ class TenantAwareClientRegistrationRepositoryTest {
                 null,
                 "https://auth.tenant.com",
                 "tenant-client-id",
-                "tenant-secret");
+                "tenant-secret",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         // First call populates cache

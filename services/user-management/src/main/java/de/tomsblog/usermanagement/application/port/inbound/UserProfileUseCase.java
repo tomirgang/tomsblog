@@ -38,4 +38,7 @@ public interface UserProfileUseCase {
     void removeTenantMembership(String identifier, TenantId tenantId);
 
     List<UserProfile> listByTenantId(TenantId tenantId);
+
+    /** @req SWR-093 */
+    void deleteUser(String identifier, TenantId tenantId, String requestingUser);
 }

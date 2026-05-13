@@ -11,6 +11,7 @@ import de.tomsblog.usermanagement.application.port.outbound.TenantSettingsReposi
 import de.tomsblog.usermanagement.domain.model.LoginMode;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +58,13 @@ class TenantSettingsServiceTest {
                     null,
                     null,
                     null,
-                    null);
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    Map.of());
             when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
 
             var result = service.getSettings(TENANT_ID);
@@ -164,7 +171,13 @@ class TenantSettingsServiceTest {
                     null,
                     "https://auth.example.com",
                     "my-client-id",
-                    "my-secret");
+                    "my-secret",
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    Map.of());
 
             assertThat(result.getLoginMode()).isEqualTo(LoginMode.OIDC);
             assertThat(result.isAutoApproveOidc()).isTrue();
@@ -181,7 +194,23 @@ class TenantSettingsServiceTest {
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
             var result = service.updateSettings(
-                    TENANT_ID, LoginMode.INTERNAL, false, Set.of(), "New Blog", null, null, null, null, null, null);
+                    TENANT_ID,
+                    LoginMode.INTERNAL,
+                    false,
+                    Set.of(),
+                    "New Blog",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    Map.of());
 
             assertThat(result.getLoginMode()).isEqualTo(LoginMode.INTERNAL);
             assertThat(result.getDisplayName()).isEqualTo("New Blog");
@@ -210,7 +239,13 @@ class TenantSettingsServiceTest {
                     null,
                     "https://auth.example.com",
                     "client-id",
-                    "***");
+                    "***",
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    Map.of());
 
             assertThat(result.getOidcClientSecret()).isEqualTo("existing-secret");
         }
@@ -236,7 +271,13 @@ class TenantSettingsServiceTest {
                     null,
                     "https://auth.example.com",
                     "client-id",
-                    "");
+                    "",
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    Map.of());
 
             assertThat(result.getOidcClientSecret()).isEqualTo("existing-secret");
         }
@@ -248,7 +289,23 @@ class TenantSettingsServiceTest {
             when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
 
             assertThatThrownBy(() -> service.updateSettings(
-                            TENANT_ID, LoginMode.BOTH, false, Set.of(), "Blog", null, null, null, null, null, null))
+                            TENANT_ID,
+                            LoginMode.BOTH,
+                            false,
+                            Set.of(),
+                            "Blog",
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            false,
+                            Map.of()))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("oidcIssuerUrl is required");
         }
@@ -270,7 +327,13 @@ class TenantSettingsServiceTest {
                             null,
                             "https://auth.example.com",
                             null,
-                            null))
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            false,
+                            Map.of()))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("oidcClientId is required");
         }
@@ -292,7 +355,13 @@ class TenantSettingsServiceTest {
                             null,
                             "https://auth.example.com",
                             "  ",
-                            null))
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            false,
+                            Map.of()))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("oidcClientId is required");
         }
@@ -314,7 +383,13 @@ class TenantSettingsServiceTest {
                             null,
                             "  ",
                             "client-id",
-                            null))
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            false,
+                            Map.of()))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("oidcIssuerUrl is required");
         }
@@ -362,7 +437,15 @@ class TenantSettingsServiceTest {
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
             var result = service.updateGeneralSettings(
-                    TENANT_ID, "New Blog", "New Tagline", LoginMode.INTERNAL, true, Set.of("test.com"));
+                    TENANT_ID,
+                    "New Blog",
+                    "New Tagline",
+                    LoginMode.INTERNAL,
+                    true,
+                    Set.of("test.com"),
+                    null,
+                    null,
+                    null);
 
             assertThat(result.getDisplayName()).isEqualTo("New Blog");
             assertThat(result.getTagline()).isEqualTo("New Tagline");
@@ -380,8 +463,8 @@ class TenantSettingsServiceTest {
             var settings = TenantSettings.create(TENANT_ID);
             when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
 
-            assertThatThrownBy(() ->
-                            service.updateGeneralSettings(TENANT_ID, "Blog", null, LoginMode.OIDC, false, Set.of()))
+            assertThatThrownBy(() -> service.updateGeneralSettings(
+                            TENANT_ID, "Blog", null, LoginMode.OIDC, false, Set.of(), null, null, null))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("oidcIssuerUrl is required");
         }
@@ -399,8 +482,8 @@ class TenantSettingsServiceTest {
             when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            var result =
-                    service.updateOidcSettings(TENANT_ID, "https://auth.example.com", "new-client-id", "new-secret");
+            var result = service.updateOidcSettings(
+                    TENANT_ID, "https://auth.example.com", "new-client-id", "new-secret", null, false, Map.of());
 
             assertThat(result.getOidcIssuerUrl()).isEqualTo("https://auth.example.com");
             assertThat(result.getOidcClientId()).isEqualTo("new-client-id");
@@ -418,7 +501,8 @@ class TenantSettingsServiceTest {
             when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            var result = service.updateOidcSettings(TENANT_ID, "https://auth.example.com", "client-id", "***");
+            var result = service.updateOidcSettings(
+                    TENANT_ID, "https://auth.example.com", "client-id", "***", null, false, Map.of());
 
             assertThat(result.getOidcClientSecret()).isEqualTo("existing-secret");
         }
@@ -431,7 +515,8 @@ class TenantSettingsServiceTest {
             when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            var result = service.updateOidcSettings(TENANT_ID, "https://auth.example.com", "client-id", "");
+            var result = service.updateOidcSettings(
+                    TENANT_ID, "https://auth.example.com", "client-id", "", null, false, Map.of());
 
             assertThat(result.getOidcClientSecret()).isEqualTo("existing-secret");
         }
@@ -444,7 +529,8 @@ class TenantSettingsServiceTest {
             when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            var result = service.updateOidcSettings(TENANT_ID, "https://auth.example.com", "client-id", null);
+            var result = service.updateOidcSettings(
+                    TENANT_ID, "https://auth.example.com", "client-id", null, null, false, Map.of());
 
             assertThat(result.getOidcClientSecret()).isEqualTo("existing-secret");
         }

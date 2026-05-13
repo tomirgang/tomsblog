@@ -88,7 +88,13 @@ class JpaTenantRepositoryIntegrationTest {
                 null,
                 null,
                 null,
-                null);
+                null,
+                null,
+                "READER",
+                null,
+                null,
+                false,
+                java.util.Map.of());
         repository.save(tenant);
 
         var found = repository.findByTenantId(tenantId);
@@ -100,7 +106,7 @@ class JpaTenantRepositoryIntegrationTest {
     void saveWithOidcConfig() {
         var tenantId = TenantId.generate();
         var tenant = Tenant.create(tenantId, "oidc-blog", "OIDC Blog");
-        tenant.updateOidcSettings("https://issuer.com", "client-id", "client-secret");
+        tenant.updateOidcSettings("https://issuer.com", "client-id", "client-secret", null, false, java.util.Map.of());
         repository.save(tenant);
 
         var found = repository.findByTenantId(tenantId);

@@ -12,6 +12,7 @@ import de.tomsblog.usermanagement.application.service.UserAlreadyExistsException
 import de.tomsblog.usermanagement.domain.model.LoginMode;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,8 @@ class AuthRegistrationControllerTest {
 
     private void setupLoginMode(LoginMode mode) {
         var settings = TenantSettings.reconstitute(
-                TENANT_ID, mode, false, Set.of(), "Blog", null, null, null, null, null, null);
+                TENANT_ID, mode, false, Set.of(), "Blog", null, null, null, null, null, null, null, null, null, null,
+                false, Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
     }
 

@@ -3,6 +3,7 @@ package de.tomsblog.usermanagement.adapter.outbound.persistence;
 import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.domain.model.LoginMode;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -25,6 +26,12 @@ public final class TenantSettingsMapper {
         entity.setOidcIssuerUrl(settings.getOidcIssuerUrl());
         entity.setOidcClientId(settings.getOidcClientId());
         entity.setOidcClientSecret(settings.getOidcClientSecret());
+        entity.setOidcButtonText(settings.getOidcButtonText());
+        entity.setDefaultRole(settings.getDefaultRole() != null ? settings.getDefaultRole() : "READER");
+        entity.setLogoUrl(settings.getLogoUrl());
+        entity.setFaviconUrl(settings.getFaviconUrl());
+        entity.setOidcRoleMappingEnabled(settings.isOidcRoleMappingEnabled());
+        entity.setOidcRoleMappings(new HashMap<>(settings.getOidcRoleMappings()));
         return entity;
     }
 
@@ -40,6 +47,12 @@ public final class TenantSettingsMapper {
                 entity.getPrivacyPolicyContent(),
                 entity.getOidcIssuerUrl(),
                 entity.getOidcClientId(),
-                entity.getOidcClientSecret());
+                entity.getOidcClientSecret(),
+                entity.getOidcButtonText(),
+                entity.getDefaultRole(),
+                entity.getLogoUrl(),
+                entity.getFaviconUrl(),
+                entity.isOidcRoleMappingEnabled(),
+                new HashMap<>(entity.getOidcRoleMappings()));
     }
 }

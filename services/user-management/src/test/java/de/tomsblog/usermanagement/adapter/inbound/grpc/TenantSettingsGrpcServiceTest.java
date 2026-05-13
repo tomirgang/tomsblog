@@ -18,6 +18,7 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -121,7 +122,13 @@ class TenantSettingsGrpcServiceTest {
                 null,
                 null,
                 null,
-                null);
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.updateSettings(
                         eq(TenantId.of(TENANT_ID)),
                         eq(LoginMode.OIDC),
@@ -133,7 +140,13 @@ class TenantSettingsGrpcServiceTest {
                         eq(null),
                         eq(null),
                         eq(null),
-                        eq(null)))
+                        eq(null),
+                        eq(null),
+                        eq(null),
+                        eq(null),
+                        eq(null),
+                        eq(false),
+                        any()))
                 .thenReturn(settings);
 
         var request = UpdateTenantSettingsRequest.newBuilder()
@@ -203,7 +216,7 @@ class TenantSettingsGrpcServiceTest {
         var settings = TenantSettings.create(TenantId.of(TENANT_ID));
         when(tenantSettingsUseCase.updateSettings(
                         any(), any(), eq(false), any(), any(), eq(null), eq(null), eq(null), eq(null), eq(null),
-                        eq(null)))
+                        eq(null), eq(null), eq(null), eq(null), eq(null), eq(false), any()))
                 .thenReturn(settings);
 
         var request = UpdateTenantSettingsRequest.newBuilder()
@@ -236,10 +249,42 @@ class TenantSettingsGrpcServiceTest {
     @DisplayName("SWR-053: listTenants returns all tenants via gRPC")
     void listTenants_returnsAll() {
         var s1 = TenantSettings.reconstitute(
-                TenantId.of(TENANT_ID), LoginMode.BOTH, false, Set.of(), "Blog A", null, null, null, null, null, null);
+                TenantId.of(TENANT_ID),
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "Blog A",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         var id2 = UUID.fromString("00000000-0000-0000-0000-000000000002");
         var s2 = TenantSettings.reconstitute(
-                TenantId.of(id2), LoginMode.OIDC, false, Set.of(), "Blog B", "tagline", null, null, null, null, null);
+                TenantId.of(id2),
+                LoginMode.OIDC,
+                false,
+                Set.of(),
+                "Blog B",
+                "tagline",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.listAllTenants()).thenReturn(List.of(s1, s2));
 
         var request = ListTenantsRequest.newBuilder().build();
@@ -295,7 +340,23 @@ class TenantSettingsGrpcServiceTest {
     @DisplayName("SWR-053: listTenants handles null displayName")
     void listTenants_nullDisplayName() {
         var settings = TenantSettings.reconstitute(
-                TenantId.of(TENANT_ID), LoginMode.BOTH, false, Set.of(), null, null, null, null, null, null, null);
+                TenantId.of(TENANT_ID),
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.listAllTenants()).thenReturn(List.of(settings));
 
         var request = ListTenantsRequest.newBuilder().build();
@@ -323,7 +384,23 @@ class TenantSettingsGrpcServiceTest {
     @DisplayName("SWR-044: getTenantSettings maps null displayName to default")
     void getTenantSettings_nullDisplayName() {
         var settings = TenantSettings.reconstitute(
-                TenantId.of(TENANT_ID), LoginMode.BOTH, false, Set.of(), null, null, null, null, null, null, null);
+                TenantId.of(TENANT_ID),
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         var request = GetTenantSettingsRequest.newBuilder()
@@ -363,7 +440,13 @@ class TenantSettingsGrpcServiceTest {
                 "<p>Privacy</p>",
                 null,
                 null,
-                null);
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.updateSettings(
                         any(),
                         any(),
@@ -375,7 +458,13 @@ class TenantSettingsGrpcServiceTest {
                         eq("<p>Privacy</p>"),
                         eq(null),
                         eq(null),
-                        eq(null)))
+                        eq(null),
+                        eq(null),
+                        eq(null),
+                        eq(null),
+                        eq(null),
+                        eq(false),
+                        any()))
                 .thenReturn(settings);
 
         var request = UpdateTenantSettingsRequest.newBuilder()
@@ -421,7 +510,13 @@ class TenantSettingsGrpcServiceTest {
                 "<p>My Privacy</p>",
                 null,
                 null,
-                null);
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(TenantId.of(TENANT_ID))).thenReturn(settings);
 
         var request = GetTenantSettingsRequest.newBuilder()
@@ -462,7 +557,13 @@ class TenantSettingsGrpcServiceTest {
                 null,
                 "https://auth.example.com",
                 "client-123",
-                "secret-456");
+                "secret-456",
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.updateSettings(
                         any(),
                         any(),
@@ -474,7 +575,13 @@ class TenantSettingsGrpcServiceTest {
                         eq(null),
                         eq("https://auth.example.com"),
                         eq("client-123"),
-                        eq("secret-456")))
+                        eq("secret-456"),
+                        eq(null),
+                        eq(null),
+                        eq(null),
+                        eq(null),
+                        eq(false),
+                        any()))
                 .thenReturn(settings);
 
         var request = UpdateTenantSettingsRequest.newBuilder()
@@ -506,5 +613,136 @@ class TenantSettingsGrpcServiceTest {
         assertThat(result.get().getOidcIssuerUrl()).isEqualTo("https://auth.example.com");
         assertThat(result.get().getOidcClientId()).isEqualTo("client-123");
         assertThat(result.get().getOidcClientSecret()).isEqualTo("secret-456");
+    }
+
+    @Test
+    @DisplayName("SWR-092: updateTenantSettings passes new fields and maps response")
+    void updateTenantSettings_withNewFields() {
+        var settings = TenantSettings.reconstitute(
+                TenantId.of(TENANT_ID),
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "Login with SSO",
+                "AUTHOR",
+                "https://example.com/logo.png",
+                "https://example.com/favicon.ico",
+                true,
+                Map.of("admins", "ADMIN", "devs", "AUTHOR"));
+        when(tenantSettingsUseCase.updateSettings(
+                        any(),
+                        any(),
+                        eq(false),
+                        any(),
+                        any(),
+                        eq(null),
+                        eq(null),
+                        eq(null),
+                        eq(null),
+                        eq(null),
+                        eq(null),
+                        eq("Login with SSO"),
+                        eq("AUTHOR"),
+                        eq("https://example.com/logo.png"),
+                        eq("https://example.com/favicon.ico"),
+                        eq(true),
+                        eq(Map.of("admins", "ADMIN", "devs", "AUTHOR"))))
+                .thenReturn(settings);
+
+        var request = UpdateTenantSettingsRequest.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .setLoginMode("BOTH")
+                .setDisplayName("Blog")
+                .setOidcButtonText("Login with SSO")
+                .setDefaultRole("AUTHOR")
+                .setLogoUrl("https://example.com/logo.png")
+                .setFaviconUrl("https://example.com/favicon.ico")
+                .setOidcRoleMappingEnabled(true)
+                .putOidcRoleMappings("admins", "ADMIN")
+                .putOidcRoleMappings("devs", "AUTHOR")
+                .build();
+
+        var result = new AtomicReference<TenantSettingsResponse>();
+        StreamObserver<TenantSettingsResponse> observer = new StreamObserver<>() {
+            @Override
+            public void onNext(TenantSettingsResponse value) {
+                result.set(value);
+            }
+
+            @Override
+            public void onError(Throwable t) {}
+
+            @Override
+            public void onCompleted() {}
+        };
+
+        grpcService.updateTenantSettings(request, observer);
+
+        assertThat(result.get()).isNotNull();
+        assertThat(result.get().getOidcButtonText()).isEqualTo("Login with SSO");
+        assertThat(result.get().getDefaultRole()).isEqualTo("AUTHOR");
+        assertThat(result.get().getLogoUrl()).isEqualTo("https://example.com/logo.png");
+        assertThat(result.get().getFaviconUrl()).isEqualTo("https://example.com/favicon.ico");
+        assertThat(result.get().getOidcRoleMappingEnabled()).isTrue();
+        assertThat(result.get().getOidcRoleMappingsMap()).containsEntry("admins", "ADMIN");
+        assertThat(result.get().getOidcRoleMappingsMap()).containsEntry("devs", "AUTHOR");
+    }
+
+    @Test
+    @DisplayName("SWR-094: getTenantSettings returns new fields in response")
+    void getTenantSettings_withNewFields() {
+        var settings = TenantSettings.reconstitute(
+                TenantId.of(TENANT_ID),
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "Custom OIDC",
+                "ADMIN",
+                "https://logo.png",
+                "https://favicon.ico",
+                true,
+                Map.of("group1", "AUTHOR"));
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        var request = GetTenantSettingsRequest.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .build();
+
+        var result = new AtomicReference<TenantSettingsResponse>();
+        StreamObserver<TenantSettingsResponse> observer = new StreamObserver<>() {
+            @Override
+            public void onNext(TenantSettingsResponse value) {
+                result.set(value);
+            }
+
+            @Override
+            public void onError(Throwable t) {}
+
+            @Override
+            public void onCompleted() {}
+        };
+
+        grpcService.getTenantSettings(request, observer);
+
+        assertThat(result.get().getOidcButtonText()).isEqualTo("Custom OIDC");
+        assertThat(result.get().getDefaultRole()).isEqualTo("ADMIN");
+        assertThat(result.get().getLogoUrl()).isEqualTo("https://logo.png");
+        assertThat(result.get().getFaviconUrl()).isEqualTo("https://favicon.ico");
+        assertThat(result.get().getOidcRoleMappingEnabled()).isTrue();
+        assertThat(result.get().getOidcRoleMappingsMap()).containsEntry("group1", "AUTHOR");
     }
 }

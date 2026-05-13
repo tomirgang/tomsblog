@@ -15,6 +15,7 @@ import de.tomsblog.usermanagement.domain.model.ApprovalStatus;
 import de.tomsblog.usermanagement.domain.model.Role;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -99,7 +100,13 @@ class UserProfileServiceTest {
                     null,
                     null,
                     null,
-                    null);
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    Map.of());
             when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
 
             var command = new SyncOidcUserCommand("sub-2", "user@any.com", "User", List.of(), TENANT_ID);
@@ -124,7 +131,13 @@ class UserProfileServiceTest {
                     null,
                     null,
                     null,
-                    null);
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    Map.of());
             when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
 
             var command = new SyncOidcUserCommand("sub-3", "user@company.com", "User", List.of(), TENANT_ID);
@@ -428,13 +441,192 @@ class UserProfileServiceTest {
                     null,
                     null,
                     null,
-                    null);
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    Map.of());
             when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
 
             var command = new RegisterUserCommand("newuser", "securePassword1", "user@company.com", "User", TENANT_ID);
             var result = service.register(command);
 
             assertThat(result.getApprovalStatus()).isEqualTo(ApprovalStatus.APPROVED);
+        }
+    }
+
+    @Nested
+    @DisplayName("deleteUser")
+    class DeleteUser {
+
+        @Test
+        @DisplayName("SWR-093: deletes OIDC user successfully")
+        void deletesOidcUserSuccessfully() {
+            var profile = UserProfile.createFromOidc("sub-1", "a@b.com", "User");
+            when(repository.findByOidcSubject("sub-1")).thenReturn(Optional.of(profile));
+
+            service.deleteUser("sub-1", TENANT_ID, "admin-user");
+
+            verify(repository).delete(profile);
+            verify(auditLogger).log(any());
+        }
+
+        @Test
+        @DisplayName("SWR-093: deletes internal user successfully")
+        void deletesInternalUserSuccessfully() {
+            var profile = UserProfile.createInternal("testuser", "hash", "a@b.com", "User");
+            when(repository.findByOidcSubject("testuser")).thenReturn(Optional.empty());
+            when(repository.findByUsername("testuser")).thenReturn(Optional.of(profile));
+
+            service.deleteUser("testuser", TENANT_ID, "admin-user");
+
+            verify(repository).delete(profile);
+            verify(auditLogger).log(any());
+        }
+
+        @Test
+        @DisplayName("SWR-093: prevents self-deletion for OIDC user")
+        void preventsSelfDeletionOidc() {
+            var profile = UserProfile.createFromOidc("sub-self", "a@b.com", "User");
+            when(repository.findByOidcSubject("sub-self")).thenReturn(Optional.of(profile));
+
+            assertThatThrownBy(() -> service.deleteUser("sub-self", TENANT_ID, "sub-self"))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Cannot delete your own account");
+        }
+
+        @Test
+        @DisplayName("SWR-093: prevents self-deletion for internal user")
+        void preventsSelfDeletionInternal() {
+            var profile = UserProfile.createInternal("admin", "hash", "a@b.com", "Admin");
+            when(repository.findByOidcSubject("admin")).thenReturn(Optional.empty());
+            when(repository.findByUsername("admin")).thenReturn(Optional.of(profile));
+
+            assertThatThrownBy(() -> service.deleteUser("admin", TENANT_ID, "admin"))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Cannot delete your own account");
+        }
+
+        @Test
+        @DisplayName("SWR-093: prevents deletion of SUPERADMIN")
+        void preventsSuperadminDeletion() {
+            var profile = UserProfile.createFromOidc("sub-super", "super@b.com", "Super");
+            profile.assignGlobalRole(Role.SUPERADMIN);
+            when(repository.findByOidcSubject("sub-super")).thenReturn(Optional.of(profile));
+
+            assertThatThrownBy(() -> service.deleteUser("sub-super", TENANT_ID, "other-user"))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Cannot delete the SUPERADMIN account");
+        }
+
+        @Test
+        @DisplayName("SWR-093: throws when user not found")
+        void throwsWhenUserNotFound() {
+            when(repository.findByOidcSubject("unknown")).thenReturn(Optional.empty());
+            when(repository.findByUsername("unknown")).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> service.deleteUser("unknown", TENANT_ID, "admin"))
+                    .isInstanceOf(UserProfileNotFoundException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("resolveDefaultRole")
+    class ResolveDefaultRole {
+
+        @Test
+        @DisplayName("SWR-094: uses configured default role from tenant settings")
+        void usesConfiguredDefaultRole() {
+            when(repository.findByOidcSubject("sub-new")).thenReturn(Optional.empty());
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+            var settings = de.tomsblog.usermanagement.domain.model.TenantSettings.reconstitute(
+                    TENANT_ID,
+                    de.tomsblog.usermanagement.domain.model.LoginMode.BOTH,
+                    false,
+                    java.util.Set.of(),
+                    "Blog",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "AUTHOR",
+                    null,
+                    null,
+                    false,
+                    Map.of());
+            when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+
+            var command = new SyncOidcUserCommand("sub-new", "user@example.com", "User", List.of(), TENANT_ID);
+            var result = service.syncFromOidc(command);
+
+            assertThat(result.getTenantMemberships()).anyMatch(m -> m.role() == Role.AUTHOR);
+        }
+
+        @Test
+        @DisplayName("SWR-094: falls back to READER when defaultRole is null")
+        void fallsBackToReaderWhenNull() {
+            when(repository.findByOidcSubject("sub-null")).thenReturn(Optional.empty());
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+            var settings = de.tomsblog.usermanagement.domain.model.TenantSettings.reconstitute(
+                    TENANT_ID,
+                    de.tomsblog.usermanagement.domain.model.LoginMode.BOTH,
+                    false,
+                    java.util.Set.of(),
+                    "Blog",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    Map.of());
+            when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+
+            var command = new SyncOidcUserCommand("sub-null", "user@example.com", "User", List.of(), TENANT_ID);
+            var result = service.syncFromOidc(command);
+
+            assertThat(result.getTenantMemberships()).anyMatch(m -> m.role() == Role.READER);
+        }
+
+        @Test
+        @DisplayName("SWR-094: falls back to READER when defaultRole is invalid")
+        void fallsBackToReaderWhenInvalid() {
+            when(repository.findByOidcSubject("sub-inv")).thenReturn(Optional.empty());
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+            var settings = de.tomsblog.usermanagement.domain.model.TenantSettings.reconstitute(
+                    TENANT_ID,
+                    de.tomsblog.usermanagement.domain.model.LoginMode.BOTH,
+                    false,
+                    java.util.Set.of(),
+                    "Blog",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "INVALID_ROLE",
+                    null,
+                    null,
+                    false,
+                    Map.of());
+            when(tenantSettingsRepository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+
+            var command = new SyncOidcUserCommand("sub-inv", "user@example.com", "User", List.of(), TENANT_ID);
+            var result = service.syncFromOidc(command);
+
+            assertThat(result.getTenantMemberships()).anyMatch(m -> m.role() == Role.READER);
         }
     }
 }

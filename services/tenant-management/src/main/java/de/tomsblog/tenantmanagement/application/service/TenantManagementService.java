@@ -8,6 +8,7 @@ import de.tomsblog.tenantmanagement.application.port.outbound.TenantRepository;
 import de.tomsblog.tenantmanagement.domain.model.LoginMode;
 import de.tomsblog.tenantmanagement.domain.model.Tenant;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -49,10 +50,18 @@ public class TenantManagementService implements TenantManagementUseCase {
             String tagline,
             String loginMode,
             boolean autoApproveOidc,
-            Set<String> autoApproveEmailDomains) {
+            Set<String> autoApproveEmailDomains,
+            String defaultRole,
+            String logoUrl,
+            String faviconUrl) {
         var tenant = getTenant(tenantId);
         var mode = LoginMode.valueOf(loginMode);
         tenant.updateGeneralSettings(displayName, tagline, mode, autoApproveOidc, autoApproveEmailDomains);
+        if (defaultRole != null && !defaultRole.isBlank()) {
+            tenant.updateDefaultRole(defaultRole);
+        }
+        tenant.updateLogoUrl(logoUrl);
+        tenant.updateFaviconUrl(faviconUrl);
         validateOidcConfig(tenant);
         Tenant saved = repository.save(tenant);
         auditLogger.log(AuditLogEntry.create(
@@ -62,9 +71,21 @@ public class TenantManagementService implements TenantManagementUseCase {
 
     @Override
     public Tenant updateOidcSettings(
-            TenantId tenantId, String oidcIssuerUrl, String oidcClientId, String oidcClientSecret) {
+            TenantId tenantId,
+            String oidcIssuerUrl,
+            String oidcClientId,
+            String oidcClientSecret,
+            String oidcButtonText,
+            boolean oidcRoleMappingEnabled,
+            Map<String, String> oidcRoleMappings) {
         var tenant = getTenant(tenantId);
-        tenant.updateOidcSettings(oidcIssuerUrl, oidcClientId, oidcClientSecret);
+        tenant.updateOidcSettings(
+                oidcIssuerUrl,
+                oidcClientId,
+                oidcClientSecret,
+                oidcButtonText,
+                oidcRoleMappingEnabled,
+                oidcRoleMappings);
         validateOidcConfig(tenant);
         Tenant saved = repository.save(tenant);
         auditLogger.log(AuditLogEntry.create(

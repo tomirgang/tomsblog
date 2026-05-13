@@ -15,6 +15,7 @@ import de.tomsblog.tenantmanagement.domain.model.LoginMode;
 import de.tomsblog.tenantmanagement.domain.model.Tenant;
 import de.tomsblog.tenantmanagement.domain.model.TenantStatus;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,7 +80,8 @@ class TenantManagementServiceTest {
         when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        var result = service.updateGeneralSettings(tenantId, "New", "Tag", "INTERNAL", false, Set.of());
+        var result =
+                service.updateGeneralSettings(tenantId, "New", "Tag", "INTERNAL", false, Set.of(), null, null, null);
 
         assertThat(result.getDisplayName()).isEqualTo("New");
         assertThat(result.getLoginMode()).isEqualTo(LoginMode.INTERNAL);
@@ -93,7 +95,8 @@ class TenantManagementServiceTest {
         var tenant = Tenant.create(tenantId, "s", "Name");
         when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
 
-        assertThatThrownBy(() -> service.updateGeneralSettings(tenantId, "Name", null, "OIDC", false, Set.of()))
+        assertThatThrownBy(() -> service.updateGeneralSettings(
+                        tenantId, "Name", null, "OIDC", false, Set.of(), null, null, null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("oidcIssuerUrl");
     }
@@ -106,7 +109,7 @@ class TenantManagementServiceTest {
         when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        var result = service.updateOidcSettings(tenantId, "https://issuer", "cid", "cs");
+        var result = service.updateOidcSettings(tenantId, "https://issuer", "cid", "cs", null, false, Map.of());
 
         assertThat(result.getOidcIssuerUrl()).isEqualTo("https://issuer");
         verify(auditLogger).log(any(AuditLogEntry.class));
@@ -144,10 +147,10 @@ class TenantManagementServiceTest {
         var tenantId = TenantId.generate();
         var tenant = Tenant.create(tenantId, "s", "Name");
         tenant.updateGeneralSettings("Name", null, LoginMode.OIDC, false, Set.of());
-        tenant.updateOidcSettings("https://issuer", "cid", "cs");
+        tenant.updateOidcSettings("https://issuer", "cid", "cs", null, false, Map.of());
         when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
 
-        assertThatThrownBy(() -> service.updateOidcSettings(tenantId, "", "", ""))
+        assertThatThrownBy(() -> service.updateOidcSettings(tenantId, "", "", "", null, false, Map.of()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("oidcIssuerUrl");
     }
@@ -157,10 +160,11 @@ class TenantManagementServiceTest {
     void updateGeneralSettingsValidatesOidcClientId() {
         var tenantId = TenantId.generate();
         var tenant = Tenant.create(tenantId, "s", "Name");
-        tenant.updateOidcSettings("https://issuer", null, null);
+        tenant.updateOidcSettings("https://issuer", null, null, null, false, Map.of());
         when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
 
-        assertThatThrownBy(() -> service.updateGeneralSettings(tenantId, "Name", null, "OIDC", false, Set.of()))
+        assertThatThrownBy(() -> service.updateGeneralSettings(
+                        tenantId, "Name", null, "OIDC", false, Set.of(), null, null, null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("oidcClientId");
     }
@@ -170,10 +174,11 @@ class TenantManagementServiceTest {
     void updateGeneralSettingsValidatesBlankOidcClientId() {
         var tenantId = TenantId.generate();
         var tenant = Tenant.create(tenantId, "s", "Name");
-        tenant.updateOidcSettings("https://issuer", " ", null);
+        tenant.updateOidcSettings("https://issuer", " ", null, null, false, Map.of());
         when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
 
-        assertThatThrownBy(() -> service.updateGeneralSettings(tenantId, "Name", null, "OIDC", false, Set.of()))
+        assertThatThrownBy(() -> service.updateGeneralSettings(
+                        tenantId, "Name", null, "OIDC", false, Set.of(), null, null, null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("oidcClientId");
     }
@@ -183,10 +188,11 @@ class TenantManagementServiceTest {
     void updateGeneralSettingsValidatesBlankOidcIssuerUrl() {
         var tenantId = TenantId.generate();
         var tenant = Tenant.create(tenantId, "s", "Name");
-        tenant.updateOidcSettings(" ", "cid", "cs");
+        tenant.updateOidcSettings(" ", "cid", "cs", null, false, Map.of());
         when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
 
-        assertThatThrownBy(() -> service.updateGeneralSettings(tenantId, "Name", null, "OIDC", false, Set.of()))
+        assertThatThrownBy(() -> service.updateGeneralSettings(
+                        tenantId, "Name", null, "OIDC", false, Set.of(), null, null, null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("oidcIssuerUrl");
     }
@@ -196,10 +202,11 @@ class TenantManagementServiceTest {
     void updateGeneralSettingsValidatesOidcForBothMode() {
         var tenantId = TenantId.generate();
         var tenant = Tenant.create(tenantId, "s", "Name");
-        tenant.updateOidcSettings(null, null, null);
+        tenant.updateOidcSettings(null, null, null, null, false, Map.of());
         when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
 
-        assertThatThrownBy(() -> service.updateGeneralSettings(tenantId, "Name", null, "BOTH", false, Set.of()))
+        assertThatThrownBy(() -> service.updateGeneralSettings(
+                        tenantId, "Name", null, "BOTH", false, Set.of(), null, null, null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("oidcIssuerUrl");
     }
@@ -210,10 +217,10 @@ class TenantManagementServiceTest {
         var tenantId = TenantId.generate();
         var tenant = Tenant.create(tenantId, "s", "Name");
         tenant.updateGeneralSettings("Name", null, LoginMode.BOTH, false, Set.of());
-        tenant.updateOidcSettings("https://issuer", "cid", "cs");
+        tenant.updateOidcSettings("https://issuer", "cid", "cs", null, false, Map.of());
         when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
 
-        assertThatThrownBy(() -> service.updateOidcSettings(tenantId, "", "", ""))
+        assertThatThrownBy(() -> service.updateOidcSettings(tenantId, "", "", "", null, false, Map.of()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("oidcIssuerUrl");
     }
@@ -223,13 +230,71 @@ class TenantManagementServiceTest {
     void updateGeneralSettingsOidcSuccess() {
         var tenantId = TenantId.generate();
         var tenant = Tenant.create(tenantId, "s", "Name");
-        tenant.updateOidcSettings("https://issuer", "cid", "cs");
+        tenant.updateOidcSettings("https://issuer", "cid", "cs", null, false, Map.of());
         when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        var result = service.updateGeneralSettings(tenantId, "Name", "Tag", "OIDC", false, Set.of());
+        var result = service.updateGeneralSettings(tenantId, "Name", "Tag", "OIDC", false, Set.of(), null, null, null);
 
         assertThat(result.getLoginMode()).isEqualTo(LoginMode.OIDC);
         verify(auditLogger).log(any(AuditLogEntry.class));
+    }
+
+    @Test
+    @DisplayName("SWR-094: updateGeneralSettings sets non-blank defaultRole")
+    void updateGeneralSettingsWithDefaultRole() {
+        var tenantId = TenantId.generate();
+        var tenant = Tenant.create(tenantId, "s", "Old");
+        when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
+        when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        var result =
+                service.updateGeneralSettings(tenantId, "New", null, "INTERNAL", false, Set.of(), "AUTHOR", null, null);
+
+        assertThat(result.getDefaultRole()).isEqualTo("AUTHOR");
+    }
+
+    @Test
+    @DisplayName("SWR-094: updateGeneralSettings does not update blank defaultRole")
+    void updateGeneralSettingsWithBlankDefaultRole() {
+        var tenantId = TenantId.generate();
+        var tenant = Tenant.create(tenantId, "s", "Old");
+        when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
+        when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        var result = service.updateGeneralSettings(tenantId, "New", null, "INTERNAL", false, Set.of(), " ", null, null);
+
+        assertThat(result.getDefaultRole()).isEqualTo("READER");
+    }
+
+    @Test
+    @DisplayName("SWR-091: updateGeneralSettings sets logoUrl and faviconUrl")
+    void updateGeneralSettingsWithLogoAndFavicon() {
+        var tenantId = TenantId.generate();
+        var tenant = Tenant.create(tenantId, "s", "Old");
+        when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
+        when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        var result = service.updateGeneralSettings(
+                tenantId, "New", null, "INTERNAL", false, Set.of(), null, "https://logo.png", "https://favicon.ico");
+
+        assertThat(result.getLogoUrl()).isEqualTo("https://logo.png");
+        assertThat(result.getFaviconUrl()).isEqualTo("https://favicon.ico");
+    }
+
+    @Test
+    @DisplayName("SWR-092: updateOidcSettings sets oidcButtonText and role mappings")
+    void updateOidcSettingsWithButtonTextAndRoleMappings() {
+        var tenantId = TenantId.generate();
+        var tenant = Tenant.create(tenantId, "s", "Name");
+        when(repository.findByTenantId(tenantId)).thenReturn(Optional.of(tenant));
+        when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        var result = service.updateOidcSettings(
+                tenantId, "https://issuer", "cid", "cs", "Login with SSO", true, Map.of("admins", "ADMIN"));
+
+        assertThat(result.getOidcButtonText()).isEqualTo("Login with SSO");
+        assertThat(result.isOidcRoleMappingEnabled()).isTrue();
+        assertThat(result.getOidcRoleMappings()).containsEntry("admins", "ADMIN");
     }
 }

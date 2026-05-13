@@ -15,6 +15,7 @@ import de.tomsblog.tenantmanagement.application.port.inbound.TenantManagementUse
 import de.tomsblog.tenantmanagement.domain.model.Tenant;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -68,7 +69,10 @@ public class TenantManagementGrpcService extends TenantManagementServiceGrpc.Ten
                     request.getTagline().isEmpty() ? null : request.getTagline(),
                     request.getLoginMode(),
                     request.getAutoApproveOidc(),
-                    new HashSet<>(request.getAutoApproveEmailDomainsList()));
+                    new HashSet<>(request.getAutoApproveEmailDomainsList()),
+                    request.getDefaultRole().isEmpty() ? null : request.getDefaultRole(),
+                    request.getLogoUrl().isEmpty() ? null : request.getLogoUrl(),
+                    request.getFaviconUrl().isEmpty() ? null : request.getFaviconUrl());
             responseObserver.onNext(toResponse(tenant));
             responseObserver.onCompleted();
         } catch (IllegalArgumentException e) {
@@ -85,7 +89,10 @@ public class TenantManagementGrpcService extends TenantManagementServiceGrpc.Ten
                     tenantId,
                     request.getOidcIssuerUrl().isEmpty() ? null : request.getOidcIssuerUrl(),
                     request.getOidcClientId().isEmpty() ? null : request.getOidcClientId(),
-                    request.getOidcClientSecret().isEmpty() ? null : request.getOidcClientSecret());
+                    request.getOidcClientSecret().isEmpty() ? null : request.getOidcClientSecret(),
+                    request.getOidcButtonText().isEmpty() ? null : request.getOidcButtonText(),
+                    request.getOidcRoleMappingEnabled(),
+                    new HashMap<>(request.getOidcRoleMappingsMap()));
             responseObserver.onNext(toResponse(tenant));
             responseObserver.onCompleted();
         } catch (IllegalArgumentException e) {
@@ -141,7 +148,13 @@ public class TenantManagementGrpcService extends TenantManagementServiceGrpc.Ten
                         tenant.getPrivacyPolicyContent() != null ? tenant.getPrivacyPolicyContent() : "")
                 .setOidcIssuerUrl(tenant.getOidcIssuerUrl() != null ? tenant.getOidcIssuerUrl() : "")
                 .setOidcClientId(tenant.getOidcClientId() != null ? tenant.getOidcClientId() : "")
-                .setOidcClientSecret(tenant.getOidcClientSecret() != null ? tenant.getOidcClientSecret() : "");
+                .setOidcClientSecret(tenant.getOidcClientSecret() != null ? tenant.getOidcClientSecret() : "")
+                .setOidcButtonText(tenant.getOidcButtonText() != null ? tenant.getOidcButtonText() : "")
+                .setDefaultRole(tenant.getDefaultRole() != null ? tenant.getDefaultRole() : "READER")
+                .setLogoUrl(tenant.getLogoUrl() != null ? tenant.getLogoUrl() : "")
+                .setFaviconUrl(tenant.getFaviconUrl() != null ? tenant.getFaviconUrl() : "")
+                .setOidcRoleMappingEnabled(tenant.isOidcRoleMappingEnabled())
+                .putAllOidcRoleMappings(tenant.getOidcRoleMappings());
 
         tenant.getAutoApproveEmailDomains().forEach(builder::addAutoApproveEmailDomains);
 

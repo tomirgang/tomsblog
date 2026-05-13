@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import de.tomsblog.shared.tenant.TenantId;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,7 +63,13 @@ class TenantTest {
                 "privacy",
                 "https://auth.example.com",
                 "client-id",
-                "client-secret");
+                "client-secret",
+                null,
+                "READER",
+                null,
+                null,
+                false,
+                Map.of());
 
         assertThat(tenant.getSlug()).isEqualTo("blog");
         assertThat(tenant.getTagline()).isEqualTo("A tagline");
@@ -94,7 +101,7 @@ class TenantTest {
     @DisplayName("SWR-072: updateOidcSettings changes OIDC config")
     void updateOidcSettingsWorks() {
         var tenant = Tenant.create(TenantId.generate(), "s", "Name");
-        tenant.updateOidcSettings("https://issuer", "cid", "csecret");
+        tenant.updateOidcSettings("https://issuer", "cid", "csecret", null, false, Map.of());
 
         assertThat(tenant.getOidcIssuerUrl()).isEqualTo("https://issuer");
         assertThat(tenant.getOidcClientId()).isEqualTo("cid");
@@ -105,8 +112,8 @@ class TenantTest {
     @DisplayName("SWR-072: updateOidcSettings preserves secret when masked")
     void updateOidcSettingsPreservesSecret() {
         var tenant = Tenant.create(TenantId.generate(), "s", "Name");
-        tenant.updateOidcSettings("https://issuer", "cid", "original");
-        tenant.updateOidcSettings("https://issuer", "cid", "***");
+        tenant.updateOidcSettings("https://issuer", "cid", "original", null, false, Map.of());
+        tenant.updateOidcSettings("https://issuer", "cid", "***", null, false, Map.of());
 
         assertThat(tenant.getOidcClientSecret()).isEqualTo("original");
     }
@@ -115,8 +122,8 @@ class TenantTest {
     @DisplayName("SWR-072: updateOidcSettings preserves secret when empty")
     void updateOidcSettingsPreservesSecretEmpty() {
         var tenant = Tenant.create(TenantId.generate(), "s", "Name");
-        tenant.updateOidcSettings("https://issuer", "cid", "original");
-        tenant.updateOidcSettings("https://issuer", "cid", "");
+        tenant.updateOidcSettings("https://issuer", "cid", "original", null, false, Map.of());
+        tenant.updateOidcSettings("https://issuer", "cid", "", null, false, Map.of());
 
         assertThat(tenant.getOidcClientSecret()).isEqualTo("original");
     }
@@ -125,8 +132,8 @@ class TenantTest {
     @DisplayName("SWR-072: updateOidcSettings preserves secret when null")
     void updateOidcSettingsPreservesSecretNull() {
         var tenant = Tenant.create(TenantId.generate(), "s", "Name");
-        tenant.updateOidcSettings("https://issuer", "cid", "original");
-        tenant.updateOidcSettings("https://issuer", "cid", null);
+        tenant.updateOidcSettings("https://issuer", "cid", "original", null, false, Map.of());
+        tenant.updateOidcSettings("https://issuer", "cid", null, null, false, Map.of());
 
         assertThat(tenant.getOidcClientSecret()).isEqualTo("original");
     }
@@ -220,5 +227,150 @@ class TenantTest {
         var tenant = Tenant.create(TenantId.generate(), "s", "Name");
         assertThatThrownBy(() -> tenant.getAutoApproveEmailDomains().add("x"))
                 .isInstanceOf(UnsupportedOperationException.class);
+    }
+
+    @Test
+    @DisplayName("SWR-091: create sets default logoUrl and faviconUrl to null")
+    void createSetsDefaultLogoAndFavicon() {
+        var tenant = Tenant.create(TenantId.generate(), "s", "Name");
+
+        assertThat(tenant.getLogoUrl()).isNull();
+        assertThat(tenant.getFaviconUrl()).isNull();
+    }
+
+    @Test
+    @DisplayName("SWR-091: updateLogoUrl and updateFaviconUrl set values")
+    void updateLogoAndFaviconUrls() {
+        var tenant = Tenant.create(TenantId.generate(), "s", "Name");
+        tenant.updateLogoUrl("https://logo.png");
+        tenant.updateFaviconUrl("https://fav.ico");
+
+        assertThat(tenant.getLogoUrl()).isEqualTo("https://logo.png");
+        assertThat(tenant.getFaviconUrl()).isEqualTo("https://fav.ico");
+    }
+
+    @Test
+    @DisplayName("SWR-092: updateOidcSettings sets oidcButtonText")
+    void updateOidcSettingsButtonText() {
+        var tenant = Tenant.create(TenantId.generate(), "s", "Name");
+        tenant.updateOidcSettings("https://iss", "cid", "cs", "Login with SSO", false, Map.of());
+
+        assertThat(tenant.getOidcButtonText()).isEqualTo("Login with SSO");
+    }
+
+    @Test
+    @DisplayName("SWR-094: create sets default role to READER")
+    void createSetsDefaultRole() {
+        var tenant = Tenant.create(TenantId.generate(), "s", "Name");
+
+        assertThat(tenant.getDefaultRole()).isEqualTo("READER");
+    }
+
+    @Test
+    @DisplayName("SWR-094: updateDefaultRole changes role")
+    void updateDefaultRole() {
+        var tenant = Tenant.create(TenantId.generate(), "s", "Name");
+        tenant.updateDefaultRole("AUTHOR");
+
+        assertThat(tenant.getDefaultRole()).isEqualTo("AUTHOR");
+    }
+
+    @Test
+    @DisplayName("SWR-095: updateOidcSettings sets role mappings")
+    void updateOidcSettingsRoleMappings() {
+        var tenant = Tenant.create(TenantId.generate(), "s", "Name");
+        tenant.updateOidcSettings(
+                "https://iss", "cid", "cs", null, true, Map.of("admins", "ADMIN", "editors", "AUTHOR"));
+
+        assertThat(tenant.isOidcRoleMappingEnabled()).isTrue();
+        assertThat(tenant.getOidcRoleMappings()).containsEntry("admins", "ADMIN");
+        assertThat(tenant.getOidcRoleMappings()).containsEntry("editors", "AUTHOR");
+    }
+
+    @Test
+    @DisplayName("SWR-095: updateOidcSettings clears old role mappings before setting new ones")
+    void updateOidcSettingsClearsOldRoleMappings() {
+        var tenant = Tenant.create(TenantId.generate(), "s", "Name");
+        tenant.updateOidcSettings("https://iss", "cid", "cs", null, true, Map.of("old", "OLD"));
+        tenant.updateOidcSettings("https://iss", "cid", "cs", null, true, Map.of("new", "NEW"));
+
+        assertThat(tenant.getOidcRoleMappings()).containsEntry("new", "NEW");
+        assertThat(tenant.getOidcRoleMappings()).doesNotContainKey("old");
+    }
+
+    @Test
+    @DisplayName("SWR-095: updateOidcSettings handles null role mappings")
+    void updateOidcSettingsNullRoleMappings() {
+        var tenant = Tenant.create(TenantId.generate(), "s", "Name");
+        tenant.updateOidcSettings("https://iss", "cid", "cs", null, false, null);
+
+        assertThat(tenant.getOidcRoleMappings()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("SWR-095: reconstitute handles null oidcRoleMappings")
+    void reconstituteNullRoleMappings() {
+        var tenant = Tenant.reconstitute(
+                TenantId.generate(),
+                "s",
+                "Name",
+                null,
+                TenantStatus.ACTIVE,
+                LoginMode.INTERNAL,
+                false,
+                Set.of(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "READER",
+                null,
+                null,
+                false,
+                null);
+
+        assertThat(tenant.getOidcRoleMappings()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("SWR-095: oidcRoleMappings returns unmodifiable map")
+    void oidcRoleMappingsUnmodifiable() {
+        var tenant = Tenant.create(TenantId.generate(), "s", "Name");
+        assertThatThrownBy(() -> tenant.getOidcRoleMappings().put("x", "y"))
+                .isInstanceOf(UnsupportedOperationException.class);
+    }
+
+    @Test
+    @DisplayName("SWR-092: reconstitute restores oidcButtonText, defaultRole, logoUrl, faviconUrl, roleMappings")
+    void reconstituteNewFields() {
+        var tenant = Tenant.reconstitute(
+                TenantId.generate(),
+                "s",
+                "Name",
+                null,
+                TenantStatus.ACTIVE,
+                LoginMode.OIDC,
+                false,
+                Set.of(),
+                null,
+                null,
+                "https://iss",
+                "cid",
+                "cs",
+                "Login with SSO",
+                "AUTHOR",
+                "https://logo.png",
+                "https://fav.ico",
+                true,
+                Map.of("admins", "ADMIN"));
+
+        assertThat(tenant.getOidcButtonText()).isEqualTo("Login with SSO");
+        assertThat(tenant.getDefaultRole()).isEqualTo("AUTHOR");
+        assertThat(tenant.getLogoUrl()).isEqualTo("https://logo.png");
+        assertThat(tenant.getFaviconUrl()).isEqualTo("https://fav.ico");
+        assertThat(tenant.isOidcRoleMappingEnabled()).isTrue();
+        assertThat(tenant.getOidcRoleMappings()).containsEntry("admins", "ADMIN");
     }
 }

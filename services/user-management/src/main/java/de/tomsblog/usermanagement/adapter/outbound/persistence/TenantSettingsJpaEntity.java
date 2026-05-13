@@ -7,11 +7,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -61,6 +64,27 @@ public class TenantSettingsJpaEntity {
 
     @Column(name = "oidc_client_secret")
     private String oidcClientSecret;
+
+    @Column(name = "oidc_button_text", length = 100)
+    private String oidcButtonText;
+
+    @Column(name = "default_role", nullable = false, length = 20)
+    private String defaultRole = "READER";
+
+    @Column(name = "logo_url", columnDefinition = "TEXT")
+    private String logoUrl;
+
+    @Column(name = "favicon_url", columnDefinition = "TEXT")
+    private String faviconUrl;
+
+    @Column(name = "oidc_role_mapping_enabled", nullable = false)
+    private boolean oidcRoleMappingEnabled;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "tenant_oidc_role_mappings", joinColumns = @JoinColumn(name = "tenant_id"))
+    @MapKeyColumn(name = "oidc_group")
+    @Column(name = "role")
+    private Map<String, String> oidcRoleMappings = new HashMap<>();
 
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
@@ -173,5 +197,53 @@ public class TenantSettingsJpaEntity {
 
     public void setOidcClientSecret(String oidcClientSecret) {
         this.oidcClientSecret = oidcClientSecret;
+    }
+
+    public String getOidcButtonText() {
+        return oidcButtonText;
+    }
+
+    public void setOidcButtonText(String oidcButtonText) {
+        this.oidcButtonText = oidcButtonText;
+    }
+
+    public String getDefaultRole() {
+        return defaultRole;
+    }
+
+    public void setDefaultRole(String defaultRole) {
+        this.defaultRole = defaultRole;
+    }
+
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
+
+    public String getFaviconUrl() {
+        return faviconUrl;
+    }
+
+    public void setFaviconUrl(String faviconUrl) {
+        this.faviconUrl = faviconUrl;
+    }
+
+    public boolean isOidcRoleMappingEnabled() {
+        return oidcRoleMappingEnabled;
+    }
+
+    public void setOidcRoleMappingEnabled(boolean oidcRoleMappingEnabled) {
+        this.oidcRoleMappingEnabled = oidcRoleMappingEnabled;
+    }
+
+    public Map<String, String> getOidcRoleMappings() {
+        return oidcRoleMappings;
+    }
+
+    public void setOidcRoleMappings(Map<String, String> oidcRoleMappings) {
+        this.oidcRoleMappings = oidcRoleMappings;
     }
 }

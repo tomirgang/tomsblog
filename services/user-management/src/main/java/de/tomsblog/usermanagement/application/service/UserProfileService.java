@@ -62,7 +62,8 @@ public class UserProfileService implements UserProfileUseCase {
         }
 
         var profile = UserProfile.createFromOidc(command.oidcSubject(), command.email(), command.displayName());
-        profile.addTenantMembership(new TenantMembership(command.tenantId(), Role.READER));
+        Role defaultRole = resolveDefaultRole(command.tenantId());
+        profile.addTenantMembership(new TenantMembership(command.tenantId(), defaultRole));
         applyAutoApproval(profile, command.tenantId(), AuthSource.OIDC, command.email());
         UserProfile saved = repository.save(profile);
         auditLogger.log(AuditLogEntry.create(
@@ -94,7 +95,8 @@ public class UserProfileService implements UserProfileUseCase {
 
         var profile = UserProfile.createInternal(
                 command.username(), command.passwordHash(), command.email(), command.displayName());
-        profile.addTenantMembership(new TenantMembership(command.tenantId(), Role.READER));
+        Role defaultRole = resolveDefaultRole(command.tenantId());
+        profile.addTenantMembership(new TenantMembership(command.tenantId(), defaultRole));
         applyAutoApproval(profile, command.tenantId(), AuthSource.INTERNAL, command.email());
         UserProfile saved = repository.save(profile);
         auditLogger.log(AuditLogEntry.create(
@@ -118,7 +120,8 @@ public class UserProfileService implements UserProfileUseCase {
         String hashedPassword = passwordEncoder.encode(command.password());
         var profile =
                 UserProfile.createInternal(command.username(), hashedPassword, command.email(), command.displayName());
-        profile.addTenantMembership(new TenantMembership(command.tenantId(), Role.READER));
+        Role defaultRole = resolveDefaultRole(command.tenantId());
+        profile.addTenantMembership(new TenantMembership(command.tenantId(), defaultRole));
         applyAutoApproval(profile, command.tenantId(), AuthSource.INTERNAL, command.email());
         UserProfile saved = repository.save(profile);
         auditLogger.log(AuditLogEntry.create(
@@ -136,6 +139,20 @@ public class UserProfileService implements UserProfileUseCase {
         if (settings.shouldAutoApprove(authSource, email)) {
             profile.approve();
         }
+    }
+
+    private Role resolveDefaultRole(TenantId tenantId) {
+        var settings =
+                tenantSettingsRepository.findByTenantId(tenantId).orElseGet(() -> TenantSettings.create(tenantId));
+        String defaultRoleStr = settings.getDefaultRole();
+        if (defaultRoleStr != null) {
+            try {
+                return Role.valueOf(defaultRoleStr);
+            } catch (IllegalArgumentException e) {
+                // Invalid role configured, fall back to READER
+            }
+        }
+        return Role.READER;
     }
 
     @Override
@@ -233,5 +250,24 @@ public class UserProfileService implements UserProfileUseCase {
                 .findByOidcSubject(identifier)
                 .or(() -> repository.findByUsername(identifier))
                 .orElseThrow(() -> new UserProfileNotFoundException(identifier));
+    }
+
+    @Override
+    public void deleteUser(String identifier, TenantId tenantId, String requestingUser) {
+        var profile = findProfile(identifier);
+        String profileIdentifier = profile.getOidcSubject() != null ? profile.getOidcSubject() : profile.getUsername();
+        if (profileIdentifier != null && profileIdentifier.equals(requestingUser)) {
+            throw new IllegalArgumentException("Cannot delete your own account");
+        }
+        if (profile.getGlobalRoles() != null && profile.getGlobalRoles().contains(Role.SUPERADMIN)) {
+            throw new IllegalArgumentException("Cannot delete the SUPERADMIN account");
+        }
+        repository.delete(profile);
+        auditLogger.log(AuditLogEntry.create(
+                tenantId.toString(),
+                requestingUser,
+                "USER_DELETED",
+                "UserProfile",
+                profile.getId().asString()));
     }
 }

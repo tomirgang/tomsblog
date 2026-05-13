@@ -1,0 +1,36 @@
+active: true
+derived: false
+header: |
+  Automatisches Rollen-Mapping über OIDC-Claims
+level: 95.0
+links:
+- STK059: pxFb27-jPPeAkTVa445LZGXEB7_hnhdMI4hbsxHMJyM=
+- SWR016: YTbwI0XKGXadExYjSk14fHkW9MgnzNyBDy8pzlNyEHQ=
+normative: true
+ref: ''
+reviewed: Rk164z4IFTODShHYKE_BXEFUTxzG1KJ6b80QSIq0CCE=
+text: |
+  Das Domain-Modell TenantSettings wird um die Felder
+  oidcRoleMappingEnabled (boolean, default false) und
+  oidcRoleMappings (Map<String, Role>) erweitert.
+
+  oidcRoleMappings definiert ein Mapping von OIDC-Gruppennamen
+  auf plattforminterne Rollen (z.B. {"blog-authors": "AUTHOR",
+  "blog-admins": "ADMIN"}).
+
+  Wenn oidcRoleMappingEnabled aktiviert ist, wird bei jedem
+  OIDC-Login der groups-Claim des ID-Tokens ausgewertet:
+  - Für jede Gruppe im Claim wird das konfigurierte Mapping geprüft.
+  - Die höchste gemappte Rolle wird dem Benutzer zugewiesen.
+  - Wenn keine Gruppe matcht, wird die Standard-Rolle (SWR-094)
+    zugewiesen.
+  - Manuell vergebene Rollen werden durch die OIDC-Rolle
+    überschrieben.
+
+  Die Admin-UI zeigt im OIDC-Bereich der Tenant-Einstellungen:
+  - Einen Toggle für oidcRoleMappingEnabled.
+  - Eine dynamische Liste von Mapping-Einträgen (OIDC-Gruppenname
+    → Rolle) mit Hinzufügen/Entfernen-Funktionalität.
+
+  Das SUPERADMIN-Mapping ist nicht erlaubt (wird bei Eingabe
+  abgelehnt).

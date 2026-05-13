@@ -2,12 +2,15 @@ package de.tomsblog.usermanagement.adapter.inbound.web;
 
 import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.inbound.SyncOidcUserCommand;
+import de.tomsblog.usermanagement.application.port.inbound.TenantSettingsUseCase;
 import de.tomsblog.usermanagement.application.port.inbound.UserProfileUseCase;
 import de.tomsblog.usermanagement.domain.model.Role;
+import de.tomsblog.usermanagement.domain.model.TenantSettings;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -29,16 +32,20 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
  * @req SWR-016
  * @req SWR-043
  * @req SWR-045
+ * @req SWR-095
  */
 public class SyncingOidcUserService extends OidcUserService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SyncingOidcUserService.class);
 
     private final UserProfileUseCase userProfileUseCase;
+    private final TenantSettingsUseCase tenantSettingsUseCase;
     private final UUID defaultTenantId;
 
-    public SyncingOidcUserService(UserProfileUseCase userProfileUseCase, UUID defaultTenantId) {
+    public SyncingOidcUserService(
+            UserProfileUseCase userProfileUseCase, TenantSettingsUseCase tenantSettingsUseCase, UUID defaultTenantId) {
         this.userProfileUseCase = userProfileUseCase;
+        this.tenantSettingsUseCase = tenantSettingsUseCase;
         this.defaultTenantId = defaultTenantId;
     }
 
@@ -64,11 +71,46 @@ public class SyncingOidcUserService extends OidcUserService {
         try {
             UserProfile profile = userProfileUseCase.syncFromOidc(
                     new SyncOidcUserCommand(subject, email, displayName, groups, new TenantId(defaultTenantId)));
+            applyOidcRoleMapping(profile, groups);
             Set<GrantedAuthority> authorities = mapAuthorities(profile, oidcUser.getAuthorities());
             return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
         } catch (Exception e) {
             LOG.warn("Failed to sync user profile for OIDC subject '{}'. Using default authorities.", subject, e);
             return oidcUser;
+        }
+    }
+
+    private void applyOidcRoleMapping(UserProfile profile, List<String> groups) {
+        try {
+            TenantSettings settings = tenantSettingsUseCase.getSettings(new TenantId(defaultTenantId));
+            if (!settings.isOidcRoleMappingEnabled()
+                    || settings.getOidcRoleMappings().isEmpty()) {
+                return;
+            }
+            Map<String, String> mappings = settings.getOidcRoleMappings();
+            Role highestRole = null;
+            for (String group : groups) {
+                String mappedRole = mappings.get(group);
+                if (mappedRole != null) {
+                    try {
+                        Role role = Role.valueOf(mappedRole);
+                        if (role == Role.SUPERADMIN) {
+                            continue;
+                        }
+                        if (highestRole == null || role.ordinal() < highestRole.ordinal()) {
+                            highestRole = role;
+                        }
+                    } catch (IllegalArgumentException e) {
+                        LOG.warn("Invalid role mapping '{}' for group '{}'.", mappedRole, group);
+                    }
+                }
+            }
+            if (highestRole != null) {
+                String identifier = profile.getOidcSubject() != null ? profile.getOidcSubject() : profile.getUsername();
+                userProfileUseCase.addTenantMembership(identifier, new TenantId(defaultTenantId), highestRole);
+            }
+        } catch (Exception e) {
+            LOG.warn("Failed to apply OIDC role mapping.", e);
         }
     }
 

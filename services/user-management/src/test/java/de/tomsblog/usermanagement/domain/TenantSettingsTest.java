@@ -7,6 +7,7 @@ import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.domain.model.AuthSource;
 import de.tomsblog.usermanagement.domain.model.LoginMode;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -51,7 +52,13 @@ class TenantSettingsTest {
                     null,
                     null,
                     null,
-                    null);
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    Map.of());
 
             assertThat(settings.getTenantId()).isEqualTo(TENANT_ID);
             assertThat(settings.getLoginMode()).isEqualTo(LoginMode.OIDC);
@@ -265,7 +272,23 @@ class TenantSettingsTest {
         @DisplayName("SWR-050: reconstitute preserves displayName and tagline")
         void reconstitutePreservesBranding() {
             var settings = TenantSettings.reconstitute(
-                    TENANT_ID, LoginMode.BOTH, false, Set.of(), "My Blog", "A tagline", null, null, null, null, null);
+                    TENANT_ID,
+                    LoginMode.BOTH,
+                    false,
+                    Set.of(),
+                    "My Blog",
+                    "A tagline",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    Map.of());
 
             assertThat(settings.getDisplayName()).isEqualTo("My Blog");
             assertThat(settings.getTagline()).isEqualTo("A tagline");
@@ -295,7 +318,23 @@ class TenantSettingsTest {
         @DisplayName("SWR-050: updateTagline allows null")
         void updateTaglineAllowsNull() {
             var settings = TenantSettings.reconstitute(
-                    TENANT_ID, LoginMode.BOTH, false, Set.of(), "Blog", "old tagline", null, null, null, null, null);
+                    TENANT_ID,
+                    LoginMode.BOTH,
+                    false,
+                    Set.of(),
+                    "Blog",
+                    "old tagline",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    Map.of());
 
             settings.updateTagline(null);
 

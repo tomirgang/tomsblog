@@ -1,0 +1,22 @@
+active: true
+derived: false
+header: |
+  OIDC-Button-Text über Admin-UI konfigurierbar
+level: 56.0
+links: []
+normative: true
+ref: ''
+reviewed: _m9WCLvWcs7CHgdxdXBrZsMaWZ8IN5MlWF60JeDu0qk=
+text: |
+  Als Tenant-Administrator möchte ich den Text des OIDC-Login-Buttons
+  (z.B. "Mit Authentik anmelden", "SSO Login", "Firmen-Login") über die
+  Admin-UI konfigurieren können, damit die Login-Seite für die Benutzer
+  meines Tenants verständlich beschriftet ist.
+
+  Der konfigurierbare Button-Text wird auf der Login-Seite angezeigt,
+  wenn der Tenant OIDC als Login-Methode aktiviert hat. Wenn kein
+  benutzerdefinierter Text gesetzt ist, wird ein Standardtext
+  (z.B. "Mit OIDC anmelden") verwendet.
+
+  Die Konfiguration erfolgt über die Admin-UI in den Tenant-Einstellungen
+  (OIDC-Bereich).

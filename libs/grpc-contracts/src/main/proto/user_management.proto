@@ -33,6 +33,9 @@ service UserManagementService {
 
   // Register a new local user (SWR-059).
   rpc RegisterUser (RegisterUserRequest) returns (UserProfileResponse);
+
+  // Delete a user (SWR-093).
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
 }
 
 // Service for tenant settings queries.
@@ -98,6 +101,12 @@ message TenantSettingsResponse {
   // Contains the actual secret for service-to-service use (mTLS protected).
   // The UI layer is responsible for masking before displaying.
   string oidc_client_secret = 11;
+  string oidc_button_text = 12;
+  string default_role = 13;
+  string logo_url = 14;
+  string favicon_url = 15;
+  bool oidc_role_mapping_enabled = 16;
+  map<string, string> oidc_role_mappings = 17;
 }
 
 message ListUsersByTenantRequest {
@@ -130,6 +139,16 @@ message RegisterUserRequest {
   string tenant_id = 5;
 }
 
+message DeleteUserRequest {
+  string identifier = 1;
+  string tenant_id = 2;
+  string requesting_user = 3;
+}
+
+message DeleteUserResponse {
+  bool success = 1;
+}
+
 message UpdateTenantSettingsRequest {
   string tenant_id = 1;
   string login_mode = 2;
@@ -142,6 +161,12 @@ message UpdateTenantSettingsRequest {
   string oidc_issuer_url = 9;
   string oidc_client_id = 10;
   string oidc_client_secret = 11;
+  string oidc_button_text = 12;
+  string default_role = 13;
+  string logo_url = 14;
+  string favicon_url = 15;
+  bool oidc_role_mapping_enabled = 16;
+  map<string, string> oidc_role_mappings = 17;
 }
 
 message ListTenantsRequest {

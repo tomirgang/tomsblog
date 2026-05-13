@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.domain.model.LoginMode;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,7 +53,13 @@ class JpaTenantSettingsRepositoryIntegrationTest {
                 null,
                 null,
                 null,
-                null);
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
 
         repository.save(settings);
         var found = repository.findByTenantId(tenantId);
@@ -77,7 +84,23 @@ class JpaTenantSettingsRepositoryIntegrationTest {
     void saveUpdatesExisting() {
         var tenantId = TenantId.generate();
         var settings = TenantSettings.reconstitute(
-                tenantId, LoginMode.BOTH, false, Set.of(), "Toms Blog", null, null, null, null, null, null);
+                tenantId,
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "Toms Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         repository.save(settings);
 
         var updated = TenantSettings.reconstitute(
@@ -91,7 +114,13 @@ class JpaTenantSettingsRepositoryIntegrationTest {
                 null,
                 null,
                 null,
-                null);
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         repository.save(updated);
 
         var found = repository.findByTenantId(tenantId);
@@ -116,7 +145,13 @@ class JpaTenantSettingsRepositoryIntegrationTest {
                 null,
                 null,
                 null,
-                null);
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
 
         repository.save(settings);
         var found = repository.findByTenantId(tenantId);
@@ -132,9 +167,41 @@ class JpaTenantSettingsRepositoryIntegrationTest {
         var tenantId1 = TenantId.generate();
         var tenantId2 = TenantId.generate();
         repository.save(TenantSettings.reconstitute(
-                tenantId1, LoginMode.BOTH, false, Set.of(), "Blog 1", null, null, null, null, null, null));
+                tenantId1,
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "Blog 1",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of()));
         repository.save(TenantSettings.reconstitute(
-                tenantId2, LoginMode.OIDC, true, Set.of("x.com"), "Blog 2", "A tagline", null, null, null, null, null));
+                tenantId2,
+                LoginMode.OIDC,
+                true,
+                Set.of("x.com"),
+                "Blog 2",
+                "A tagline",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of()));
 
         var all = repository.findAll();
 
@@ -157,7 +224,13 @@ class JpaTenantSettingsRepositoryIntegrationTest {
                 null,
                 null,
                 null,
-                null);
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
 
         repository.save(settings);
         var found = repository.findByTenantId(tenantId);

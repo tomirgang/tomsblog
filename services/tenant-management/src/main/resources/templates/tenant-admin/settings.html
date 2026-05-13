@@ -37,6 +37,14 @@
                     <label for="tagline">Tagline (optional)</label>
                     <input type="text" id="tagline" name="tagline"
                            th:value="${tenant?.tagline}">
+                    <label for="logoUrl">Logo-URL (optional)</label>
+                    <input type="url" id="logoUrl" name="logoUrl"
+                           th:value="${tenant?.logoUrl}"
+                           placeholder="https://example.com/logo.png">
+                    <label for="faviconUrl">Favicon-URL (optional)</label>
+                    <input type="url" id="faviconUrl" name="faviconUrl"
+                           th:value="${tenant?.faviconUrl}"
+                           placeholder="https://example.com/favicon.ico">
                 </fieldset>
 
                 <fieldset>
@@ -71,6 +79,16 @@
                            placeholder="example.com, company.org">
                 </fieldset>
 
+                <fieldset>
+                    <legend>Standard-Rolle</legend>
+                    <label for="defaultRole">Rolle für neue Benutzer</label>
+                    <select id="defaultRole" name="defaultRole">
+                        <option value="READER" th:selected="${tenant?.defaultRole == null or tenant?.defaultRole == 'READER'}">Reader</option>
+                        <option value="REVIEWER" th:selected="${tenant?.defaultRole == 'REVIEWER'}">Reviewer</option>
+                        <option value="AUTHOR" th:selected="${tenant?.defaultRole == 'AUTHOR'}">Author</option>
+                    </select>
+                </fieldset>
+
                 <button type="submit">Speichern</button>
             </form>
         </div>
@@ -92,8 +110,63 @@
                     <small>Leer lassen, um den bestehenden Wert beizubehalten.</small>
                 </fieldset>
 
+                <fieldset>
+                    <legend>OIDC-Anzeige</legend>
+                    <label for="oidcButtonText">Button-Text auf der Login-Seite</label>
+                    <input type="text" id="oidcButtonText" name="oidcButtonText"
+                           th:value="${tenant?.oidcButtonText}"
+                           placeholder="Mit OIDC anmelden">
+                </fieldset>
+
+                <fieldset>
+                    <legend>OIDC-Rollenzuordnung</legend>
+                    <label>
+                        <input type="checkbox" name="oidcRoleMappingEnabled" value="true"
+                               th:checked="${tenant?.oidcRoleMappingEnabled}">
+                        Rollenzuordnung aktivieren
+                    </label>
+                    <small>Ordnet OIDC-Gruppen den Blog-Rollen zu. Die höchste Rolle gewinnt.</small>
+                    <div th:if="${tenant?.oidcRoleMappings != null}" th:each="entry : ${tenant.oidcRoleMappings}">
+                        <label th:text="'Gruppe: ' + ${entry.key}"></label>
+                        <select th:name="'oidcRoleMapping_' + ${entry.key}">
+                            <option value="READER" th:selected="${entry.value == 'READER'}">Reader</option>
+                            <option value="REVIEWER" th:selected="${entry.value == 'REVIEWER'}">Reviewer</option>
+                            <option value="AUTHOR" th:selected="${entry.value == 'AUTHOR'}">Author</option>
+                            <option value="ADMIN" th:selected="${entry.value == 'ADMIN'}">Admin</option>
+                        </select>
+                    </div>
+                    <details>
+                        <summary>Neue Zuordnung hinzufügen</summary>
+                        <label for="newGroupName">OIDC-Gruppenname</label>
+                        <input type="text" id="newGroupName" placeholder="z.B. blog-admins">
+                        <label for="newGroupRole">Rolle</label>
+                        <select id="newGroupRole">
+                            <option value="READER">Reader</option>
+                            <option value="REVIEWER">Reviewer</option>
+                            <option value="AUTHOR">Author</option>
+                            <option value="ADMIN">Admin</option>
+                        </select>
+                        <button type="button" onclick="addRoleMapping()">Hinzufügen</button>
+                    </details>
+                    <div id="newMappings"></div>
+                </fieldset>
+
                 <button type="submit">Speichern</button>
             </form>
+            <script th:inline="javascript">
+                function addRoleMapping() {
+                    var group = document.getElementById('newGroupName').value.trim();
+                    var role = document.getElementById('newGroupRole').value;
+                    if (!group) return;
+                    var container = document.getElementById('newMappings');
+                    var div = document.createElement('div');
+                    div.innerHTML = '<label>' + group + '</label>' +
+                        '<input type="hidden" name="oidcRoleMapping_' + group + '" value="' + role + '">' +
+                        '<span>' + role + '</span>';
+                    container.appendChild(div);
+                    document.getElementById('newGroupName').value = '';
+                }
+            </script>
         </div>
 
         <div th:classappend="${activeTab == 'legal'} ? 'active'" class="tab-content">

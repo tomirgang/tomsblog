@@ -1,0 +1,25 @@
+active: true
+derived: false
+header: |
+  Konfigurierbare Standard-Rolle für neue Benutzer pro Tenant
+level: 94.0
+links:
+- STK058: UCvGOyiuSylWeoJGa-vVEX8AHfXwYM6ybE_Hx4KZCes=
+normative: true
+ref: ''
+reviewed: bxSpem-Rv-wcQ9dXripcn02_lqweTlCX1_02EeUs3Gw=
+text: |
+  Das Domain-Modell TenantSettings wird um das Feld defaultRole
+  (Role, default READER) erweitert.
+
+  Erlaubte Werte für die Standard-Rolle: READER, REVIEWER, AUTHOR.
+  Die Rollen ADMIN und SUPERADMIN sind als Standard-Rolle nicht
+  zulässig und werden bei Eingabe abgelehnt (HTTP 400 Bad Request).
+
+  Bei der Registrierung oder beim ersten OIDC-Login eines neuen
+  Benutzers wird die konfigurierte Standard-Rolle statt der
+  fest codierten Rolle READER zugewiesen.
+
+  Die Admin-UI zeigt in den Tenant-Einstellungen ein Dropdown-Feld
+  für die Standard-Rolle mit den Optionen READER, REVIEWER und
+  AUTHOR. Der aktuelle Wert wird vorausgewählt.

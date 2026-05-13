@@ -1,0 +1,25 @@
+active: true
+derived: false
+header: |
+  Konfigurierbarer OIDC-Login-Button-Text pro Tenant
+level: 92.0
+links:
+- STK056: _m9WCLvWcs7CHgdxdXBrZsMaWZ8IN5MlWF60JeDu0qk=
+normative: true
+ref: ''
+reviewed: nKswh5IihywGRTo3nUngjNxe9IOWv6vjwT_LCMI1-bE=
+text: |
+  Das Domain-Modell TenantSettings wird um das Feld oidcButtonText
+  (String, optional) erweitert.
+
+  Die Login-Seite des User-Management-Service verwendet den
+  konfigurierten oidcButtonText als Beschriftung des OIDC-Login-Buttons.
+  Wenn kein benutzerdefinierter Text gesetzt ist, wird der Standardtext
+  "Mit OIDC anmelden" verwendet.
+
+  Die Admin-UI zeigt im OIDC-Bereich der Tenant-Einstellungen ein
+  Eingabefeld für den Button-Text. Die maximale Länge beträgt
+  100 Zeichen.
+
+  Der oidcButtonText wird über gRPC an den Blog-Content-Service
+  propagiert, falls dort Login-Links angezeigt werden.

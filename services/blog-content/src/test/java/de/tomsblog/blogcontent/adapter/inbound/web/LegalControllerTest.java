@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import de.tomsblog.blogcontent.adapter.outbound.usermanagement.TenantSettingsDto;
 import de.tomsblog.blogcontent.adapter.outbound.usermanagement.UserManagementClient;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -31,8 +32,9 @@ class LegalControllerTest {
     @Test
     @DisplayName("SWR-054: GET /impressum shows default when no custom content")
     void impressumDefaultContent() throws Exception {
-        var settings =
-                new TenantSettingsDto(TENANT_ID, "BOTH", false, Set.of(), "Blog", null, null, null, null, null, null);
+        var settings = new TenantSettingsDto(
+                TENANT_ID, "BOTH", false, Set.of(), "Blog", null, null, null, null, null, null, null, null, null, null,
+                false, Map.of());
         when(userManagementClient.getTenantSettings(TENANT_ID)).thenReturn(settings);
 
         mockMvc.perform(get("/impressum").header("X-Tenant-Id", TENANT_ID.toString()))
@@ -45,7 +47,23 @@ class LegalControllerTest {
     @DisplayName("SWR-055: GET /impressum shows tenant-specific content")
     void impressumCustomContent() throws Exception {
         var settings = new TenantSettingsDto(
-                TENANT_ID, "BOTH", false, Set.of(), "Blog", null, "<p>Mein Impressum</p>", null, null, null, null);
+                TENANT_ID,
+                "BOTH",
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                "<p>Mein Impressum</p>",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(userManagementClient.getTenantSettings(TENANT_ID)).thenReturn(settings);
 
         mockMvc.perform(get("/impressum").header("X-Tenant-Id", TENANT_ID.toString()))
@@ -57,8 +75,9 @@ class LegalControllerTest {
     @Test
     @DisplayName("SWR-054: GET /privacy shows default when no custom content")
     void privacyDefaultContent() throws Exception {
-        var settings =
-                new TenantSettingsDto(TENANT_ID, "BOTH", false, Set.of(), "Blog", null, null, null, null, null, null);
+        var settings = new TenantSettingsDto(
+                TENANT_ID, "BOTH", false, Set.of(), "Blog", null, null, null, null, null, null, null, null, null, null,
+                false, Map.of());
         when(userManagementClient.getTenantSettings(TENANT_ID)).thenReturn(settings);
 
         mockMvc.perform(get("/privacy").header("X-Tenant-Id", TENANT_ID.toString()))
@@ -71,7 +90,23 @@ class LegalControllerTest {
     @DisplayName("SWR-055: GET /privacy shows tenant-specific content")
     void privacyCustomContent() throws Exception {
         var settings = new TenantSettingsDto(
-                TENANT_ID, "BOTH", false, Set.of(), "Blog", null, null, "<p>Datenschutz</p>", null, null, null);
+                TENANT_ID,
+                "BOTH",
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                "<p>Datenschutz</p>",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(userManagementClient.getTenantSettings(TENANT_ID)).thenReturn(settings);
 
         mockMvc.perform(get("/privacy").header("X-Tenant-Id", TENANT_ID.toString()))
@@ -105,8 +140,9 @@ class LegalControllerTest {
     @Test
     @DisplayName("SWR-054: GET /impressum uses default tenant when no header")
     void impressumDefaultTenant() throws Exception {
-        var settings =
-                new TenantSettingsDto(TENANT_ID, "BOTH", false, Set.of(), "Blog", null, null, null, null, null, null);
+        var settings = new TenantSettingsDto(
+                TENANT_ID, "BOTH", false, Set.of(), "Blog", null, null, null, null, null, null, null, null, null, null,
+                false, Map.of());
         when(userManagementClient.getTenantSettings(TENANT_ID)).thenReturn(settings);
 
         mockMvc.perform(get("/impressum")).andExpect(status().isOk()).andExpect(view().name("legal/impressum"));
@@ -127,7 +163,14 @@ class LegalControllerTest {
                 null,
                 null,
                 null,
-                null);
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
+
         when(userManagementClient.getTenantSettings(sessionTenant)).thenReturn(settings);
 
         mockMvc.perform(get("/impressum")
@@ -140,8 +183,9 @@ class LegalControllerTest {
     @Test
     @DisplayName("SWR-055: GET /impressum treats blank content as no custom content")
     void impressumBlankContent() throws Exception {
-        var settings =
-                new TenantSettingsDto(TENANT_ID, "BOTH", false, Set.of(), "Blog", null, "   ", null, null, null, null);
+        var settings = new TenantSettingsDto(
+                TENANT_ID, "BOTH", false, Set.of(), "Blog", null, "   ", null, null, null, null, null, null, null, null,
+                false, Map.of());
         when(userManagementClient.getTenantSettings(TENANT_ID)).thenReturn(settings);
 
         mockMvc.perform(get("/impressum").header("X-Tenant-Id", TENANT_ID.toString()))
@@ -152,8 +196,9 @@ class LegalControllerTest {
     @Test
     @DisplayName("SWR-054: GET /impressum handles invalid session tenant ID")
     void impressumInvalidSessionTenant() throws Exception {
-        var settings =
-                new TenantSettingsDto(TENANT_ID, "BOTH", false, Set.of(), "Blog", null, null, null, null, null, null);
+        var settings = new TenantSettingsDto(
+                TENANT_ID, "BOTH", false, Set.of(), "Blog", null, null, null, null, null, null, null, null, null, null,
+                false, Map.of());
         when(userManagementClient.getTenantSettings(TENANT_ID)).thenReturn(settings);
 
         mockMvc.perform(get("/impressum")
@@ -181,8 +226,9 @@ class LegalControllerTest {
     @Test
     @DisplayName("SWR-055: GET /privacy treats blank content as no custom content")
     void privacyBlankContent() throws Exception {
-        var settings =
-                new TenantSettingsDto(TENANT_ID, "BOTH", false, Set.of(), "Blog", null, null, "   ", null, null, null);
+        var settings = new TenantSettingsDto(
+                TENANT_ID, "BOTH", false, Set.of(), "Blog", null, null, "   ", null, null, null, null, null, null, null,
+                false, Map.of());
         when(userManagementClient.getTenantSettings(TENANT_ID)).thenReturn(settings);
 
         mockMvc.perform(get("/privacy").header("X-Tenant-Id", TENANT_ID.toString()))

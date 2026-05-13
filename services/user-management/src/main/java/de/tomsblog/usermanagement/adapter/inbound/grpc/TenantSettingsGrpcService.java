@@ -13,6 +13,7 @@ import de.tomsblog.usermanagement.domain.model.LoginMode;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -68,7 +69,13 @@ public class TenantSettingsGrpcService extends TenantSettingsServiceGrpc.TenantS
                     request.getPrivacyPolicyContent().isEmpty() ? null : request.getPrivacyPolicyContent(),
                     request.getOidcIssuerUrl().isEmpty() ? null : request.getOidcIssuerUrl(),
                     request.getOidcClientId().isEmpty() ? null : request.getOidcClientId(),
-                    request.getOidcClientSecret().isEmpty() ? null : request.getOidcClientSecret());
+                    request.getOidcClientSecret().isEmpty() ? null : request.getOidcClientSecret(),
+                    request.getOidcButtonText().isEmpty() ? null : request.getOidcButtonText(),
+                    request.getDefaultRole().isEmpty() ? null : request.getDefaultRole(),
+                    request.getLogoUrl().isEmpty() ? null : request.getLogoUrl(),
+                    request.getFaviconUrl().isEmpty() ? null : request.getFaviconUrl(),
+                    request.getOidcRoleMappingEnabled(),
+                    new HashMap<>(request.getOidcRoleMappingsMap()));
             responseObserver.onNext(toResponse(settings));
             responseObserver.onCompleted();
         } catch (IllegalArgumentException e) {
@@ -103,7 +110,13 @@ public class TenantSettingsGrpcService extends TenantSettingsServiceGrpc.TenantS
                         settings.getPrivacyPolicyContent() != null ? settings.getPrivacyPolicyContent() : "")
                 .setOidcIssuerUrl(settings.getOidcIssuerUrl() != null ? settings.getOidcIssuerUrl() : "")
                 .setOidcClientId(settings.getOidcClientId() != null ? settings.getOidcClientId() : "")
-                .setOidcClientSecret(settings.getOidcClientSecret() != null ? settings.getOidcClientSecret() : "");
+                .setOidcClientSecret(settings.getOidcClientSecret() != null ? settings.getOidcClientSecret() : "")
+                .setOidcButtonText(settings.getOidcButtonText() != null ? settings.getOidcButtonText() : "")
+                .setDefaultRole(settings.getDefaultRole() != null ? settings.getDefaultRole() : "READER")
+                .setLogoUrl(settings.getLogoUrl() != null ? settings.getLogoUrl() : "")
+                .setFaviconUrl(settings.getFaviconUrl() != null ? settings.getFaviconUrl() : "")
+                .setOidcRoleMappingEnabled(settings.isOidcRoleMappingEnabled())
+                .putAllOidcRoleMappings(settings.getOidcRoleMappings());
 
         settings.getAutoApproveEmailDomains().forEach(builder::addAutoApproveEmailDomains);
 

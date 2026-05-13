@@ -13,6 +13,7 @@ import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.inbound.TenantSettingsUseCase;
 import de.tomsblog.usermanagement.domain.model.LoginMode;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -82,7 +83,13 @@ class TenantSettingsControllerTest {
                 null,
                 null,
                 null,
-                null);
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(TENANT_ID)).thenReturn(settings);
 
         mockMvc.perform(get("/api/tenants/{tenantId}/settings", TENANT_UUID).header("X-API-Key", API_KEY))
@@ -97,7 +104,23 @@ class TenantSettingsControllerTest {
     @DisplayName("SWR-044: PUT /api/tenants/{tenantId}/settings/login-mode updates login mode")
     void updateLoginMode() throws Exception {
         var settings = TenantSettings.reconstitute(
-                TENANT_ID, LoginMode.INTERNAL, false, Set.of(), "Toms Blog", null, null, null, null, null, null);
+                TENANT_ID,
+                LoginMode.INTERNAL,
+                false,
+                Set.of(),
+                "Toms Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.updateLoginMode(eq(TENANT_ID), eq(LoginMode.INTERNAL)))
                 .thenReturn(settings);
 
@@ -125,7 +148,23 @@ class TenantSettingsControllerTest {
     @DisplayName("SWR-045: PUT /api/tenants/{tenantId}/settings/auto-approval updates auto-approval")
     void updateAutoApproval() throws Exception {
         var settings = TenantSettings.reconstitute(
-                TENANT_ID, LoginMode.BOTH, true, Set.of("test.com"), "Toms Blog", null, null, null, null, null, null);
+                TENANT_ID,
+                LoginMode.BOTH,
+                true,
+                Set.of("test.com"),
+                "Toms Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.updateAutoApproval(eq(TENANT_ID), eq(true), any()))
                 .thenReturn(settings);
 
@@ -144,7 +183,23 @@ class TenantSettingsControllerTest {
     @DisplayName("SWR-045: PUT /api/tenants/{tenantId}/settings/auto-approval with null domains uses empty set")
     void updateAutoApprovalNullDomains() throws Exception {
         var settings = TenantSettings.reconstitute(
-                TENANT_ID, LoginMode.BOTH, false, Set.of(), "Toms Blog", null, null, null, null, null, null);
+                TENANT_ID,
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "Toms Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.updateAutoApproval(eq(TENANT_ID), eq(false), eq(Set.of())))
                 .thenReturn(settings);
 

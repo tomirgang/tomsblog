@@ -6,6 +6,7 @@ import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.tenantmanagement.domain.model.LoginMode;
 import de.tomsblog.tenantmanagement.domain.model.Tenant;
 import de.tomsblog.tenantmanagement.domain.model.TenantStatus;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,13 @@ class TenantMapperTest {
                 "privacy",
                 "https://issuer",
                 "cid",
-                "cs");
+                "cs",
+                "Login with SSO",
+                "AUTHOR",
+                "https://logo.png",
+                "https://fav.ico",
+                true,
+                Map.of("admins", "ADMIN"));
 
         var entity = TenantMapper.toEntity(tenant);
 
@@ -46,6 +53,42 @@ class TenantMapperTest {
         assertThat(entity.getOidcIssuerUrl()).isEqualTo("https://issuer");
         assertThat(entity.getOidcClientId()).isEqualTo("cid");
         assertThat(entity.getOidcClientSecret()).isEqualTo("cs");
+        assertThat(entity.getOidcButtonText()).isEqualTo("Login with SSO");
+        assertThat(entity.getDefaultRole()).isEqualTo("AUTHOR");
+        assertThat(entity.getLogoUrl()).isEqualTo("https://logo.png");
+        assertThat(entity.getFaviconUrl()).isEqualTo("https://fav.ico");
+        assertThat(entity.isOidcRoleMappingEnabled()).isTrue();
+        assertThat(entity.getOidcRoleMappings()).containsEntry("admins", "ADMIN");
+    }
+
+    @Test
+    @DisplayName("SWR-094: toEntity defaults null defaultRole to READER")
+    void toEntityDefaultsNullDefaultRole() {
+        var tenantId = TenantId.generate();
+        var tenant = Tenant.reconstitute(
+                tenantId,
+                "slug",
+                "Name",
+                null,
+                TenantStatus.ACTIVE,
+                LoginMode.INTERNAL,
+                false,
+                Set.of(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
+
+        var entity = TenantMapper.toEntity(tenant);
+
+        assertThat(entity.getDefaultRole()).isEqualTo("READER");
     }
 
     @Test
@@ -66,6 +109,12 @@ class TenantMapperTest {
         entity.setOidcIssuerUrl("https://iss");
         entity.setOidcClientId("c");
         entity.setOidcClientSecret("s");
+        entity.setOidcButtonText("Login via SSO");
+        entity.setDefaultRole("AUTHOR");
+        entity.setLogoUrl("https://logo.png");
+        entity.setFaviconUrl("https://fav.ico");
+        entity.setOidcRoleMappingEnabled(true);
+        entity.setOidcRoleMappings(Map.of("admins", "ADMIN"));
 
         var tenant = TenantMapper.toDomain(entity);
 
@@ -82,6 +131,12 @@ class TenantMapperTest {
         assertThat(tenant.getOidcIssuerUrl()).isEqualTo("https://iss");
         assertThat(tenant.getOidcClientId()).isEqualTo("c");
         assertThat(tenant.getOidcClientSecret()).isEqualTo("s");
+        assertThat(tenant.getOidcButtonText()).isEqualTo("Login via SSO");
+        assertThat(tenant.getDefaultRole()).isEqualTo("AUTHOR");
+        assertThat(tenant.getLogoUrl()).isEqualTo("https://logo.png");
+        assertThat(tenant.getFaviconUrl()).isEqualTo("https://fav.ico");
+        assertThat(tenant.isOidcRoleMappingEnabled()).isTrue();
+        assertThat(tenant.getOidcRoleMappings()).containsEntry("admins", "ADMIN");
     }
 
     @Test
@@ -101,7 +156,13 @@ class TenantMapperTest {
                 null,
                 null,
                 null,
-                null);
+                null,
+                null,
+                "READER",
+                null,
+                null,
+                false,
+                Map.of());
 
         var entity = TenantMapper.toEntity(original);
         var restored = TenantMapper.toDomain(entity);

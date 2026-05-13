@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Changed
 
+- Chaos Testing: Umfang reduziert und auf begrenzte Ressourcen angepasst. Schwergewichtige Chaos-Tools (Chaos Mesh, Litmus) und CI/CD-Integration entfernt. Stattdessen leichtgewichtige Resilience-Tests mit Testcontainers (Phase 6) und manuelle Chaos-Experimente (kubectl delete pod, kubectl drain node) eingeplant.
+
+### Added
+
+- Stakeholder Requirements STK-055 bis STK-059 und Software Requirements SWR-091 bis SWR-095 für fünf neue Features: Logo/FavIcon pro Tenant (STK-055, SWR-091), konfigurierbarer OIDC-Button-Text (STK-056, SWR-092), Benutzer-Löschung über Admin-UI (STK-057, SWR-093), konfigurierbare Standard-Rolle pro Tenant (STK-058, SWR-094), automatisches OIDC-Rollen-Mapping (STK-059, SWR-095)
 - Cluster-Provisionierung von kube-hetzner/OpenTofu auf hetzner-k3s umgestellt (ADR-0034 supersedes ADR-0022). Einheitliches Node-Sizing: alle Nodes CPX22 (2 vCPU, 4 GB). WireGuard-Verschlüsselung entfällt zugunsten von privatem Hetzner-Netzwerk + Linkerd mTLS.
 - Ressourcen für 3x CPX22 Cluster optimiert: PostgreSQL auf 1 Instanz reduziert, Spring Boot Services 384Mi→256Mi Request, Prometheus 512Mi→256Mi, Loki/Tempo 256Mi→128Mi, Kafka Broker 512Mi→256Mi, MongoDB/RabbitMQ 256Mi→128Mi, Strimzi Operator 256Mi→128Mi. Gesamte Memory Requests von ~6,8 GB auf ~3,8 GB gesenkt.
 

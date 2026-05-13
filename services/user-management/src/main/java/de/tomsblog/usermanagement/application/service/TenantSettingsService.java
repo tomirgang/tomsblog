@@ -8,6 +8,7 @@ import de.tomsblog.usermanagement.application.port.outbound.TenantSettingsReposi
 import de.tomsblog.usermanagement.domain.model.LoginMode;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -77,7 +78,13 @@ public class TenantSettingsService implements TenantSettingsUseCase {
             String privacyPolicyContent,
             String oidcIssuerUrl,
             String oidcClientId,
-            String oidcClientSecret) {
+            String oidcClientSecret,
+            String oidcButtonText,
+            String defaultRole,
+            String logoUrl,
+            String faviconUrl,
+            boolean oidcRoleMappingEnabled,
+            Map<String, String> oidcRoleMappings) {
         var settings = getOrCreate(tenantId);
         settings.updateLoginMode(loginMode);
         settings.updateAutoApproveOidc(autoApproveOidc);
@@ -91,6 +98,12 @@ public class TenantSettingsService implements TenantSettingsUseCase {
         if (oidcClientSecret != null && !oidcClientSecret.isEmpty() && !"***".equals(oidcClientSecret)) {
             settings.updateOidcClientSecret(oidcClientSecret);
         }
+        settings.updateOidcButtonText(oidcButtonText);
+        settings.updateDefaultRole(defaultRole);
+        settings.updateLogoUrl(logoUrl);
+        settings.updateFaviconUrl(faviconUrl);
+        settings.updateOidcRoleMappingEnabled(oidcRoleMappingEnabled);
+        settings.setOidcRoleMappings(oidcRoleMappings != null ? oidcRoleMappings : Map.of());
         validateOidcConfig(settings);
         TenantSettings saved = repository.save(settings);
         auditLogger.log(AuditLogEntry.create(
@@ -105,13 +118,19 @@ public class TenantSettingsService implements TenantSettingsUseCase {
             String tagline,
             LoginMode loginMode,
             boolean autoApproveOidc,
-            Set<String> autoApproveEmailDomains) {
+            Set<String> autoApproveEmailDomains,
+            String defaultRole,
+            String logoUrl,
+            String faviconUrl) {
         var settings = getOrCreate(tenantId);
         settings.updateDisplayName(displayName);
         settings.updateTagline(tagline);
         settings.updateLoginMode(loginMode);
         settings.updateAutoApproveOidc(autoApproveOidc);
         settings.setAutoApproveEmailDomains(autoApproveEmailDomains);
+        settings.updateDefaultRole(defaultRole);
+        settings.updateLogoUrl(logoUrl);
+        settings.updateFaviconUrl(faviconUrl);
         validateOidcConfig(settings);
         TenantSettings saved = repository.save(settings);
         auditLogger.log(AuditLogEntry.create(
@@ -125,12 +144,23 @@ public class TenantSettingsService implements TenantSettingsUseCase {
 
     @Override
     public TenantSettings updateOidcSettings(
-            TenantId tenantId, String oidcIssuerUrl, String oidcClientId, String oidcClientSecret) {
+            TenantId tenantId,
+            String oidcIssuerUrl,
+            String oidcClientId,
+            String oidcClientSecret,
+            String oidcButtonText,
+            boolean oidcRoleMappingEnabled,
+            Map<String, String> oidcRoleMappings) {
         var settings = getOrCreate(tenantId);
         settings.updateOidcIssuerUrl(oidcIssuerUrl);
         settings.updateOidcClientId(oidcClientId);
         if (oidcClientSecret != null && !oidcClientSecret.isEmpty() && !"***".equals(oidcClientSecret)) {
             settings.updateOidcClientSecret(oidcClientSecret);
+        }
+        settings.updateOidcButtonText(oidcButtonText);
+        settings.updateOidcRoleMappingEnabled(oidcRoleMappingEnabled);
+        if (oidcRoleMappings != null) {
+            settings.setOidcRoleMappings(oidcRoleMappings);
         }
         validateOidcConfig(settings);
         TenantSettings saved = repository.save(settings);

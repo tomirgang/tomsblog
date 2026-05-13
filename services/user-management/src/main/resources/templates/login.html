@@ -19,8 +19,9 @@
 
         <!-- OIDC login: shown for OIDC and BOTH modes -->
         <div th:if="${loginMode == 'OIDC' or loginMode == 'BOTH'}">
-            <h2>Mit Authentik anmelden</h2>
-            <a th:href="@{/oauth2/authorization/authentik}" role="button">Mit Authentik anmelden</a>
+            <h2 th:text="${oidcButtonText ?: 'Mit OIDC anmelden'}">Mit OIDC anmelden</h2>
+            <a th:href="@{/oauth2/authorization/authentik}" role="button"
+               th:text="${oidcButtonText ?: 'Mit OIDC anmelden'}">Mit OIDC anmelden</a>
         </div>
 
         <!-- Separator: only shown when both modes are active -->

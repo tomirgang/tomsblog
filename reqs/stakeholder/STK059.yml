@@ -1,0 +1,25 @@
+active: true
+derived: false
+header: |
+  Benutzer-Rollen über OIDC-Claims automatisch setzen
+level: 59.0
+links: []
+normative: true
+ref: ''
+reviewed: pxFb27-jPPeAkTVa445LZGXEB7_hnhdMI4hbsxHMJyM=
+text: |
+  Als Tenant-Administrator möchte ich konfigurieren können, dass
+  Benutzer-Rollen automatisch aus OIDC-Claims (z.B. groups oder roles)
+  übernommen werden, damit die Rollenverwaltung zentral über den
+  Identity Provider erfolgen kann.
+
+  Das Mapping von OIDC-Gruppen auf plattforminterne Rollen soll pro
+  Tenant konfigurierbar sein (z.B. "blog-authors" → AUTHOR,
+  "blog-admins" → ADMIN).
+
+  Wenn das OIDC-Rollen-Mapping aktiviert ist, werden die Rollen bei
+  jedem Login aus den Claims aktualisiert. Manuell vergebene Rollen
+  werden in diesem Fall durch die OIDC-Rollen überschrieben.
+
+  Die Konfiguration erfolgt über die Admin-UI in den OIDC-Einstellungen
+  des Tenants.

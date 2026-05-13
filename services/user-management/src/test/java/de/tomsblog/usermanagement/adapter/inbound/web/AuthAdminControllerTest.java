@@ -13,6 +13,7 @@ import de.tomsblog.usermanagement.domain.model.Role;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
 import de.tomsblog.usermanagement.domain.model.UserProfile;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -99,7 +100,23 @@ class AuthAdminControllerTest {
     @DisplayName("showSettings returns settings view with data")
     void showSettings() {
         var settings = TenantSettings.reconstitute(
-                TENANT_ID, LoginMode.BOTH, true, Set.of("test.com"), "Blog", null, null, null, null, null, null);
+                TENANT_ID,
+                LoginMode.BOTH,
+                true,
+                Set.of("test.com"),
+                "Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         Model model = new ConcurrentModel();
@@ -127,7 +144,7 @@ class AuthAdminControllerTest {
     void updateGeneralSettings() {
         MockHttpSession session = new MockHttpSession();
         String view = controller.updateGeneralSettings(
-                TENANT_UUID, session, "BOTH", true, "example.com, test.org", "My Blog", "Tagline");
+                TENANT_UUID, session, "BOTH", true, "example.com, test.org", "My Blog", "Tagline", null, null, null);
 
         verify(tenantSettingsUseCase)
                 .updateGeneralSettings(
@@ -136,7 +153,10 @@ class AuthAdminControllerTest {
                         eq("Tagline"),
                         eq(LoginMode.BOTH),
                         eq(true),
-                        eq(Set.of("example.com", "test.org")));
+                        eq(Set.of("example.com", "test.org")),
+                        any(),
+                        any(),
+                        any());
         assertThat(view).isEqualTo("redirect:/auth/admin/settings?tab=general");
     }
 
@@ -144,17 +164,27 @@ class AuthAdminControllerTest {
     @DisplayName("updateGeneralSettings with blank domains creates empty set")
     void updateGeneralSettingsEmptyDomains() {
         MockHttpSession session = new MockHttpSession();
-        controller.updateGeneralSettings(TENANT_UUID, session, "OIDC", false, "  ", "Blog", null);
+        controller.updateGeneralSettings(TENANT_UUID, session, "OIDC", false, "  ", "Blog", null, null, null, null);
 
         verify(tenantSettingsUseCase)
-                .updateGeneralSettings(eq(TENANT_ID), eq("Blog"), any(), eq(LoginMode.OIDC), eq(false), eq(Set.of()));
+                .updateGeneralSettings(
+                        eq(TENANT_ID),
+                        eq("Blog"),
+                        any(),
+                        eq(LoginMode.OIDC),
+                        eq(false),
+                        eq(Set.of()),
+                        any(),
+                        any(),
+                        any());
     }
 
     @Test
     @DisplayName("updateGeneralSettings filters empty segments from domain list")
     void updateGeneralSettingsFiltersEmptyDomainSegments() {
         MockHttpSession session = new MockHttpSession();
-        controller.updateGeneralSettings(TENANT_UUID, session, "INTERNAL", false, "a.com,,b.com", "Blog", null);
+        controller.updateGeneralSettings(
+                TENANT_UUID, session, "INTERNAL", false, "a.com,,b.com", "Blog", null, null, null, null);
 
         verify(tenantSettingsUseCase)
                 .updateGeneralSettings(
@@ -163,7 +193,10 @@ class AuthAdminControllerTest {
                         any(),
                         eq(LoginMode.INTERNAL),
                         eq(false),
-                        eq(Set.of("a.com", "b.com")));
+                        eq(Set.of("a.com", "b.com")),
+                        any(),
+                        any(),
+                        any());
     }
 
     @Test
@@ -171,11 +204,17 @@ class AuthAdminControllerTest {
     void updateOidcSettings() {
         MockHttpSession session = new MockHttpSession();
         String view = controller.updateOidcSettings(
-                TENANT_UUID, session, "https://auth.example.com", "client-id", "client-secret");
+                TENANT_UUID, session, "https://auth.example.com", "client-id", "client-secret", null, false, Map.of());
 
         verify(tenantSettingsUseCase)
                 .updateOidcSettings(
-                        eq(TENANT_ID), eq("https://auth.example.com"), eq("client-id"), eq("client-secret"));
+                        eq(TENANT_ID),
+                        eq("https://auth.example.com"),
+                        eq("client-id"),
+                        eq("client-secret"),
+                        any(),
+                        eq(false),
+                        any());
         assertThat(view).isEqualTo("redirect:/auth/admin/settings?tab=oidc");
     }
 
@@ -277,5 +316,72 @@ class AuthAdminControllerTest {
         String view = controller.switchTenant(OTHER_TENANT, session, request);
 
         assertThat(view).isEqualTo("redirect:https://myapp.example.com/admin/settings");
+    }
+
+    @Test
+    @DisplayName("SWR-093: deleteUser delegates and redirects")
+    void deleteUser() {
+        MockHttpSession session = new MockHttpSession();
+        java.security.Principal principal = () -> "admin-user";
+        String view = controller.deleteUser("user-1", TENANT_UUID, session, principal);
+
+        verify(userProfileUseCase).deleteUser("user-1", TENANT_ID, "admin-user");
+        assertThat(view).isEqualTo("redirect:/auth/admin/users");
+    }
+
+    @Test
+    @DisplayName("SWR-093: deleteUser uses unknown when principal is null")
+    void deleteUserNullPrincipal() {
+        MockHttpSession session = new MockHttpSession();
+        String view = controller.deleteUser("user-1", TENANT_UUID, session, null);
+
+        verify(userProfileUseCase).deleteUser("user-1", TENANT_ID, "unknown");
+        assertThat(view).isEqualTo("redirect:/auth/admin/users");
+    }
+
+    @Test
+    @DisplayName("SWR-095: updateOidcSettings extracts role mappings from params")
+    void updateOidcSettingsExtractsRoleMappings() {
+        MockHttpSession session = new MockHttpSession();
+        var allParams = new java.util.HashMap<String, String>();
+        allParams.put("oidcIssuerUrl", "https://auth.example.com");
+        allParams.put("oidcClientId", "client-id");
+        allParams.put("oidcClientSecret", "secret");
+        allParams.put("oidcButtonText", "Login with SSO");
+        allParams.put("oidcRoleMappingEnabled", "true");
+        allParams.put("oidcRoleMapping_admins", "ADMIN");
+        allParams.put("oidcRoleMapping_devs", "AUTHOR");
+        allParams.put("oidcRoleMapping_", "READER");
+        allParams.put("oidcRoleMapping_viewers", "");
+
+        controller.updateOidcSettings(
+                TENANT_UUID,
+                session,
+                "https://auth.example.com",
+                "client-id",
+                "secret",
+                "Login with SSO",
+                true,
+                allParams);
+
+        verify(tenantSettingsUseCase)
+                .updateOidcSettings(
+                        eq(TENANT_ID),
+                        eq("https://auth.example.com"),
+                        eq("client-id"),
+                        eq("secret"),
+                        eq("Login with SSO"),
+                        eq(true),
+                        eq(Map.of("admins", "ADMIN", "devs", "AUTHOR")));
+    }
+
+    @Test
+    @DisplayName("SWR-095: updateOidcSettings passes empty mappings when no role mapping params")
+    void updateOidcSettingsEmptyRoleMappings() {
+        MockHttpSession session = new MockHttpSession();
+        controller.updateOidcSettings(TENANT_UUID, session, null, null, null, null, false, Map.of());
+
+        verify(tenantSettingsUseCase)
+                .updateOidcSettings(eq(TENANT_ID), any(), any(), any(), any(), eq(false), eq(Map.of()));
     }
 }

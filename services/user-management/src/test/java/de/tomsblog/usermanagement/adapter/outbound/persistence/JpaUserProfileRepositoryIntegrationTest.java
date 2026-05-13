@@ -191,4 +191,39 @@ class JpaUserProfileRepositoryIntegrationTest {
     void existsByEmail_returnsFalse() {
         assertThat(repository.existsByEmail("unknown@test.com")).isFalse();
     }
+
+    @Test
+    @DisplayName("SWR-093: delete removes OIDC user profile")
+    void deleteOidcUser() {
+        UserProfile profile = UserProfile.createFromOidc("sub-del-oidc", "del@example.com", "Delete Me");
+        repository.save(profile);
+
+        assertThat(repository.findByOidcSubject("sub-del-oidc")).isPresent();
+
+        repository.delete(profile);
+
+        assertThat(repository.findByOidcSubject("sub-del-oidc")).isEmpty();
+    }
+
+    @Test
+    @DisplayName("SWR-093: delete removes internal user profile")
+    void deleteInternalUser() {
+        UserProfile profile = UserProfile.createInternal("del-user", "hash", "del-int@example.com", "Delete Me");
+        repository.save(profile);
+
+        assertThat(repository.findByUsername("del-user")).isPresent();
+
+        repository.delete(profile);
+
+        assertThat(repository.findByUsername("del-user")).isEmpty();
+    }
+
+    @Test
+    @DisplayName("SWR-093: delete is no-op when user does not exist")
+    void deleteNonExistentUser() {
+        UserProfile profile = UserProfile.createFromOidc("non-existent-sub", "none@example.com", "Ghost");
+
+        // Should not throw
+        repository.delete(profile);
+    }
 }

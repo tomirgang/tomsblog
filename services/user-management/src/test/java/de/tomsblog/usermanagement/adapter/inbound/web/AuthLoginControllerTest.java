@@ -7,6 +7,7 @@ import de.tomsblog.shared.tenant.TenantId;
 import de.tomsblog.usermanagement.application.port.inbound.TenantSettingsUseCase;
 import de.tomsblog.usermanagement.domain.model.LoginMode;
 import de.tomsblog.usermanagement.domain.model.TenantSettings;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +34,23 @@ class AuthLoginControllerTest {
     @DisplayName("login page returns 'login' view with loginMode from tenant settings")
     void loginReturnsViewWithLoginMode() {
         var settings = TenantSettings.reconstitute(
-                TenantId.of(TENANT_UUID), LoginMode.OIDC, false, Set.of(), "Blog", null, null, null, null, null, null);
+                TenantId.of(TENANT_UUID),
+                LoginMode.OIDC,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
         when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
 
         Model model = new ConcurrentModel();
@@ -72,5 +89,103 @@ class AuthLoginControllerTest {
     void adminLogin() {
         String view = controller.adminLogin();
         assertThat(view).isEqualTo("admin-login");
+    }
+
+    @Test
+    @DisplayName("SWR-092: login page returns custom OIDC button text")
+    void loginReturnsCustomOidcButtonText() {
+        var settings = TenantSettings.reconstitute(
+                TenantId.of(TENANT_UUID),
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "Login with SSO",
+                null,
+                null,
+                null,
+                false,
+                Map.of());
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        Model model = new ConcurrentModel();
+        controller.login(TENANT_UUID, model);
+
+        assertThat(model.getAttribute("oidcButtonText")).isEqualTo("Login with SSO");
+    }
+
+    @Test
+    @DisplayName("SWR-092: login page returns default text when OIDC button text is null")
+    void loginReturnsDefaultOidcButtonTextWhenNull() {
+        var settings = TenantSettings.reconstitute(
+                TenantId.of(TENANT_UUID),
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                Map.of());
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        Model model = new ConcurrentModel();
+        controller.login(TENANT_UUID, model);
+
+        assertThat(model.getAttribute("oidcButtonText")).isEqualTo("Mit OIDC anmelden");
+    }
+
+    @Test
+    @DisplayName("SWR-092: login page returns default text when OIDC button text is blank")
+    void loginReturnsDefaultOidcButtonTextWhenBlank() {
+        var settings = TenantSettings.reconstitute(
+                TenantId.of(TENANT_UUID),
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "   ",
+                null,
+                null,
+                null,
+                false,
+                Map.of());
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        Model model = new ConcurrentModel();
+        controller.login(TENANT_UUID, model);
+
+        assertThat(model.getAttribute("oidcButtonText")).isEqualTo("Mit OIDC anmelden");
+    }
+
+    @Test
+    @DisplayName("SWR-092: login page returns default text on exception")
+    void loginReturnsDefaultOidcButtonTextOnException() {
+        when(tenantSettingsUseCase.getSettings(any())).thenThrow(new RuntimeException("DB down"));
+
+        Model model = new ConcurrentModel();
+        controller.login(TENANT_UUID, model);
+
+        assertThat(model.getAttribute("oidcButtonText")).isEqualTo("Mit OIDC anmelden");
     }
 }
