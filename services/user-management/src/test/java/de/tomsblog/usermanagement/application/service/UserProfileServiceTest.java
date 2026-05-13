@@ -530,6 +530,37 @@ class UserProfileServiceTest {
             assertThatThrownBy(() -> service.deleteUser("unknown", TENANT_ID, "admin"))
                     .isInstanceOf(UserProfileNotFoundException.class);
         }
+
+        @Test
+        @DisplayName("SWR-093: deletes user when profileIdentifier is null (both oidcSubject and username null)")
+        void deletesWhenProfileIdentifierIsNull() {
+            var profile = mock(UserProfile.class);
+            when(profile.getOidcSubject()).thenReturn(null);
+            when(profile.getUsername()).thenReturn(null);
+            when(profile.getGlobalRoles()).thenReturn(java.util.Set.of(Role.READER));
+            when(profile.getId())
+                    .thenReturn(new de.tomsblog.usermanagement.domain.model.UserProfileId(java.util.UUID.randomUUID()));
+            when(repository.findByOidcSubject("identifier")).thenReturn(Optional.of(profile));
+
+            service.deleteUser("identifier", TENANT_ID, "admin-user");
+
+            verify(repository).delete(profile);
+        }
+
+        @Test
+        @DisplayName("SWR-093: deletes user when globalRoles is null")
+        void deletesWhenGlobalRolesIsNull() {
+            var profile = mock(UserProfile.class);
+            when(profile.getOidcSubject()).thenReturn("sub-other");
+            when(profile.getGlobalRoles()).thenReturn(null);
+            when(profile.getId())
+                    .thenReturn(new de.tomsblog.usermanagement.domain.model.UserProfileId(java.util.UUID.randomUUID()));
+            when(repository.findByOidcSubject("sub-other")).thenReturn(Optional.of(profile));
+
+            service.deleteUser("sub-other", TENANT_ID, "admin-user");
+
+            verify(repository).delete(profile);
+        }
     }
 
     @Nested

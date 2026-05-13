@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 
 import de.tomsblog.grpc.usermanagement.ApproveUserRequest;
 import de.tomsblog.grpc.usermanagement.ChangeUserRoleRequest;
+import de.tomsblog.grpc.usermanagement.DeleteUserRequest;
+import de.tomsblog.grpc.usermanagement.DeleteUserResponse;
 import de.tomsblog.grpc.usermanagement.FindByOidcSubjectRequest;
 import de.tomsblog.grpc.usermanagement.FindByUsernameRequest;
 import de.tomsblog.grpc.usermanagement.ListUsersByTenantRequest;
@@ -658,6 +660,137 @@ class UserManagementGrpcServiceTest {
         };
 
         grpcService.registerUser(request, observer);
+
+        assertThat(error.get()).isInstanceOf(StatusRuntimeException.class);
+        assertThat(((StatusRuntimeException) error.get()).getStatus().getCode())
+                .isEqualTo(Status.INVALID_ARGUMENT.getCode());
+    }
+
+    @Test
+    @DisplayName("SWR-093: deleteUser returns success via gRPC")
+    void deleteUser_returnsSuccess() {
+        var request = DeleteUserRequest.newBuilder()
+                .setIdentifier("sub-1")
+                .setTenantId(TENANT_ID.toString())
+                .setRequestingUser("admin-user")
+                .build();
+
+        var result = new AtomicReference<DeleteUserResponse>();
+        StreamObserver<DeleteUserResponse> observer = new StreamObserver<>() {
+            @Override
+            public void onNext(DeleteUserResponse value) {
+                result.set(value);
+            }
+
+            @Override
+            public void onError(Throwable t) {}
+
+            @Override
+            public void onCompleted() {}
+        };
+
+        grpcService.deleteUser(request, observer);
+
+        assertThat(result.get()).isNotNull();
+        assertThat(result.get().getSuccess()).isTrue();
+        verify(userProfileUseCase).deleteUser("sub-1", TenantId.of(TENANT_ID), "admin-user");
+    }
+
+    @Test
+    @DisplayName("SWR-093: deleteUser returns NOT_FOUND when user does not exist")
+    void deleteUser_notFound() {
+        doThrow(new UserProfileNotFoundException("sub-x"))
+                .when(userProfileUseCase)
+                .deleteUser("sub-x", TenantId.of(TENANT_ID), "admin-user");
+
+        var request = DeleteUserRequest.newBuilder()
+                .setIdentifier("sub-x")
+                .setTenantId(TENANT_ID.toString())
+                .setRequestingUser("admin-user")
+                .build();
+
+        var error = new AtomicReference<Throwable>();
+        StreamObserver<DeleteUserResponse> observer = new StreamObserver<>() {
+            @Override
+            public void onNext(DeleteUserResponse value) {}
+
+            @Override
+            public void onError(Throwable t) {
+                error.set(t);
+            }
+
+            @Override
+            public void onCompleted() {}
+        };
+
+        grpcService.deleteUser(request, observer);
+
+        assertThat(error.get()).isInstanceOf(StatusRuntimeException.class);
+        assertThat(((StatusRuntimeException) error.get()).getStatus().getCode()).isEqualTo(Status.NOT_FOUND.getCode());
+    }
+
+    @Test
+    @DisplayName("SWR-093: deleteUser returns INVALID_ARGUMENT on self-deletion")
+    void deleteUser_selfDeletion() {
+        doThrow(new IllegalArgumentException("Cannot delete your own account"))
+                .when(userProfileUseCase)
+                .deleteUser("admin-user", TenantId.of(TENANT_ID), "admin-user");
+
+        var request = DeleteUserRequest.newBuilder()
+                .setIdentifier("admin-user")
+                .setTenantId(TENANT_ID.toString())
+                .setRequestingUser("admin-user")
+                .build();
+
+        var error = new AtomicReference<Throwable>();
+        StreamObserver<DeleteUserResponse> observer = new StreamObserver<>() {
+            @Override
+            public void onNext(DeleteUserResponse value) {}
+
+            @Override
+            public void onError(Throwable t) {
+                error.set(t);
+            }
+
+            @Override
+            public void onCompleted() {}
+        };
+
+        grpcService.deleteUser(request, observer);
+
+        assertThat(error.get()).isInstanceOf(StatusRuntimeException.class);
+        assertThat(((StatusRuntimeException) error.get()).getStatus().getCode())
+                .isEqualTo(Status.INVALID_ARGUMENT.getCode());
+    }
+
+    @Test
+    @DisplayName("SWR-093: deleteUser returns INVALID_ARGUMENT on SUPERADMIN deletion")
+    void deleteUser_superadmin() {
+        doThrow(new IllegalStateException("Cannot delete the SUPERADMIN account"))
+                .when(userProfileUseCase)
+                .deleteUser("super-user", TenantId.of(TENANT_ID), "admin-user");
+
+        var request = DeleteUserRequest.newBuilder()
+                .setIdentifier("super-user")
+                .setTenantId(TENANT_ID.toString())
+                .setRequestingUser("admin-user")
+                .build();
+
+        var error = new AtomicReference<Throwable>();
+        StreamObserver<DeleteUserResponse> observer = new StreamObserver<>() {
+            @Override
+            public void onNext(DeleteUserResponse value) {}
+
+            @Override
+            public void onError(Throwable t) {
+                error.set(t);
+            }
+
+            @Override
+            public void onCompleted() {}
+        };
+
+        grpcService.deleteUser(request, observer);
 
         assertThat(error.get()).isInstanceOf(StatusRuntimeException.class);
         assertThat(((StatusRuntimeException) error.get()).getStatus().getCode())

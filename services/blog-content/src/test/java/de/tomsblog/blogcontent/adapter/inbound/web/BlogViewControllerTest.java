@@ -162,6 +162,25 @@ class BlogViewControllerTest {
     }
 
     @Test
+    @DisplayName("SWR-036: Excerpt for null rendered content returns empty string")
+    void index_nullRenderedContent_returnsEmptyExcerpt() throws Exception {
+        Post post = Post.create(
+                TenantId.of(tenantId), authorId, "MD Post", "# Title", ContentType.MARKDOWN, PostLocale.german());
+        post.publish();
+        when(postUseCase.listRecentPublishedPosts(any(TenantId.class), eq(3))).thenReturn(List.of(post));
+        when(markdownRenderer.renderToHtml("# Title")).thenReturn(null);
+
+        mockMvc.perform(get("/").header("X-Tenant-Id", tenantId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute(
+                                "excerpts",
+                                org.hamcrest.Matchers.hasEntry(
+                                        org.hamcrest.Matchers.equalTo(
+                                                post.getId().value()),
+                                        org.hamcrest.Matchers.equalTo(""))));
+    }
+
+    @Test
     @DisplayName("SWR-036: Excerpt for blank content returns empty string")
     void index_blankContent_returnsEmptyExcerpt() throws Exception {
         Post post = Post.create(TenantId.of(tenantId), authorId, "Empty Post", "", PostLocale.german());
@@ -1381,6 +1400,22 @@ class BlogViewControllerTest {
                         .header("X-Tenant-Id", tenantId.toString())
                         .header("X-Author-Id", UUID.randomUUID().toString()))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("POST /posts/{id}/publish allows superadmin even with different author")
+    @WithMockUser(username = "superadmin", roles = "SUPERADMIN")
+    void publishPost_allowsSuperadmin() throws Exception {
+        UUID postId = UUID.randomUUID();
+        Post post = Post.create(TenantId.of(tenantId), authorId, "Test", "Content", PostLocale.german());
+        when(postUseCase.getPost(any(), any())).thenReturn(post);
+
+        mockMvc.perform(post("/posts/{id}/publish", postId)
+                        .with(csrf())
+                        .header("X-Tenant-Id", tenantId.toString())
+                        .header("X-Author-Id", UUID.randomUUID().toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts"));
     }
 
     @Test

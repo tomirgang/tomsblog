@@ -506,4 +506,93 @@ class UserManagementClientTest {
         assertThat(result.oidcClientId()).isEqualTo("client-id");
         assertThat(result.oidcClientSecret()).isEqualTo("secret");
     }
+
+    @Test
+    @DisplayName("SWR-091: updateTenantSettings passes non-null new fields")
+    void updateTenantSettings_withNewFieldsNonNull() {
+        var response = TenantSettingsResponse.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .setLoginMode("OIDC")
+                .setDisplayName("Blog")
+                .setOidcButtonText("Login with SSO")
+                .setDefaultRole("AUTHOR")
+                .setLogoUrl("https://cdn.example.com/logo.png")
+                .setFaviconUrl("https://cdn.example.com/favicon.ico")
+                .setOidcRoleMappingEnabled(true)
+                .putOidcRoleMappings("admin-group", "ADMIN")
+                .build();
+        when(tenantSettingsStub.updateTenantSettings(any(UpdateTenantSettingsRequest.class)))
+                .thenReturn(response);
+
+        TenantSettingsDto result = client.updateTenantSettings(
+                TENANT_ID,
+                "OIDC",
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "Login with SSO",
+                "AUTHOR",
+                "https://cdn.example.com/logo.png",
+                "https://cdn.example.com/favicon.ico",
+                true,
+                Map.of("admin-group", "ADMIN"));
+
+        assertThat(result.oidcButtonText()).isEqualTo("Login with SSO");
+        assertThat(result.defaultRole()).isEqualTo("AUTHOR");
+        assertThat(result.logoUrl()).isEqualTo("https://cdn.example.com/logo.png");
+        assertThat(result.faviconUrl()).isEqualTo("https://cdn.example.com/favicon.ico");
+        assertThat(result.oidcRoleMappingEnabled()).isTrue();
+        assertThat(result.oidcRoleMappings()).containsEntry("admin-group", "ADMIN");
+    }
+
+    @Test
+    @DisplayName("SWR-091: updateTenantSettings handles null oidcRoleMappings")
+    void updateTenantSettings_withNullRoleMappings() {
+        var response = TenantSettingsResponse.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .setLoginMode("BOTH")
+                .setDisplayName("Blog")
+                .build();
+        when(tenantSettingsStub.updateTenantSettings(any(UpdateTenantSettingsRequest.class)))
+                .thenReturn(response);
+
+        TenantSettingsDto result = client.updateTenantSettings(
+                TENANT_ID, "BOTH", false, Set.of(), "Blog", null, null, null, null, null, null, null, null, null, null,
+                false, null);
+
+        assertThat(result.oidcRoleMappings()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("SWR-091: getTenantSettings maps non-empty new fields")
+    void getTenantSettings_mapsNonEmptyNewFields() {
+        var response = TenantSettingsResponse.newBuilder()
+                .setTenantId(TENANT_ID.toString())
+                .setLoginMode("OIDC")
+                .setDisplayName("Blog")
+                .setOidcButtonText("Sign in with Company SSO")
+                .setDefaultRole("READER")
+                .setLogoUrl("https://cdn.example.com/logo.svg")
+                .setFaviconUrl("https://cdn.example.com/favicon.png")
+                .setOidcRoleMappingEnabled(true)
+                .putOidcRoleMappings("editors", "AUTHOR")
+                .build();
+        when(tenantSettingsStub.getTenantSettings(any(GetTenantSettingsRequest.class)))
+                .thenReturn(response);
+
+        TenantSettingsDto result = client.getTenantSettings(TENANT_ID);
+
+        assertThat(result.oidcButtonText()).isEqualTo("Sign in with Company SSO");
+        assertThat(result.defaultRole()).isEqualTo("READER");
+        assertThat(result.logoUrl()).isEqualTo("https://cdn.example.com/logo.svg");
+        assertThat(result.faviconUrl()).isEqualTo("https://cdn.example.com/favicon.png");
+        assertThat(result.oidcRoleMappingEnabled()).isTrue();
+        assertThat(result.oidcRoleMappings()).containsEntry("editors", "AUTHOR");
+    }
 }

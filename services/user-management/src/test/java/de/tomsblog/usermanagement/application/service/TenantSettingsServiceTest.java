@@ -393,6 +393,35 @@ class TenantSettingsServiceTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("oidcIssuerUrl is required");
         }
+
+        @Test
+        @DisplayName("SWR-052: uses empty map when oidcRoleMappings parameter is null")
+        void usesEmptyMapWhenOidcRoleMappingsNull() {
+            var settings = TenantSettings.create(TENANT_ID);
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            var result = service.updateSettings(
+                    TENANT_ID,
+                    LoginMode.INTERNAL,
+                    false,
+                    Set.of(),
+                    "Blog",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    null);
+
+            assertThat(result.getOidcRoleMappings()).isEmpty();
+        }
     }
 
     @Nested
@@ -533,6 +562,20 @@ class TenantSettingsServiceTest {
                     TENANT_ID, "https://auth.example.com", "client-id", null, null, false, Map.of());
 
             assertThat(result.getOidcClientSecret()).isEqualTo("existing-secret");
+        }
+
+        @Test
+        @DisplayName("SWR-071: preserves existing role mappings when oidcRoleMappings is null")
+        void preservesRoleMappingsWhenNull() {
+            var settings = TenantSettings.create(TENANT_ID);
+            settings.setOidcRoleMappings(Map.of("devs", "AUTHOR"));
+            when(repository.findByTenantId(TENANT_ID)).thenReturn(Optional.of(settings));
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            var result = service.updateOidcSettings(
+                    TENANT_ID, "https://auth.example.com", "client-id", "secret", null, false, null);
+
+            assertThat(result.getOidcRoleMappings()).containsEntry("devs", "AUTHOR");
         }
     }
 

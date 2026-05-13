@@ -405,4 +405,68 @@ class SyncingOidcUserServiceTest {
         assertThat(result).isNotNull();
         verify(userProfileUseCase, never()).addTenantMembership(any(), any(), any());
     }
+
+    @Test
+    @DisplayName("SWR-095: applyOidcRoleMapping uses username when oidcSubject is null")
+    void applyOidcRoleMappingUsesUsernameWhenOidcSubjectNull() {
+        var profile = UserProfile.createInternal("internaluser", "hash", "user@test.com", "User");
+        when(userProfileUseCase.syncFromOidc(any())).thenReturn(profile);
+
+        var settings = TenantSettings.reconstitute(
+                TenantId.of(DEFAULT_TENANT),
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true,
+                Map.of("devs", "AUTHOR"));
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        OidcUser oidcUser = createOidcUser("sub-1", "user@test.com", "User", List.of("devs"));
+        service.enrichWithRoles(oidcUser);
+
+        verify(userProfileUseCase).addTenantMembership("internaluser", TenantId.of(DEFAULT_TENANT), Role.AUTHOR);
+    }
+
+    @Test
+    @DisplayName("SWR-095: applyOidcRoleMapping keeps highest role when lower priority group follows")
+    void applyOidcRoleMappingKeepsHighestWhenLowerFollows() {
+        var profile = UserProfile.createFromOidc("sub-1", "user@test.com", "User");
+        when(userProfileUseCase.syncFromOidc(any())).thenReturn(profile);
+
+        var settings = TenantSettings.reconstitute(
+                TenantId.of(DEFAULT_TENANT),
+                LoginMode.BOTH,
+                false,
+                Set.of(),
+                "Blog",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                true,
+                Map.of("admins", "ADMIN", "readers", "READER"));
+        when(tenantSettingsUseCase.getSettings(any())).thenReturn(settings);
+
+        OidcUser oidcUser = createOidcUser("sub-1", "user@test.com", "User", List.of("admins", "readers"));
+        service.enrichWithRoles(oidcUser);
+
+        verify(userProfileUseCase).addTenantMembership("sub-1", TenantId.of(DEFAULT_TENANT), Role.ADMIN);
+    }
 }

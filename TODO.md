@@ -141,11 +141,11 @@
 - [ ] Resilience-Tests: Timeout- und Retry-Verhalten mit Testcontainers verifizieren (DB/Kafka/Redis stoppen)
 - [ ] Resilience-Tests: Graceful Degradation bei Redis-Ausfall prüfen (Session Fallback)
 - [ ] Resilience-Tests: Manuelle Chaos-Experimente dokumentieren (kubectl delete pod, kubectl drain node)
-- [ ] Logo und FavIcon pro Tenant konfigurierbar (STK-055, SWR-091)
-- [ ] OIDC-Button-Text über Admin-UI konfigurierbar (STK-056, SWR-092)
-- [ ] Nutzer über die Admin-UI löschen (STK-057, SWR-093)
-- [ ] Standard-Rolle für neue Benutzer pro Tenant einstellbar (STK-058, SWR-094)
-- [ ] Benutzer-Rollen über OIDC-Claims automatisch setzen (STK-059, SWR-095)
+- [x] Logo und FavIcon pro Tenant konfigurierbar (STK-055, SWR-091)
+- [x] OIDC-Button-Text über Admin-UI konfigurierbar (STK-056, SWR-092)
+- [x] Nutzer über die Admin-UI löschen (STK-057, SWR-093)
+- [x] Standard-Rolle für neue Benutzer pro Tenant einstellbar (STK-058, SWR-094)
+- [x] Benutzer-Rollen über OIDC-Claims automatisch setzen (STK-059, SWR-095)
 - [ ] Security-Reviews (OWASP)
 - [ ] Architecture Review
 
