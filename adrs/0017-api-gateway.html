@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0017: API Gateway</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0017-api-gateway">ADR-0017: API Gateway</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Mit wachsender Anzahl an Services (Domain-Services, BFFs,
+Auth-Service) wird ein zentraler Einstiegspunkt für externe Clients
+notwendig. Ohne Gateway müssen Clients die Adressen mehrerer Services
+kennen, und Querschnittsthemen wie Rate-Limiting, TLS-Terminierung und
+Authentifizierung müssen in jedem Service einzeln gelöst werden.</p>
+<p>Optionen:</p>
+<ul>
+<li><strong>Nginx/Envoy als Reverse Proxy</strong>: Leichtgewichtig,
+aber wenig Logik-Möglichkeiten</li>
+<li><strong>Spring Cloud Gateway</strong>: Java-basiert, gut integriert
+ins Spring-Ökosystem, reaktiv</li>
+<li><strong>Kong/APISIX</strong>: Feature-reich, aber zusätzliche
+Infrastruktur-Komplexität</li>
+<li><strong>Kubernetes Ingress + Service Mesh (Istio)</strong>:
+Infrastruktur-nah, aber hohe Komplexität</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p>Wir verwenden <strong>Spring Cloud Gateway</strong> als API
+Gateway.</p>
+<h3 id="verantwortlichkeiten">Verantwortlichkeiten</h3>
+<ul>
+<li><strong>Routing</strong>: Eingehende Requests an den korrekten BFF
+oder Service weiterleiten</li>
+<li><strong>TLS-Terminierung</strong>: HTTPS am Gateway terminieren</li>
+<li><strong>Rate-Limiting</strong>: Schutz vor Überlastung (Token-Bucket
+pro Client/Tenant)</li>
+<li><strong>Authentication-Propagation</strong>: JWT-Token validieren
+und an BFFs/Services weiterreichen</li>
+<li><strong>CORS</strong>: Zentrale CORS-Konfiguration für alle
+Clients</li>
+<li><strong>Request/Response-Logging</strong>: Zentrale
+Zugriffsprotokolle</li>
+<li><strong>Circuit Breaking</strong>: Schutz bei Service-Ausfällen</li>
+</ul>
+<h3 id="routing-schema">Routing-Schema</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Route</th>
+<th>Ziel</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>/api/**</td>
+<td>Web BFF</td>
+</tr>
+<tr class="even">
+<td>/mobile/api/**</td>
+<td>Mobile BFF</td>
+</tr>
+<tr class="odd">
+<td>/media/api/**</td>
+<td>Media BFF (GraphQL)</td>
+</tr>
+<tr class="even">
+<td>/auth/**</td>
+<td>Auth Service</td>
+</tr>
+</tbody>
+</table>
+<h3 id="konfiguration">Konfiguration</h3>
+<ul>
+<li>Routen werden deklarativ in YAML konfiguriert</li>
+<li>Tenant-Auflösung erfolgt weiterhin per Host-Header (ADR-0012)</li>
+<li>Gateway ist zustandslos und horizontal skalierbar</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Vorteile:</strong></p>
+<ul>
+<li>Single Point of Entry für alle Clients</li>
+<li>Querschnittsthemen zentral gelöst</li>
+<li>Spring-Ökosystem-Integration (gleiche Observability, Config,
+etc.)</li>
+<li>Vereinfachte Client-Konfiguration (nur eine URL)</li>
+</ul>
+<p><strong>Nachteile:</strong></p>
+<ul>
+<li>Single Point of Failure (mitigiert durch Replikation +
+Health-Checks)</li>
+<li>Zusätzlicher Netzwerk-Hop für jeden Request</li>
+<li>Gateway muss performant genug sein (reaktiver Stack hilft)</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li>ADR-0016: Backend for Frontend</li>
+<li>ADR-0012: Domain-basierte Tenant-Auswahl</li>
+<li>Spring Cloud Gateway Dokumentation</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

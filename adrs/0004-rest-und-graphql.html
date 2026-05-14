@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0004: REST für Text-Blog, GraphQL für Podcast/Video</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0004-rest-für-text-blog-graphql-für-podcastvideo">ADR-0004:
+REST für Text-Blog, GraphQL für Podcast/Video</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Die Plattform hat unterschiedliche UI-Clients mit unterschiedlichen
+Anforderungen:</p>
+<ul>
+<li><strong>Text-Blog</strong>: Thymeleaf (SSR) und später Angular mit
+klassischen CRUD-Operationen, seitenbasiert</li>
+<li><strong>Podcast/Video</strong>: React mit verschachtelten
+Datenstrukturen (Episode, Segments, Timestamps), flexible Queries</li>
+</ul>
+<p>Wir brauchen eine API-Strategie, die zu den jeweiligen Clients und
+Datenmustern passt.</p>
+<h2 id="decision">Decision</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Service-Gruppe</th>
+<th>API-Stil</th>
+<th>Client</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Text-Blog, Auth, Feeds</td>
+<td>REST (Spring MVC)</td>
+<td>Thymeleaf, Angular</td>
+</tr>
+<tr class="even">
+<td>Podcast, Video</td>
+<td>GraphQL (Spring for GraphQL)</td>
+<td>React</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Begründung:</strong></p>
+<ul>
+<li>REST ist einfacher für CRUD-lastige APIs und besser für SSR
+(Thymeleaf)</li>
+<li>GraphQL vermeidet Over-/Under-Fetching bei verschachtelten
+Media-Daten</li>
+<li>Trennung ermöglicht Lernen beider Technologien im selben
+Projekt</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Jeder API-Stil dort wo er am besten passt</li>
+<li>Thymeleaf funktioniert natürlich mit REST (Controller →
+Template)</li>
+<li>React + Apollo Client ist ein bewährtes Muster für GraphQL</li>
+<li>Lernerfahrung für beide API-Paradigmen</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>Zwei unterschiedliche API-Stile im selben Projekt (höhere
+Komplexität)</li>
+<li>Tooling-Split: OpenAPI für REST, GraphQL Schema für
+Podcast/Video</li>
+<li>Team muss beide Paradigmen kennen</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

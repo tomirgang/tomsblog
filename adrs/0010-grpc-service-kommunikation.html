@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0010: gRPC für synchrone Service-Kommunikation</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0010-grpc-für-synchrone-service-kommunikation">ADR-0010:
+gRPC für synchrone Service-Kommunikation</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Die Plattform verwendet Kafka für asynchrone, event-basierte
+Kommunikation zwischen Services (siehe ADR-0006). Einige Szenarien
+erfordern jedoch synchrone Aufrufe zwischen Microservices:</p>
+<ul>
+<li>Ein Service benötigt Daten eines anderen Service in Echtzeit (z.B.
+Autor-Informationen vom Auth-Service)</li>
+<li>Request-Response-Muster, bei denen der Aufrufer auf das Ergebnis
+warten muss</li>
+<li>Service-to-Service-Queries, die nicht über Events abgebildet werden
+können</li>
+</ul>
+<p>REST wäre eine Option, bietet aber keine typsicheren Contracts auf
+Schema-Ebene und erfordert manuell gepflegte Clients.</p>
+<h2 id="decision">Decision</h2>
+<p>Wir verwenden <strong>gRPC</strong> für die synchrone Kommunikation
+zwischen Microservices.</p>
+<p><strong>Abgrenzung der Kommunikationsprotokolle:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>Kommunikationsart</th>
+<th>Protokoll</th>
+<th>Zweck</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Client → Service (extern)</td>
+<td>REST</td>
+<td>Text-Blog APIs (Thymeleaf, Angular)</td>
+</tr>
+<tr class="even">
+<td>Client → Service (extern)</td>
+<td>GraphQL</td>
+<td>Podcast/Video APIs (React)</td>
+</tr>
+<tr class="odd">
+<td>Service → Service (sync)</td>
+<td>gRPC</td>
+<td>Synchrone Abfragen zwischen Services</td>
+</tr>
+<tr class="even">
+<td>Service → Service (async)</td>
+<td>Kafka</td>
+<td>Event-basierte lose Kopplung</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Umsetzung:</strong></p>
+<ul>
+<li>Service-Interfaces werden als <code>.proto</code>-Dateien
+definiert</li>
+<li>Proto-Dateien werden in einer geteilten Library
+(<code>libs/grpc-contracts/</code>) verwaltet</li>
+<li>Java-Code wird via <code>protobuf-maven-plugin</code> generiert</li>
+<li>Spring Boot Integration über
+<code>grpc-spring-boot-starter</code></li>
+<li>Deadline/Timeout-Propagation für alle gRPC-Calls</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Typsichere Contracts via Protobuf (Compile-Time-Fehler bei Breaking
+Changes)</li>
+<li>Effizientes Binary-Protokoll (HTTP/2, geringer Overhead)</li>
+<li>Native Streaming-Unterstützung (Server-Streaming,
+Bidirectional)</li>
+<li>Code-Generierung für Client und Server aus einer Quelle</li>
+<li>Schema-Evolution mit Protobuf-Kompatibilitätsregeln</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>Zusätzliche Toolchain (protoc, Protobuf-Plugin im Build)</li>
+<li>Nicht direkt im Browser testbar (kein curl wie bei REST)</li>
+<li>Stärkere Kopplung als Events (synchroner Aufruf = Abhängigkeit zur
+Laufzeit)</li>
+<li>Debugging erfordert spezielle Tools (grpcurl, Bloom RPC)</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li>SWA-009: gRPC für synchrone Service-Kommunikation</li>
+<li>ADR-0004: REST und GraphQL Strategie</li>
+<li>ADR-0006: Event-Driven Architecture mit Kafka</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

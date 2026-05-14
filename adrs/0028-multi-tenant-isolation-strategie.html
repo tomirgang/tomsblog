@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0028: Multi-Tenant-Isolation auf Datenebene</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0028-multi-tenant-isolation-auf-datenebene">ADR-0028:
+Multi-Tenant-Isolation auf Datenebene</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Unsere Plattform ist multi-tenant-fähig (STK-002). Jeder Service
+besitzt eine eigene Datenbank (ADR-0019). Innerhalb dieser Datenbank
+muss sichergestellt werden, dass Tenant-Daten voneinander isoliert sind.
+Drei gängige Ansätze existieren:</p>
+<ol type="1">
+<li><strong>Schema-per-Tenant</strong>: Jeder Tenant erhält ein eigenes
+Datenbank-Schema. Queries laufen immer gegen das jeweilige Schema.</li>
+<li><strong>Row-Level Security (RLS)</strong>: Ein gemeinsames Schema
+mit einer <code>tenant_id</code>-Spalte. PostgreSQL erzwingt auf
+DB-Ebene, dass Queries nur Zeilen des aktiven Tenants sehen.</li>
+<li><strong>Shared Schema mit Application-Level Filtering</strong>: Ein
+gemeinsames Schema mit einer <code>tenant_id</code>-Spalte. Die
+Anwendung filtert in allen Queries nach <code>tenant_id</code>.</li>
+</ol>
+<h3 id="bewertung">Bewertung</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Kriterium</th>
+<th>Schema-per-Tenant</th>
+<th>RLS (DB-enforced)</th>
+<th>Shared Schema + App Filtering</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Isolationsstärke</td>
+<td>Sehr hoch (physisch)</td>
+<td>Hoch (DB-enforced)</td>
+<td>Mittel (App-enforced)</td>
+</tr>
+<tr class="even">
+<td>Komplexität Migrationen</td>
+<td>Hoch (pro Schema)</td>
+<td>Mittel (Policy-Management)</td>
+<td>Gering (eine Migration)</td>
+</tr>
+<tr class="odd">
+<td>Komplexität Connection-Mgmt</td>
+<td>Hoch (Schema-Switching)</td>
+<td>Gering (Session-Variable)</td>
+<td>Gering (keine)</td>
+</tr>
+<tr class="even">
+<td>Performance</td>
+<td>Gut (wenige Zeilen)</td>
+<td>Gut (Index + Filter)</td>
+<td>Gut (Index + Filter)</td>
+</tr>
+<tr class="odd">
+<td>CloudNativePG-Kompatibilität</td>
+<td>Eingeschränkt</td>
+<td>Voll</td>
+<td>Voll</td>
+</tr>
+<tr class="even">
+<td>Onboarding neuer Tenants</td>
+<td>Aufwändig (DDL nötig)</td>
+<td>Einfach (INSERT)</td>
+<td>Einfach (INSERT)</td>
+</tr>
+<tr class="odd">
+<td>Testbarkeit</td>
+<td>Aufwändig</td>
+<td>Gut</td>
+<td>Sehr gut</td>
+</tr>
+<tr class="even">
+<td>Hexagonale Architektur</td>
+<td>Leak in Adapter</td>
+<td>Leak in DB-Config</td>
+<td>Sauber im Domain/App Layer</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Schema-per-Tenant</strong> scheidet aus: CloudNativePG
+verwaltet einen PostgreSQL-Cluster pro Service. Dynamisches
+Schema-Management zur Laufzeit wäre ein erheblicher
+Infrastruktur-Aufwand und bricht mit dem Flyway-Migrationsmodell.</p>
+<p><strong>RLS</strong> bietet zusätzliche Sicherheit auf DB-Ebene,
+erfordert aber Session-Variable-Management
+(<code>SET app.current_tenant = ...</code>) in jedem Connection-Setup
+und erschwert Testcontainers-basierte Tests, wo Policies separat geprüft
+werden müssen.</p>
+<p><strong>Shared Schema + App Filtering</strong> ist der einfachste
+Ansatz und passt zur hexagonalen Architektur: Die Isolation wird durch
+die Application-Layer-Ports erzwungen (<code>findAllByTenantId</code>,
+<code>findByIdAndTenantId</code>). Die Repository-Interfaces definieren
+TenantId als Pflichtparameter.</p>
+<h2 id="decision">Decision</h2>
+<p>Wir verwenden <strong>Shared Schema mit Application-Level
+Filtering</strong> für die Tenant-Isolation innerhalb jeder
+Service-Datenbank.</p>
+<h3 id="regeln">Regeln</h3>
+<ol type="1">
+<li><strong>Jede Domain-Entity trägt eine <code>TenantId</code></strong>
+(SWR-003).</li>
+<li><strong>Alle Repository-Port-Methoden</strong> enthalten
+<code>TenantId</code> als Pflichtparameter. Es gibt keine Methode, die
+tenant-übergreifend Daten liefert (Ausnahme: SuperAdmin-Operationen mit
+expliziter Kennzeichnung).</li>
+<li><strong>Datenbank-Indexes</strong> auf <code>(tenant_id, ...)</code>
+für alle häufig abgefragten Tabellen.</li>
+<li><strong>Integrationstests</strong> verifizieren Tenant-Isolation:
+Test mit zwei Tenants prüft, dass Tenant A keine Daten von Tenant B
+sieht.</li>
+<li><strong>Kein direkter DB-Zugriff</strong> zwischen Services
+(ADR-0019). Jeder Service ist für seine eigene Isolation
+verantwortlich.</li>
+</ol>
+<h3 id="optionale-härtung-phase-2">Optionale Härtung (Phase 2)</h3>
+<p>PostgreSQL Row-Level Security kann zu einem späteren Zeitpunkt als
+zusätzliche Absicherungsschicht aktiviert werden. Dies ist eine
+Defense-in-Depth-Maßnahme und ändert nichts am primären
+Isolationsmechanismus im Application Layer.</p>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Einfaches Flyway-Migrationsmodell (ein Schema pro Service)</li>
+<li>Kein Schema-Switching oder Session-Variable-Management nötig</li>
+<li>Repository-Interfaces erzwingen Tenant-Filterung bereits auf
+Architekturebene</li>
+<li>Einfache Testbarkeit mit Testcontainers</li>
+<li>CloudNativePG-kompatibel ohne Einschränkungen</li>
+<li>Onboarding neuer Tenants erfordert nur Daten-INSERTs</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>Ein Bug im Application Layer kann zu Tenant-übergreifendem
+Datenzugriff führen</li>
+<li>Keine DB-seitige letzte Verteidigungslinie (bis RLS nachgerüstet
+wird)</li>
+<li>Entwickler müssen diszipliniert TenantId in allen Queries
+verwenden</li>
+</ul>
+<p><strong>Mitigationen:</strong></p>
+<ul>
+<li>Repository-Port-Interfaces erzwingen TenantId als Parameter
+(Compiletime-Safety)</li>
+<li>ArchUnit-Tests prüfen, dass kein Repository-Methode ohne TenantId
+existiert</li>
+<li>Integrationstests mit Multi-Tenant-Szenarien in jedem Service</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li>SWR-003: Tenant-Isolation auf Datenebene</li>
+<li>ADR-0012: Domain-basierte Tenant-Auswahl</li>
+<li>ADR-0019: Database per Service</li>
+<li>STK-002: Multi-Tenant-Fähigkeit</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

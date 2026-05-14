@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0027: Leichtgewichtiges User Management mit Authentik als
+OIDC Provider</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1
+id="adr-0027-leichtgewichtiges-user-management-mit-authentik-als-oidc-provider">ADR-0027:
+Leichtgewichtiges User Management mit Authentik als OIDC Provider</h1>
+<h2 id="status">Status</h2>
+<p>Accepted (supersedes ADR-0011)</p>
+<h2 id="kontext">Kontext</h2>
+<p>Die Plattform benötigt eine Benutzerverwaltung mit Login, Rollen,
+Sessions und Multi-Faktor-Authentifizierung (MFA). ADR-0011 entschied
+sich für einen komplett eigenen Auth-Service, der OAuth2/OIDC selbst
+implementiert. Bei genauerer Betrachtung ergeben sich folgende Probleme
+mit diesem Ansatz:</p>
+<ul>
+<li><strong>MFA-Implementierung</strong> (TOTP, WebAuthn, Push) ist
+sicherheitskritisch und komplex</li>
+<li><strong>Account Recovery</strong>, Passwort-Reset-Flows und
+Brute-Force-Protection müssen selbst gebaut werden</li>
+<li><strong>Security Audits</strong> und regelmäßige
+Vulnerability-Patches für Auth-Code binden dauerhaft Kapazität</li>
+<li>Der Lerneffekt bei OIDC-Flows bleibt auch als Relying Party
+(Consumer) erhalten</li>
+</ul>
+<p>Gleichzeitig ist Keycloak für ein einzelnes Projekt überdimensioniert
+(Java-Monolith, hoher Speicherverbrauch, komplexes
+Upgrade-Verfahren).</p>
+<p><strong>Authentik</strong> bietet eine moderne Alternative:</p>
+<ul>
+<li>Leichtgewichtig (Python/Django, geringer Speicherverbrauch)</li>
+<li>Integrierte MFA (TOTP, WebAuthn, Duo, SMS)</li>
+<li>OIDC/OAuth2 Provider out-of-the-box</li>
+<li>Einfache Deployment-Optionen (Docker, Kubernetes via Helm)</li>
+<li>Admin-UI für Benutzer- und Applikationsverwaltung</li>
+<li>Flow-basierte Konfiguration (Login, Registration, Recovery)</li>
+</ul>
+<h2 id="entscheidung">Entscheidung</h2>
+<p>Wir implementieren eine <strong>zweistufige Architektur</strong>:</p>
+<h3 id="1-authentik-als-externer-oidc-provider">1. Authentik als
+externer OIDC Provider</h3>
+<ul>
+<li>Eine bestehende Authentik-Instanz
+(<code>https://auth.do9ita.de</code>) wird als externer OIDC Provider
+genutzt</li>
+<li>Authentik wird <strong>nicht</strong> im Kubernetes-Cluster
+deployed, sondern extern betrieben</li>
+<li>Verantwortlich für: Login-Flows, MFA, Session-Management,
+Passwort-Policies</li>
+<li>Stellt OIDC-Tokens (ID Token + Access Token) aus</li>
+<li>Multi-Faktor-Authentifizierung (TOTP + WebAuthn) für alle
+Benutzer</li>
+<li>Konfiguration der Blog-Plattform als OIDC Application in
+Authentik</li>
+<li>OIDC Discovery Endpoint:
+<code>https://auth.do9ita.de/application/o/&lt;app-slug&gt;/.well-known/openid-configuration</code></li>
+</ul>
+<h3 id="2-leichtgewichtiger-user-management-service-intern">2.
+Leichtgewichtiger User-Management-Service (intern)</h3>
+<ul>
+<li>Eigener Microservice innerhalb der Blog-Plattform</li>
+<li>Verantwortlich für: plattformspezifische Benutzerprofile, Rollen
+(ADMIN, AUTHOR, READER), Tenant-Zuordnung</li>
+<li>Agiert als OIDC Relying Party (Spring Security OAuth2
+Client/Resource Server)</li>
+<li>Synchronisiert Benutzerdaten aus dem OIDC ID Token (Sub, Email,
+Name)</li>
+<li>Verwaltet plattformspezifische Attribute (Rollen,
+Tenant-Mitgliedschaften, Einstellungen)</li>
+<li>Stellt interne JWTs aus für Service-zu-Service-Kommunikation
+(optional, falls nötig)</li>
+</ul>
+<h3 id="authentifizierungs-flow">Authentifizierungs-Flow</h3>
+<ol type="1">
+<li>Benutzer klickt "Login" auf der Blog-Plattform</li>
+<li>Redirect zu Authentik (Authorization Code Flow mit PKCE)</li>
+<li>Authentik authentifiziert (Passwort + MFA)</li>
+<li>Redirect zurück mit Authorization Code</li>
+<li>User-Management-Service tauscht Code gegen Tokens</li>
+<li>User-Management-Service erstellt/aktualisiert lokales
+Benutzerprofil</li>
+<li>Session wird etabliert (oder internes JWT ausgestellt)</li>
+</ol>
+<h3 id="rollen-mapping">Rollen-Mapping</h3>
+<ul>
+<li>Authentik-Gruppen werden auf Plattform-Rollen gemappt
+(konfigurierbar)</li>
+<li>Alternativ: Rollen werden ausschließlich im internen User-Management
+verwaltet</li>
+<li>RBAC: ADMIN (alles), AUTHOR (eigene Posts), READER (nur lesen)</li>
+</ul>
+<h2 id="konsequenzen">Konsequenzen</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>MFA, Brute-Force-Protection und Account-Recovery sind sofort
+verfügbar (Authentik)</li>
+<li>Geringerer Implementierungsaufwand für sicherheitskritische
+Flows</li>
+<li>Volle Kontrolle über plattformspezifische Benutzerdaten und
+Rollen</li>
+<li>Lerneffekt bei OIDC Relying Party Implementierung bleibt
+erhalten</li>
+<li>Authentik ist leichtgewichtiger als Keycloak</li>
+<li>Klare Trennung: Authentifizierung (Authentik) vs. Autorisierung
+(intern)</li>
+<li>Einfacher Providerwechsel möglich (Standard OIDC)</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>Abhängigkeit von externer Authentik-Instanz (Verfügbarkeit)</li>
+<li>Abhängigkeit von Authentik-Projekt (Community-driven)</li>
+<li>Netzwerk-Roundtrip zu Authentik bei jedem Login</li>
+<li>Zwei Systeme zu pflegen (Authentik + interner Service)</li>
+</ul>
+<h2 id="referenzen">Referenzen</h2>
+<ul>
+<li>ADR-0011: Custom Identity Provider mit OIDC (superseded)</li>
+<li>STK001: Blog-Posts erstellen und veröffentlichen (benötigt
+Autorenrolle)</li>
+<li>SWR-007: Rollenbasierte Zugriffskontrolle</li>
+<li>SWR-016: Custom Identity Provider mit OIDC</li>
+<li>SWA-010: Custom Auth Service als eigener Microservice</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

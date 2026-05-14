@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0020: Flux für GitOps</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0020-flux-für-gitops">ADR-0020: Flux für GitOps</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Für das automatisierte Deployment auf dem Hetzner-Kubernetes-Cluster
+wird ein GitOps-Tool benötigt, das Kubernetes-Manifeste aus einem
+Git-Repository mit dem Cluster-Zustand synchronisiert. Die zwei
+etablierten CNCF-Projekte sind ArgoCD und Flux.</p>
+<p>Bewertungskriterien:</p>
+<ul>
+<li><strong>Architekturmodell</strong>: ArgoCD bringt einen zentralen
+Application Controller mit Web-UI und API-Server mit. Flux arbeitet als
+Sammlung eigenständiger Controller (Source, Kustomize, Helm,
+Notification, Image Automation), die unabhängig deployed werden.</li>
+<li><strong>Ressourcenverbrauch</strong>: ArgoCD benötigt deutlich mehr
+RAM und CPU durch Web-UI, API-Server, Redis-Cache und Dex-Server. Flux
+läuft mit minimalen Ressourcen, was für einen 3-Node-Cluster auf Hetzner
+relevant ist.</li>
+<li><strong>Kustomize-/Helm-Integration</strong>: Flux unterstützt
+Kustomize und Helm nativ als First-Class-Konzepte über dedizierte
+Controller. ArgoCD unterstützt dies ebenfalls, aber über einen
+monolithischeren Ansatz.</li>
+<li><strong>Image Automation</strong>: Flux bietet Image Automation
+Controller, der automatisch neue Container-Image-Tags erkennt und
+Git-Commits mit aktualisierten Tags erzeugt. ArgoCD benötigt dafür
+Argocd Image Updater als separates Projekt.</li>
+<li><strong>Multi-Tenancy</strong>: Flux ermöglicht feingranulare
+Multi-Tenancy über Namespaces mit eigenen Source- und
+Kustomization-Ressourcen. ArgoCD löst dies über AppProjects.</li>
+<li><strong>Komplexität</strong>: Für ein Lernprojekt mit einem kleinen
+Cluster ist die schlanke, deklarative Natur von Flux besser geeignet als
+die umfangreichere ArgoCD-Installation.</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p>Wir verwenden <strong>Flux</strong> als GitOps-Tool für das
+Kubernetes-Deployment.</p>
+<h3 id="begründung">Begründung</h3>
+<ul>
+<li><strong>Leichtgewichtig</strong>: Flux benötigt weniger Ressourcen
+als ArgoCD, was für den 3-Node-Hetzner-Cluster optimal ist.</li>
+<li><strong>Deklarativ und Git-nativ</strong>: Alle Flux-Konfigurationen
+sind Kubernetes-Custom-Resources, die selbst in Git verwaltet werden
+(GitOps für GitOps).</li>
+<li><strong>Modulare Controller</strong>: Nur die benötigten Controller
+werden installiert (Source, Kustomize, Helm). Weitere (Image Automation,
+Notification) können bei Bedarf ergänzt werden.</li>
+<li><strong>CNCF Graduated</strong>: Flux ist ein graduiertes
+CNCF-Projekt mit breiter Community-Unterstützung.</li>
+<li><strong>Kustomize-First</strong>: Der Kustomize-Controller
+vereinfacht das Overlay-Modell für unterschiedliche Umgebungen (Dev,
+Staging, Prod).</li>
+</ul>
+<h3 id="einsatzbereich">Einsatzbereich</h3>
+<ul>
+<li>Synchronisation von Helm Charts und Kustomize-Overlays aus dem
+Git-Repository</li>
+<li>Automatische Reconciliation bei Git-Commits</li>
+<li>Health-Checks und Notifications bei Sync-Fehlern</li>
+<li>Später: Image Automation für automatische Deployments nach
+Container-Image-Builds</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Vorteile:</strong></p>
+<ul>
+<li>Minimaler Ressourcenverbrauch auf dem Cluster</li>
+<li>Kein zusätzlicher UI-Server nötig (Cluster-Zustand über kubectl oder
+Weave GitOps Dashboard bei Bedarf)</li>
+<li>Alle Konfigurationen sind versioniert und auditierbar in Git</li>
+<li>Einfache Erweiterbarkeit durch zusätzliche Flux-Controller</li>
+</ul>
+<p><strong>Nachteile:</strong></p>
+<ul>
+<li>Kein eingebautes Web-UI (kann durch Weave GitOps Dashboard ergänzt
+werden)</li>
+<li>Debugging erfordert kubectl und Flux CLI statt einer grafischen
+Oberfläche</li>
+<li>Lernkurve für Custom Resources (GitRepository, Kustomization,
+HelmRelease)</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

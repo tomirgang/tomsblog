@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0022: Kubernetes-Plattform mit kube-hetzner und
+OpenTofu</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1
+id="adr-0022-kubernetes-plattform-mit-kube-hetzner-und-opentofu">ADR-0022:
+Kubernetes-Plattform mit kube-hetzner und OpenTofu</h1>
+<h2 id="status">Status</h2>
+<p>Superseded by <a
+href="0034-hetzner-k3s-provisioning.md">ADR-0034</a></p>
+<h2 id="context">Context</h2>
+<p>Für den Betrieb der Microservices wird ein Kubernetes-Cluster
+benötigt (STK-007). Die Plattform muss budgetgerecht, wartbar und
+reproduzierbar provisioniert werden.</p>
+<p>Bewertungskriterien:</p>
+<ul>
+<li><strong>Kosten</strong>: Budget-limitiertes Projekt auf Hetzner
+Cloud</li>
+<li><strong>Reproduzierbarkeit</strong>: Infrastructure as Code für
+konsistente Cluster-Erstellung</li>
+<li><strong>Wartbarkeit</strong>: Kontrollierte Updates ohne
+Datenverlust</li>
+<li><strong>Trennung</strong>: Plattform-Provisionierung vs.
+Applikations-Deployment</li>
+</ul>
+<h3 id="evaluierte-alternativen">Evaluierte Alternativen</h3>
+<p><strong>Managed Kubernetes (Hetzner Cloud):</strong></p>
+<ul>
+<li>Hetzner bietet kein managed K8s-Produkt an</li>
+</ul>
+<p><strong>kubeadm manuell:</strong></p>
+<ul>
+<li>Volle Kontrolle, aber hoher manueller Aufwand</li>
+<li>Keine deklarative Reproduzierbarkeit</li>
+</ul>
+<p><strong>kube-hetzner (Terraform-Modul):</strong></p>
+<ul>
+<li>k3s-basiertes Cluster auf Hetzner Cloud VMs</li>
+<li>Terraform/OpenTofu als IaC-Tool</li>
+<li>Integriert Hetzner CSI, CCM, WireGuard-Verschlüsselung</li>
+<li>Packer für MicroOS-Snapshots</li>
+<li>Community-maintained, aktiv entwickelt</li>
+</ul>
+<p><strong>Talos Linux:</strong></p>
+<ul>
+<li>Minimal-OS speziell für Kubernetes</li>
+<li>Weniger Community-Support auf Hetzner</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p>Wir verwenden <strong>kube-hetzner</strong> (Terraform-Modul) mit
+<strong>OpenTofu</strong> zur Provisionierung eines k3s-Clusters auf
+Hetzner Cloud.</p>
+<h3 id="cluster-konfiguration">Cluster-Konfiguration</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Komponente</th>
+<th>Konfiguration</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Control Plane</td>
+<td>1x CX33 (4 vCPU, 8 GB), Nürnberg (nbg1)</td>
+</tr>
+<tr class="even">
+<td>Worker Nodes</td>
+<td>2x CX23 (2 vCPU, 4 GB), Nürnberg (nbg1)</td>
+</tr>
+<tr class="odd">
+<td>Load Balancer</td>
+<td>LB11, Nürnberg</td>
+</tr>
+<tr class="even">
+<td>CNI-Verschlüsselung</td>
+<td>WireGuard</td>
+</tr>
+<tr class="odd">
+<td>Storage</td>
+<td>Hetzner CSI (hcloud-volumes)</td>
+</tr>
+<tr class="even">
+<td>Automatische Upgrades</td>
+<td>Deaktiviert (manuelle Kontrolle)</td>
+</tr>
+<tr class="odd">
+<td>Basis-Domain</td>
+<td>cluster.tomirgang.de</td>
+</tr>
+<tr class="even">
+<td>Kosten</td>
+<td>ca. 30 EUR/Monat</td>
+</tr>
+</tbody>
+</table>
+<h3 id="repository-trennung">Repository-Trennung</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Verantwortung</th>
+<th>Repository</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Cluster-Provisionierung (Nodes, Netzwerk, Operatoren)</td>
+<td><code>kubernetes-playground/K8nCluster</code></td>
+</tr>
+<tr class="even">
+<td>Applikationsspezifische Ressourcen (DB-Instanzen, Services)</td>
+<td><code>tomsblog/infra/k8s/</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="begründung">Begründung</h3>
+<ul>
+<li><strong>Budget-optimal</strong>: ca. 30 EUR/Monat für ein
+vollständiges 3-Node-Cluster (inkl. LB, Volumes, IPs)</li>
+<li><strong>Reproduzierbar</strong>: OpenTofu State ermöglicht
+konsistente Infrastruktur</li>
+<li><strong>WireGuard</strong>: Netzwerkverschlüsselung zwischen Nodes
+als Ergänzung zu Linkerd mTLS (ADR-0021)</li>
+<li><strong>Hetzner-nativ</strong>: CSI und CCM direkt integriert, keine
+manuellen Volume-/LB-Konfigurationen</li>
+<li><strong>Saubere Trennung</strong>: Plattform-Lifecycle (selten, IaC)
+getrennt von App-Lifecycle (häufig, GitOps/Flux)</li>
+<li><strong>OpenTofu statt Terraform</strong>: Open-Source-Fork,
+vermeidet HashiCorp BSL-Lizenzprobleme</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Vorteile:</strong></p>
+<ul>
+<li>Cluster ist vollständig aus Code reproduzierbar</li>
+<li>Kontrollierte Updates über dedizierte Skripte
+(cluster_update.sh)</li>
+<li>Kosten-Modi (normal/reduziert/pausiert) für Entwicklungsphasen</li>
+<li>WireGuard-Verschlüsselung ohne zusätzliche Konfiguration</li>
+</ul>
+<p><strong>Nachteile:</strong></p>
+<ul>
+<li>Kein HA (Single Control Plane): kurze Downtime bei Updates
+unvermeidbar</li>
+<li>k3s statt vollwertigem K8s: einige Randfälle bei Helm Charts
+möglich</li>
+<li>Abhängigkeit vom kube-hetzner Community-Modul</li>
+<li>Terraform-State muss separat gesichert werden</li>
+</ul>
+<h3 id="historische-änderungen">Historische Änderungen</h3>
+<p><strong>2026-05-03: Control Plane CX23 → CX33</strong></p>
+<p>Der k3s-Server-Prozess (API-Server, Scheduler, etcd) belegt allein
+ca. 1,3 Gi RAM. Zusammen mit containerd und den System-Pods (CoreDNS,
+metrics-server, kured, system-upgrade-controller) war der 4-GB-Node
+(CX23) mit 98% Memory-Auslastung an der Grenze. Das Upgrade auf CX33 (8
+GB) schafft ausreichend Headroom für stabile Operationen ohne
+OOM-Risiko.</p>
+<h2 id="references">References</h2>
+<ul>
+<li>STK-007 (Cloud-Native Deployment)</li>
+<li>ADR-0020 (Flux für GitOps)</li>
+<li>ADR-0021 (Zero Trust mit Linkerd)</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

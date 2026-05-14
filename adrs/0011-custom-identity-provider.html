@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0011: Custom Identity Provider mit OIDC</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0011-custom-identity-provider-mit-oidc">ADR-0011: Custom
+Identity Provider mit OIDC</h1>
+<h2 id="status">Status</h2>
+<p>Superseded by <a
+href="0027-authentik-oidc-user-management.md">ADR-0027</a></p>
+<h2 id="context">Context</h2>
+<p>Die Plattform benötigt eine Benutzerverwaltung mit Login, Rollen und
+Sessions. Zwei Optionen stehen zur Auswahl:</p>
+<ol type="1">
+<li><strong>Keycloak</strong>: Mächtiger, etablierter Identity Provider
+mit umfangreichen Features</li>
+<li><strong>Custom Auth Service</strong>: Eigener Microservice mit
+gezielter Funktionalität</li>
+</ol>
+<p>Keycloak bringt hohe Betriebskomplexität mit (Java-Monolith, eigene
+DB, regelmäßige Updates, Theme-Anpassungen). Für ein Lernprojekt bietet
+ein eigener Service mehr Einblick in OAuth2/OIDC-Mechanismen.</p>
+<h2 id="decision">Decision</h2>
+<p>Wir implementieren einen <strong>eigenen Auth Service</strong> als
+Microservice mit folgenden Eigenschaften:</p>
+<ul>
+<li>Unterstützung als OIDC Relying Party (Login via externe Provider wie
+Google, GitHub)</li>
+<li>Eigene Benutzerverwaltung (lokale Accounts + OIDC-verknüpfte
+Accounts)</li>
+<li>JWT-Ausstellung für die interne Service-Kommunikation</li>
+<li>RBAC mit den Rollen ADMIN, AUTHOR, READER</li>
+<li>Token-Validierung durch andere Services lokal via Public Key (kein
+Introspection-Roundtrip)</li>
+</ul>
+<p><strong>Kein Keycloak</strong> aufgrund:</p>
+<ul>
+<li>Geringerer Betriebsaufwand (kein separater Keycloak-Cluster)</li>
+<li>Volle Kontrolle über das Datenmodell</li>
+<li>Besserer Lerneffekt (OAuth2/OIDC-Implementierung verstehen)</li>
+<li>Schlankerer Footprint auf dem Kubernetes-Cluster</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Vollständige Kontrolle über Authentifizierung und Autorisierung</li>
+<li>Geringerer Infrastruktur-Overhead</li>
+<li>Tiefes Verständnis von OIDC/OAuth2-Flows</li>
+<li>Einfache Integration der Tenant-Zuordnung in den Auth-Flow</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>Höherer Implementierungsaufwand (vs. Keycloak out-of-the-box)</li>
+<li>Sicherheitskritischer Service muss selbst korrekt implementiert
+werden</li>
+<li>Features wie 2FA, Account Recovery müssen selbst gebaut werden</li>
+<li>Keine Community-Plugins oder Admin-UI von Keycloak</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li>SWR-016: Custom Identity Provider mit OIDC</li>
+<li>SWR-007: Rollenbasierte Zugriffskontrolle</li>
+<li>SWA-010: Custom Auth Service als eigener Microservice</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

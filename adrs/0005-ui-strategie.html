@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0005: UI-Strategie (Thymeleaf → Angular + React)</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0005-ui-strategie-thymeleaf--angular--react">ADR-0005:
+UI-Strategie (Thymeleaf → Angular + React)</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Die Plattform braucht eine Benutzeroberfläche. Wir wollen
+inkrementell vorgehen: zuerst etwas Funktionierendes, dann
+modernisieren.</p>
+<p><strong>Alternativen für Phase 1:</strong></p>
+<ul>
+<li><strong>SPA sofort (Angular/React)</strong>: modernes UX, aber
+höherer initialer Aufwand</li>
+<li><strong>Thymeleaf (SSR)</strong>: schnell funktionsfähig,
+Spring-integriert, SEO-freundlich</li>
+</ul>
+<p><strong>Zielzustand:</strong></p>
+<ul>
+<li>Angular + Nx + Native Federation für den Text-Blog (REST)</li>
+<li>React + Module Federation für Podcast/Video (GraphQL)</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p><strong>Phase 1:</strong> Thymeleaf als SSR-UI für den vollständigen
+Text-Blog.</p>
+<p><strong>Später:</strong></p>
+<ul>
+<li>Angular-UI (Nx + Native Federation) als SPA für den Text-Blog</li>
+<li>React-UI (Module Federation) für Podcast und Video</li>
+<li>Thymeleaf bleibt als Fallback/SEO-Variante</li>
+</ul>
+<p>Die REST-API wird von Anfang an so designed, dass sie sowohl von
+Thymeleaf-Controllern als auch von SPAs konsumiert werden kann.</p>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Schneller erster lauffähiger Blog (kein Frontend-Build-Tooling
+nötig)</li>
+<li>SSR = SEO-freundlich out-of-the-box</li>
+<li>API-First-Design erzwingt saubere Trennung</li>
+<li>Micro-Frontend-Architektur als Lernziel (Native Federation + Module
+Federation)</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>Thymeleaf-UI wird teilweise obsolet nach Angular-Migration</li>
+<li>Doppelter UI-Code während der Übergangsphase</li>
+<li>Native Federation und Module Federation sind unterschiedliche
+Toolchains</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

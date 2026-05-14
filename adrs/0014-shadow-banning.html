@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0014: Shadow-Banning im Kommentarsystem</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0014-shadow-banning-im-kommentarsystem">ADR-0014:
+Shadow-Banning im Kommentarsystem</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Klassisches Banning (harter Ban) informiert den Benutzer, dass er
+gesperrt ist. Dies führt häufig dazu, dass der Benutzer neue Accounts
+erstellt oder andere Umgehungsstrategien nutzt.</p>
+<p>Shadow-Banning ist eine Anti-Troll-Maßnahme, bei der der gebannte
+Benutzer nicht erfährt, dass er gesperrt wurde. Seine Kommentare sind
+für ihn selbst sichtbar, für alle anderen Benutzer jedoch nicht.</p>
+<h2 id="decision">Decision</h2>
+<p>Das Kommentarsystem unterstützt <strong>Shadow-Banning</strong> als
+Moderationswerkzeug.</p>
+<p><strong>Funktionsweise:</strong></p>
+<ul>
+<li>Administratoren und Autoren können einen Benutzer shadow-bannen</li>
+<li>Shadow-gebannte Benutzer sehen ihre eigenen Kommentare weiterhin
+normal angezeigt</li>
+<li>Andere Benutzer (inklusive anonyme) sehen Kommentare von
+shadow-gebannten Benutzern nicht</li>
+<li>Der Shadow-Ban ist pro Tenant (ein Ban auf Blog A wirkt nicht auf
+Blog B)</li>
+<li>Shadow-Bans können von Admins/Autoren aufgehoben werden</li>
+</ul>
+<p><strong>Technische Umsetzung:</strong></p>
+<ul>
+<li><code>ShadowBanStatus</code> am Benutzer-Profil (pro Tenant):
+<code>ACTIVE</code>, <code>SHADOW_BANNED</code></li>
+<li>Query-Filter in der Kommentar-Abfrage: Kommentare von
+shadow-gebannten Benutzern werden nur für den Autor selbst
+zurückgegeben</li>
+<li>Kein sichtbarer Hinweis im UI für den gebannten Benutzer</li>
+<li>Audit-Log über Ban/Unban-Aktionen (wer hat wann gebannt)</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Reduziert Motivation für neue Account-Erstellung</li>
+<li>Troll-Beiträge verschwinden für die Community ohne Eskalation</li>
+<li>Einfach implementierbar (Filter-Logik in der Query)</li>
+<li>Kombinierbar mit LLM-Moderation (automatischer Shadow-Ban bei
+wiederholten Verstößen)</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>Ethische Bedenken: Benutzer wird getäuscht (vertretbar bei
+Spam/Trolling)</li>
+<li>Benutzer könnte über Inkognito-Modus den Ban bemerken</li>
+<li>Kein Feedback an den Benutzer (keine Chance zur
+Verhaltensänderung)</li>
+<li>Admin muss bewusst entscheiden (nicht als Standardreaktion
+verwenden)</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li>SWR-019: Shadow-Banning für Kommentare</li>
+<li>SWR-007: Rollenbasierte Zugriffskontrolle (Admin/Author können Bans
+vergeben)</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

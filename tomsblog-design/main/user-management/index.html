@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>User Management Service: Detail Design :: Toms Blog: Dokumentation</title>
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../index.html">Toms Blog: Dokumentation</a>
+      <button class="navbar-burger" aria-label="Toggle navigation" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="../../../tomsblog-arc42/main/index.html">Architektur (arc42)</a>
+        <a class="navbar-item" href="../../../tomsblog-design/main/index.html">Software Detail Design</a>
+        <a class="navbar-item" href="../../../tomsblog-infra/main/index.html">Infrastruktur</a>
+        <a class="navbar-item" href="../../../requirements/index.html">Requirements</a>
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field">
+            <input id="search-input" type="text" placeholder="Dokumentation durchsuchen">
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="tomsblog-design" data-version="main">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Toms Blog: Software Detail Design</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Überblick</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../blog-content/index.html">Blog Content Service</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="index.html">User Management Service</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../tenant-management/index.html">Tenant Management Service</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../feed/index.html">Feed Service</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../shared-ui/index.html">Shared UI Library</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../e2e-tests/index.html">E2E-Test-Modul</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Toms Blog: Software Detail Design</span>
+    <span class="version">main-dev</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-arc42/v0.10.6/index.html">Toms Blog: Architekturdokumentation</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../tomsblog-arc42/main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../../tomsblog-arc42/v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-infra/main/index.html">Toms Blog: Infrastruktur-Dokumentation</a></div>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../tomsblog-infra/main/index.html">main-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.6/index.html">v0.9.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.5/index.html">v0.9.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.4/index.html">v0.9.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.3/index.html">v0.9.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.2/index.html">v0.9.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.1/index.html">v0.9.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.0/index.html">v0.9.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.9/index.html">v0.8.9-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.8/index.html">v0.8.8-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.7/index.html">v0.8.7-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.6/index.html">v0.8.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.5/index.html">v0.8.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.4/index.html">v0.8.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.3/index.html">v0.8.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.2/index.html">v0.8.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.1/index.html">v0.8.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.0/index.html">v0.8.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.3/index.html">v0.7.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.2/index.html">v0.7.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.1/index.html">v0.7.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.5.3/index.html">v0.5.3-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <div class="title"><a href="../../v0.10.6/index.html">Toms Blog: Software Detail Design</a></div>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="../index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../tomsblog-arc42/v0.10.6/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Toms Blog: Software Detail Design</a></li>
+    <li><a href="index.html">User Management Service</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">main-dev</button>
+  <div class="version-menu">
+    <a class="version is-current" href="index.html">main-dev</a>
+    <a class="version" href="../../v0.10.6/user-management/index.html">v0.10.6</a>
+    <a class="version" href="../../v0.10.5/user-management/index.html">v0.10.5</a>
+    <a class="version" href="../../v0.10.4/user-management/index.html">v0.10.4</a>
+    <a class="version" href="../../v0.10.3/user-management/index.html">v0.10.3</a>
+    <a class="version" href="../../v0.10.2/user-management/index.html">v0.10.2</a>
+    <a class="version" href="../../v0.10.1/user-management/index.html">v0.10.1</a>
+    <a class="version" href="../../v0.10.0/user-management/index.html">v0.10.0</a>
+    <a class="version" href="../../v0.9.6/user-management/index.html">v0.9.6</a>
+    <a class="version" href="../../v0.9.5/user-management/index.html">v0.9.5</a>
+    <a class="version" href="../../v0.9.4/user-management/index.html">v0.9.4</a>
+    <a class="version" href="../../v0.9.3/user-management/index.html">v0.9.3</a>
+    <a class="version" href="../../v0.9.2/user-management/index.html">v0.9.2</a>
+    <a class="version" href="../../v0.9.1/user-management/index.html">v0.9.1</a>
+    <a class="version" href="../../v0.9.0/user-management/index.html">v0.9.0</a>
+    <a class="version" href="../../v0.8.9/user-management/index.html">v0.8.9</a>
+    <a class="version" href="../../v0.8.8/user-management/index.html">v0.8.8</a>
+    <a class="version" href="../../v0.8.7/user-management/index.html">v0.8.7</a>
+    <a class="version" href="../../v0.8.6/user-management/index.html">v0.8.6</a>
+    <a class="version" href="../../v0.8.5/user-management/index.html">v0.8.5</a>
+    <a class="version" href="../../v0.8.4/user-management/index.html">v0.8.4</a>
+    <a class="version" href="../../v0.8.3/user-management/index.html">v0.8.3</a>
+    <a class="version" href="../../v0.8.2/user-management/index.html">v0.8.2</a>
+    <a class="version" href="../../v0.8.1/user-management/index.html">v0.8.1</a>
+    <a class="version" href="../../v0.8.0/user-management/index.html">v0.8.0</a>
+    <a class="version" href="../../v0.7.3/user-management/index.html">v0.7.3</a>
+    <a class="version" href="../../v0.7.2/user-management/index.html">v0.7.2</a>
+    <a class="version" href="../../v0.7.1/user-management/index.html">v0.7.1</a>
+    <a class="version is-missing" href="../../v0.5.3/index.html">v0.5.3</a>
+    <a class="version is-missing" href="../../v0.5.2/index.html">v0.5.2</a>
+    <a class="version is-missing" href="../../v0.5.1/index.html">v0.5.1</a>
+    <a class="version is-missing" href="../../v0.5.0/index.html">v0.5.0</a>
+    <a class="version is-missing" href="../../v0.4.6/index.html">v0.4.6</a>
+    <a class="version is-missing" href="../../v0.4.5/index.html">v0.4.5</a>
+    <a class="version is-missing" href="../../v0.4.4/index.html">v0.4.4</a>
+    <a class="version is-missing" href="../../v0.4.3/index.html">v0.4.3</a>
+    <a class="version is-missing" href="../../v0.4.1/index.html">v0.4.1</a>
+    <a class="version is-missing" href="../../v0.4.0/index.html">v0.4.0</a>
+    <a class="version is-missing" href="../../v0.3.3/index.html">v0.3.3</a>
+    <a class="version is-missing" href="../../v0.3.0/index.html">v0.3.0-dev</a>
+    <a class="version is-missing" href="../../v0.2.0/index.html">v0.2.0-dev</a>
+    <a class="version is-missing" href="../../v0.1.0/index.html">v0.1.0-dev</a>
+  </div>
+</div>
+<div class="edit-this-page"><a href="https://github.com/tomirgang/tomsblog/edit/main/docs/design/modules/ROOT/pages/user-management/index.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">User Management Service: Detail Design</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_überblick">1. Überblick</a></li>
+<li><a href="#_domain_modell">2. Domain-Modell</a>
+<ul class="sectlevel2">
+<li><a href="#_aggregate_root_userprofile">2.1. Aggregate Root: UserProfile</a></li>
+<li><a href="#_rollen_semantik">2.2. Rollen-Semantik</a></li>
+<li><a href="#_login_modus_tenant_konfiguration">2.3. Login-Modus (Tenant-Konfiguration)</a></li>
+<li><a href="#_auto_approval">2.4. Auto-Approval</a></li>
+<li><a href="#_oidc_provider_konfiguration_pro_tenant_swr_061_stk047">2.5. OIDC-Provider-Konfiguration pro Tenant (SWR-061, STK047)</a></li>
+</ul>
+</li>
+<li><a href="#_application_layer">3. Application Layer</a>
+<ul class="sectlevel2">
+<li><a href="#_inbound_port_userprofileusecase">3.1. Inbound Port: UserProfileUseCase</a></li>
+<li><a href="#_outbound_port_userprofilerepository">3.2. Outbound Port: UserProfileRepository</a></li>
+<li><a href="#_inbound_port_tenantsettingsusecase">3.3. Inbound Port: TenantSettingsUseCase</a></li>
+<li><a href="#_outbound_port_tenantsettingsrepository">3.4. Outbound Port: TenantSettingsRepository</a></li>
+</ul>
+</li>
+<li><a href="#_adapter_layer">4. Adapter Layer</a>
+<ul class="sectlevel2">
+<li><a href="#_inbound_rest_api">4.1. Inbound: REST API</a></li>
+<li><a href="#_inbound_grpc_api">4.2. Inbound: gRPC API</a></li>
+<li><a href="#_outbound_postgresql_jpa">4.3. Outbound: PostgreSQL (JPA)</a></li>
+<li><a href="#_outbound_audit_logging_swr_056_swa_031">4.4. Outbound: Audit Logging (SWR-056, SWA-031)</a></li>
+</ul>
+</li>
+<li><a href="#_inbound_thymeleaf_web_ui_adr_0032">5. Inbound: Thymeleaf Web-UI (ADR-0032)</a>
+<ul class="sectlevel2">
+<li><a href="#_login_seite_authlogin_swr_044">5.1. Login-Seite (/auth/login, SWR-044)</a></li>
+<li><a href="#_break_glass_admin_login_authadminlogin_swr_028">5.2. Break-Glass Admin-Login (/auth/admin/login, SWR-028)</a></li>
+<li><a href="#_registrierungsseite_authregister_swr_060">5.3. Registrierungsseite (/auth/register, SWR-060)</a></li>
+<li><a href="#_admin_ui_benutzerverwaltung_authadminusers_swr_051">5.4. Admin-UI: Benutzerverwaltung (/auth/admin/users, SWR-051)</a></li>
+<li><a href="#_admin_ui_tenant_einstellungen_authadminsettings_swr_052">5.5. Admin-UI: Tenant-Einstellungen (/auth/admin/settings, SWR-052)</a></li>
+<li><a href="#_superadmin_tenant_umschaltung_swr_053">5.6. SuperAdmin Tenant-Umschaltung (SWR-053)</a></li>
+<li><a href="#_oidc_login_flow_swr_016_swr_063">5.7. OIDC-Login-Flow (SWR-016, SWR-063)</a></li>
+<li><a href="#_interner_login_flow">5.8. Interner Login-Flow</a></li>
+</ul>
+</li>
+<li><a href="#_integration_mit_blog_content_service">6. Integration mit Blog Content Service</a>
+<ul class="sectlevel2">
+<li><a href="#_session_basierte_integration_swr_064">6.1. Session-basierte Integration (SWR-064)</a></li>
+<li><a href="#_grpc_api_verbleibende_nutzung">6.2. gRPC-API (verbleibende Nutzung)</a>
+<ul class="sectlevel3">
+<li><a href="#_rest_api_swr_059">6.2.1. REST-API (SWR-059)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_anforderungsabdeckung">7. Anforderungsabdeckung</a></li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="_überblick"><a class="anchor" href="#_überblick"></a>1. Überblick</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der User Management Service verwaltet plattformspezifische Benutzerprofile, Rollen und Tenant-Zuordnungen (SWR-043).
+Er ergänzt den externen OIDC Provider Authentik (ADR-0027): Authentik übernimmt die Authentifizierung (Login, MFA, Passwort-Policies), während dieser Service die Autorisierungsdaten intern verwaltet.</p>
+</div>
+<div class="paragraph">
+<p>Der Tenant-Administrator kann pro Tenant konfigurieren, ob Login über interne Accounts, OIDC oder beides erlaubt ist (SWR-044, STK031).
+Auch bei reinem OIDC-Login bleibt ein separates Break-Glass Admin-Login unter <code>/admin/login</code> verfügbar.</p>
+</div>
+<div class="paragraph">
+<p>Neue Benutzer können optional automatisch freigegeben werden, wenn sie sich über OIDC anmelden oder ihre E-Mail-Domain auf einer Whitelist steht (SWR-045, STK032).</p>
+</div>
+<div class="paragraph">
+<p>Die Architektur folgt der hexagonalen Architektur (SWA-001) mit klarer Trennung von Domain, Application und Adapter Layer (SWA-029).
+Der Service verwendet eine eigene PostgreSQL-Datenbank (Database per Service, ADR-0019).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_domain_modell"><a class="anchor" href="#_domain_modell"></a>2. Domain-Modell</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Das Domain-Modell bildet Benutzerprofile mit ihren Rollen und Tenant-Zuordnungen ab.
+Die rollenbasierte Zugriffskontrolle (SWR-007) wird über das Enum <code>Role</code> mit den Werten ADMIN, AUTHOR, REVIEWER und READER abgebildet.
+Neue Benutzer erhalten initial den Status PENDING und die Rolle READER, bis ein Tenant-Admin sie freigibt (STK028).
+Nicht angemeldete Benutzer werden wie READER behandelt (STK029).
+Das folgende Klassendiagramm zeigt die Struktur:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-454feb92286cad96a3ee87952ed8a1b36bc02581.svg" alt="Diagram">
+</div>
+</div>
+<div class="sect2">
+<h3 id="_aggregate_root_userprofile"><a class="anchor" href="#_aggregate_root_userprofile"></a>2.1. Aggregate Root: UserProfile</h3>
+<div class="paragraph">
+<p>Das <code>UserProfile</code> ist das einzige Aggregate im Service.
+Es wird über den OIDC Subject (die eindeutige Kennung des Benutzers beim Identity Provider) identifiziert.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>oidcSubject</code> ist unveränderlich und dient als natürlicher Schlüssel für OIDC-Benutzer. Bei internen Accounts ist das Feld null.</p>
+</li>
+<li>
+<p><code>username</code> und <code>passwordHash</code> werden nur für interne Accounts (AuthSource.INTERNAL) verwendet. Das Passwort wird mit BCrypt gehasht.</p>
+</li>
+<li>
+<p><code>authSource</code> gibt an, ob der Benutzer über OIDC oder über ein internes Konto authentifiziert wird.</p>
+</li>
+<li>
+<p><code>approvalStatus</code> ist initial PENDING. Erst nach Freigabe durch einen Tenant-Admin (APPROVED) können dem Benutzer Rollen über READER hinaus zugewiesen werden (STK028). Optional kann Auto-Approval aktiviert werden (SWR-045).</p>
+</li>
+<li>
+<p><code>globalRoles</code> sind Rollen, die für alle Tenants gelten (z.B. SUPERADMIN für Plattform-Administration).</p>
+</li>
+<li>
+<p><code>tenantMemberships</code> ordnen den Benutzer einzelnen Tenants mit einer spezifischen Rolle zu.</p>
+</li>
+<li>
+<p><code>getEffectiveRoles(tenantId)</code> kombiniert globale Rollen mit der tenant-spezifischen Rolle. Für nicht-approved Benutzer wird immer nur READER zurückgegeben.</p>
+</li>
+<li>
+<p><code>syncFromOidc</code> akzeptiert optional OIDC-Gruppen und mappt sie auf plattforminterne Rollen (konfigurierbar).</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rollen_semantik"><a class="anchor" href="#_rollen_semantik"></a>2.2. Rollen-Semantik</h3>
+<div class="paragraph">
+<p>Die fünf Rollen (SWR-007) haben folgende Bedeutung:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Rolle</th>
+<th class="tableblock halign-left valign-top">Berechtigung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SUPERADMIN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Plattformweiter Vollzugriff: Tenant-Verwaltung, Plattform-Konfiguration. Credentials werden über die Infrastruktur gesetzt (Umgebungsvariable/Secret). Es gibt genau einen SUPERADMIN pro Plattform-Instanz.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ADMIN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tenant-Admin: Benutzer- und Content-Verwaltung innerhalb eines Tenants, Benutzer-Freigabe</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AUTHOR</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Eigene Posts erstellen, bearbeiten und veröffentlichen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>REVIEWER</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Veröffentlichte und zur Review freigegebene Posts lesen und Review-Feedback geben</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>READER</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Nur Lesezugriff auf veröffentlichte Inhalte</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Nicht angemeldete Benutzer (anonyme Besucher) werden wie READER behandelt (STK029).
+Ein Benutzer ohne explizite Tenant-Zuordnung erhält die Rolle READER als Fallback.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_login_modus_tenant_konfiguration"><a class="anchor" href="#_login_modus_tenant_konfiguration"></a>2.3. Login-Modus (Tenant-Konfiguration)</h3>
+<div class="paragraph">
+<p>Der Tenant-Administrator legt fest, welche Login-Methoden für reguläre Benutzer verfügbar sind (SWR-044, STK031).
+Das folgende Diagramm zeigt die Konfigurationsstruktur:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-c47d6c792f290e2cff94f3283c035b5e6f9f3d69.svg" alt="Diagram">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>INTERNAL</code>: Nur formbasierter Login mit internen Accounts (Username/Passwort).</p>
+</li>
+<li>
+<p><code>OIDC</code>: Nur Login über den konfigurierten OIDC Provider. Die reguläre Login-Seite zeigt nur den OIDC-Button. In diesem Modus müssen <code>oidcIssuerUrl</code> und <code>oidcClientId</code> gesetzt sein.</p>
+</li>
+<li>
+<p><code>BOTH</code>: Sowohl formbasierter als auch OIDC-Login stehen zur Verfügung. Auch hier müssen die OIDC-Felder konfiguriert sein.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Bei Neuanlage eines Tenants wird der LoginMode auf <code>INTERNAL</code> gesetzt (SWR-044).
+Die Umstellung auf <code>OIDC</code> oder <code>BOTH</code> erfordert die vorherige Konfiguration der OIDC-Felder (<code>oidcIssuerUrl</code>, <code>oidcClientId</code>).</p>
+</div>
+<div class="paragraph">
+<p>Unabhängig vom LoginMode ist unter <code>/admin/login</code> ein separates formbasiertes Admin-Login-Formular verfügbar (Break-Glass-Lösung).
+Nur Benutzer mit der Rolle ADMIN können sich dort anmelden.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_auto_approval"><a class="anchor" href="#_auto_approval"></a>2.4. Auto-Approval</h3>
+<div class="paragraph">
+<p>Neue Benutzer können optional automatisch freigegeben werden (SWR-045, STK032), statt auf manuelle Freigabe durch den Tenant-Admin warten zu müssen:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>autoApproveOidc</code>: Wenn aktiviert, erhalten Benutzer, die sich über OIDC anmelden, direkt den Status APPROVED.</p>
+</li>
+<li>
+<p><code>autoApproveEmailDomains</code>: Eine Liste von E-Mail-Domains (z.B. <code>example.com</code>). Benutzer, deren E-Mail-Adresse zu einer dieser Domains gehört, erhalten direkt den Status APPROVED.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Die Prüfung erfolgt beim Erstellen eines neuen UserProfile im <code>syncFromOidc</code>- bzw. <code>syncFromInternal</code>-Flow.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_oidc_provider_konfiguration_pro_tenant_swr_061_stk047"><a class="anchor" href="#_oidc_provider_konfiguration_pro_tenant_swr_061_stk047"></a>2.5. OIDC-Provider-Konfiguration pro Tenant (SWR-061, STK047)</h3>
+<div class="paragraph">
+<p>Die OIDC-Provider-Konfiguration wird pro Tenant in den <code>TenantSettings</code> gespeichert (SWR-061).
+Dadurch kann jeder Tenant seinen eigenen Identity-Provider nutzen.
+Folgende Felder stehen zur Verfügung:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>oidcIssuerUrl</code>: Die Issuer-URL des OIDC-Providers (z.B. <code><a href="https://auth.example.com/application/o/myapp/" class="bare">https://auth.example.com/application/o/myapp/</a></code>). Aus dieser URL werden die Standard-OIDC-Endpunkte per OpenID Connect Discovery (<code>.well-known/openid-configuration</code>) automatisch abgeleitet.</p>
+</li>
+<li>
+<p><code>oidcClientId</code>: Die Client-ID für die OIDC-Registrierung beim Provider.</p>
+</li>
+<li>
+<p><code>oidcClientSecret</code>: Das Client-Secret (verschlüsselt gespeichert). In API-Responses wird das Secret maskiert als <code><strong>*</strong></code> zurückgegeben, wenn ein Wert gesetzt ist.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Beim Aktualisieren der Tenant-Einstellungen wird das <code>oidcClientSecret</code> nur geändert, wenn ein neuer Wert übermittelt wird.
+Ein leeres oder mit <code><strong>*</strong></code> gefülltes Secret-Feld bedeutet, dass der bestehende Wert beibehalten wird.</p>
+</div>
+<div class="paragraph">
+<p>Wenn der <code>loginMode</code> auf <code>OIDC</code> oder <code>BOTH</code> gesetzt wird, müssen <code>oidcIssuerUrl</code> und <code>oidcClientId</code> ausgefüllt sein.
+Bei <code>INTERNAL</code> sind die OIDC-Felder optional und werden ignoriert.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_application_layer"><a class="anchor" href="#_application_layer"></a>3. Application Layer</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der Application Layer definiert die Inbound- und Outbound-Ports.
+Das folgende Diagramm zeigt die Portstruktur:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-5460b37b8b73af2cecbd3e7d95661ab1e81c973a.svg" alt="Diagram">
+</div>
+</div>
+<div class="sect2">
+<h3 id="_inbound_port_userprofileusecase"><a class="anchor" href="#_inbound_port_userprofileusecase"></a>3.1. Inbound Port: UserProfileUseCase</h3>
+<div class="paragraph">
+<p>Das Interface <code>UserProfileUseCase</code> bietet folgende Operationen:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>syncFromOidc(SyncUserCommand)</code>: Erstellt oder aktualisiert ein Benutzerprofil anhand der OIDC-Claims. Idempotent (Upsert-Semantik). Aktualisiert <code>lastLoginAt</code>. Übernimmt optional OIDC-Gruppen und mappt sie auf Rollen. Prüft Auto-Approval-Regeln bei neuen Profilen (SWR-045).</p>
+</li>
+<li>
+<p><code>syncFromInternal(SyncInternalUserCommand)</code>: Erstellt oder aktualisiert ein internes Benutzerprofil (formbasierter Login). Prüft Auto-Approval anhand der E-Mail-Domain.</p>
+</li>
+<li>
+<p><code>register(RegisterUserCommand)</code>: Registriert einen neuen lokalen Benutzer (SWR-059, STK046). Validiert Eindeutigkeit von Username und E-Mail. Hasht das Passwort mit BCrypt. Setzt AuthSource auf INTERNAL, Rolle auf READER und ApprovalStatus auf PENDING (mit Auto-Approval-Prüfung). Wirft eine Exception bei Duplikaten.</p>
+</li>
+<li>
+<p><code>findByOidcSubject(String)</code>: Gibt das Profil mit Rollen und Tenant-Zuordnungen zurück (für OIDC-Benutzer).</p>
+</li>
+<li>
+<p><code>findByUsername(String)</code>: Gibt das Profil mit Rollen zurück (für interne Benutzer).</p>
+</li>
+<li>
+<p><code>approveUser</code> / <code>rejectUser</code>: Ändert den ApprovalStatus (nur durch ADMIN, STK028).</p>
+</li>
+<li>
+<p><code>assignGlobalRole</code> / <code>removeGlobalRole</code>: Verwaltet globale Rollen (nur durch ADMIN, nur für approved Benutzer).</p>
+</li>
+<li>
+<p><code>addTenantMembership</code> / <code>removeTenantMembership</code>: Verwaltet Tenant-Zuordnungen (nur durch ADMIN).</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_outbound_port_userprofilerepository"><a class="anchor" href="#_outbound_port_userprofilerepository"></a>3.2. Outbound Port: UserProfileRepository</h3>
+<div class="paragraph">
+<p>Das Interface <code>UserProfileRepository</code> abstrahiert die Persistenz:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>save(UserProfile)</code>: Speichert oder aktualisiert ein UserProfile.</p>
+</li>
+<li>
+<p><code>findByOidcSubject(String)</code>: Sucht nach OIDC Subject (für OIDC-Benutzer).</p>
+</li>
+<li>
+<p><code>findByUsername(String)</code>: Sucht nach Username (für interne Benutzer).</p>
+</li>
+<li>
+<p><code>existsByUsername(String)</code>: Prüft, ob ein Username bereits vergeben ist (für Registrierung, SWR-059).</p>
+</li>
+<li>
+<p><code>existsByEmail(String)</code>: Prüft, ob eine E-Mail-Adresse bereits vergeben ist (für Registrierung, SWR-059).</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_inbound_port_tenantsettingsusecase"><a class="anchor" href="#_inbound_port_tenantsettingsusecase"></a>3.3. Inbound Port: TenantSettingsUseCase</h3>
+<div class="paragraph">
+<p>Das Interface <code>TenantSettingsUseCase</code> kapselt die Verwaltung der Tenant-Einstellungen:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>getSettings(TenantId)</code>: Gibt die Einstellungen des Tenants zurück (inklusive OIDC-Konfiguration, Secret maskiert).</p>
+</li>
+<li>
+<p><code>updateSettings(TenantId, &#8230;&#8203;)</code>: Aktualisiert die Einstellungen inklusive OIDC-Provider-Konfiguration. Validiert, dass bei LoginMode <code>OIDC</code> oder <code>BOTH</code> die Felder <code>oidcIssuerUrl</code> und <code>oidcClientId</code> gesetzt sind (SWR-061).</p>
+</li>
+<li>
+<p><code>listTenants()</code>: Gibt alle konfigurierten Tenants zurück (für SuperAdmin Tenant-Umschaltung).</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_outbound_port_tenantsettingsrepository"><a class="anchor" href="#_outbound_port_tenantsettingsrepository"></a>3.4. Outbound Port: TenantSettingsRepository</h3>
+<div class="paragraph">
+<p>Das Interface <code>TenantSettingsRepository</code> abstrahiert die Persistenz der Tenant-Einstellungen:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>save(TenantSettings)</code>: Speichert oder aktualisiert TenantSettings.</p>
+</li>
+<li>
+<p><code>findByTenantId(TenantId)</code>: Sucht nach Tenant-ID.</p>
+</li>
+<li>
+<p><code>findAll()</code>: Gibt alle TenantSettings zurück.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_adapter_layer"><a class="anchor" href="#_adapter_layer"></a>4. Adapter Layer</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_inbound_rest_api"><a class="anchor" href="#_inbound_rest_api"></a>4.1. Inbound: REST API</h3>
+<div class="paragraph">
+<p>Der <code>UserController</code> stellt die REST-API unter <code>/api/users</code> bereit, der <code>TenantSettingsController</code> die Tenant-Einstellungen unter <code>/api/tenant-settings</code>.
+Diese APIs sind nur für interne Service-Kommunikation vorgesehen und werden durch API-Key-Authentifizierung (<code>ApiKeyAuthenticationFilter</code>) und Linkerd mTLS (SWA-023) geschützt.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Methode</th>
+<th class="tableblock halign-left valign-top">Pfad</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/users/sync</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Synchronisiert ein Benutzerprofil aus OIDC-Claims (Upsert). Gibt das aktuelle Profil mit Rollen zurück.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/users/{oidcSubject}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gibt das Benutzerprofil mit Rollen und Tenant-Zuordnungen zurück.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/users/{oidcSubject}/approve</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gibt einen Benutzer frei (setzt ApprovalStatus auf APPROVED). Nur durch ADMIN (STK028).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/users/{oidcSubject}/reject</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lehnt einen Benutzer ab (setzt ApprovalStatus auf REJECTED). Nur durch ADMIN.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/users/register</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Registriert einen neuen lokalen Benutzer (SWR-059). Erwartet username, password, email, displayName. Gibt HTTP 201 mit Profil zurück. Bei Duplikat HTTP 409.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_inbound_grpc_api"><a class="anchor" href="#_inbound_grpc_api"></a>4.2. Inbound: gRPC API</h3>
+<div class="paragraph">
+<p>Der <code>UserManagementGrpcService</code> und <code>TenantSettingsGrpcService</code> stellen die gRPC-APIs bereit, die vom Blog Content Service für die Profil-Synchronisation und Tenant-Einstellungen genutzt werden.
+Der <code>GrpcExceptionInterceptor</code> sorgt für einheitliche Fehlerbehandlung aller gRPC-Aufrufe.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_outbound_postgresql_jpa"><a class="anchor" href="#_outbound_postgresql_jpa"></a>4.3. Outbound: PostgreSQL (JPA)</h3>
+<div class="paragraph">
+<p>Die Persistenz wird über Spring Data JPA implementiert (SWA-029).
+Das folgende Diagramm zeigt die JPA-Entities:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-422cb5ae15f84a6f86d0ff54b716d1fd45315870.svg" alt="Diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Zusätzlich existiert die <code>audit_log</code>-Tabelle (SWR-056) zur Protokollierung aller fachlich relevanten Aktionen:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">CREATE TABLE audit_log (
+    id         UUID PRIMARY KEY,
+    timestamp  TIMESTAMP NOT NULL,
+    tenant_id  VARCHAR(255),
+    actor      VARCHAR(255) NOT NULL,
+    action     VARCHAR(255) NOT NULL,
+    entity_type VARCHAR(255) NOT NULL,
+    entity_id  VARCHAR(255) NOT NULL,
+    details    TEXT
+);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_outbound_audit_logging_swr_056_swa_031"><a class="anchor" href="#_outbound_audit_logging_swr_056_swa_031"></a>4.4. Outbound: Audit Logging (SWR-056, SWA-031)</h3>
+<div class="paragraph">
+<p>Der <code>JpaAuditLogger</code> implementiert den <code>AuditLogger</code>-Port aus dem Shared Kernel und persistiert alle Audit-Einträge in der <code>audit_log</code>-Tabelle.
+Er wird als <code>@Component</code> registriert und in die Application Services (<code>UserProfileService</code>, <code>TenantSettingsService</code>) injiziert.</p>
+</div>
+<div class="paragraph">
+<p>Auditierte Aktionen umfassen Benutzer-Synchronisation (OIDC und intern), Freigabe/Ablehnung, Rollenzuweisung, Tenant-Mitgliedschaftsverwaltung und Änderungen an Tenant-Einstellungen.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_inbound_thymeleaf_web_ui_adr_0032"><a class="anchor" href="#_inbound_thymeleaf_web_ui_adr_0032"></a>5. Inbound: Thymeleaf Web-UI (ADR-0032)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der User Management Service stellt eine eigene Thymeleaf-basierte Web-Oberfläche für Authentifizierung und Benutzerverwaltung bereit (ADR-0032).
+Damit entfällt die bisherige Kopplung, bei der der Blog Content Service diese UI hostete und per gRPC die benötigten Daten abfragte.
+Alle Auth- und Admin-Seiten laufen nun unter dem Pfadpräfix <code>/auth/</code> und werden über das API Gateway geroutet (ADR-0017).</p>
+</div>
+<div class="sect2">
+<h3 id="_login_seite_authlogin_swr_044"><a class="anchor" href="#_login_seite_authlogin_swr_044"></a>5.1. Login-Seite (/auth/login, SWR-044)</h3>
+<div class="paragraph">
+<p>Die Login-Seite wertet den <code>LoginMode</code> des aktuellen Tenants direkt aus der lokalen Datenbank aus:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>INTERNAL</code>: Zeigt nur das Username/Passwort-Formular.</p>
+</li>
+<li>
+<p><code>OIDC</code>: Zeigt nur den OIDC-Login-Button (Redirect zum konfigurierten Provider).</p>
+</li>
+<li>
+<p><code>BOTH</code>: Zeigt sowohl Formular als auch OIDC-Button.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Da der User Management Service die TenantSettings lokal hält, entfällt der bisherige gRPC-Roundtrip für jede Login-Seite.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_break_glass_admin_login_authadminlogin_swr_028"><a class="anchor" href="#_break_glass_admin_login_authadminlogin_swr_028"></a>5.2. Break-Glass Admin-Login (/auth/admin/login, SWR-028)</h3>
+<div class="paragraph">
+<p>Unter <code>/auth/admin/login</code> steht ein separates formbasiertes Login-Formular bereit.
+Nur der SUPERADMIN kann sich dort anmelden, unabhängig vom LoginMode.
+Die Credentials werden über die Infrastruktur (Umgebungsvariable/Secret) gesetzt.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_registrierungsseite_authregister_swr_060"><a class="anchor" href="#_registrierungsseite_authregister_swr_060"></a>5.3. Registrierungsseite (/auth/register, SWR-060)</h3>
+<div class="paragraph">
+<p>Der User Management Service stellt eine Registrierungsseite unter <code>/auth/register</code> bereit:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Das Formular enthält Felder für Username, E-Mail, Anzeigename, Passwort und Passwort-Bestätigung.</p>
+</li>
+<li>
+<p>Die Seite ist nur erreichbar, wenn der LoginMode des Tenants <code>INTERNAL</code> oder <code>BOTH</code> ist. Bei <code>OIDC</code> wird auf <code>/auth/login</code> weitergeleitet.</p>
+</li>
+<li>
+<p>Die Login-Seite zeigt einen Link „Registrieren" an, wenn lokale Registrierung erlaubt ist.</p>
+</li>
+<li>
+<p>Bei Validierungsfehlern wird das Formular mit Fehlermeldungen und den eingegebenen Werten (außer Passwort) erneut angezeigt.</p>
+</li>
+<li>
+<p>Nach erfolgreicher Registrierung wird eine Bestätigungsseite angezeigt (STK028).</p>
+</li>
+<li>
+<p>Der Controller greift direkt auf den lokalen <code>UserProfileUseCase</code> zu (kein gRPC-Umweg).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Das folgende Sequenzdiagramm zeigt den Registrierungsablauf:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-8f6de34b87642d2d369cc8947f966eccd861923d.svg" alt="Diagram">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_admin_ui_benutzerverwaltung_authadminusers_swr_051"><a class="anchor" href="#_admin_ui_benutzerverwaltung_authadminusers_swr_051"></a>5.4. Admin-UI: Benutzerverwaltung (/auth/admin/users, SWR-051)</h3>
+<div class="paragraph">
+<p>Unter <code>/auth/admin/users</code> wird eine Thymeleaf-Seite bereitgestellt, die alle Benutzer des aktuellen Tenants auflistet (Name, E-Mail, Rolle, Approval-Status).
+Verfügbare Aktionen: Approve, Reject, Rolle ändern.
+Zugriff nur für Benutzer mit Rolle ADMIN oder SUPERADMIN.
+Der Controller greift direkt auf den lokalen <code>UserProfileUseCase</code> zu.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_admin_ui_tenant_einstellungen_authadminsettings_swr_052"><a class="anchor" href="#_admin_ui_tenant_einstellungen_authadminsettings_swr_052"></a>5.5. Admin-UI: Tenant-Einstellungen (/auth/admin/settings, SWR-052)</h3>
+<div class="paragraph">
+<p>Unter <code>/auth/admin/settings</code> wird eine Thymeleaf-Seite bereitgestellt, die die Tenant-Einstellungen (Login-Mode, Auto-Approval-Regeln, Branding, OIDC-Konfiguration) anzeigt und bearbeitbar macht.
+Zugriff nur für Benutzer mit Rolle ADMIN oder SUPERADMIN.
+Der Controller greift direkt auf den lokalen <code>TenantSettingsUseCase</code> zu.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_superadmin_tenant_umschaltung_swr_053"><a class="anchor" href="#_superadmin_tenant_umschaltung_swr_053"></a>5.6. SuperAdmin Tenant-Umschaltung (SWR-053)</h3>
+<div class="paragraph">
+<p>Der SuperAdmin kann über einen Tenant-Selector in der Admin-Navigation den aktiven Tenant wechseln.
+Die Auswahl wird in der Redis-Session gespeichert (SWR-064).
+POST <code>/auth/admin/switch-tenant</code> speichert die Auswahl und leitet auf die aktuelle Seite zurück.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_oidc_login_flow_swr_016_swr_063"><a class="anchor" href="#_oidc_login_flow_swr_016_swr_063"></a>5.7. OIDC-Login-Flow (SWR-016, SWR-063)</h3>
+<div class="paragraph">
+<p>Der OIDC-Flow läuft vollständig im User Management Service ab.
+Das <code>TenantAwareClientRegistrationRepository</code> lädt die OIDC-Konfiguration pro Tenant direkt aus der lokalen Datenbank (SWR-063, kein gRPC-Umweg).
+Das folgende Sequenzdiagramm zeigt den Ablauf:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-e7d4d29d555ac7f8dfb72cc4d83973aedf36a4ec.svg" alt="Diagram">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_interner_login_flow"><a class="anchor" href="#_interner_login_flow"></a>5.8. Interner Login-Flow</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Der Benutzer gibt Username/Passwort auf <code>/auth/login</code> oder <code>/auth/admin/login</code> ein.</p>
+</li>
+<li>
+<p>Spring Security authentifiziert direkt gegen die lokale Datenbank.</p>
+</li>
+<li>
+<p>Der User Management Service erstellt eine Session in Redis mit den Rollen des Benutzers.</p>
+</li>
+<li>
+<p>Redirect zurück zum Blog Content Service, der die Redis-Session liest.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_integration_mit_blog_content_service"><a class="anchor" href="#_integration_mit_blog_content_service"></a>6. Integration mit Blog Content Service</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Nach ADR-0032 ist die Integration zwischen den Services deutlich vereinfacht.
+Der Blog Content Service führt keine eigenen Login-Flows mehr durch, sondern nutzt die vom User Management Service in Redis erstellten Sessions (SWR-064).</p>
+</div>
+<div class="sect2">
+<h3 id="_session_basierte_integration_swr_064"><a class="anchor" href="#_session_basierte_integration_swr_064"></a>6.1. Session-basierte Integration (SWR-064)</h3>
+<div class="paragraph">
+<p>Beide Services verwenden Spring Session Data Redis mit identischer Konfiguration:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Gleicher Redis-Namespace und Cookie-Name</p>
+</li>
+<li>
+<p>Gleiche Serialisierung (Spring Security <code>SecurityContext</code>)</p>
+</li>
+<li>
+<p>Gleiche Session-TTL und Cookie-Konfiguration (Domain, Path, Secure, HttpOnly)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Der Blog Content Service liest die bestehende Session aus Redis und nutzt die enthaltenen <code>GrantedAuthority</code>-Objekte für die Zugriffskontrolle.
+Unauthentifizierte Benutzer werden per Redirect auf <code>/auth/login</code> weitergeleitet.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_grpc_api_verbleibende_nutzung"><a class="anchor" href="#_grpc_api_verbleibende_nutzung"></a>6.2. gRPC-API (verbleibende Nutzung)</h3>
+<div class="paragraph">
+<p>Die gRPC-API wird weiterhin für Operationen benötigt, die der Blog Content Service zur Laufzeit braucht:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Tenant-Branding (SWR-050): <code>GetTenantSettings</code> für displayName und tagline im Header</p>
+</li>
+<li>
+<p>Tenant-Liste (SWR-053): <code>ListTenants</code> für den SuperAdmin Tenant-Selector (jetzt im User Management Service)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Die bisherigen gRPC-Aufrufe für Login-Mode, OIDC-Konfiguration und Benutzeroperationen entfallen.</p>
+</div>
+<div class="sect3">
+<h4 id="_rest_api_swr_059"><a class="anchor" href="#_rest_api_swr_059"></a>6.2.1. REST-API (SWR-059)</h4>
+<div class="paragraph">
+<p>Der User-Management-Service stellt einen öffentlichen REST-Endpunkt bereit:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Methode</th>
+<th class="tableblock halign-left valign-top">Pfad</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/users/register</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Registriert einen neuen lokalen Benutzer. Erwartet username, password, email und displayName. Gibt HTTP 201 mit Benutzerprofil (ohne Passwort-Hash) zurück. Bei Duplikat HTTP 409.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Validierungsregeln:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>username</code>: Pflichtfeld, muss eindeutig sein</p>
+</li>
+<li>
+<p><code>email</code>: Pflichtfeld, gültiges E-Mail-Format, muss eindeutig sein</p>
+</li>
+<li>
+<p><code>password</code>: Pflichtfeld, mindestens 12 Zeichen, wird serverseitig mit BCrypt gehasht (salted hash, BCrypt erzeugt automatisch ein zufälliges Salt pro Passwort)</p>
+</li>
+<li>
+<p><code>displayName</code>: optional</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Der neue Benutzer erhält <code>AuthSource.INTERNAL</code>, die Rolle <code>READER</code> und den <code>ApprovalStatus.PENDING</code> (SWR-007, STK028).
+Auto-Approval-Regeln (SWR-045) werden bei der Registrierung geprüft: Wenn die E-Mail-Domain auf der Whitelist des Tenants steht, wird der Status direkt auf <code>APPROVED</code> gesetzt.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_anforderungsabdeckung"><a class="anchor" href="#_anforderungsabdeckung"></a>7. Anforderungsabdeckung</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 60%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Anforderung</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+<th class="tableblock halign-left valign-top">Abdeckung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-007</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rollenbasierte Zugriffskontrolle (SUPERADMIN, ADMIN, AUTHOR, REVIEWER, READER)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain: Role Enum, UserProfile.getEffectiveRoles()</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-016</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OIDC Login mit Authentik, optionales Gruppen-Mapping</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Web-UI: OIDC-Flow im User Management Service, SyncingOidcUserService</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-028</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Break-Glass Admin-Login</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Web-UI: /auth/admin/login (formbasiert, nur SUPERADMIN)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-043</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User-Management-Service für Profile, Rollen, Tenant-Zuordnung</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alle Layer</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-044</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Konfigurierbare Login-Methode und Break-Glass Admin-Login</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain: TenantSettings.loginMode, Web-UI: /auth/login, /auth/admin/login</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-045</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Auto-Approval bei OIDC-Login und E-Mail-Domain</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain: TenantSettings, Application: syncFromOidc/syncFromInternal</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-051</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Admin-UI Benutzerliste und -verwaltung</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Web-UI: /auth/admin/users (direkt auf lokalen UseCase)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-052</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Admin-UI Tenant-Einstellungen</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Web-UI: /auth/admin/settings (direkt auf lokalen UseCase)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-053</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SuperAdmin Tenant-Umschaltung</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Web-UI: /auth/admin/switch-tenant, Redis-Session</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-059</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST-API für lokale Benutzerregistrierung</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST: POST /api/users/register, Application: UserProfileService</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-060</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Thymeleaf-Registrierungsseite</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Web-UI: /auth/register (direkt auf lokalen UseCase)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-063</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dynamische OIDC-Client-Registrierung pro Tenant</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Web-UI: TenantAwareClientRegistrationRepository (lokaler DB-Zugriff)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-064</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shared Redis Session</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Web-UI: Session-Erstellung, Blog Content Service: Session-Validierung</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STK028</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Benutzer-Freigabe durch Tenant-Admin</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain: ApprovalStatus, Application: approveUser/rejectUser</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STK029</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Nicht angemeldete Benutzer als Reader</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Blog Content Service: anonyme Requests erhalten READER-Rechte</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STK031</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Konfigurierbare Login-Methode pro Tenant</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain: LoginMode, TenantSettings</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STK032</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Auto-Approval neuer Benutzer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain: TenantSettings.autoApproveOidc, autoApproveEmailDomains</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STK046</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lokale Benutzerregistrierung</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-059 (REST-API), SWR-060 (Web-UI)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STK047</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OIDC-Konfiguration pro Tenant über Admin-Interface</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-061 (Datenhaltung), SWR-062 (Admin-UI), SWR-063 (dynamische Registrierung)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-001</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hexagonale Architektur</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ports &amp; Adapters Struktur</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-010</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Authentik OIDC und leichtgewichtiger User-Management-Service</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gesamtarchitektur</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-029</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User-Management-Service Architektur (hexagonal)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alle Layer</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-056</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Audit-Logging für alle relevanten Aktionen</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JpaAuditLogger, AuditLogEntry, UserProfileService/TenantSettingsService Audit-Aufrufe, V5 Migration</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-031</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Audit-Logging-Architektur</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AuditLogger (Port im Shared Kernel), JpaAuditLogger (Outbound Adapter), audit_log-Tabelle</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-061</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tenant-spezifische OIDC-Provider-Konfiguration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain: TenantSettings (oidcIssuerUrl, oidcClientId, oidcClientSecret), JPA</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-062</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OIDC-Konfiguration in der Admin-Oberfläche</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Web-UI: /auth/admin/settings OIDC-Sektion</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

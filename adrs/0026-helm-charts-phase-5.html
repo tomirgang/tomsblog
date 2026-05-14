@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0026: Migration auf Helm Charts in Phase 5</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0026-migration-auf-helm-charts-in-phase-5">ADR-0026:
+Migration auf Helm Charts in Phase 5</h1>
+<h2 id="status">Status</h2>
+<p>Proposed</p>
+<h2 id="kontext">Kontext</h2>
+<p>In den fruehen Phasen (Meilenstein 1-4) nutzen wir Kustomize fuer
+Kubernetes-Manifeste (siehe ADR-0024). Mit dem Hinzukommen von
+Operator-managed Services in Phase 5 (Kafka, RabbitMQ, MongoDB) steigt
+die Komplexitaet erheblich:</p>
+<ul>
+<li>Operator-Installationen (Strimzi fuer Kafka, RabbitMQ Cluster
+Operator, MongoDB Community Operator) erfordern umfangreiche CRDs und
+Konfiguration</li>
+<li>Helm Charts der Operatoren bieten getestete Default-Werte und
+Upgrade-Pfade</li>
+<li>Kustomize-Patches fuer Operator-CRDs sind fehleranfaellig und
+schlecht dokumentiert</li>
+<li>Versionsverwaltung von Operatoren ist mit Helm einfacher
+(Chart-Versionen vs. Raw-Manifeste)</li>
+</ul>
+<h2 id="entscheidung">Entscheidung</h2>
+<p>Ab Phase 5 migrieren wir die Infrastruktur-Deployment-Strategie auf
+Helm Charts:</p>
+<h3 id="was-migriert-wird">Was migriert wird</h3>
+<ul>
+<li><strong>Kafka</strong> (Strimzi Operator): Helm Chart fuer
+Operator-Installation + CRDs fuer Topics/Cluster</li>
+<li><strong>RabbitMQ</strong> (Cluster Operator): Helm Chart fuer
+Operator + RabbitmqCluster CRDs</li>
+<li><strong>MongoDB</strong> (Community Operator): Helm Chart fuer
+Operator + MongoDBCommunity CRDs</li>
+<li><strong>Observability Stack</strong>: Prometheus/Grafana/Loki/Tempo
+via kube-prometheus-stack Helm Chart</li>
+</ul>
+<h3 id="was-bei-kustomize-bleibt">Was bei Kustomize bleibt</h3>
+<ul>
+<li>Applikations-Deployments (blog-content, auth-service, etc.) bleiben
+Kustomize-basiert</li>
+<li>Namespace-Definitionen und NetworkPolicies</li>
+<li>Einfache Ressourcen ohne Operator-Abhaengigkeit</li>
+</ul>
+<h3 id="migrations-strategie">Migrations-Strategie</h3>
+<ol type="1">
+<li>Neue Operator-Services werden direkt als Flux HelmRelease
+definiert</li>
+<li>Bestehende Kustomize-Manifeste (CNPG, Reflector) werden nicht
+migriert (bereits stabil)</li>
+<li>Hybrid-Ansatz: Flux verwaltet sowohl HelmReleases als auch
+Kustomizations</li>
+</ol>
+<h2 id="konsequenzen">Konsequenzen</h2>
+<h3 id="positiv">Positiv</h3>
+<ul>
+<li>Bewaehlte Operator-Defaults ohne manuelle Konfiguration</li>
+<li>Einfache Upgrades via Chart-Version-Bumps</li>
+<li>Community-Support fuer Helm-basierte Operator-Installationen</li>
+<li>Flux unterstuetzt HelmRelease nativ (kein Tool-Wechsel)</li>
+</ul>
+<h3 id="negativ">Negativ</h3>
+<ul>
+<li>Zwei Deployment-Paradigmen im selben Cluster (Helm + Kustomize)</li>
+<li>Helm-Values muessen verstanden und gepflegt werden</li>
+<li>Chart-Breaking-Changes bei Major-Upgrades moeglich</li>
+</ul>
+<h3 id="neutral">Neutral</h3>
+<ul>
+<li>Kein Big-Bang-Migration: schrittweiser Uebergang bei neuen
+Services</li>
+<li>Reflector ist bereits als HelmRelease deployed (Praezedenzfall)</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0021: Zero Trust mit Linkerd Service Mesh</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0021-zero-trust-mit-linkerd-service-mesh">ADR-0021: Zero
+Trust mit Linkerd Service Mesh</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Die Microservice-Architektur erfordert sichere Kommunikation zwischen
+den Services. Im Kubernetes-Cluster sind Pod-zu-Pod-Verbindungen
+standardmäßig unverschlüsselt und nicht authentifiziert. Jeder Pod im
+Cluster kann jeden anderen Pod erreichen (flaches Netzwerk). Das
+widerspricht dem Zero-Trust-Prinzip: "never trust, always verify".</p>
+<p>Bewertungskriterien:</p>
+<ul>
+<li><strong>Automatisches mTLS</strong>: Verschlüsselung und
+gegenseitige Authentifizierung aller Service-zu-Service-Verbindungen
+ohne Code-Änderungen.</li>
+<li><strong>Service-Identität</strong>: Kryptografische Zuordnung von
+Identitäten zu Services basierend auf Kubernetes ServiceAccounts.</li>
+<li><strong>Autorisierungspolicies</strong>: Feingranulare Kontrolle,
+welcher Service mit welchem kommunizieren darf (Default-Deny).</li>
+<li><strong>Ressourcenverbrauch</strong>: Relevant für den
+3-Node-Hetzner-Cluster mit begrenzten Ressourcen.</li>
+<li><strong>Operationale Komplexität</strong>: Lernkurve und
+Wartungsaufwand.</li>
+<li><strong>User-Kontext-Propagierung</strong>: KI-Features und
+schreibende Operationen dürfen nur im Kontext eines autorisierten
+Benutzers ausgeführt werden.</li>
+</ul>
+<h3 id="evaluierte-alternativen">Evaluierte Alternativen</h3>
+<p><strong>Linkerd:</strong></p>
+<ul>
+<li>Leichtgewichtiger Rust-basierter Sidecar-Proxy (linkerd2-proxy)</li>
+<li>Ca. 50 MB RAM pro Proxy, minimaler Latenz-Overhead (&lt;1 ms
+p99)</li>
+<li>Automatisches mTLS ohne Konfiguration nach Mesh-Injection</li>
+<li>AuthorizationPolicy auf Basis von ServiceAccount-Identitäten</li>
+<li>CNCF Graduated Projekt</li>
+</ul>
+<p><strong>Istio:</strong></p>
+<ul>
+<li>Envoy-basierter Sidecar-Proxy</li>
+<li>Ca. 100+ MB RAM pro Proxy, höherer Ressourcenverbrauch durch istiod
+Control Plane</li>
+<li>Umfangreichere Features (Traffic Management, ext. AuthZ,
+Wasm-Plugins)</li>
+<li>Höhere Komplexität und Lernkurve</li>
+</ul>
+<p><strong>Cilium Service Mesh:</strong></p>
+<ul>
+<li>eBPF-basiert, kein Sidecar nötig</li>
+<li>Niedrigster Overhead, aber weniger ausgereift bei L7-Policies</li>
+<li>Abhängig davon, ob Cilium als CNI im Cluster läuft</li>
+</ul>
+<p><strong>Application-Level TLS (Spring Boot +
+cert-manager):</strong></p>
+<ul>
+<li>Maximale Kontrolle, aber hoher Implementierungsaufwand pro
+Service</li>
+<li>Manuelle Policy-Definition und Certificate-Rotation</li>
+<li>Kein automatisches Mesh-Verhalten</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p>Wir verwenden <strong>Linkerd</strong> als Service Mesh für Zero
+Trust im Kubernetes-Cluster.</p>
+<h3 id="begründung">Begründung</h3>
+<ul>
+<li><strong>Leichtgewichtig</strong>: Minimaler Ressourcenverbrauch
+passt zum 3-Node-Cluster auf Hetzner.</li>
+<li><strong>Automatisches mTLS</strong>: Nach Mesh-Injection sind alle
+Verbindungen verschlüsselt und authentifiziert ohne
+Code-Änderungen.</li>
+<li><strong>Default-Deny-Policies</strong>: AuthorizationPolicy erlaubt
+nur explizit konfigurierte Service-zu-Service-Kommunikation.</li>
+<li><strong>Einfache Installation</strong>: Helm-basiert, passt in den
+Flux-GitOps-Workflow (ADR-0020).</li>
+<li><strong>gRPC-Support</strong>: Nativer HTTP/2-Support für die
+geplante gRPC-Kommunikation zwischen Services (ADR-0010).</li>
+<li><strong>Geringer Latenz-Overhead</strong>: Rust-basierter Proxy mit
+&lt;1 ms p99 zusätzlicher Latenz.</li>
+<li><strong>CNCF Graduated</strong>: Breite Community, langfristige
+Unterstützung.</li>
+</ul>
+<h3 id="zero-trust-modell-zwei-ebenen">Zero-Trust-Modell (zwei
+Ebenen)</h3>
+<p><strong>Ebene 1: Service-Identität (Netzwerkebene)</strong></p>
+<ul>
+<li>Linkerd vergibt jedem Pod eine kryptografische Identität basierend
+auf dem Kubernetes ServiceAccount.</li>
+<li>AuthorizationPolicy definiert erlaubte Kommunikationspfade (z.B. nur
+blog-content darf ai-service aufrufen).</li>
+<li>Default-Deny: Ohne explizite Policy ist keine Kommunikation
+möglich.</li>
+</ul>
+<p><strong>Ebene 2: User-Kontext-Propagierung
+(Anwendungsebene)</strong></p>
+<ul>
+<li>Das API-Gateway validiert JWT-Token und extrahiert User-Claims.</li>
+<li>Aufrufende Services propagieren User-Kontext als Header (z.B.
+X-User-Id, X-User-Roles).</li>
+<li>Aufgerufene Services prüfen: Caller-Identität OK (Linkerd) UND
+User-Claims mit passender Berechtigung vorhanden.</li>
+<li>KI-Features erfordern die Rolle AUTHOR oder ADMIN im propagierten
+User-Kontext.</li>
+</ul>
+<h3 id="einsatzbereich">Einsatzbereich</h3>
+<ul>
+<li>Alle Service-zu-Service-Verbindungen im Cluster (REST, gRPC)</li>
+<li>Ingress-Traffic über den Gateway (terminiert TLS am Ingress, Linkerd
+sichert intern)</li>
+<li>AuthorizationPolicies pro Service (z.B. AI-Service nur von
+blog-content erreichbar)</li>
+<li>Certificate-Rotation automatisch durch Linkerd Identity
+Controller</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Vorteile:</strong></p>
+<ul>
+<li>Vollständige Verschlüsselung aller internen Verbindungen ohne
+Anwendungscode-Änderungen</li>
+<li>Kryptografisch verifizierte Service-Identitäten</li>
+<li>Feingranulare Zugriffskontrolle auf Netzwerkebene</li>
+<li>Automatische Certificate-Rotation (kein manuelles
+Key-Management)</li>
+<li>Observability-Metriken (Golden Signals) als Nebeneffekt des
+Proxys</li>
+<li>Vorbereitung für Phase 9 (Observability): Linkerd liefert Latenz-,
+Traffic- und Error-Metriken</li>
+</ul>
+<p><strong>Nachteile:</strong></p>
+<ul>
+<li>Zusätzlicher Ressourcenverbrauch durch Sidecar-Proxies (~50 MB RAM
+pro Pod)</li>
+<li>Initiale Lernkurve für Linkerd-Konzepte (Server,
+ServerAuthorization, AuthorizationPolicy)</li>
+<li>Debugging erfordert Verständnis der Proxy-Logs und Linkerd CLI
+(linkerd viz)</li>
+<li>Certificate Trust Anchor muss bei Installation korrekt konfiguriert
+und rotiert werden</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

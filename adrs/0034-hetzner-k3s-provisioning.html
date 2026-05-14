@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0034: Cluster-Provisionierung mit hetzner-k3s</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0034-cluster-provisionierung-mit-hetzner-k3s">ADR-0034:
+Cluster-Provisionierung mit hetzner-k3s</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<p>Supersedes <a
+href="0022-kubernetes-plattform-kube-hetzner.md">ADR-0022</a></p>
+<h2 id="context">Context</h2>
+<p>Das Kubernetes-Cluster wurde bisher mit dem Terraform-Modul
+kube-hetzner und OpenTofu provisioniert (ADR-0022). Dieses Setup
+erfordert mehrere Werkzeuge (OpenTofu, Packer für MicroOS-Snapshots,
+Terraform-State-Management) und bringt eine hohe Komplexität für ein
+Lernprojekt mit sich.</p>
+<p>Das CLI-Tool <a
+href="https://github.com/vitobotta/hetzner-k3s">hetzner-k3s</a> bietet
+eine deutlich einfachere Alternative: Eine einzige YAML-Datei und ein
+CLI-Befehl reichen aus, um ein vollständiges k3s-Cluster auf Hetzner
+Cloud zu erstellen.</p>
+<h3 id="evaluierte-alternativen">Evaluierte Alternativen</h3>
+<p><strong>kube-hetzner (bisherig, ADR-0022):</strong></p>
+<ul>
+<li>OpenTofu + Terraform-Modul + Packer</li>
+<li>Hohe Komplexität (State-Management, MicroOS-Snapshots)</li>
+<li>WireGuard-Verschlüsselung integriert</li>
+<li>Community-maintained, aber komplexe Fehlersuche</li>
+</ul>
+<p><strong>hetzner-k3s (Vito Botta):</strong></p>
+<ul>
+<li>Einzelnes CLI-Tool + YAML-Konfiguration</li>
+<li>Kein Terraform, kein Packer, kein Ansible</li>
+<li>Idempotente create/upgrade/delete Befehle</li>
+<li>Hetzner CSI und CCM automatisch integriert</li>
+<li>Aktiv gepflegt, einfache Bedienung</li>
+</ul>
+<p><strong>Managed Kubernetes:</strong></p>
+<ul>
+<li>Hetzner bietet weiterhin kein managed K8s-Produkt an</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p>Wir wechseln die Cluster-Provisionierung von
+<strong>kube-hetzner/OpenTofu</strong> auf <strong>hetzner-k3s</strong>
+(CLI-Tool von Vito Botta).</p>
+<h3 id="cluster-konfiguration">Cluster-Konfiguration</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Komponente</th>
+<th>Konfiguration</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Alle Nodes</td>
+<td>3x CPX22 (2 vCPU, 4 GB), Nürnberg (nbg1)</td>
+</tr>
+<tr class="even">
+<td>k3s-Version</td>
+<td>v1.33.1+k3s1</td>
+</tr>
+<tr class="odd">
+<td>CNI</td>
+<td>Flannel (k3s-Standard, ohne Verschlüsselung)</td>
+</tr>
+<tr class="even">
+<td>Storage</td>
+<td>Hetzner CSI (hcloud-volumes)</td>
+</tr>
+<tr class="odd">
+<td>Privates Netzwerk</td>
+<td>10.0.0.0/16</td>
+</tr>
+<tr class="even">
+<td>Ingress</td>
+<td>Traefik (k3s-Standard)</td>
+</tr>
+<tr class="odd">
+<td>K8s API LB</td>
+<td>Deaktiviert (direkter Zugang via Controller IP)</td>
+</tr>
+<tr class="even">
+<td>Basis-Domain</td>
+<td>cluster.tomirgang.de</td>
+</tr>
+<tr class="odd">
+<td>Kosten</td>
+<td>ca. 26 EUR/Monat (3x CPX22 + IPs)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="repository-trennung">Repository-Trennung</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Verantwortung</th>
+<th>Repository</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Cluster-Provisionierung (Nodes, Netzwerk, k3s)</td>
+<td><code>kubernetes-playground/k3s/</code></td>
+</tr>
+<tr class="even">
+<td>Applikationsspezifische Ressourcen (DB, Services, etc.)</td>
+<td><code>tomsblog/infra/k8s/</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="begründung">Begründung</h3>
+<ul>
+<li><strong>Einfacher</strong>: Ein CLI-Tool + eine YAML-Datei statt
+OpenTofu + Packer + State-Management</li>
+<li><strong>Budget-optimal</strong>: ca. 26 EUR/Monat, etwas günstiger
+als bisher</li>
+<li><strong>Idempotent</strong>: <code>hetzner-k3s create</code> kann
+beliebig oft ausgeführt werden (Skalierung, Updates)</li>
+<li><strong>Hetzner-nativ</strong>: CSI und CCM werden automatisch
+installiert</li>
+<li><strong>Saubere Trennung</strong>: Plattform-Lifecycle (selten, CLI)
+getrennt von App-Lifecycle (häufig, GitOps/Flux)</li>
+<li><strong>Einheitliches Node-Sizing</strong>: Alle Nodes identisch
+(CPX22), vereinfacht Verwaltung und Austausch</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Vorteile:</strong></p>
+<ul>
+<li>Drastisch reduzierte Komplexität bei der Cluster-Verwaltung</li>
+<li>Kein Terraform-State mehr zu sichern</li>
+<li>Schnelle Cluster-Erstellung (2-3 Minuten)</li>
+<li>Einfache Upgrades via <code>hetzner-k3s upgrade</code></li>
+<li>Einfache Skalierung via Änderung der <code>instance_count</code> in
+YAML</li>
+</ul>
+<p><strong>Nachteile:</strong></p>
+<ul>
+<li>Kein HA (Single Controller): kurze Downtime bei Updates
+unvermeidbar</li>
+<li>WireGuard Node-zu-Node-Verschlüsselung entfällt (Flannel ohne
+Encryption)
+<ul>
+<li>Pod-zu-Pod-Kommunikation bleibt durch Linkerd mTLS (ADR-0021)
+geschützt</li>
+<li>Node-zu-Node-Traffic innerhalb des privaten Hetzner-Netzwerks ist
+nicht verschlüsselt, aber isoliert</li>
+</ul></li>
+<li>Abhängigkeit von einem Single-Maintainer-Projekt (Vito Botta)</li>
+<li>Kein automatischer Load Balancer für die Kubernetes API (direkter
+Zugriff via Controller-IP)</li>
+</ul>
+<h3 id="änderungen-gegenüber-adr-0022">Änderungen gegenüber
+ADR-0022</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Aspekt</th>
+<th>Vorher (kube-hetzner)</th>
+<th>Nachher (hetzner-k3s)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Provisioning-Tool</td>
+<td>OpenTofu + kube-hetzner Modul</td>
+<td>hetzner-k3s CLI</td>
+</tr>
+<tr class="even">
+<td>Nodes</td>
+<td>1x CX33 + 2x CX23 (heterogen)</td>
+<td>3x CPX22 (2 vCPU, 4 GB, einheitlich)</td>
+</tr>
+<tr class="odd">
+<td>CNI-Verschlüsselung</td>
+<td>WireGuard</td>
+<td>Keine (privates Netzwerk + Linkerd)</td>
+</tr>
+<tr class="even">
+<td>Basis-OS</td>
+<td>MicroOS (Packer Snapshots)</td>
+<td>Tool-verwaltet</td>
+</tr>
+<tr class="odd">
+<td>K8s API Load Balancer</td>
+<td>LB11</td>
+<td>Deaktiviert</td>
+</tr>
+<tr class="even">
+<td>Upgrades</td>
+<td>system-upgrade-controller</td>
+<td>hetzner-k3s upgrade</td>
+</tr>
+<tr class="odd">
+<td>State-Management</td>
+<td>OpenTofu State</td>
+<td>Keines (deklarative YAML)</td>
+</tr>
+<tr class="even">
+<td>IaC-Repo-Pfad</td>
+<td>kubernetes-playground/K8nCluster</td>
+<td>kubernetes-playground/k3s/</td>
+</tr>
+</tbody>
+</table>
+<h2 id="references">References</h2>
+<ul>
+<li>STK-007 (Cloud-Native Deployment)</li>
+<li>ADR-0020 (Flux für GitOps)</li>
+<li>ADR-0021 (Zero Trust mit Linkerd)</li>
+<li>ADR-0022 (Vorgänger, superseded)</li>
+<li><a
+href="https://github.com/vitobotta/hetzner-k3s">https://github.com/vitobotta/hetzner-k3s</a></li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

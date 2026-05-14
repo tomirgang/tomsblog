@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0033: E2E-Testing-Strategie mit Selenium WebDriver</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0033-e2e-testing-strategie-mit-selenium-webdriver">ADR-0033:
+E2E-Testing-Strategie mit Selenium WebDriver</h1>
+<h2 id="status">Status</h2>
+<p>Proposed</p>
+<h2 id="context">Context</h2>
+<p>Die Plattform verfügt über 19 Thymeleaf-Templates verteilt auf drei
+Services (Blog Content, User Management, Tenant Management) mit 16
+UI-Use-Cases. Aktuell existieren ausschließlich Unit-Tests (MockMvc) und
+Integrationstests (Testcontainers) für die Web-Adapter-Schicht. Echte
+Browser-basierte End-to-End-Tests, die das Zusammenspiel von UI, Backend
+und Datenbank aus Benutzersicht verifizieren, fehlen vollständig
+(STK-052).</p>
+<h3 id="probleme-ohne-e2e-tests">Probleme ohne E2E-Tests</h3>
+<ol type="1">
+<li><strong>Kein Rendering-Nachweis</strong>: MockMvc prüft
+HTTP-Responses, aber nicht ob Templates korrekt rendern
+(Thymeleaf-Fehler, fehlende Fragmente, CSS-Probleme)</li>
+<li><strong>Keine JavaScript-Verifikation</strong>: Mermaid-Diagramme,
+Syntax-Highlighting und interaktive Elemente werden nicht getestet</li>
+<li><strong>Keine Cross-Service-Verifikation</strong>: Login-Flow (User
+Management) → Post-Erstellung (Blog Content) → Tenant-Settings (Tenant
+Management) wird nie als Ganzes getestet</li>
+<li><strong>Kein Regressionsschutz</strong>: UI-Änderungen in der Shared
+UI Library (libs/shared-ui) können unbemerkt alle Services
+beeinflussen</li>
+</ol>
+<h3 id="evaluierte-alternativen">Evaluierte Alternativen</h3>
+<p><strong>Playwright (Node.js-basiert):</strong></p>
+<ul>
+<li>Vorteil: Modernes API, Auto-Wait, Multi-Browser</li>
+<li>Nachteil: Node.js-Toolchain parallel zu Maven, kein nativer
+JUnit-5-Support, separate Dependency-Verwaltung</li>
+</ul>
+<p><strong>Cypress (JavaScript-basiert):</strong></p>
+<ul>
+<li>Vorteil: Interaktives Test-UI, Time-Travel Debugging</li>
+<li>Nachteil: Eigene Runtime, kein Java-Ökosystem, nur Chromium-Support
+(Firefox experimentell)</li>
+</ul>
+<p><strong>Selenium WebDriver (Java-basiert):</strong></p>
+<ul>
+<li>Vorteil: Gleiche Sprache wie Produktionscode, JUnit 5 nativ,
+Maven-Integration, breiter Browser-Support,
+Testcontainers-Selenium-Module verfügbar</li>
+<li>Nachteil: Älteres API, explizite Waits erforderlich, verbose Page
+Objects</li>
+</ul>
+<p><strong>HtmlUnit (headless, kein echter Browser):</strong></p>
+<ul>
+<li>Vorteil: Schnell, kein Browser-Prozess</li>
+<li>Nachteil: Kein echtes Rendering, kein JavaScript-Support, kein
+visueller Nachweis</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p><strong>Selenium WebDriver</strong> wird als E2E-Test-Framework
+eingesetzt. Die Tests werden in einem <strong>separaten Maven-Modul
+<code>e2e-tests/</code></strong> auf Root-Ebene organisiert.</p>
+<h3 id="architektur-entscheidungen">Architektur-Entscheidungen</h3>
+<ol type="1">
+<li><p><strong>Separates Maven-Modul</strong>: Das Modul
+<code>e2e-tests/</code> ist kein Service, sondern ein reines
+Testprojekt. Es hat Testabhängigkeiten auf die drei Services, startet
+diese als Spring-Boot-Anwendungen mit Testcontainers und testet gegen
+echte Browser-Instanzen.</p></li>
+<li><p><strong>Testcontainers-Selenium</strong>: Browser-Container
+(Chrome) werden per Testcontainers gestartet. Damit entfällt die
+Notwendigkeit, lokal einen Browser oder ChromeDriver zu
+installieren.</p></li>
+<li><p><strong>Page Object Model (POM)</strong>: Jede UI-Seite wird als
+Page Object abstrahiert. Test-Logik und Seitenstruktur sind getrennt.
+Änderungen an Templates erfordern nur Anpassungen im zugehörigen Page
+Object.</p></li>
+<li><p><strong>JUnit 5 Extension für Screenshots</strong>: Bei
+Test-Fehlschlägen wird automatisch ein Screenshot erstellt und im
+<code>target/screenshots/</code>-Verzeichnis abgelegt.</p></li>
+<li><p><strong>Eigenes Maven-Profil</strong>: E2E-Tests laufen
+ausschließlich im Profil <code>e2e</code>
+(<code>mvn verify -Pe2e</code>), damit der reguläre Build-Zyklus nicht
+verlangsamt wird.</p></li>
+<li><p><strong>Lokale Ausführung</strong>: Entwickler können E2E-Tests
+lokal mit <code>./mvnw verify -Pe2e</code> ausführen. Testcontainers
+starten PostgreSQL und Chrome automatisch.</p></li>
+<li><p><strong>Release-Pflicht</strong>: Das Release-Script
+(<code>scripts/release.sh</code>) führt die E2E-Tests als Pflichtschritt
+vor dem Release aus.</p></li>
+<li><p><strong>CI/CD-Integration</strong>: Ein separater GitHub Actions
+Job führt die E2E-Tests nach dem regulären Build aus. Screenshots und
+HTML-Reports werden als Artefakte archiviert.</p></li>
+</ol>
+<h3 id="testabdeckung">Testabdeckung</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Bereich</th>
+<th>Testklasse</th>
+<th>UI-Use-Cases</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Blog public</td>
+<td>BlogPublicViewE2ETest</td>
+<td>Landing Page, Post-Liste, Suche, Detailansicht, Legal</td>
+</tr>
+<tr class="even">
+<td>Blog author</td>
+<td>BlogAuthorWorkflowE2ETest</td>
+<td>Post erstellen, Post bearbeiten</td>
+</tr>
+<tr class="odd">
+<td>Auth</td>
+<td>AuthenticationE2ETest</td>
+<td>Login, Registrierung, Break-Glass Login</td>
+</tr>
+<tr class="even">
+<td>Admin</td>
+<td>AdminWorkflowE2ETest</td>
+<td>Benutzerverwaltung, Tenant-Settings</td>
+</tr>
+<tr class="odd">
+<td>SuperAdmin</td>
+<td>SuperAdminE2ETest</td>
+<td>SuperAdmin-Login, Tenant-CRUD, Global Settings</td>
+</tr>
+</tbody>
+</table>
+<h2 id="consequences">Consequences</h2>
+<h3 id="vorteile">Vorteile</h3>
+<ul>
+<li>Vollständiger Nachweis, dass alle UI-Use-Cases aus Benutzersicht
+funktionieren</li>
+<li>Regressionsschutz bei Änderungen an Templates, CSS oder
+JavaScript</li>
+<li>Gleiche Sprache und Build-Toolchain wie der Produktionscode</li>
+<li>Automatische Browser-Verwaltung durch Testcontainers (kein lokales
+Setup nötig)</li>
+<li>Screenshots bei Fehlschlag für schnelle Fehleranalyse</li>
+<li>Lokale Ausführbarkeit und Release-Integration gewährleisten
+Qualitätssicherung</li>
+</ul>
+<h3 id="nachteile">Nachteile</h3>
+<ul>
+<li>Längere Testlaufzeit (Browser-Start, Seitennavigation, Waits)</li>
+<li>Zusätzliches Maven-Modul erhöht die Build-Komplexität</li>
+<li>Selenium-Tests können flaky sein (Timing-Probleme,
+Browser-Updates)</li>
+<li>Testcontainers-Selenium benötigt Docker lokal und in CI</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li>STK-052: E2E-Selenium-Tests für alle relevanten UI-Use-Cases</li>
+<li>ADR-0005: UI-Strategie (Thymeleaf -&gt; Angular + React)</li>
+<li>ADR-0032: Eigenständige UI für Authentifizierung und
+Benutzerverwaltung</li>
+<li><a href="https://www.selenium.dev/documentation/webdriver/">Selenium
+WebDriver Documentation</a></li>
+<li><a
+href="https://java.testcontainers.org/modules/webdriver_containers/">Testcontainers
+Selenium Module</a></li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0031: Eigenständiger Tenant-Management-Service</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0031-eigenständiger-tenant-management-service">ADR-0031:
+Eigenständiger Tenant-Management-Service</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Die Plattform ist multi-tenant-fähig (STK-002). Aktuell sind
+Tenant-bezogene Konzepte über mehrere Stellen verteilt:</p>
+<ol type="1">
+<li><strong>Shared Kernel</strong>: <code>TenantId</code> als Value
+Object (<code>libs/shared-kernel</code>)</li>
+<li><strong>user-management</strong>: <code>TenantSettings</code>
+(Login-Mode, Branding, OIDC-Config, Impressum, Datenschutzerklärung),
+<code>TenantMembership</code> (User-Tenant-Zuordnung mit Rolle),
+<code>TenantSettingsUseCase</code>,
+<code>TenantSettingsRepository</code></li>
+<li><strong>blog-content</strong>: <code>DefaultTenantFilter</code> als
+provisorischer Workaround, der einen
+Default-<code>X-Tenant-Id</code>-Header injiziert</li>
+</ol>
+<p>Was fehlt:</p>
+<ul>
+<li><strong>Tenant-Aggregate</strong>: Es gibt keine
+<code>Tenant</code>-Entity mit Lifecycle (erstellen, aktivieren,
+deaktivieren, löschen)</li>
+<li><strong>Domain-Mapping</strong>: Das in ADR-0012 definierte
+Domain-zu-Tenant-Mapping (FQDN, is_primary, verified) ist nicht
+implementiert</li>
+<li><strong>Domain-Resolution</strong>: Die Auflösung Host-Header zu
+TenantId (ADR-0012) fehlt. Der <code>DefaultTenantFilter</code> im
+blog-content ist ein expliziter Platzhalter</li>
+<li><strong>Tenant-Onboarding</strong>: Kein Prozess zum Anlegen neuer
+Tenants mit DNS-Verifikation</li>
+</ul>
+<p>Die Frage ist, ob diese Verantwortlichkeiten in den bestehenden
+user-management Service integriert oder in einen eigenständigen Service
+ausgelagert werden sollen.</p>
+<h3 id="bewertung">Bewertung</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Kriterium</th>
+<th>Im user-management</th>
+<th>Eigenständiger tenant-management</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Bounded Context Kohäsion</td>
+<td>Mischung aus Identity und Tenant-Verwaltung</td>
+<td>Klare Domänentrennung</td>
+</tr>
+<tr class="even">
+<td>Unabhängiges Deployment</td>
+<td>Tenant-Änderungen erfordern User-Deployment</td>
+<td>Unabhängig deploybar</td>
+</tr>
+<tr class="odd">
+<td>Skalierbarkeit</td>
+<td>Domain-Resolution skaliert mit User-Service</td>
+<td>Domain-Resolution unabhängig skalierbar</td>
+</tr>
+<tr class="even">
+<td>Domain-Resolution Performance</td>
+<td>Hot Path koppelt an User-Service-Last</td>
+<td>Isoliert, optimierbar (Cache, Replikation)</td>
+</tr>
+<tr class="odd">
+<td>Komplexität</td>
+<td>Weniger Services, weniger Netzwerk-Hops</td>
+<td>Zusätzlicher Service und Datenbank</td>
+</tr>
+<tr class="even">
+<td>DDD-Konformität</td>
+<td>Tenant ist kein User-Subdomain-Konzept</td>
+<td>Eigene Bounded Context</td>
+</tr>
+<tr class="odd">
+<td>Evolutionsfähigkeit</td>
+<td>Refactoring bei wachsender Komplexität</td>
+<td>Von Anfang an sauber getrennt</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Tenant-Verwaltung</strong> (Lifecycle, Domain-Mapping,
+DNS-Verifikation, Konfiguration) und <strong>User-Verwaltung</strong>
+(Profile, Authentifizierung, Rollen) sind unterschiedliche Bounded
+Contexts. Ein Tenant existiert unabhängig von einzelnen Benutzern. Die
+Domain-Resolution ist ein Hot Path, der bei jedem eingehenden Request
+durchlaufen wird und unabhängig von der User-Service-Last performant
+bleiben muss.</p>
+<h2 id="decision">Decision</h2>
+<p>Wir führen einen eigenständigen <strong>tenant-management</strong>
+Service ein (<code>services/tenant-management/</code>).</p>
+<h3
+id="verantwortlichkeiten-des-tenant-management-service">Verantwortlichkeiten
+des tenant-management Service</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Verantwortlichkeit</th>
+<th>Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Tenant-Lifecycle</strong></td>
+<td>Erstellen, Aktivieren, Deaktivieren, Löschen von Tenants</td>
+</tr>
+<tr class="even">
+<td><strong>Domain-Mapping</strong></td>
+<td>CRUD für Domain-zu-Tenant-Zuordnungen (ADR-0012)</td>
+</tr>
+<tr class="odd">
+<td><strong>DNS-Verifikation</strong></td>
+<td>Verifizierung von Custom Domains via DNS TXT Record</td>
+</tr>
+<tr class="even">
+<td><strong>Tenant-Konfiguration</strong></td>
+<td>Login-Mode, Auto-Approval, Branding, Impressum,
+Datenschutzerklärung</td>
+</tr>
+<tr class="odd">
+<td><strong>OIDC-Provider-Config</strong></td>
+<td>Tenant-spezifische OIDC-Konfiguration (Issuer, Client-ID,
+Client-Secret)</td>
+</tr>
+<tr class="even">
+<td><strong>Domain-Resolution</strong></td>
+<td>Auflösung Host-Header zu TenantId (gRPC-Endpunkt für API
+Gateway)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="domain-modell">Domain-Modell</h3>
+<p><strong>Tenant</strong> (Aggregate Root):</p>
+<table>
+<thead>
+<tr class="header">
+<th>Feld</th>
+<th>Typ</th>
+<th>Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>tenantId</td>
+<td>TenantId (UUID)</td>
+<td>Eindeutige Kennung</td>
+</tr>
+<tr class="even">
+<td>slug</td>
+<td>String</td>
+<td>URL-freundlicher Kurzname (eindeutig)</td>
+</tr>
+<tr class="odd">
+<td>displayName</td>
+<td>String</td>
+<td>Anzeigename des Tenants</td>
+</tr>
+<tr class="even">
+<td>tagline</td>
+<td>String</td>
+<td>Optionaler Untertitel</td>
+</tr>
+<tr class="odd">
+<td>status</td>
+<td>TenantStatus</td>
+<td>ACTIVE, SUSPENDED, DEACTIVATED</td>
+</tr>
+<tr class="even">
+<td>loginMode</td>
+<td>LoginMode</td>
+<td>INTERNAL, OIDC, BOTH</td>
+</tr>
+<tr class="odd">
+<td>autoApproveOidc</td>
+<td>boolean</td>
+<td>OIDC-Nutzer automatisch freischalten</td>
+</tr>
+<tr class="even">
+<td>autoApproveEmailDomains</td>
+<td>Set&lt;String&gt;</td>
+<td>E-Mail-Domains für Auto-Approval</td>
+</tr>
+<tr class="odd">
+<td>impressumContent</td>
+<td>String</td>
+<td>Impressum (Markdown)</td>
+</tr>
+<tr class="even">
+<td>privacyPolicyContent</td>
+<td>String</td>
+<td>Datenschutzerklärung (Markdown)</td>
+</tr>
+<tr class="odd">
+<td>oidcIssuerUrl</td>
+<td>String</td>
+<td>Tenant-spezifischer OIDC Issuer</td>
+</tr>
+<tr class="even">
+<td>oidcClientId</td>
+<td>String</td>
+<td>OIDC Client-ID</td>
+</tr>
+<tr class="odd">
+<td>oidcClientSecret</td>
+<td>String</td>
+<td>OIDC Client-Secret (verschlüsselt gespeichert)</td>
+</tr>
+<tr class="even">
+<td>createdAt</td>
+<td>Instant</td>
+<td>Erstellungszeitpunkt</td>
+</tr>
+<tr class="odd">
+<td>updatedAt</td>
+<td>Instant</td>
+<td>Letzter Änderungszeitpunkt</td>
+</tr>
+</tbody>
+</table>
+<p><strong>TenantDomain</strong> (Entity, Teil des
+Tenant-Aggregates):</p>
+<table>
+<thead>
+<tr class="header">
+<th>Feld</th>
+<th>Typ</th>
+<th>Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>domainId</td>
+<td>DomainId (UUID)</td>
+<td>Eindeutige Kennung</td>
+</tr>
+<tr class="even">
+<td>domain</td>
+<td>String</td>
+<td>FQDN (global eindeutig)</td>
+</tr>
+<tr class="odd">
+<td>isPrimary</td>
+<td>boolean</td>
+<td>Primärdomain für Canonical-URLs</td>
+</tr>
+<tr class="even">
+<td>verified</td>
+<td>boolean</td>
+<td>DNS-Verifikation abgeschlossen</td>
+</tr>
+<tr class="odd">
+<td>verificationToken</td>
+<td>String</td>
+<td>DNS TXT Record Token für Verifikation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="was-bleibt-im-user-management-service">Was bleibt im
+user-management Service</h3>
+<ul>
+<li><code>TenantMembership</code> (Zuordnung User zu Tenant mit Rolle)
+bleibt im user-management, da es ein User-Konzept ist</li>
+<li><code>UserProfile</code>, Rollen, Authentifizierung bleiben
+unverändert</li>
+<li>user-management konsumiert
+<code>TenantCreated</code>/<code>TenantDeactivated</code> Events, um zu
+wissen, welche Tenants existieren</li>
+</ul>
+<h3 id="was-wird-migriert">Was wird migriert</h3>
+<p>Die folgenden Artefakte werden aus dem user-management in den
+tenant-management Service verschoben:</p>
+<ul>
+<li><code>TenantSettings</code> (wird zum <code>Tenant</code>-Aggregate
+erweitert)</li>
+<li><code>TenantSettingsUseCase</code> (wird zu
+<code>TenantManagementUseCase</code>)</li>
+<li><code>TenantSettingsRepository</code> (wird zu
+<code>TenantRepository</code>)</li>
+<li><code>TenantSettingsService</code> (wird zu
+<code>TenantManagementService</code>)</li>
+<li><code>LoginMode</code> (Enum)</li>
+<li>Zugehörige REST-Endpunkte und Persistence-Adapter</li>
+</ul>
+<h3 id="technische-umsetzung">Technische Umsetzung</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Aspekt</th>
+<th>Entscheidung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Datenbank</td>
+<td>Eigene PostgreSQL-Instanz (ADR-0019), CloudNativePG (ADR-0023)</td>
+</tr>
+<tr class="even">
+<td>Migrationen</td>
+<td>Flyway (ADR-0015)</td>
+</tr>
+<tr class="odd">
+<td>Architektur</td>
+<td>Hexagonal (ADR-0001): domain/, application/, adapter/</td>
+</tr>
+<tr class="even">
+<td>Sync-Kommunikation</td>
+<td>gRPC (ADR-0010) für Domain-Resolution und Tenant-Abfragen</td>
+</tr>
+<tr class="odd">
+<td>Async-Kommunikation</td>
+<td>Kafka (ADR-0018) für Domain Events (TenantCreated, TenantUpdated,
+etc.)</td>
+</tr>
+<tr class="even">
+<td>Tenant-Isolation</td>
+<td>Entfällt: Der Tenant-Service verwaltet alle Tenants
+(SuperAdmin-Zugriff)</td>
+</tr>
+<tr class="odd">
+<td>API (extern)</td>
+<td>REST für Admin-Oberfläche (Tenant-CRUD, Domain-Verwaltung)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="domain-resolution-flow">Domain-Resolution Flow</h3>
+<pre><code>Browser ──► API Gateway (Spring Cloud Gateway)
+                │
+                │  1. Host-Header extrahieren
+                │  2. gRPC-Call: ResolveDomain(host) → TenantId
+                │     (mit lokalem Cache, TTL 60s)
+                │  3. X-Tenant-Id Header setzen
+                │
+                ├──► blog-content (mit X-Tenant-Id)
+                ├──► user-management (mit X-Tenant-Id)
+                └──► weitere Services (mit X-Tenant-Id)</code></pre>
+<p>Der <code>DefaultTenantFilter</code> im blog-content wird obsolet und
+entfernt, sobald die Domain-Resolution im API Gateway aktiv ist.</p>
+<h3 id="domain-events">Domain Events</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Event</th>
+<th>Payload</th>
+<th>Konsumenten</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>TenantCreated</td>
+<td>tenantId, slug, displayName</td>
+<td>user-management, blog-content</td>
+</tr>
+<tr class="even">
+<td>TenantActivated</td>
+<td>tenantId</td>
+<td>API Gateway (Cache invalidieren)</td>
+</tr>
+<tr class="odd">
+<td>TenantSuspended</td>
+<td>tenantId</td>
+<td>API Gateway, alle Services</td>
+</tr>
+<tr class="even">
+<td>TenantDeactivated</td>
+<td>tenantId</td>
+<td>API Gateway, alle Services</td>
+</tr>
+<tr class="odd">
+<td>TenantSettingsUpdated</td>
+<td>tenantId, geänderte Felder</td>
+<td>user-management (Login-Mode-Sync)</td>
+</tr>
+<tr class="even">
+<td>TenantDomainAdded</td>
+<td>tenantId, domain, isPrimary</td>
+<td>API Gateway (Cache invalidieren)</td>
+</tr>
+<tr class="odd">
+<td>TenantDomainVerified</td>
+<td>tenantId, domain</td>
+<td>API Gateway</td>
+</tr>
+<tr class="even">
+<td>TenantDomainRemoved</td>
+<td>tenantId, domain</td>
+<td>API Gateway (Cache invalidieren)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="grpc-service-definition-entwurf">gRPC-Service-Definition
+(Entwurf)</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode protobuf"><code class="sourceCode protobuf"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>service TenantResolution {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  rpc ResolveDomain(ResolveDomainRequest) returns (ResolveDomainResponse);</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  rpc GetTenant(GetTenantRequest) returns (TenantInfo);</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  rpc GetTenantSettings(GetTenantSettingsRequest) returns (TenantSettingsInfo);</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Die Proto-Datei wird in <code>libs/grpc-contracts/</code> gepflegt
+(ADR-0010).</p>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Klare Bounded Context Trennung: Tenant-Verwaltung ist eine
+eigenständige Domäne</li>
+<li>Domain-Resolution ist unabhängig skalierbar und optimierbar (eigener
+Cache, eigene Replicas)</li>
+<li>Tenant-Lifecycle (erstellen, suspendieren, deaktivieren) ist sauber
+modellierbar</li>
+<li>user-management wird schlanker und fokussiert sich auf Identity
+&amp; Access</li>
+<li>Domain-Mapping und DNS-Verifikation haben einen klaren Owner</li>
+<li>Neue Services müssen nur den <code>X-Tenant-Id</code>-Header lesen,
+die Auflösung ist zentral im Gateway</li>
+<li>Unabhängiges Deployment: Tenant-Konfigurationsänderungen erfordern
+kein User-Service-Deployment</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>Zusätzlicher Service mit eigener Datenbank, eigenen Migrationen,
+eigenem Deployment</li>
+<li>user-management muss <code>TenantSettings</code>-bezogene Logik
+abgeben (Migration bestehenden Codes)</li>
+<li>Inter-Service-Kommunikation: user-management muss per gRPC oder
+Kafka-Event prüfen, ob ein Tenant existiert</li>
+<li>Domain-Resolution wird zum kritischen Pfad (Mitigation: Caching im
+API Gateway)</li>
+<li>Komplexeres lokales Entwicklungssetup (ein Service mehr in Docker
+Compose)</li>
+</ul>
+<p><strong>Mitigationen:</strong></p>
+<ul>
+<li>API Gateway cached Domain-Resolution-Ergebnisse (TTL-basiert +
+Event-basierte Invalidierung)</li>
+<li>Der tenant-management Service publiziert alle Zustandsänderungen als
+Kafka Events</li>
+<li>Lokale Entwicklung: Default-Tenant bleibt konfigurierbar für
+Einzelservice-Starts ohne Gateway</li>
+<li>ArchUnit-Tests stellen sicher, dass kein Service direkt auf die
+Tenant-Datenbank zugreift</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li>STK-002: Multi-Tenant-Fähigkeit</li>
+<li>SWR-003: Tenant-Isolation auf Datenebene</li>
+<li>SWR-017: Domain-basierte Tenant-Auswahl</li>
+<li>SWR-044: Tenant-spezifische Login-Konfiguration</li>
+<li>SWR-045: Auto-Approval-Regeln</li>
+<li>SWR-050: Tenant-Branding</li>
+<li>SWR-061: OIDC-Konfiguration pro Tenant</li>
+<li>ADR-0001: Hexagonale Architektur</li>
+<li>ADR-0010: gRPC für synchrone Service-Kommunikation</li>
+<li>ADR-0012: Domain-basierte Tenant-Auswahl</li>
+<li>ADR-0015: Flyway für Datenbank-Migrationen</li>
+<li>ADR-0017: API Gateway (Spring Cloud Gateway)</li>
+<li>ADR-0018: Dual-Broker-Strategie (Kafka + RabbitMQ)</li>
+<li>ADR-0019: Database per Service</li>
+<li>ADR-0023: CloudNativePG für PostgreSQL</li>
+<li>ADR-0028: Multi-Tenant-Isolation auf Datenebene</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

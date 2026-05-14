@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>12. Glossar :: Toms Blog: Dokumentation</title>
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../index.html">Toms Blog: Dokumentation</a>
+      <button class="navbar-burger" aria-label="Toggle navigation" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="../../../tomsblog-arc42/main/index.html">Architektur (arc42)</a>
+        <a class="navbar-item" href="../../../tomsblog-design/main/index.html">Software Detail Design</a>
+        <a class="navbar-item" href="../../../tomsblog-infra/main/index.html">Infrastruktur</a>
+        <a class="navbar-item" href="../../../requirements/index.html">Requirements</a>
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field">
+            <input id="search-input" type="text" placeholder="Dokumentation durchsuchen">
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="tomsblog-arc42" data-version="v0.9.1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Toms Blog: Architekturdokumentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Überblick</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../01_introduction/index.html">1. Einführung und Ziele</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../02_constraints/index.html">2. Randbedingungen</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../03_context/index.html">3. Kontextabgrenzung</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../04_solution_strategy/index.html">4. Lösungsstrategie</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../05_building_blocks/index.html">5. Bausteinsicht</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../06_runtime/index.html">6. Laufzeitsicht</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../07_deployment/index.html">7. Verteilungssicht</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../08_crosscutting/index.html">8. Querschnittliche Konzepte</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../09_decisions/index.html">9. Architekturentscheidungen</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../10_quality/index.html">10. Qualitätsanforderungen</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../11_risks/index.html">11. Risiken und technische Schulden</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="index.html">12. Glossar</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Toms Blog: Architekturdokumentation</span>
+    <span class="version">v0.9.1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../../v0.10.6/index.html">Toms Blog: Architekturdokumentation</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-infra/main/index.html">Toms Blog: Infrastruktur-Dokumentation</a></div>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../tomsblog-infra/main/index.html">main-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.6/index.html">v0.9.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.5/index.html">v0.9.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.4/index.html">v0.9.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.3/index.html">v0.9.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.2/index.html">v0.9.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.1/index.html">v0.9.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.0/index.html">v0.9.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.9/index.html">v0.8.9-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.8/index.html">v0.8.8-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.7/index.html">v0.8.7-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.6/index.html">v0.8.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.5/index.html">v0.8.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.4/index.html">v0.8.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.3/index.html">v0.8.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.2/index.html">v0.8.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.1/index.html">v0.8.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.0/index.html">v0.8.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.3/index.html">v0.7.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.2/index.html">v0.7.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.1/index.html">v0.7.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.5.3/index.html">v0.5.3-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-design/v0.10.6/index.html">Toms Blog: Software Detail Design</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../tomsblog-design/main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../../tomsblog-design/v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../v0.10.6/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Toms Blog: Architekturdokumentation</a></li>
+    <li><a href="index.html">12. Glossar</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v0.9.1</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/12_glossary/index.html">main-dev</a>
+    <a class="version" href="../../v0.10.6/12_glossary/index.html">v0.10.6</a>
+    <a class="version" href="../../v0.10.5/12_glossary/index.html">v0.10.5</a>
+    <a class="version" href="../../v0.10.4/12_glossary/index.html">v0.10.4</a>
+    <a class="version" href="../../v0.10.3/12_glossary/index.html">v0.10.3</a>
+    <a class="version" href="../../v0.10.2/12_glossary/index.html">v0.10.2</a>
+    <a class="version" href="../../v0.10.1/12_glossary/index.html">v0.10.1</a>
+    <a class="version" href="../../v0.10.0/12_glossary/index.html">v0.10.0</a>
+    <a class="version" href="../../v0.9.6/12_glossary/index.html">v0.9.6</a>
+    <a class="version" href="../../v0.9.5/12_glossary/index.html">v0.9.5</a>
+    <a class="version" href="../../v0.9.4/12_glossary/index.html">v0.9.4</a>
+    <a class="version" href="../../v0.9.3/12_glossary/index.html">v0.9.3</a>
+    <a class="version" href="../../v0.9.2/12_glossary/index.html">v0.9.2</a>
+    <a class="version is-current" href="index.html">v0.9.1</a>
+    <a class="version" href="../../v0.9.0/12_glossary/index.html">v0.9.0</a>
+    <a class="version" href="../../v0.8.9/12_glossary/index.html">v0.8.9</a>
+    <a class="version" href="../../v0.8.8/12_glossary/index.html">v0.8.8</a>
+    <a class="version" href="../../v0.8.7/12_glossary/index.html">v0.8.7</a>
+    <a class="version" href="../../v0.8.6/12_glossary/index.html">v0.8.6</a>
+    <a class="version" href="../../v0.8.5/12_glossary/index.html">v0.8.5</a>
+    <a class="version" href="../../v0.8.4/12_glossary/index.html">v0.8.4</a>
+    <a class="version" href="../../v0.8.3/12_glossary/index.html">v0.8.3</a>
+    <a class="version" href="../../v0.8.2/12_glossary/index.html">v0.8.2</a>
+    <a class="version" href="../../v0.8.1/12_glossary/index.html">v0.8.1</a>
+    <a class="version" href="../../v0.8.0/12_glossary/index.html">v0.8.0</a>
+    <a class="version" href="../../v0.7.3/12_glossary/index.html">v0.7.3</a>
+    <a class="version" href="../../v0.7.2/12_glossary/index.html">v0.7.2</a>
+    <a class="version" href="../../v0.7.1/12_glossary/index.html">v0.7.1</a>
+    <a class="version" href="../../v0.5.3/12_glossary/index.html">v0.5.3</a>
+    <a class="version" href="../../v0.5.2/12_glossary/index.html">v0.5.2</a>
+    <a class="version" href="../../v0.5.1/12_glossary/index.html">v0.5.1</a>
+    <a class="version" href="../../v0.5.0/12_glossary/index.html">v0.5.0</a>
+    <a class="version" href="../../v0.4.6/12_glossary/index.html">v0.4.6</a>
+    <a class="version" href="../../v0.4.5/12_glossary/index.html">v0.4.5</a>
+    <a class="version" href="../../v0.4.4/12_glossary/index.html">v0.4.4</a>
+    <a class="version" href="../../v0.4.3/12_glossary/index.html">v0.4.3</a>
+    <a class="version" href="../../v0.4.1/12_glossary/index.html">v0.4.1</a>
+    <a class="version" href="../../v0.4.0/12_glossary/index.html">v0.4.0</a>
+    <a class="version" href="../../v0.3.3/12_glossary/index.html">v0.3.3</a>
+    <a class="version" href="../../v0.3.0/12_glossary/index.html">v0.3.0-dev</a>
+    <a class="version" href="../../v0.2.0/12_glossary/index.html">v0.2.0-dev</a>
+    <a class="version" href="../../v0.1.0/12_glossary/index.html">v0.1.0-dev</a>
+  </div>
+</div>
+<div class="edit-this-page"><a href="https://github.com/tomirgang/tomsblog/blob/v0.9.1/docs/arc42/modules/ROOT/pages/12_glossary/index.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">12. Glossar</h1>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Begriff</th>
+<th class="tableblock halign-left valign-top">Bedeutung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Aggregate Root</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DDD-Muster: Einstiegspunkt in ein Cluster von Domain-Objekten</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ADR</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Architecture Decision Record, eine dokumentierte Architekturentscheidung</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Adapter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Technische Implementierung eines Ports (z.B. JPA, REST, Kafka)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bounded Context</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DDD: Abgegrenzter fachlicher Bereich mit eigenem Modell</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain Event</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fachliches Ereignis (z.B. "Post veröffentlicht")</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hexagonale Architektur</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Architekturstil mit Ports (Interfaces) und Adaptern (Implementierungen)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">KRaft</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kafka Raft, also Kafka ohne ZooKeeper</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Multi-Tenant</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">System, das mehrere Mandanten (Kunden) isoliert bedient</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Port</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Interface zwischen Domain/Application und der Außenwelt</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shared Kernel</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Geteilte Library mit Domain Primitives (EntityId, TenantId etc.)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STK, SWR, SWA, TST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Doorstop-Dokument-Prefixes (Stakeholder, Software Req, Architecture, Test)</p></td>
+</tr>
+</tbody>
+</table>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

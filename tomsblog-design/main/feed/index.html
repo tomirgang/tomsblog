@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Feed Service: Detail Design :: Toms Blog: Dokumentation</title>
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../index.html">Toms Blog: Dokumentation</a>
+      <button class="navbar-burger" aria-label="Toggle navigation" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="../../../tomsblog-arc42/main/index.html">Architektur (arc42)</a>
+        <a class="navbar-item" href="../../../tomsblog-design/main/index.html">Software Detail Design</a>
+        <a class="navbar-item" href="../../../tomsblog-infra/main/index.html">Infrastruktur</a>
+        <a class="navbar-item" href="../../../requirements/index.html">Requirements</a>
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field">
+            <input id="search-input" type="text" placeholder="Dokumentation durchsuchen">
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="tomsblog-design" data-version="main">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Toms Blog: Software Detail Design</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Überblick</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../blog-content/index.html">Blog Content Service</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../user-management/index.html">User Management Service</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../tenant-management/index.html">Tenant Management Service</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="index.html">Feed Service</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../shared-ui/index.html">Shared UI Library</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../e2e-tests/index.html">E2E-Test-Modul</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Toms Blog: Software Detail Design</span>
+    <span class="version">main-dev</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-arc42/v0.10.6/index.html">Toms Blog: Architekturdokumentation</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../tomsblog-arc42/main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../../tomsblog-arc42/v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-infra/main/index.html">Toms Blog: Infrastruktur-Dokumentation</a></div>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../tomsblog-infra/main/index.html">main-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.6/index.html">v0.9.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.5/index.html">v0.9.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.4/index.html">v0.9.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.3/index.html">v0.9.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.2/index.html">v0.9.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.1/index.html">v0.9.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.0/index.html">v0.9.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.9/index.html">v0.8.9-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.8/index.html">v0.8.8-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.7/index.html">v0.8.7-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.6/index.html">v0.8.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.5/index.html">v0.8.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.4/index.html">v0.8.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.3/index.html">v0.8.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.2/index.html">v0.8.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.1/index.html">v0.8.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.0/index.html">v0.8.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.3/index.html">v0.7.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.2/index.html">v0.7.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.1/index.html">v0.7.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.5.3/index.html">v0.5.3-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <div class="title"><a href="../../v0.10.6/index.html">Toms Blog: Software Detail Design</a></div>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="../index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../tomsblog-arc42/v0.10.6/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Toms Blog: Software Detail Design</a></li>
+    <li><a href="index.html">Feed Service</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">main-dev</button>
+  <div class="version-menu">
+    <a class="version is-current" href="index.html">main-dev</a>
+    <a class="version" href="../../v0.10.6/feed/index.html">v0.10.6</a>
+    <a class="version" href="../../v0.10.5/feed/index.html">v0.10.5</a>
+    <a class="version" href="../../v0.10.4/feed/index.html">v0.10.4</a>
+    <a class="version" href="../../v0.10.3/feed/index.html">v0.10.3</a>
+    <a class="version" href="../../v0.10.2/feed/index.html">v0.10.2</a>
+    <a class="version" href="../../v0.10.1/feed/index.html">v0.10.1</a>
+    <a class="version" href="../../v0.10.0/feed/index.html">v0.10.0</a>
+    <a class="version is-missing" href="../../v0.9.6/index.html">v0.9.6</a>
+    <a class="version is-missing" href="../../v0.9.5/index.html">v0.9.5</a>
+    <a class="version is-missing" href="../../v0.9.4/index.html">v0.9.4</a>
+    <a class="version is-missing" href="../../v0.9.3/index.html">v0.9.3</a>
+    <a class="version is-missing" href="../../v0.9.2/index.html">v0.9.2</a>
+    <a class="version is-missing" href="../../v0.9.1/index.html">v0.9.1</a>
+    <a class="version is-missing" href="../../v0.9.0/index.html">v0.9.0</a>
+    <a class="version is-missing" href="../../v0.8.9/index.html">v0.8.9</a>
+    <a class="version is-missing" href="../../v0.8.8/index.html">v0.8.8</a>
+    <a class="version is-missing" href="../../v0.8.7/index.html">v0.8.7</a>
+    <a class="version is-missing" href="../../v0.8.6/index.html">v0.8.6</a>
+    <a class="version is-missing" href="../../v0.8.5/index.html">v0.8.5</a>
+    <a class="version is-missing" href="../../v0.8.4/index.html">v0.8.4</a>
+    <a class="version is-missing" href="../../v0.8.3/index.html">v0.8.3</a>
+    <a class="version is-missing" href="../../v0.8.2/index.html">v0.8.2</a>
+    <a class="version is-missing" href="../../v0.8.1/index.html">v0.8.1</a>
+    <a class="version is-missing" href="../../v0.8.0/index.html">v0.8.0</a>
+    <a class="version is-missing" href="../../v0.7.3/index.html">v0.7.3</a>
+    <a class="version is-missing" href="../../v0.7.2/index.html">v0.7.2</a>
+    <a class="version is-missing" href="../../v0.7.1/index.html">v0.7.1</a>
+    <a class="version is-missing" href="../../v0.5.3/index.html">v0.5.3</a>
+    <a class="version is-missing" href="../../v0.5.2/index.html">v0.5.2</a>
+    <a class="version is-missing" href="../../v0.5.1/index.html">v0.5.1</a>
+    <a class="version is-missing" href="../../v0.5.0/index.html">v0.5.0</a>
+    <a class="version is-missing" href="../../v0.4.6/index.html">v0.4.6</a>
+    <a class="version is-missing" href="../../v0.4.5/index.html">v0.4.5</a>
+    <a class="version is-missing" href="../../v0.4.4/index.html">v0.4.4</a>
+    <a class="version is-missing" href="../../v0.4.3/index.html">v0.4.3</a>
+    <a class="version is-missing" href="../../v0.4.1/index.html">v0.4.1</a>
+    <a class="version is-missing" href="../../v0.4.0/index.html">v0.4.0</a>
+    <a class="version is-missing" href="../../v0.3.3/index.html">v0.3.3</a>
+    <a class="version is-missing" href="../../v0.3.0/index.html">v0.3.0-dev</a>
+    <a class="version is-missing" href="../../v0.2.0/index.html">v0.2.0-dev</a>
+    <a class="version is-missing" href="../../v0.1.0/index.html">v0.1.0-dev</a>
+  </div>
+</div>
+<div class="edit-this-page"><a href="https://github.com/tomirgang/tomsblog/edit/main/docs/design/modules/ROOT/pages/feed/index.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Feed Service: Detail Design</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_überblick">1. Überblick</a></li>
+<li><a href="#_domain_modell">2. Domain-Modell</a></li>
+<li><a href="#_application_layer">3. Application Layer</a></li>
+<li><a href="#_adapter_layer">4. Adapter Layer</a>
+<ul class="sectlevel2">
+<li><a href="#_inbound_kafka_consumer">4.1. Inbound: Kafka Consumer</a></li>
+<li><a href="#_outbound_jpa_persistence">4.2. Outbound: JPA Persistence</a></li>
+</ul>
+</li>
+<li><a href="#_konfiguration">5. Konfiguration</a></li>
+<li><a href="#_anforderungsverfolgung">6. Anforderungsverfolgung</a></li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="_überblick"><a class="anchor" href="#_überblick"></a>1. Überblick</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der Feed Service ist ein event-konsumierender Microservice, der denormalisierte Feed-Einträge aus veröffentlichten Blog-Posts erstellt und verwaltet (SWR-090). Er konsumiert Domain Events des Blog Content Service über Kafka und materialisiert eine lesoptimierte Sicht auf veröffentlichte Posts.</p>
+</div>
+<div class="paragraph">
+<p>Der Service folgt der hexagonalen Architektur (SWA-001) mit klarer Trennung von Domain, Application und Adapter Layer. Er besitzt eine eigene PostgreSQL-Datenbank (Database per Service, ADR-0019, SWA-015) und wird mit eigenen Kubernetes-Ressourcen deployt.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_domain_modell"><a class="anchor" href="#_domain_modell"></a>2. Domain-Modell</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Das Domain-Modell ist bewusst schlank gehalten. Ein <code>FeedEntry</code> repräsentiert einen denormalisierten, veröffentlichten Blog-Post mit den für die Feed-Anzeige relevanten Metadaten.</p>
+</div>
+<div class="paragraph">
+<p>Das folgende Klassendiagramm zeigt die Struktur des Domain Layers:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-6676cbe24e653e0bf3a5067724730d78d1f5b2e7.svg" alt="Diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Die <code>TenantId</code> stammt aus dem Shared Kernel (<code>libs/shared-kernel</code>) und gewährleistet konsistente Tenant-Isolation über alle Services hinweg (SWR-003).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_application_layer"><a class="anchor" href="#_application_layer"></a>3. Application Layer</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der Application Layer definiert die Ports für eingehende Events und ausgehende Persistenz.</p>
+</div>
+<div class="paragraph">
+<p>Das folgende Diagramm zeigt die Ports und den Application Service:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-16911024e3cbf9d936e6dd49a968cbdbaaec154a.svg" alt="Diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Der <code>FeedEntryService</code> implementiert das Upsert-Pattern: Bei <code>onPostPublished</code> wird ein bestehender Eintrag aktualisiert oder ein neuer erstellt. Bei <code>onPostUpdated</code> werden nur bestehende Einträge aktualisiert (SWR-090).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_adapter_layer"><a class="anchor" href="#_adapter_layer"></a>4. Adapter Layer</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_inbound_kafka_consumer"><a class="anchor" href="#_inbound_kafka_consumer"></a>4.1. Inbound: Kafka Consumer</h3>
+<div class="paragraph">
+<p>Der <code>PostEventConsumer</code> empfängt <code>PostPublishedEvent</code> und <code>PostUpdatedEvent</code> aus den Kafka-Topics <code>post.published</code> und <code>post.updated</code> und delegiert an den <code>FeedEntryUseCase</code>.</p>
+</div>
+<div class="paragraph">
+<p>Das folgende Diagramm zeigt den Datenfluss vom Kafka-Topic zum Domain-Modell:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-b8e524e58091f2dba7c2fc78b2075f7d05bd7c20.svg" alt="Diagram">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_outbound_jpa_persistence"><a class="anchor" href="#_outbound_jpa_persistence"></a>4.2. Outbound: JPA Persistence</h3>
+<div class="paragraph">
+<p>Die Persistenz wird über Spring Data JPA implementiert. Der <code>FeedEntryMapper</code> konvertiert zwischen Domain-Modell (<code>FeedEntry</code> mit <code>TenantId</code>) und JPA-Entity (<code>FeedEntryJpaEntity</code> mit <code>UUID</code>).</p>
+</div>
+<div class="paragraph">
+<p>Das folgende Komponentendiagramm zeigt die Adapter-Struktur:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-c17b867a987bafa837e10765c937ff28ceec3cca.svg" alt="Diagram">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_konfiguration"><a class="anchor" href="#_konfiguration"></a>5. Konfiguration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Die Bean-Verdrahtung erfolgt in der <code>FeedConfiguration</code>-Klasse, konsistent mit dem Muster der anderen Services (<code>BlogContentConfiguration</code>, <code>TenantManagementConfiguration</code>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+public class FeedConfiguration {
+    @Bean
+    public FeedEntryUseCase feedEntryUseCase(FeedEntryRepository feedEntryRepository) {
+        return new FeedEntryService(feedEntryRepository);
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_anforderungsverfolgung"><a class="anchor" href="#_anforderungsverfolgung"></a>6. Anforderungsverfolgung</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Die folgende Tabelle zeigt die Zuordnung der implementierten Anforderungen zu den Komponenten:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Anforderung</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+<th class="tableblock halign-left valign-top">Implementierung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-090</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Feed-Einträge aus Post-Events materialisieren</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FeedEntryService</code>, <code>PostEventConsumer</code>, <code>FeedEntry</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-003</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tenant-Isolation auf Datenebene</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TenantId</code> in <code>FeedEntry</code>, <code>findByTenantIdAndPostId</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-001</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hexagonale Architektur</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Package-Struktur domain/application/adapter</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-005</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain Events über Kafka</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PostEventConsumer</code> konsumiert Event Contracts</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-015</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Database per Service</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Eigene PostgreSQL-Datenbank <code>feed</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

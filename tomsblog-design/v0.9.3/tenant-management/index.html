@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Tenant Management Service: Detail Design :: Toms Blog: Dokumentation</title>
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../index.html">Toms Blog: Dokumentation</a>
+      <button class="navbar-burger" aria-label="Toggle navigation" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="../../../tomsblog-arc42/main/index.html">Architektur (arc42)</a>
+        <a class="navbar-item" href="../../../tomsblog-design/main/index.html">Software Detail Design</a>
+        <a class="navbar-item" href="../../../tomsblog-infra/main/index.html">Infrastruktur</a>
+        <a class="navbar-item" href="../../../requirements/index.html">Requirements</a>
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field">
+            <input id="search-input" type="text" placeholder="Dokumentation durchsuchen">
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="tomsblog-design" data-version="v0.9.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Toms Blog: Software Detail Design</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Überblick</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../blog-content/index.html">Blog Content Service</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../user-management/index.html">User Management Service</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="index.html">Tenant Management Service</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../shared-ui/index.html">Shared UI Library</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../e2e-tests/index.html">E2E-Test-Modul</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Toms Blog: Software Detail Design</span>
+    <span class="version">v0.9.3</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-arc42/v0.10.6/index.html">Toms Blog: Architekturdokumentation</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../tomsblog-arc42/main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../../tomsblog-arc42/v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-infra/main/index.html">Toms Blog: Infrastruktur-Dokumentation</a></div>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../tomsblog-infra/main/index.html">main-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.6/index.html">v0.9.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.5/index.html">v0.9.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.4/index.html">v0.9.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.3/index.html">v0.9.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.2/index.html">v0.9.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.1/index.html">v0.9.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.0/index.html">v0.9.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.9/index.html">v0.8.9-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.8/index.html">v0.8.8-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.7/index.html">v0.8.7-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.6/index.html">v0.8.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.5/index.html">v0.8.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.4/index.html">v0.8.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.3/index.html">v0.8.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.2/index.html">v0.8.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.1/index.html">v0.8.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.0/index.html">v0.8.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.3/index.html">v0.7.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.2/index.html">v0.7.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.1/index.html">v0.7.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.5.3/index.html">v0.5.3-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <div class="title"><a href="../../v0.10.6/index.html">Toms Blog: Software Detail Design</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../tomsblog-arc42/v0.10.6/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Toms Blog: Software Detail Design</a></li>
+    <li><a href="index.html">Tenant Management Service</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v0.9.3</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/tenant-management/index.html">main-dev</a>
+    <a class="version" href="../../v0.10.6/tenant-management/index.html">v0.10.6</a>
+    <a class="version" href="../../v0.10.5/tenant-management/index.html">v0.10.5</a>
+    <a class="version" href="../../v0.10.4/tenant-management/index.html">v0.10.4</a>
+    <a class="version" href="../../v0.10.3/tenant-management/index.html">v0.10.3</a>
+    <a class="version" href="../../v0.10.2/tenant-management/index.html">v0.10.2</a>
+    <a class="version" href="../../v0.10.1/tenant-management/index.html">v0.10.1</a>
+    <a class="version" href="../../v0.10.0/tenant-management/index.html">v0.10.0</a>
+    <a class="version" href="../../v0.9.6/tenant-management/index.html">v0.9.6</a>
+    <a class="version" href="../../v0.9.5/tenant-management/index.html">v0.9.5</a>
+    <a class="version" href="../../v0.9.4/tenant-management/index.html">v0.9.4</a>
+    <a class="version is-current" href="index.html">v0.9.3</a>
+    <a class="version is-missing" href="../../v0.9.2/index.html">v0.9.2</a>
+    <a class="version is-missing" href="../../v0.9.1/index.html">v0.9.1</a>
+    <a class="version is-missing" href="../../v0.9.0/index.html">v0.9.0</a>
+    <a class="version is-missing" href="../../v0.8.9/index.html">v0.8.9</a>
+    <a class="version is-missing" href="../../v0.8.8/index.html">v0.8.8</a>
+    <a class="version is-missing" href="../../v0.8.7/index.html">v0.8.7</a>
+    <a class="version is-missing" href="../../v0.8.6/index.html">v0.8.6</a>
+    <a class="version is-missing" href="../../v0.8.5/index.html">v0.8.5</a>
+    <a class="version is-missing" href="../../v0.8.4/index.html">v0.8.4</a>
+    <a class="version is-missing" href="../../v0.8.3/index.html">v0.8.3</a>
+    <a class="version is-missing" href="../../v0.8.2/index.html">v0.8.2</a>
+    <a class="version is-missing" href="../../v0.8.1/index.html">v0.8.1</a>
+    <a class="version is-missing" href="../../v0.8.0/index.html">v0.8.0</a>
+    <a class="version is-missing" href="../../v0.7.3/index.html">v0.7.3</a>
+    <a class="version is-missing" href="../../v0.7.2/index.html">v0.7.2</a>
+    <a class="version is-missing" href="../../v0.7.1/index.html">v0.7.1</a>
+    <a class="version is-missing" href="../../v0.5.3/index.html">v0.5.3</a>
+    <a class="version is-missing" href="../../v0.5.2/index.html">v0.5.2</a>
+    <a class="version is-missing" href="../../v0.5.1/index.html">v0.5.1</a>
+    <a class="version is-missing" href="../../v0.5.0/index.html">v0.5.0</a>
+    <a class="version is-missing" href="../../v0.4.6/index.html">v0.4.6</a>
+    <a class="version is-missing" href="../../v0.4.5/index.html">v0.4.5</a>
+    <a class="version is-missing" href="../../v0.4.4/index.html">v0.4.4</a>
+    <a class="version is-missing" href="../../v0.4.3/index.html">v0.4.3</a>
+    <a class="version is-missing" href="../../v0.4.1/index.html">v0.4.1</a>
+    <a class="version is-missing" href="../../v0.4.0/index.html">v0.4.0</a>
+    <a class="version is-missing" href="../../v0.3.3/index.html">v0.3.3</a>
+    <a class="version is-missing" href="../../v0.3.0/index.html">v0.3.0-dev</a>
+    <a class="version is-missing" href="../../v0.2.0/index.html">v0.2.0-dev</a>
+    <a class="version is-missing" href="../../v0.1.0/index.html">v0.1.0-dev</a>
+  </div>
+</div>
+<div class="edit-this-page"><a href="https://github.com/tomirgang/tomsblog/blob/v0.9.3/docs/design/modules/ROOT/pages/tenant-management/index.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Tenant Management Service: Detail Design</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_überblick">1. Überblick</a></li>
+<li><a href="#_domain_modell">2. Domain-Modell</a>
+<ul class="sectlevel2">
+<li><a href="#_tenant_aggregate_root">2.1. Tenant (Aggregate Root)</a></li>
+<li><a href="#_loginmode_enum">2.2. LoginMode (Enum)</a></li>
+</ul>
+</li>
+<li><a href="#_application_layer">3. Application Layer</a>
+<ul class="sectlevel2">
+<li><a href="#_inbound_port_tenantmanagementusecase">3.1. Inbound Port: TenantManagementUseCase</a></li>
+<li><a href="#_outbound_port_tenantrepository">3.2. Outbound Port: TenantRepository</a></li>
+<li><a href="#_tenantmanagementservice">3.3. TenantManagementService</a></li>
+</ul>
+</li>
+<li><a href="#_adapter_layer">4. Adapter Layer</a>
+<ul class="sectlevel2">
+<li><a href="#_inbound_thymeleaf_web_ui">4.1. Inbound: Thymeleaf Web-UI</a>
+<ul class="sectlevel3">
+<li><a href="#_seiten">4.1.1. Seiten</a></li>
+</ul>
+</li>
+<li><a href="#_inbound_grpc">4.2. Inbound: gRPC</a>
+<ul class="sectlevel3">
+<li><a href="#_konsumenten">4.2.1. Konsumenten</a></li>
+</ul>
+</li>
+<li><a href="#_inbound_security">4.3. Inbound: Security</a></li>
+<li><a href="#_outbound_jpa_persistenz">4.4. Outbound: JPA-Persistenz</a></li>
+</ul>
+</li>
+<li><a href="#_kubernetes_deployment">5. Kubernetes-Deployment</a></li>
+<li><a href="#_anforderungsabdeckung">6. Anforderungsabdeckung</a></li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="_überblick"><a class="anchor" href="#_überblick"></a>1. Überblick</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der Tenant Management Service verwaltet den Tenant-Lifecycle und die Tenant-Konfiguration als eigenständiger Bounded Context (ADR-0031, SWR-072). Er übernimmt die Verantwortlichkeiten, die bisher im User Management Service als TenantSettings modelliert waren.</p>
+</div>
+<div class="paragraph">
+<p>Der Service stellt eine Thymeleaf-basierte Admin-UI für SuperAdmins bereit (SWR-073) und eine gRPC-Schnittstelle für Service-zu-Service-Abfragen (SWR-074). Die Architektur folgt der hexagonalen Architektur (SWA-001) mit klarer Trennung von Domain, Application und Adapter Layer (SWA-034).</p>
+</div>
+<div class="paragraph">
+<p>Der Service besitzt eine eigene PostgreSQL-Datenbank (Database per Service, ADR-0019) und wird mit eigenen Kubernetes-Ressourcen deployt (SWR-075).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_domain_modell"><a class="anchor" href="#_domain_modell"></a>2. Domain-Modell</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Das Domain-Modell bildet Tenants als Aggregate Root mit Lifecycle-Management, Login-Konfiguration, Branding und rechtlichen Inhalten ab.</p>
+</div>
+<div class="paragraph">
+<p>Das folgende Klassendiagramm zeigt die Struktur des Domain Layers:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-828ce46faade93a09a15ccbe94dccb90a7a5766f.svg" alt="Diagram">
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tenant_aggregate_root"><a class="anchor" href="#_tenant_aggregate_root"></a>2.1. Tenant (Aggregate Root)</h3>
+<div class="paragraph">
+<p>Der Tenant ist das zentrale Aggregate Root des Service (STK-050). Er kapselt alle Konfigurationsdaten, die bisher als TenantSettings im User Management Service verwaltet wurden, und erweitert sie um einen expliziten Lifecycle.</p>
+</div>
+<div class="paragraph">
+<p>Die Login-Mode-Konfiguration (SWR-044) steuert, ob Benutzer sich über interne Accounts, OIDC oder beides anmelden können. Die Auto-Approval-Regeln (SWR-045) ermöglichen die automatische Freigabe neuer Benutzer basierend auf OIDC-Login oder E-Mail-Domain.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_loginmode_enum"><a class="anchor" href="#_loginmode_enum"></a>2.2. LoginMode (Enum)</h3>
+<div class="paragraph">
+<p>Das LoginMode-Enum wird aus dem User Management Service migriert. Es bestimmt die verfügbaren Authentifizierungsmethoden pro Tenant. Bei Neuanlage eines Tenants wird der LoginMode auf <code>INTERNAL</code> gesetzt (SWR-044). Die Umstellung auf <code>OIDC</code> oder <code>BOTH</code> erfordert die vorherige Konfiguration der OIDC-Felder.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_application_layer"><a class="anchor" href="#_application_layer"></a>3. Application Layer</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der Application Layer definiert die Inbound- und Outbound-Ports gemäß hexagonaler Architektur.</p>
+</div>
+<div class="paragraph">
+<p>Das folgende Diagramm zeigt die Ports und den Service:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-519b888186dcf5ea05dd80b347fb7904f1c3785d.svg" alt="Diagram">
+</div>
+</div>
+<div class="sect2">
+<h3 id="_inbound_port_tenantmanagementusecase"><a class="anchor" href="#_inbound_port_tenantmanagementusecase"></a>3.1. Inbound Port: TenantManagementUseCase</h3>
+<div class="paragraph">
+<p>Der TenantManagementUseCase definiert alle Operationen zur Tenant-Verwaltung. Die Methode <code>createTenant</code> ermöglicht das Anlegen neuer Tenants durch den SuperAdmin. Die Update-Methoden sind analog zum User Management Service in Einstellungsgruppen aufgeteilt (SWR-069, SWR-070, SWR-071).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_outbound_port_tenantrepository"><a class="anchor" href="#_outbound_port_tenantrepository"></a>3.2. Outbound Port: TenantRepository</h3>
+<div class="paragraph">
+<p>Der TenantRepository Port abstrahiert die Persistenz. Die <code>findAll</code>-Methode wird sowohl für die Admin-UI als auch für den gRPC-ListTenants-Endpunkt verwendet.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tenantmanagementservice"><a class="anchor" href="#_tenantmanagementservice"></a>3.3. TenantManagementService</h3>
+<div class="paragraph">
+<p>Der Service implementiert den Inbound Port und orchestriert Domain-Logik mit Persistenz. Alle Mutationen werden über den AuditLogger protokolliert (SWR-056).</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_adapter_layer"><a class="anchor" href="#_adapter_layer"></a>4. Adapter Layer</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_inbound_thymeleaf_web_ui"><a class="anchor" href="#_inbound_thymeleaf_web_ui"></a>4.1. Inbound: Thymeleaf Web-UI</h3>
+<div class="paragraph">
+<p>Die Admin-UI (SWR-073) wird als Thymeleaf-basierte Webanwendung unter <code>/tenant/admin/**</code> bereitgestellt. Sie verwendet die Shared UI Library (SWR-065, SWA-033) für Layout, Footer und CSS.</p>
+</div>
+<div class="paragraph">
+<p>Das folgende Diagramm zeigt den Ablauf des Tenant-Erstellungsprozesses:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-41397a1c9137457bf11d7dd7955f3c4c47b17317.svg" alt="Diagram">
+</div>
+</div>
+<div class="sect3">
+<h4 id="_seiten"><a class="anchor" href="#_seiten"></a>4.1.1. Seiten</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Pfad</th>
+<th class="tableblock halign-left valign-top">Funktion</th>
+<th class="tableblock halign-left valign-top">Rollen</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/tenant/admin/login</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Break-Glass-SuperAdmin-Login</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Öffentlich</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/tenant/admin/tenants</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tenant-Übersicht mit Status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SUPERADMIN</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/tenant/admin/tenants/new</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Neuen Tenant anlegen</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SUPERADMIN</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/tenant/admin/tenants/{id}/settings</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tenant-Einstellungen bearbeiten</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SUPERADMIN</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Die Einstellungsseite verwendet Tab-Navigation mit separaten Formularen pro Einstellungsgruppe (allgemein, OIDC, Impressum/Datenschutz), analog zur bestehenden Admin-Settings-UI im User Management Service (SWR-069, SWR-070, SWR-071).</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_inbound_grpc"><a class="anchor" href="#_inbound_grpc"></a>4.2. Inbound: gRPC</h3>
+<div class="paragraph">
+<p>Der gRPC-Adapter (SWR-074) stellt Tenant-Informationen für andere Services bereit. Er ersetzt die bisherige TenantSettingsService-Definition in user_management.proto.</p>
+</div>
+<div class="paragraph">
+<p>Die Proto-Definition wird in eine eigene Datei <code>tenant_management.proto</code> in <code>libs/grpc-contracts/</code> migriert:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-protobuf hljs" data-lang="protobuf">service TenantManagementService {
+  rpc GetTenantSettings(GetTenantSettingsRequest) returns (TenantSettingsResponse);
+  rpc ListTenants(ListTenantsRequest) returns (ListTenantsResponse);
+}</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_konsumenten"><a class="anchor" href="#_konsumenten"></a>4.2.1. Konsumenten</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Service</th>
+<th class="tableblock halign-left valign-top">Verwendung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">user-management</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Login-Mode und OIDC-Konfiguration für dynamische ClientRegistration (SWR-063)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">blog-content</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tenant-Branding und Impressum/Datenschutz für Anzeige</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_inbound_security"><a class="anchor" href="#_inbound_security"></a>4.3. Inbound: Security</h3>
+<div class="paragraph">
+<p>Die Security-Konfiguration umfasst zwei Filter Chains:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Chain (Order)</th>
+<th class="tableblock halign-left valign-top">Pfadmuster</th>
+<th class="tableblock halign-left valign-top">Verhalten</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Admin (Order 1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/tenant/admin/**</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Break-Glass-FormLogin, SUPERADMIN-Rolle erforderlich</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Default (Order 2)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">alles andere</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Actuator Health öffentlich, Rest gesperrt</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Redis-Session-Sharing (SWR-064) wird konfiguriert, um Sessions mit den anderen Services zu teilen.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_outbound_jpa_persistenz"><a class="anchor" href="#_outbound_jpa_persistenz"></a>4.4. Outbound: JPA-Persistenz</h3>
+<div class="paragraph">
+<p>Die Persistenz erfolgt über JPA mit einer eigenen PostgreSQL-Datenbank <code>tenant_management</code> (ADR-0019, ADR-0023). Das Schema wird über Flyway verwaltet (ADR-0015).</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_kubernetes_deployment"><a class="anchor" href="#_kubernetes_deployment"></a>5. Kubernetes-Deployment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der Service wird mit den folgenden Kubernetes-Ressourcen deployt (SWR-075):</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Ressource</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deployment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2 Replicas, Rolling-Update, SecurityContext (non-root, read-only FS)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Service</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ClusterIP: Port 80 (HTTP) → 8082, Port 9090 (gRPC)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ingress</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/tenant/admin/**</code> → tenant-management (blog.tomirgang.de, shared TLS)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NetworkPolicy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ingress: Traefik (HTTP), Intra-Namespace (gRPC). Egress: DNS, PostgreSQL, Redis</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Linkerd Server</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP/1 (tenant-management-http), HTTP/2 (tenant-management-grpc)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AuthorizationPolicy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Traefik → HTTP, blog-content/user-management → gRPC</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Secret</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SOPS-verschlüsselt: admin-password</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ServiceAccount</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dedizierter ServiceAccount</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Die Manifeste liegen unter <code>infra/k8s/tenant-management/</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_anforderungsabdeckung"><a class="anchor" href="#_anforderungsabdeckung"></a>6. Anforderungsabdeckung</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 60%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Requirement</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+<th class="tableblock halign-left valign-top">Abdeckung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STK-050</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Eigenständiger Tenant-Verwaltungsservice mit Admin-UI</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vollständig</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-072</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tenant-Management-Service als eigenständiger Microservice</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vollständig</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-073</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tenant-Admin-UI mit Shared UI Library</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vollständig</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-074</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tenant-Management gRPC-Schnittstelle</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vollständig</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-075</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes-Deployment für Tenant-Management-Service</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vollständig</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-034</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tenant-Management-Service Architektur</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vollständig</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-044</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Konfigurierbare Login-Methode pro Tenant</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Migriert aus user-management</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-045</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Auto-Approval-Regeln</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Migriert aus user-management</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-050</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tenant-Branding</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Migriert aus user-management</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-056</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Audit-Logging</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Via JpaAuditLogger</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-061</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OIDC-Konfiguration pro Tenant</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Migriert aus user-management</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

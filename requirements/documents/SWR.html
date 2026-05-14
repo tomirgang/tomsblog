@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html>
+<head><title>doc-SWR</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="../template/bootstrap.min.css" />
+  <link rel="stylesheet" href="../template/general.css" />
+  <link type="text/css" rel="stylesheet" href="../template/doorstop.css" />
+  <script src="../template/tex-mml-chtml.js" id="MathJax-script" async></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+  </script>
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a></div>
+
+  <header class="navbar navbar-expand-lg navbar-dark bd-navbar sticky-top text-bg-secondary">
+  <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap" aria-label="Document attributes">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">Documents</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../traceability.html">Traceability</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Contents
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#toc">Table of Contents</a></li>
+                <ul>
+                <li><a class="dropdown-item" href="#SWR001">1.0 Post CRUD API</a></li>
+                <li><a class="dropdown-item" href="#SWR002">2.0 Post veröffentlichen</a></li>
+                <li><a class="dropdown-item" href="#SWR003">3.0 Tenant-Isolation auf Datenebene</a></li>
+                <li><a class="dropdown-item" href="#SWR004">4.0 Übersetzung per KI (Author-getriggert)</a></li>
+                <li><a class="dropdown-item" href="#SWR005">5.0 Manuelle Übersetzung</a></li>
+                <li><a class="dropdown-item" href="#SWR006">6.0 Audit-Trail für Posts</a></li>
+                <li><a class="dropdown-item" href="#SWR007">7.0 Rollenbasierte Zugriffskontrolle</a></li>
+                <li><a class="dropdown-item" href="#SWR008">8.0 RSS/Atom Feed-Generierung</a></li>
+                <li><a class="dropdown-item" href="#SWR009">9.0 Domain Events via Kafka</a></li>
+                <li><a class="dropdown-item" href="#SWR010">10 Container-Image und Health-Checks</a></li>
+                <li><a class="dropdown-item" href="#SWR011">11 Metriken und Tracing</a></li>
+                <li><a class="dropdown-item" href="#SWR012">12 Quellen-Verwaltung</a></li>
+                <li><a class="dropdown-item" href="#SWR013">13 Web-Snapshot von Quellen</a></li>
+                <li><a class="dropdown-item" href="#SWR014">14 Graceful Degradation bei KI-Ausfall</a></li>
+                <li><a class="dropdown-item" href="#SWR015">15 Input-Validierung und OWASP-Schutz</a></li>
+                <li><a class="dropdown-item" href="#SWR016">16 OIDC Login mit Authentik als externem Provider</a></li>
+                <li><a class="dropdown-item" href="#SWR017">17 Domain-basierte Tenant-Auswahl</a></li>
+                <li><a class="dropdown-item" href="#SWR018">18 Automatisierte Kommentar-Moderation via LLM</a></li>
+                <li><a class="dropdown-item" href="#SWR019">19 Shadow-Banning für Kommentare</a></li>
+                <li><a class="dropdown-item" href="#SWR020">20 Tag CRUD API</a></li>
+                <li><a class="dropdown-item" href="#SWR021">21 Translation CRUD API</a></li>
+                <li><a class="dropdown-item" href="#SWR022">22 Time-based Auto Publishing</a></li>
+                <li><a class="dropdown-item" href="#SWR023">23 Fuzz Testing externer Interfaces</a></li>
+                <li><a class="dropdown-item" href="#SWR024">24 OpenAPI/Swagger API-Dokumentation</a></li>
+                <li><a class="dropdown-item" href="#SWR025">25 Thymeleaf Layout-Grundgerüst (responsiv)</a></li>
+                <li><a class="dropdown-item" href="#SWR026">26 Öffentliche Blog-Ansicht (Post-Liste und Einzelansicht)</a></li>
+                <li><a class="dropdown-item" href="#SWR027">27 Thymeleaf-Formular zum Erstellen und Bearbeiten von Posts</a></li>
+                <li><a class="dropdown-item" href="#SWR028">28 Einfacher Admin-Login zum Schutz der Schreiboperationen</a></li>
+                <li><a class="dropdown-item" href="#SWR029">29 Service Mesh mit automatischem mTLS (Linkerd)</a></li>
+                <li><a class="dropdown-item" href="#SWR030">30 User-Kontext-Propagierung für geschützte Features</a></li>
+                <li><a class="dropdown-item" href="#SWR031">31 Secrets verschlüsselt im Repository und automatisch synchronisiert</a></li>
+                <li><a class="dropdown-item" href="#SWR032">32 HTTPS-Verschlüsselung für externe Zugriffe</a></li>
+                <li><a class="dropdown-item" href="#SWR033">33 Landing Page zeigt maximal drei neueste Posts</a></li>
+                <li><a class="dropdown-item" href="#SWR034">34 Versionsnummer im Footer anzeigen</a></li>
+                <li><a class="dropdown-item" href="#SWR035">35 HTML- und Markdown-Unterstützung mit Rendering</a></li>
+                <li><a class="dropdown-item" href="#SWR036">36 Gerenderte Vorschau in der Post-Liste</a></li>
+                <li><a class="dropdown-item" href="#SWR037">37 Vorschau zeigt den ersten Abschnitt</a></li>
+                <li><a class="dropdown-item" href="#SWR038">38 Volltextsuche für veröffentlichte Blog Posts</a></li>
+                <li><a class="dropdown-item" href="#SWR039">39 Chronologische Previous/Next-Navigation auf Post-Detailseiten</a></li>
+                <li><a class="dropdown-item" href="#SWR040">40 Serien-Navigation für thematisch zusammenhängende Posts</a></li>
+                <li><a class="dropdown-item" href="#SWR041">41 Featured-Zeitraum im Domain-Modell</a></li>
+                <li><a class="dropdown-item" href="#SWR042">42 Featured Posts auf der Landing Page anzeigen</a></li>
+                <li><a class="dropdown-item" href="#SWR043">43 User-Management-Service fuer Profile, Rollen und Tenant-Zuordnung</a></li>
+                <li><a class="dropdown-item" href="#SWR044">44 Konfigurierbare Login-Methode und Break-Glass Admin-Login</a></li>
+                <li><a class="dropdown-item" href="#SWR045">45 Auto-Approval bei OIDC-Login und E-Mail-Domain</a></li>
+                <li><a class="dropdown-item" href="#SWR046">46 gRPC für synchrone Inter-Service-Aufrufe</a></li>
+                <li><a class="dropdown-item" href="#SWR047">47 Kafka für Event-Streaming zwischen Services</a></li>
+                <li><a class="dropdown-item" href="#SWR048">48 RabbitMQ für Task-Queues zwischen Services</a></li>
+                <li><a class="dropdown-item" href="#SWR049">49 REST und GraphQL nur für Client-Kommunikation</a></li>
+                <li><a class="dropdown-item" href="#SWR050">50 Tenant-Branding im Header</a></li>
+                <li><a class="dropdown-item" href="#SWR051">51 Admin-UI Benutzerliste und -verwaltung</a></li>
+                <li><a class="dropdown-item" href="#SWR052">52 Admin-UI Tenant-Einstellungen</a></li>
+                <li><a class="dropdown-item" href="#SWR053">53 SuperAdmin Tenant-Umschaltung</a></li>
+                <li><a class="dropdown-item" href="#SWR054">54 Standard-Impressum und Datenschutzerklärung</a></li>
+                <li><a class="dropdown-item" href="#SWR055">55 Tenant-spezifisches Impressum und Datenschutzerklärung</a></li>
+                <li><a class="dropdown-item" href="#SWR056">56 Audit-Logging für alle relevanten Aktionen</a></li>
+                <li><a class="dropdown-item" href="#SWR057">57 Externer Session-Store für Blog Content Service</a></li>
+                <li><a class="dropdown-item" href="#SWR058">58 Mehrere Replicas für Blog Content Service</a></li>
+                <li><a class="dropdown-item" href="#SWR059">59 REST-API fuer lokale Benutzerregistrierung</a></li>
+                <li><a class="dropdown-item" href="#SWR060">60 Thymeleaf-Registrierungsseite fuer lokale Benutzer</a></li>
+                <li><a class="dropdown-item" href="#SWR061">61 Tenant-spezifische OIDC-Provider-Konfiguration im User Management Service</a></li>
+                <li><a class="dropdown-item" href="#SWR062">62 OIDC-Konfiguration in der Admin-Oberfläche (Thymeleaf)</a></li>
+                <li><a class="dropdown-item" href="#SWR063">63 Dynamische OIDC-Client-Registrierung pro Tenant</a></li>
+                <li><a class="dropdown-item" href="#SWR064">64 Shared Redis Session zwischen Blog Content und User Management Service</a></li>
+                <li><a class="dropdown-item" href="#SWR065">65 Shared UI Library als Maven-Modul</a></li>
+                <li><a class="dropdown-item" href="#SWR066">66 Gemeinsames Layout-Template in der Shared UI Library</a></li>
+                <li><a class="dropdown-item" href="#SWR067">67 Gemeinsame CSS-Styles in der Shared UI Library</a></li>
+                <li><a class="dropdown-item" href="#SWR068">68 Gemeinsamer Footer in der Shared UI Library</a></li>
+                <li><a class="dropdown-item" href="#SWR069">69 Separate Formulare für Tenant-Einstellungsgruppen</a></li>
+                <li><a class="dropdown-item" href="#SWR070">70 Navigation zwischen Tenant-Einstellungsgruppen</a></li>
+                <li><a class="dropdown-item" href="#SWR071">71 Unabhängige Speicherung pro Einstellungsgruppe</a></li>
+                <li><a class="dropdown-item" href="#SWR072">72 Tenant-Management-Service als eigenständiger Microservice</a></li>
+                <li><a class="dropdown-item" href="#SWR073">73 Tenant-Admin-UI mit Shared UI Library</a></li>
+                <li><a class="dropdown-item" href="#SWR074">74 Tenant-Management gRPC-Schnittstelle</a></li>
+                <li><a class="dropdown-item" href="#SWR075">75 Kubernetes-Deployment für Tenant-Management-Service</a></li>
+                <li><a class="dropdown-item" href="#SWR076">76 Post-Vorschau-Endpoint für DRAFT-Posts</a></li>
+                <li><a class="dropdown-item" href="#SWR077">77 Vorschau-Button im Post-Formular</a></li>
+                <li><a class="dropdown-item" href="#SWR078">78 E2E-Test-Infrastruktur mit Selenium WebDriver</a></li>
+                <li><a class="dropdown-item" href="#SWR079">79 E2E-Tests: Blog-Content öffentliche Ansichten</a></li>
+                <li><a class="dropdown-item" href="#SWR080">80 E2E-Tests: Blog-Content Autoren-Workflows</a></li>
+                <li><a class="dropdown-item" href="#SWR081">81 E2E-Tests: Authentifizierung und Registrierung</a></li>
+                <li><a class="dropdown-item" href="#SWR082">82 E2E-Tests: Admin-Workflows (User/Tenant)</a></li>
+                <li><a class="dropdown-item" href="#SWR083">83 E2E-Tests: SuperAdmin Tenant-Verwaltung</a></li>
+                <li><a class="dropdown-item" href="#SWR084">84 Tag-Verwaltung im Admin-Backend</a></li>
+                <li><a class="dropdown-item" href="#SWR085">85 Tag-Auswahl im Post-Formular</a></li>
+                <li><a class="dropdown-item" href="#SWR086">86 Tag-Anzeige in Post-Übersicht und Detailansicht</a></li>
+                <li><a class="dropdown-item" href="#SWR087">87 Auditlog-Abfrage-Port und Repository</a></li>
+                <li><a class="dropdown-item" href="#SWR088">88 Auditlog-Admin-View im Blog Content Service</a></li>
+                <li><a class="dropdown-item" href="#SWR089">89 TaskPublisher als Outbound Port für RabbitMQ-Task-Verteilung</a></li>
+                <li><a class="dropdown-item" href="#SWR090">90 Feed Event Consumer</a></li>
+                <li><a class="dropdown-item" href="#SWR091">91 Logo und FavIcon in Tenant-Branding-Einstellungen</a></li>
+                <li><a class="dropdown-item" href="#SWR092">92 Konfigurierbarer OIDC-Login-Button-Text pro Tenant</a></li>
+                <li><a class="dropdown-item" href="#SWR093">93 Benutzer-Löschung über Admin-UI</a></li>
+                <li><a class="dropdown-item" href="#SWR094">94 Konfigurierbare Standard-Rolle für neue Benutzer pro Tenant</a></li>
+                <li><a class="dropdown-item" href="#SWR095">95 Automatisches Rollen-Mapping über OIDC-Claims</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <!-- Insert logotype. -->
+            <img src="../template/logo-black-white.png" alt="Doorstop" height="128" class="d-inline-block align-text-top">
+          </div>
+        </div>
+        <div class="col-6 align-self-center">
+          <div class="bd-lead text-nowrap text-center">
+            <span class="text-monospace"><strong>doc-SWR</strong></span>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">Ref</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">By</span>
+            <p><span class="text-monospace">-</span></p>
+            <span class="text-muted">Issue</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </nav>
+</header>
+<div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout">
+  <main class="bd-main order-1">
+    <div class="bd-intro ps-lg-4">
+      <H1><p>Test document for development of <em>Doorstop</em></p></H1>
+      <h1 id="SWR001">1.0 Post CRUD API <small>SWR001</small></h1>
+<p>Das System muss eine REST API bereitstellen mit Endpunkten fuer:
+POST /api/posts (erstellen), GET /api/posts/{id} (lesen),
+PUT /api/posts/{id} (aktualisieren), DELETE /api/posts/{id} (löschen).
+Alle Endpunkte müssen die TenantId des authentifizierten Benutzers berücksichtigen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a>, <a href="TST.html#TST001">TST001 Post erstellen generiert ID und Slug</a>, <a href="SWA.html#SWA002">SWA002 Shared Kernel als Framework-freie Library</a>, <a href="TST.html#TST002">TST002 Post erstellen registriert PostCreatedEvent</a>, <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a>, <a href="TST.html#TST005">TST005 Post-Inhalt aktualisieren</a>, <a href="TST.html#TST006">TST006 Post mit leerem Titel wird abgelehnt</a>, <a href="SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a>, <a href="TST.html#TST007">TST007 Persistenz und Tenant-Isolation (Integration)</a>, <a href="TST.html#TST008">TST008 Posts nach Tenant auflisten (Integration)</a>, <a href="SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a>, <a href="SWA.html#SWA015">SWA015 Database per Service</a></p>
+<h1 id="SWR002">2.0 Post veröffentlichen <small>SWR002</small></h1>
+<p>Ein Post kann über POST /api/posts/{id}/publish veröffentlicht werden.
+Dabei wird der Status auf PUBLISHED gesetzt und ein PostPublishedEvent erzeugt.
+Ein bereits veröffentlichter Post kann nicht erneut veröffentlicht werden.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<p><em>Child links:</em> <a href="TST.html#TST003">TST003 Post veröffentlichen ändert Status und Event</a>, <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a>, <a href="TST.html#TST004">TST004 Bereits veröffentlichter Post wirft Exception</a></p>
+<h1 id="SWR003">3.0 Tenant-Isolation auf Datenebene <small>SWR003</small></h1>
+<p>Jede Domain-Entity muss eine TenantId tragen.
+Datenbankabfragen müssen immer nach TenantId filtern.
+Ein Benutzer darf niemals Daten eines anderen Tenants sehen oder ändern.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK002">STK002 Multi-Tenancy</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA002">SWA002 Shared Kernel als Framework-freie Library</a>, <a href="SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a>, <a href="TST.html#TST007">TST007 Persistenz und Tenant-Isolation (Integration)</a>, <a href="TST.html#TST008">TST008 Posts nach Tenant auflisten (Integration)</a>, <a href="SWA.html#SWA011">SWA011 Domain-basierte Tenant-Resolution am Ingress</a>, <a href="SWA.html#SWA015">SWA015 Database per Service</a></p>
+<h1 id="SWR004">4.0 Übersetzung per KI (Author-getriggert) <small>SWR004</small></h1>
+<p>Der Autor kann über POST /api/posts/{id}/translate eine KI-Übersetzung
+ausloesen. Das Ergebnis wird als Entwurf gespeichert und dem Autor
+zur Prüfung angezeigt. Erst nach expliziter Freigabe wird die
+Übersetzung übernommen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK003">STK003 Mehrsprachige Inhalte</a>, <a href="STK.html#STK011">STK011 KI-Unterstützung für Autoren</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA006">SWA006 AI Service als separater Adapter</a>, <a href="SWA.html#SWA008">SWA008 Translation als separates Aggregate mit eigenem Lifecycle</a></p>
+<h1 id="SWR005">5.0 Manuelle Übersetzung <small>SWR005</small></h1>
+<p>Der Autor kann über PUT /api/posts/{id}/translation eine manuelle
+Übersetzung direkt eingeben und speichern.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK003">STK003 Mehrsprachige Inhalte</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA008">SWA008 Translation als separates Aggregate mit eigenem Lifecycle</a></p>
+<h1 id="SWR006">6.0 Audit-Trail für Posts <small>SWR006</small></h1>
+<p>Jede Post-Entity muss createdAt, updatedAt, createdBy und updatedBy
+führen. Diese Felder werden automatisch beim Persistieren gesetzt.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK004">STK004 Audit-Fähigkeit</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></p>
+<h1 id="SWR007">7.0 Rollenbasierte Zugriffskontrolle <small>SWR007</small></h1>
+<p>Das System muss fünf Rollen unterstützen: SUPERADMIN, ADMIN, AUTHOR,
+REVIEWER, READER.
+SUPERADMIN verwaltet Tenants und die Plattform-Konfiguration. Sein
+Passwort wird ausschließlich über die Infrastruktur gesetzt
+(Umgebungsvariable/Secret). Es gibt genau einen SUPERADMIN pro
+Plattform-Instanz.
+ADMIN verwaltet Benutzer und Inhalte innerhalb eines Tenants und gibt
+neue Benutzer frei (STK028).
+AUTHOR darf Posts erstellen, bearbeiten und veröffentlichen.
+REVIEWER darf Posts lesen und Review-Feedback geben, aber nicht erstellen.
+READER hat nur Lesezugriff auf veröffentlichte Posts.
+Nicht angemeldete Benutzer werden wie READER behandelt (STK029).</p>
+<p><em>Parent links:</em> <a href="STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a>, <a href="STK.html#STK028">STK028 Benutzer-Freigabe durch Tenant-Admin</a>, <a href="STK.html#STK029">STK029 Nicht angemeldete Benutzer als Reader behandeln</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA010">SWA010 Authentik OIDC und leichtgewichtiger User-Management-Service</a>, <a href="SWA.html#SWA029">SWA029 User-Management-Service Architektur (hexagonal)</a></p>
+<h1 id="SWR008">8.0 RSS/Atom Feed-Generierung <small>SWR008</small></h1>
+<p>Das System muss bei Veröffentlichung eines Posts automatisch den
+RSS/Atom Feed aktualisieren. Feeds müssen nach Tags filterbar sein.
+Der Feed-Service konsumiert PostPublishedEvents via Kafka.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK006">STK006 RSS/Atom Feeds</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA005">SWA005 Kafka als Event-Broker</a></p>
+<h1 id="SWR009">9.0 Domain Events via Kafka <small>SWR009</small></h1>
+<p>Domain Events (PostCreated, PostUpdated, PostPublished) müssen
+über Kafka publiziert werden. Jedes Event traegt EventMetadata
+mit ID, Timestamp, TenantId und CorrelationId.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a>, <a href="TST.html#TST002">TST002 Post erstellen registriert PostCreatedEvent</a>, <a href="SWA.html#SWA003">SWA003 Event-Contracts als geteilte Library</a>, <a href="SWA.html#SWA005">SWA005 Kafka als Event-Broker</a>, <a href="SWA.html#SWA009">SWA009 gRPC für synchrone Service-Kommunikation</a>, <a href="SWA.html#SWA014">SWA014 RabbitMQ als Task-Queue-Broker</a></p>
+<h1 id="SWR010">10 Container-Image und Health-Checks <small>SWR010</small></h1>
+<p>Jeder Service muss als OCI-Container-Image gebaut werden.
+Jeder Service muss /actuator/health (liveness) und
+/actuator/health/readiness (readiness) Endpunkte bereitstellen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK007">STK007 Cloud-Native Deployment</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA017">SWA017 Kubernetes-Cluster-Provisionierung mit hetzner-k3s</a>, <a href="SWA.html#SWA018">SWA018 PostgreSQL-Betrieb mit CloudNativePG Operator</a>, <a href="SWA.html#SWA030">SWA030 Deklarative Datenbank-Ressourcen pro Service</a></p>
+<h1 id="SWR011">11 Metriken und Tracing <small>SWR011</small></h1>
+<p>Jeder Service muss Metriken im Prometheus-Format unter /actuator/prometheus
+exponieren. Distributed Tracing via OpenTelemetry muss integriert sein.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK008">STK008 Observability</a></p>
+<h1 id="SWR012">12 Quellen-Verwaltung <small>SWR012</small></h1>
+<p>Ein Post kann eine Liste von Quellen (URL + Titel) enthalten.
+Das System muss eine API zum Hinzufügen, Entfernen und Auflisten
+von Quellen bereitstellen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK010">STK010 Quellenverwaltung für Posts</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></p>
+<h1 id="SWR013">13 Web-Snapshot von Quellen <small>SWR013</small></h1>
+<p>Beim Hinzufügen einer Quelle soll das System automatisch einen
+Snapshot (HTML/PDF) der referenzierten Webseite erstellen und
+in S3-kompatiblem Storage ablegen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK010">STK010 Quellenverwaltung für Posts</a></p>
+<h1 id="SWR014">14 Graceful Degradation bei KI-Ausfall <small>SWR014</small></h1>
+<p>Bei Nichterreichbarkeit des KI-Providers (OpenRouter) muss das System
+eine aussagekräftige Fehlermeldung anzeigen. Alle nicht-KI-Funktionen
+müssen weiterhin uneingeschraenkt verfügbar sein.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK011">STK011 KI-Unterstützung für Autoren</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA006">SWA006 AI Service als separater Adapter</a></p>
+<h1 id="SWR015">15 Input-Validierung und OWASP-Schutz <small>SWR015</small></h1>
+<p>Alle API-Eingaben müssen serverseitig validiert werden (Bean Validation).
+XSS-Schutz bei der Ausgabe von User-Content. CSRF-Schutz fuer
+zustandsbehaftete Endpunkte. SQL-Injection-Schutz durch Prepared Statements.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK012">STK012 Sicherheit (OWASP Top 10)</a></p>
+<p><em>Child links:</em> <a href="TST.html#TST006">TST006 Post mit leerem Titel wird abgelehnt</a></p>
+<h1 id="SWR016">16 OIDC Login mit Authentik als externem Provider <small>SWR016</small></h1>
+<p>Das System muss OpenID Connect (OIDC) Login über Authentik
+(https://auth.do9ita.de) als externen Identity Provider unterstützen
+(siehe ADR-0027). Der Authorization Code Flow mit PKCE wird verwendet.
+Services, die eine Web-Oberfläche bereitstellen (z.B. Blog Content
+Service), agieren als OAuth2 Client (Spring Security OAuth2 Login).
+API-Endpunkte werden als OAuth2 Resource Server geschützt und validieren
+Authentik-JWTs. Authentik übernimmt Login-Flows, MFA, Session-Management
+und Passwort-Policies. Dies ersetzt die einfache formbasierte
+Admin-Authentifizierung (SWR-028).
+Optional können Gruppen-Attribute aus dem OIDC ID Token (groups Claim)
+übernommen und auf plattforminterne Rollen gemappt werden. Das Mapping
+ist pro Tenant konfigurierbar.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA010">SWA010 Authentik OIDC und leichtgewichtiger User-Management-Service</a></p>
+<h1 id="SWR017">17 Domain-basierte Tenant-Auswahl <small>SWR017</small></h1>
+<p>Die Tenant-Zuordnung eines Requests muss über die verwendete Domain
+oder Subdomain erfolgen. Ein Tenant kann mehrere Domains und Subdomains
+konfigurieren (z.B. eigene Domain, Subdomain der Plattform). Das System
+muss die TenantId aus dem Host-Header des eingehenden Requests auflösen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK002">STK002 Multi-Tenancy</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA011">SWA011 Domain-basierte Tenant-Resolution am Ingress</a></p>
+<h1 id="SWR018">18 Automatisierte Kommentar-Moderation via LLM <small>SWR018</small></h1>
+<p>Neue Kommentare müssen automatisiert durch ein LLM überprüft werden.
+Die Überprüfung nutzt das OpenRouter-Backend und bewertet Kommentare
+auf Spam, Beleidigungen und Off-Topic-Inhalte. Kommentare werden
+automatisch als approved, rejected oder review_pending klassifiziert.
+Bei LLM-Ausfall greift Graceful Degradation (Kommentar wird als
+review_pending markiert).</p>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA012">SWA012 LLM-basierte Kommentar-Moderation als Adapter</a></p>
+<h1 id="SWR019">19 Shadow-Banning für Kommentare <small>SWR019</small></h1>
+<p>Das Kommentarsystem muss Shadow-Banning unterstützen. Ein
+shadow-gebannter Benutzer sieht seine eigenen Kommentare weiterhin
+normal, andere Benutzer sehen diese Kommentare jedoch nicht.
+Administratoren und Autoren können Shadow-Bans vergeben und aufheben.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<h1 id="SWR020">20 Tag CRUD API <small>SWR020</small></h1>
+<p>Das System muss eine REST API für Tag-Verwaltung bereitstellen:
+POST /api/tags (Tag erstellen), GET /api/tags (alle Tags des Tenants),
+GET /api/tags/{id} (einzelnen Tag lesen),
+PUT /api/tags/{id} (Tag umbenennen), DELETE /api/tags/{id} (Tag löschen).
+Tag-Namen müssen pro Tenant eindeutig sein.
+Alle Endpunkte sind Tenant-scoped über den X-Tenant-Id Header.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></p>
+<h1 id="SWR021">21 Translation CRUD API <small>SWR021</small></h1>
+<p>Das System muss eine REST API für die Verwaltung von Übersetzungen bereitstellen:
+POST /api/posts/{postId}/translations (Übersetzung erstellen),
+GET /api/posts/{postId}/translations (alle Übersetzungen eines Posts),
+GET /api/posts/{postId}/translations/{id} (einzelne Übersetzung lesen),
+PUT /api/posts/{postId}/translations/{id} (Übersetzung aktualisieren),
+POST /api/posts/{postId}/translations/{id}/approve (Übersetzung freigeben),
+POST /api/posts/{postId}/translations/{id}/reject (Übersetzung ablehnen),
+DELETE /api/posts/{postId}/translations/{id} (Übersetzung löschen).
+Alle Endpunkte sind Tenant-scoped über den X-Tenant-Id Header.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></p>
+<h1 id="SWR022">22 Time-based Auto Publishing <small>SWR022</small></h1>
+<p>Das System muss zeitgesteuerte Veröffentlichung (Scheduled Publishing) unterstützen:
+<ul>
+<li>Ein Post kann mit einem zukünftigen Veröffentlichungszeitpunkt (publishAt) versehen werden.</li>
+<li>Ein Scheduler prüft periodisch, ob Posts zur Veröffentlichung anstehen.</li>
+<li>Zum geplanten Zeitpunkt wird der Post automatisch in den Status PUBLISHED überführt.</li>
+<li>Ein PostPublishedEvent wird dabei ausgelöst (wie bei manueller Veröffentlichung).</li>
+<li>Der Autor kann den geplanten Zeitpunkt bis zur Veröffentlichung ändern oder stornieren.</li>
+<li>Die REST API wird um das Feld publishAt erweitert (optional bei POST/PUT /api/posts/{id}).</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK013">STK013 Zeitgesteuerte Veröffentlichung</a></p>
+<h1 id="SWR023">23 Fuzz Testing externer Interfaces <small>SWR023</small></h1>
+<p>Alle externen Interfaces (REST-Endpoints) müssen durch Fuzz Tests abgesichert werden:
+<ul>
+<li>Jeder öffentliche REST-Endpoint muss einen zugehörigen Fuzz Test besitzen.</li>
+<li>Fuzz Tests senden zufällige/ungültige Eingaben an die Endpoints.</li>
+<li>Kein Fuzz-Input darf einen HTTP 5xx Statuscode auslösen (Server Error).</li>
+<li>Fuzz Tests verwenden Jazzer mit JUnit 5 Integration (@FuzzTest).</li>
+<li>Fuzz Tests werden als Teil des regulären Test-Lifecycles ausgeführt (Regression Mode).</li>
+<li>Gefundene Crash-Inputs werden als Corpus-Dateien versioniert.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK012">STK012 Sicherheit (OWASP Top 10)</a></p>
+<h1 id="SWR024">24 OpenAPI/Swagger API-Dokumentation <small>SWR024</small></h1>
+<p>Jeder REST-Service muss eine maschinenlesbare OpenAPI 3.x Spezifikation bereitstellen:
+<ul>
+<li>Die Spezifikation wird automatisch aus dem Code generiert (springdoc-openapi).</li>
+<li>Alle Endpunkte, Request/Response-Schemas und Parameter müssen dokumentiert sein.</li>
+<li>Ein Swagger UI muss unter /swagger-ui.html erreichbar sein.</li>
+<li>Die OpenAPI JSON-Spezifikation muss unter /api-docs abrufbar sein.</li>
+<li>Der X-Tenant-Id Header muss als erforderlicher Parameter dokumentiert werden.</li>
+<li>Jede Operation muss einen Summary-Text und die möglichen HTTP-Statuscodes enthalten.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></p>
+<p><em>Child links:</em> <a href="TST.html#TST009">TST009 OpenAPI-Spezifikation und Swagger UI (Integration)</a>, <a href="SWA.html#SWA016">SWA016 springdoc-openapi für API-Dokumentation</a></p>
+<h1 id="SWR025">25 Thymeleaf Layout-Grundgerüst (responsiv) <small>SWR025</small></h1>
+<p>Der Blog Content Service stellt ein responsives Thymeleaf-Layout als Server-Side-Rendering-UI bereit:
+<ul>
+<li>Ein zentrales Layout-Template mit Header, Navigation, Content-Bereich und Footer.</li>
+<li>Thymeleaf Layout Dialect für deklarative Template-Vererbung (layout:decorate).</li>
+<li>PicoCSS als classless CSS-Framework für responsives Design ohne Build-Tooling.</li>
+<li>Semantische HTML5-Struktur (header, nav, main, footer).</li>
+<li>Dark/Light Mode Support via prefers-color-scheme (durch PicoCSS).</li>
+<li>Wiederverwendbare Fragments für Header und Footer.</li>
+<li>Eigene CSS-Datei für minimale Anpassungen und Tenant-Branding-Hooks.</li>
+<li>Der Web-Controller bildet einen eigenen Inbound Adapter (adapter/inbound/web/).</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<h1 id="SWR026">26 Öffentliche Blog-Ansicht (Post-Liste und Einzelansicht) <small>SWR026</small></h1>
+<p>Der Blog Content Service muss eine öffentliche Thymeleaf-basierte Blog-Ansicht bereitstellen:
+<ul>
+<li>Die Landing Page (/) und /posts zeigen beide dieselbe Post-Liste mit allen veröffentlichten Posts des Tenants in absteigender chronologischer Reihenfolge (neueste zuerst).</li>
+<li>Die Post-Liste zeigt pro Eintrag: Titel, Veröffentlichungsdatum, Klartext-Kurzvorschau (max. 200 Zeichen, HTML-Tags entfernt) und einen Link zur Einzelansicht.</li>
+<li>Die Einzelansicht unter /posts/{slug} zeigt einen veröffentlichten Post mit: Titel, Veröffentlichungsdatum, Volltext, Quellen und Tags.</li>
+<li>Nicht veröffentlichte Posts (DRAFT, ARCHIVED) sind in der öffentlichen Ansicht nicht sichtbar.</li>
+<li>Die Slug-basierte URL ist SEO-freundlich und leserlich.</li>
+<li>Das PostRepository muss eine Methode zur Abfrage veröffentlichter Posts und zur Suche nach Slug bereitstellen.</li>
+<li>Die Views nutzen das bestehende Layout-Grundgerüst (SWR-025) via Thymeleaf Layout Dialect.</li>
+<li>Beide Views sind ohne Authentifizierung zugänglich (öffentliche Ansicht).</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<h1 id="SWR027">27 Thymeleaf-Formular zum Erstellen und Bearbeiten von Posts <small>SWR027</small></h1>
+<p>Der Blog Content Service muss ein Thymeleaf-basiertes Formular bereitstellen, mit dem Posts erstellt und bearbeitet werden können:
+<ul>
+<li>Ein Formular unter /posts/new ermöglicht das Erstellen eines neuen Posts mit Feldern für Titel, Inhalt, Sprache (Locale), Social-Media-Titel (optional) und Social-Media-Zusammenfassung (optional).</li>
+<li>Ein Formular unter /posts/{id}/edit ermöglicht das Bearbeiten eines bestehenden Posts (gleiche Felder wie beim Erstellen, vorausgefüllt mit den aktuellen Werten).</li>
+<li>Nach erfolgreichem Erstellen oder Bearbeiten wird der Benutzer zur Post-Liste weitergeleitet (/posts).</li>
+<li>Das Formular validiert serverseitig: Titel und Inhalt dürfen nicht leer sein.</li>
+<li>Bei Validierungsfehlern wird das Formular erneut angezeigt mit Fehlermeldungen und den eingegebenen Werten.</li>
+<li>Die Post-Liste (/posts) enthält einen Link zum Erstellen eines neuen Posts.</li>
+<li>Jeder Post in der Liste enthält einen Link zum Bearbeiten.</li>
+<li>Die Views nutzen das bestehende Layout-Grundgerüst (SWR-025) via Thymeleaf Layout Dialect.</li>
+<li>Der Controller nutzt die bestehenden Inbound Ports (PostUseCase) mit CreatePostCommand und UpdatePostCommand.</li>
+<li>Die TenantId und AuthorId werden aus dem Request-Header (X-Tenant-Id, X-Author-Id) bezogen.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></p>
+<h1 id="SWR028">28 Einfacher Admin-Login zum Schutz der Schreiboperationen <small>SWR028</small></h1>
+<p>Der Blog Content Service schuetzt alle Schreiboperationen ueber
+Spring Security:
+<ul>
+<li>Spring Security sichert alle schreibenden Endpunkte (POST, PUT,</li>
+  DELETE auf /api/<strong> sowie POST /posts, GET /posts/new,</li>
+  GET /posts/{id}/edit).</li>
+<li>Die oeffentliche Web-Ansicht (GET /posts, GET /posts/{slug}) zeigt</li>
+  nur veroeffentlichte Posts (Status PUBLISHED) an.</li>
+<li>Nach Login zeigt die Web-Ansicht (GET /posts) alle Posts inklusive</li>
+  Drafts und archivierte Posts mit Status-Anzeige.</li>
+<li>Die REST-API (GET /api/posts/</strong>) ist vollstaendig geschuetzt und</li>
+  zeigt alle Posts unabhaengig vom Status.</li>
+<li>Die Authentifizierung erfolgt ueber den User-Management-Service</li>
+  (ADR-0032). Unauthentifizierte Benutzer werden per Redirect auf</li>
+  /auth/login weitergeleitet.</li>
+<li>Das Break-Glass Admin-Login (SUPERADMIN) ist unter /auth/admin/login</li>
+  im User-Management-Service verfuegbar.</li>
+<li>Nach erfolgreichem Login wird der Benutzer auf die Post-Liste</li>
+  weitergeleitet.</li>
+<li>Ein Logout-Link ist im Header sichtbar, wenn der Benutzer</li>
+  eingeloggt ist.</li>
+<li>Die REST-API (/api/**) nutzt HTTP Basic Authentication als</li>
+  Alternative zum formbasierten Login.</li>
+<li>Die Session wird ueber Redis geteilt (SWR-064), sodass der Blog</li>
+  Content Service die vom User-Management-Service erstellte Session</li>
+  direkt nutzen kann.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a>, <a href="SWR.html#SWR007">SWR007 Rollenbasierte Zugriffskontrolle</a></p>
+<h1 id="SWR029">29 Service Mesh mit automatischem mTLS (Linkerd) <small>SWR029</small></h1>
+<p>Das System muss ein Service Mesh (Linkerd) verwenden, das folgende Anforderungen erfüllt:
+<ul>
+<li>Alle Service-zu-Service-Verbindungen im Kubernetes-Cluster werden automatisch mit mTLS verschlüsselt.</li>
+<li>Jeder Service erhält eine kryptografische Identität basierend auf seinem Kubernetes ServiceAccount.</li>
+<li>AuthorizationPolicies definieren erlaubte Kommunikationspfade (Default-Deny).</li>
+<li>Nur explizit konfigurierte Service-zu-Service-Verbindungen sind zulässig.</li>
+<li>Certificates werden automatisch rotiert (kein manuelles Key-Management).</li>
+<li>Die Installation erfolgt über Helm Charts und wird via Flux (GitOps) verwaltet.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK014">STK014 Sichere Service-zu-Service-Kommunikation (Zero Trust)</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA022">SWA022 Linkerd Service Mesh Deployment via Flux und cert-manager</a>, <a href="SWA.html#SWA023">SWA023 Default-Deny AuthorizationPolicies fuer Linkerd Service Mesh</a></p>
+<h1 id="SWR030">30 User-Kontext-Propagierung für geschützte Features <small>SWR030</small></h1>
+<p>Das System muss einen User-Kontext durch die Service-Kette propagieren:
+<ul>
+<li>Das API-Gateway validiert JWT-Token und extrahiert User-Claims (User-ID, Rollen, Tenant).</li>
+<li>Aufrufende Services propagieren den User-Kontext als HTTP-Header (X-User-Id, X-User-Roles, X-Tenant-Id).</li>
+<li>Aufgerufene Services prüfen sowohl die Linkerd-Service-Identität als auch die User-Claims.</li>
+<li>KI-Features (Übersetzung, Schreibassistenz, Bildgenerierung) lehnen Anfragen ohne gültigen User-Kontext mit HTTP 403 ab.</li>
+<li>Nur Benutzer mit der Rolle AUTHOR oder ADMIN dürfen KI-Features auslösen.</li>
+<li>Der propagierte User-Kontext wird für Audit-Logging und Rate-Limiting verwendet.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK015">STK015 KI-Features nur für autorisierte Benutzer</a>, <a href="SWR.html#SWR029">SWR029 Service Mesh mit automatischem mTLS (Linkerd)</a></p>
+<h1 id="SWR031">31 Secrets verschlüsselt im Repository und automatisch synchronisiert <small>SWR031</small></h1>
+<p>Sensible Zugangsdaten (Passwörter, API-Keys, Tokens) dürfen nicht im Klartext
+im Git-Repository gespeichert werden. Sie müssen vor dem Commit verschlüsselt
+werden und beim Deployment automatisch entschlüsselt werden. Operator-generierte
+Secrets (z.B. Datenbank-Credentials) müssen automatisch in die Namespaces der
+konsumierenden Services synchronisiert werden, ohne manuelle Kopiervorgänge.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK016">STK016 Sichere Verwaltung von Secrets im Cluster</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA019">SWA019 Cross-Namespace Secret-Synchronisation mit Reflector</a>, <a href="SWA.html#SWA020">SWA020 SOPS+age Verschlüsselung für Secrets im Git-Repository</a></p>
+<h1 id="SWR032">32 HTTPS-Verschlüsselung für externe Zugriffe <small>SWR032</small></h1>
+<p>Alle externen Zugriffe auf die Plattform müssen über HTTPS (TLS 1.2+)
+verschlüsselt erfolgen. HTTP-Anfragen auf Port 80 werden automatisch
+auf HTTPS (Port 443) umgeleitet. TLS-Zertifikate werden automatisch
+über Let's Encrypt (ACME-Protokoll) bereitgestellt und vor Ablauf
+erneuert. Die TLS-Terminierung erfolgt am Ingress-Controller.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK012">STK012 Sicherheit (OWASP Top 10)</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA021">SWA021 TLS-Terminierung am Ingress mit cert-manager und Let's Encrypt</a></p>
+<h1 id="SWR033">33 Landing Page zeigt maximal drei neueste Posts <small>SWR033</small></h1>
+<p>Die Landing Page (Route „/") zeigt ausschließlich die drei neuesten
+veröffentlichten Blog-Posts an. Die vollständige Post-Liste bleibt unter
+„/posts" erreichbar.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK017">STK017 Landing Page zeigt neueste Posts</a></p>
+<p><em>Child links:</em> <a href="TST.html#TST010">TST010 Landing Page zeigt maximal drei Posts (Unit + WebMvcTest)</a>, <a href="SWA.html#SWA026">SWA026 Landing Page mit begrenzter Post-Anzahl und Paginierung am Repository</a></p>
+<h1 id="SWR034">34 Versionsnummer im Footer anzeigen <small>SWR034</small></h1>
+<p>Der Footer jeder Seite zeigt die aktuelle Anwendungsversion an. Die Version
+wird zur Build-Zeit aus den Maven-Projektkoordinaten ermittelt und über
+Spring Boot BuildProperties bereitgestellt.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK018">STK018 Versionsnummer im Footer</a></p>
+<p><em>Child links:</em> <a href="TST.html#TST011">TST011 Versionsnummer im Footer (ControllerAdvice Unit Test)</a>, <a href="SWA.html#SWA025">SWA025 ControllerAdvice für globale Modellattribute (VersionModelAdvice)</a></p>
+<h1 id="SWR035">35 HTML- und Markdown-Unterstützung mit Rendering <small>SWR035</small></h1>
+<p>Blog-Posts können wahlweise in HTML oder Markdown verfasst werden. Der
+Content-Type wird pro Post gespeichert. Markdown-Inhalte werden serverseitig
+mit flexmark-java zu HTML gerendert. Mermaid-Diagramme und Code-Blöcke mit
+Syntax-Highlighting werden clientseitig via Mermaid.js und highlight.js
+dargestellt.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK019">STK019 HTML- und Markdown-Unterstützung für Blog-Inhalte</a></p>
+<p><em>Child links:</em> <a href="TST.html#TST012">TST012 Markdown-Rendering (Unit Test FlexmarkMarkdownRenderer)</a>, <a href="SWA.html#SWA024">SWA024 Outbound Port und Adapter für Markdown-Rendering</a>, <a href="SWA.html#SWA027">SWA027 ContentType im Domain-Modell und Persistenz-Schema</a></p>
+<h1 id="SWR036">36 Gerenderte Vorschau in der Post-Liste <small>SWR036</small></h1>
+<p>Die Post-Liste zeigt eine gerenderte HTML-Vorschau anstelle von Plaintext.
+Bei Markdown-Posts wird der Vorschau-Text zuerst zu HTML gerendert, bevor er
+angezeigt wird.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK020">STK020 Gerenderte Vorschau in der Post-Liste</a></p>
+<p><em>Child links:</em> <a href="TST.html#TST013">TST013 Gerenderte Vorschau und erster Absatz (WebMvcTest)</a>, <a href="SWA.html#SWA027">SWA027 ContentType im Domain-Modell und Persistenz-Schema</a></p>
+<h1 id="SWR037">37 Vorschau zeigt den ersten Abschnitt <small>SWR037</small></h1>
+<p>Die Vorschau in der Post-Liste umfasst den ersten Absatz des Post-Inhalts.
+Bei HTML-Posts wird das erste <p>-Element extrahiert, bei Markdown-Posts der
+erste Textabschnitt (bis zur ersten Leerzeile) gerendert.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK021">STK021 Vorschau umfasst den ersten Abschnitt</a></p>
+<p><em>Child links:</em> <a href="TST.html#TST013">TST013 Gerenderte Vorschau und erster Absatz (WebMvcTest)</a>, <a href="SWA.html#SWA027">SWA027 ContentType im Domain-Modell und Persistenz-Schema</a></p>
+<h1 id="SWR038">38 Volltextsuche für veröffentlichte Blog Posts <small>SWR038</small></h1>
+<p>Der Blog Content Service muss eine Volltextsuche über veröffentlichte
+Blog-Posts eines Tenants bereitstellen:
+<ul>
+<li>Die Suche durchsucht Titel und Inhalt der Posts.</li>
+<li>Nur veröffentlichte Posts (Status PUBLISHED) sind durchsuchbar.</li>
+<li>Die Suche ist tenant-isoliert (nur Posts des eigenen Tenants).</li>
+<li>PostgreSQL-native Volltextsuche mit tsvector/tsquery und GIN-Index.</li>
+<li>Suchergebnisse werden nach Relevanz (ts_rank) sortiert.</li>
+<li>REST-API: GET /api/posts/search?q={query} liefert eine Liste von PostResponse.</li>
+<li>Web-UI: Suchformular auf der Post-Liste, Ergebnisse im selben Template.</li>
+<li>Leerer oder fehlender Suchbegriff liefert alle veröffentlichten Posts.</li>
+<li>Das PostRepository wird um eine searchPublished-Methode erweitert.</li>
+<li>Der PostUseCase wird um searchPublishedPosts erweitert.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK022">STK022 Volltextsuche über Tenant-Inhalte</a></p>
+<h1 id="SWR039">39 Chronologische Previous/Next-Navigation auf Post-Detailseiten <small>SWR039</small></h1>
+<p>Auf der Detailseite eines veröffentlichten Blog-Posts werden Links zum
+chronologisch vorherigen und nächsten Post angezeigt:
+<ul>
+<li>Navigation basiert auf dem Veröffentlichungsdatum (published_at).</li>
+<li>Nur veröffentlichte Posts (Status PUBLISHED) werden berücksichtigt.</li>
+<li>Die Navigation ist tenant-isoliert.</li>
+<li>Der vorherige Post ist der nächstältere veröffentlichte Post.</li>
+<li>Der nächste Post ist der nächstjüngere veröffentlichte Post.</li>
+<li>Links werden nur angezeigt, wenn ein vorheriger bzw. nächster Post existiert.</li>
+<li>Das PostRepository wird um findPreviousPublished und findNextPublished erweitert.</li>
+<li>Der BlogViewController übergibt die Navigationsdaten an das Template.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK025">STK025 Chronologische Navigation auf Post-Detailseiten</a></p>
+<h1 id="SWR040">40 Serien-Navigation für thematisch zusammenhängende Posts <small>SWR040</small></h1>
+<p>Posts können optional in thematische Serien eingebunden werden:
+<ul>
+<li>Ein Post kann einen vorherigen und einen nächsten Post innerhalb einer</li>
+  Serie referenzieren (seriesPreviousPostId, seriesNextPostId).</li>
+<li>Beide Felder sind optional (nullable UUID-Referenzen).</li>
+<li>Serien-Links werden auf der Post-Detailseite angezeigt, sofern sie sich</li>
+  von der chronologischen Navigation (SWR-039) unterscheiden.</li>
+<li>Die Serienfelder können beim Erstellen und Bearbeiten eines Posts gesetzt werden.</li>
+<li>Flyway-Migration fügt die Spalten series_previous_post_id und</li>
+  series_next_post_id zur posts-Tabelle hinzu.</li>
+<li>Das Domain-Modell (Post) wird um die optionalen PostId-Felder erweitert.</li>
+<li>CreatePostCommand und UpdatePostCommand werden um die Serienfelder erweitert.</li>
+<li>Die REST-API und die PostResponse enthalten die Serienfelder.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK026">STK026 Serien-Navigation für thematisch zusammenhängende Posts</a></p>
+<h1 id="SWR041">41 Featured-Zeitraum im Domain-Modell <small>SWR041</small></h1>
+<p>Das Domain-Modell Post wird um optionale Featured-Felder erweitert:
+<ul>
+<li>featuredFrom (LocalDate, nullable): Beginn des Featured-Zeitraums.</li>
+<li>featuredUntil (LocalDate, nullable): Ende des Featured-Zeitraums (inklusiv).</li>
+<li>Beide Felder müssen gemeinsam gesetzt oder gemeinsam null sein.</li>
+<li>featuredUntil muss gleich oder nach featuredFrom liegen.</li>
+<li>Ein Post gilt als „aktuell featured", wenn das aktuelle Datum im</li>
+  Intervall [featuredFrom, featuredUntil] liegt.</li>
+<li>Flyway-Migration fügt die Spalten featured_from und featured_until</li>
+  zur posts-Tabelle hinzu.</li>
+<li>CreatePostCommand und UpdatePostCommand werden um die Featured-Felder</li>
+  erweitert.</li>
+<li>Die REST-API (PostResponse) enthält die Featured-Felder.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK027">STK027 Featured Posts auf der Landing Page</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA028">SWA028 Featured-Post-Abfrage im Persistence Adapter</a></p>
+<h1 id="SWR042">42 Featured Posts auf der Landing Page anzeigen <small>SWR042</small></h1>
+<p>Die Landing Page (Route „/") zeigt zusätzlich zu den neuesten Posts
+einen eigenen Bereich für aktuell gefeatured Posts:
+<ul>
+<li>Featured Posts werden in einem visuell abgesetzten Bereich oberhalb</li>
+  der neuesten Posts dargestellt.</li>
+<li>Ein Post gilt als featured, wenn das aktuelle Datum im Intervall</li>
+  [featuredFrom, featuredUntil] liegt und der Post den Status PUBLISHED hat.</li>
+<li>Featured Posts werden nach featuredFrom absteigend sortiert (neueste zuerst).</li>
+<li>Ein Post, der sowohl featured als auch unter den neuesten 3 Posts ist,</li>
+  erscheint in beiden Bereichen.</li>
+<li>Das PostRepository erhält eine Methode zum Abfragen aktuell gefeatured</li>
+  Posts eines Tenants.</li>
+<li>Der Thymeleaf-Controller übergibt die Featured Posts als eigenes</li>
+  Modell-Attribut an das Landing-Page-Template.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK017">STK017 Landing Page zeigt neueste Posts</a>, <a href="STK.html#STK027">STK027 Featured Posts auf der Landing Page</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA028">SWA028 Featured-Post-Abfrage im Persistence Adapter</a></p>
+<h1 id="SWR043">43 User-Management-Service fuer Profile, Rollen und Tenant-Zuordnung <small>SWR043</small></h1>
+<p>Ein leichtgewichtiger User-Management-Service verwaltet plattformspezifische
+Benutzerdaten (ADR-0027):
+<ul>
+<li>Synchronisiert Benutzerprofile aus OIDC-Claims (Subject, E-Mail, Name)</li>
+  beim ersten Login und bei jedem weiteren Login (Upsert-Semantik).</li>
+<li>Uebernimmt optional Gruppen-Attribute aus der OIDC-Quelle und mappt</li>
+  sie auf plattforminterne Rollen.</li>
+<li>Verwaltet Rollen (SUPERADMIN, ADMIN, AUTHOR, REVIEWER, READER) pro</li>
+  Benutzer (SWR-007).</li>
+<li>SUPERADMIN ist ein plattformweiter Account, dessen Credentials ueber</li>
+  die Infrastruktur (Umgebungsvariable/Secret) gesetzt werden. Er wird</li>
+  beim Service-Start automatisch angelegt oder aktualisiert.</li>
+<li>Neue regulaere Benutzer erhalten initial die Rolle READER und den</li>
+  Status PENDING. Ein Tenant-Admin (ADMIN) muss den Benutzer freigeben</li>
+  (approve), bevor hoehere Rollen zugewiesen werden koennen (STK028).</li>
+<li>Nicht angemeldete Benutzer werden wie READER behandelt (STK029).</li>
+<li>Verwaltet Tenant-Zuordnungen (welcher Benutzer zu welchem Tenant gehoert).</li>
+<li>Stellt eine REST-API bereit fuer Profil-Synchronisation (POST /api/users/sync),</li>
+  Profilabfrage (GET /api/users/{oidcSubject}), Rollenverwaltung und</li>
+  Benutzer-Freigabe (POST /api/users/{oidcSubject}/approve).</li>
+<li>Verwendet eine eigene PostgreSQL-Datenbank (Database per Service, ADR-0019).</li>
+<li>Die REST-API ist nur fuer interne Service-Kommunikation vorgesehen</li>
+  (geschuetzt durch Linkerd mTLS, SWA-023).</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a>, <a href="STK.html#STK028">STK028 Benutzer-Freigabe durch Tenant-Admin</a>, <a href="STK.html#STK029">STK029 Nicht angemeldete Benutzer als Reader behandeln</a>, <a href="STK.html#STK031">STK031 Konfigurierbare Login-Methode pro Tenant</a>, <a href="STK.html#STK032">STK032 Auto-Approval neuer Benutzer</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA029">SWA029 User-Management-Service Architektur (hexagonal)</a></p>
+<h1 id="SWR044">44 Konfigurierbare Login-Methode und Break-Glass Admin-Login <small>SWR044</small></h1>
+<p>Der User-Management-Service verwaltet pro Tenant die konfigurierte
+Login-Methode (SWR-043) und stellt die zugehoerige Login-UI selbst
+bereit (ADR-0032):
+<ul>
+<li>LoginMode Enum: INTERNAL (nur formbasiert), OIDC (nur OIDC-Provider),</li>
+  BOTH (formbasiert und OIDC). Standard bei Neuanlage: INTERNAL.</li>
+<li>Die Login-Methode wird als Tenant-Einstellung gespeichert und</li>
+  direkt beim Rendern der Login-Seite ausgewertet (kein gRPC-Umweg).</li>
+<li>Wird der LoginMode auf OIDC oder BOTH gesetzt, muessen oidcIssuerUrl</li>
+  und oidcClientId konfiguriert sein (Validierung im Service).</li>
+<li>Die Login-Seite wird unter /auth/login vom User-Management-Service</li>
+  bereitgestellt. Der Blog Content Service leitet unauthentifizierte</li>
+  Benutzer per Redirect dorthin weiter.</li>
+<li>Wenn LoginMode OIDC ist, zeigt die Login-Seite nur den</li>
+  OIDC-Login-Button.</li>
+<li>Unabhaengig vom LoginMode steht unter /auth/admin/login ein</li>
+  separates formbasiertes Login-Formular bereit (Break-Glass-Loesung).</li>
+  Nur der SUPERADMIN kann sich dort anmelden. Die Credentials werden</li>
+  ueber die Infrastruktur gesetzt (Umgebungsvariable/Secret).</li>
+<li>Der User-Management-Service wertet den LoginMode beim Rendern der</li>
+  Login-Seite aus und zeigt entsprechend Formular, OIDC-Button oder</li>
+  beides an.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK031">STK031 Konfigurierbare Login-Methode pro Tenant</a></p>
+<h1 id="SWR045">45 Auto-Approval bei OIDC-Login und E-Mail-Domain <small>SWR045</small></h1>
+<p>Der User-Management-Service unterstuetzt optionale automatische
+Freigabe (Auto-Approval) neuer Benutzer (SWR-043):
+<ul>
+<li>Pro Tenant konfigurierbar ueber TenantSettings:</li>
+  autoApproveOidc (boolean): Neue Benutzer, die sich ueber OIDC</li>
+  anmelden, werden automatisch auf APPROVED gesetzt.</li>
+  autoApproveEmailDomains (Set<String>): Neue Benutzer, deren</li>
+  E-Mail-Domain in dieser Liste enthalten ist, werden automatisch</li>
+  auf APPROVED gesetzt.</li>
+<li>Die Auto-Approval-Pruefung erfolgt im syncFromOidc-Flow: Beim</li>
+  Erstellen eines neuen UserProfile wird geprueft, ob eine der</li>
+  Auto-Approval-Regeln greift. Falls ja, wird der ApprovalStatus</li>
+  direkt auf APPROVED gesetzt statt auf PENDING.</li>
+<li>Auto-Approval aendert nur den initialen Status. Manuelle Ablehnung</li>
+  (reject) durch einen Admin ist weiterhin moeglich.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK028">STK028 Benutzer-Freigabe durch Tenant-Admin</a>, <a href="STK.html#STK032">STK032 Auto-Approval neuer Benutzer</a></p>
+<h1 id="SWR046">46 gRPC für synchrone Inter-Service-Aufrufe <small>SWR046</small></h1>
+<p>Alle synchronen Aufrufe zwischen Microservices müssen über gRPC
+erfolgen (ADR-0010). Jeder Service, der eine synchrone Schnittstelle
+für andere Services bereitstellt, definiert seine API als Protocol
+Buffers (.proto) im Modul event-contracts. REST- oder GraphQL-Endpunkte
+dürfen nicht für Service-zu-Service-Kommunikation genutzt werden.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK037">STK037 Synchrone Service-Kommunikation via gRPC</a></p>
+<h1 id="SWR047">47 Kafka für Event-Streaming zwischen Services <small>SWR047</small></h1>
+<p>Domain Events, die für service-übergreifende Konsistenz oder
+Benachrichtigungen relevant sind, werden über Apache Kafka publiziert
+und konsumiert (ADR-0006). Kafka wird für Event-Streaming verwendet,
+bei dem mehrere Consumer dasselbe Event unabhängig verarbeiten können
+(z.B. PostPublishedEvent, UserCreatedEvent).</p>
+<p><em>Parent links:</em> <a href="STK.html#STK038">STK038 Asynchrone Service-Kommunikation via Kafka oder RabbitMQ</a></p>
+<h1 id="SWR048">48 RabbitMQ für Task-Queues zwischen Services <small>SWR048</small></h1>
+<p>Asynchrone Aufgaben, die genau einmal verarbeitet werden müssen
+(z.B. Übersetzungen, TTS-Generierung, Snapshot-Erstellung,
+Benachrichtigungen), werden über RabbitMQ-Task-Queues verteilt
+(ADR-0018). RabbitMQ wird für Work-Queues mit Einzelverarbeitung
+verwendet, bei denen ein Job an genau einen Worker geht.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK038">STK038 Asynchrone Service-Kommunikation via Kafka oder RabbitMQ</a></p>
+<h1 id="SWR049">49 REST und GraphQL nur für Client-Kommunikation <small>SWR049</small></h1>
+<p>REST-Endpunkte und GraphQL-Schemas dürfen ausschließlich für die
+Kommunikation mit externen Clients bereitgestellt werden (Web-UI,
+Mobile-Apps, BFF-Layer). Für die Kommunikation zwischen Services
+sind nur gRPC (synchron, SWR-046), Kafka (Event-Streaming, SWR-047)
+und RabbitMQ (Task-Queues, SWR-048) zulässig. Bestehende interne
+REST-APIs (z.B. User-Management POST /api/users/sync) müssen
+mittelfristig auf gRPC migriert werden.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK039">STK039 REST und GraphQL ausschließlich für Clients</a></p>
+<h1 id="SWR050">50 Tenant-Branding im Header <small>SWR050</small></h1>
+<p>Der Blog-Header zeigt den konfigurierbaren Tenant-Namen (statt
+hardcoded "Toms Blog") und optional eine Tagline an. Das Domain-Modell
+TenantSettings im User-Management-Service wird um displayName (String,
+nicht leer) und tagline (String, optional) erweitert. Der Blog-Content-
+Service ruft die Branding-Daten über gRPC vom User-Management-Service
+ab und stellt sie als Model-Attribut für das Header-Fragment bereit.
+Fallback bei fehlendem displayName: "Toms Blog".</p>
+<p><em>Parent links:</em> <a href="STK.html#STK002">STK002 Multi-Tenancy</a>, <a href="STK.html#STK040">STK040 Tenant-Branding in Navigation</a></p>
+<h1 id="SWR051">51 Admin-UI Benutzerliste und -verwaltung <small>SWR051</small></h1>
+<p>Der User-Management-Service stellt unter /auth/admin/users eine
+Thymeleaf-Seite bereit (ADR-0032), die alle Benutzer des aktuellen
+Tenants auflistet (Name, E-Mail, Rolle, Approval-Status). Verfuegbare
+Aktionen: Approve, Reject, Rolle aendern. Zugriff nur fuer Benutzer
+mit Rolle ADMIN oder SUPERADMIN. Der Controller greift direkt auf
+den lokalen UserProfileUseCase zu (kein gRPC-Umweg).</p>
+<p><em>Parent links:</em> <a href="STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a>, <a href="STK.html#STK028">STK028 Benutzer-Freigabe durch Tenant-Admin</a>, <a href="STK.html#STK041">STK041 Admin-Oberfläche für Benutzerverwaltung</a></p>
+<h1 id="SWR052">52 Admin-UI Tenant-Einstellungen <small>SWR052</small></h1>
+<p>Der User-Management-Service stellt unter /auth/admin/settings eine
+Thymeleaf-Seite bereit (ADR-0032), die die Tenant-Einstellungen
+(Login-Mode, Auto-Approval-Regeln, Branding mit displayName und
+tagline) anzeigt und bearbeitbar macht. Zugriff nur fuer Benutzer
+mit Rolle ADMIN oder SUPERADMIN. Der Controller greift direkt auf
+den lokalen TenantSettingsUseCase zu (kein gRPC-Umweg).</p>
+<p><em>Parent links:</em> <a href="STK.html#STK031">STK031 Konfigurierbare Login-Methode pro Tenant</a>, <a href="STK.html#STK042">STK042 Admin-Oberfläche für Tenant-Einstellungen</a></p>
+<h1 id="SWR053">53 SuperAdmin Tenant-Umschaltung <small>SWR053</small></h1>
+<p>Der SuperAdmin kann ueber einen Tenant-Selector in der Admin-Navigation
+des User-Management-Service den aktiven Tenant wechseln (ADR-0032).
+Die Auswahl wird in der HTTP-Session (Redis, SWR-064) gespeichert
+und ueberschreibt den Standard-Tenant fuer alle nachfolgenden Requests.
+Regulaere Admins sind an ihren Tenant gebunden und sehen keinen
+Selector. Der Controller greift direkt auf den lokalen
+TenantSettingsUseCase zu (kein gRPC-Umweg). POST /auth/admin/switch-tenant
+speichert die Auswahl in der Session und leitet auf die aktuelle
+Seite zurueck.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK002">STK002 Multi-Tenancy</a>, <a href="STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a></p>
+<h1 id="SWR054">54 Standard-Impressum und Datenschutzerklärung <small>SWR054</small></h1>
+<p>Das System muss unter /impressum und /privacy statische Seiten bereitstellen,
+die im Footer verlinkt werden. Der Inhalt wird als Platform-Default
+ausgeliefert, solange kein Tenant-spezifischer Inhalt konfiguriert ist.
+Die Seiten verwenden das Standard-Layout (Header, Footer, Navigation).</p>
+<p><em>Parent links:</em> <a href="STK.html#STK043">STK043 Impressum und Datenschutzerklärung im Footer</a></p>
+<h1 id="SWR055">55 Tenant-spezifisches Impressum und Datenschutzerklärung <small>SWR055</small></h1>
+<p>Die TenantSettings werden um zwei optionale TEXT-Felder impressum_content
+und privacy_policy_content erweitert. Sind diese konfiguriert, wird deren
+Inhalt (HTML) auf /impressum bzw. /privacy anstelle des Platform-Defaults
+gerendert. Die Konfiguration erfolgt über die Admin-Einstellungen-Seite.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK044">STK044 Tenant-spezifisches Impressum und Datenschutzerklärung</a></p>
+<h1 id="SWR056">56 Audit-Logging für alle relevanten Aktionen <small>SWR056</small></h1>
+<p>Alle schreibenden Aktionen werden in einem unveränderlichen Audit-Log
+protokolliert. Jeder Eintrag enthält: Zeitstempel (wann), Akteur (wer),
+Aktion (was), betroffene Entität (Typ und ID), Tenant-ID und optionale
+Details (JSON). Die Audit-Log-Tabelle ist append-only (kein UPDATE/DELETE).</p>
+<p>Blog Content Service auditierte Aktionen:
+<ul>
+<li>Post: erstellt, aktualisiert, veröffentlicht, gelöscht</li>
+<li>Tag: erstellt, umbenannt, gelöscht</li>
+<li>Translation: erstellt, aktualisiert, freigegeben, abgelehnt, gelöscht</li>
+<li>Source: hinzugefügt, entfernt</p></li>
+</ul>
+<p>User Management Service auditierte Aktionen:
+<ul>
+<li>User: synchronisiert (OIDC/intern), freigegeben, abgelehnt</li>
+<li>Globale Rolle: zugewiesen, entfernt</li>
+<li>Tenant-Mitgliedschaft: hinzugefügt, entfernt</li>
+<li>Tenant-Einstellungen: aktualisiert</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK004">STK004 Audit-Fähigkeit</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA031">SWA031 Audit-Logging-Architektur</a></p>
+<h1 id="SWR057">57 Externer Session-Store für Blog Content Service <small>SWR057</small></h1>
+<p>HTTP-Sessions des Blog Content Service müssen in einem externen
+Session-Store (Redis) statt im Servlet-Container gespeichert werden.
+Alle Session-Daten (Spring Security Authentication, Rollen, Tenant-
+Auswahl) müssen über alle Replicas des Services hinweg verfügbar sein.
+Spring Session Data Redis wird als Implementierung verwendet.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK045">STK045 Horizontale Skalierbarkeit und unterbrechungsfreie Updates</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA032">SWA032 Redis als externer Session-Store</a></p>
+<h1 id="SWR058">58 Mehrere Replicas für Blog Content Service <small>SWR058</small></h1>
+<p>Der Blog Content Service muss mit mindestens 2 Replicas auf Kubernetes
+betrieben werden. Die Rolling-Update-Strategie stellt sicher, dass
+mindestens eine Instanz immer verfügbar ist. Benutzer-Sessions bleiben
+über Pod-Wechsel erhalten (abhängig von SWR-057).</p>
+<p><em>Parent links:</em> <a href="STK.html#STK045">STK045 Horizontale Skalierbarkeit und unterbrechungsfreie Updates</a></p>
+<h1 id="SWR059">59 REST-API fuer lokale Benutzerregistrierung <small>SWR059</small></h1>
+<p>Der User-Management-Service muss einen oeffentlichen REST-Endpunkt fuer
+die lokale Benutzerregistrierung bereitstellen:
+<ul>
+<li>POST /api/users/register nimmt username, password, email und</li>
+  displayName entgegen.</li>
+<li>Das Passwort wird serverseitig mit BCrypt gehasht (salted hash).</li>
+  BCrypt erzeugt automatisch ein zufaelliges Salt pro Passwort.</li>
+  Das Klartext-Passwort wird niemals persistiert oder geloggt.</li>
+<li>Validierungen: username darf nicht leer und muss eindeutig sein,</li>
+  E-Mail darf nicht leer und muss ein gueltiges Format haben,</li>
+  Passwort muss mindestens 12 Zeichen lang sein.</li>
+<li>Bei Duplikat (username oder E-Mail bereits vergeben) wird HTTP 409</li>
+  Conflict zurueckgegeben.</li>
+<li>Der neue Benutzer erhaelt AuthSource INTERNAL, die Rolle READER und</li>
+  den ApprovalStatus PENDING (SWR-007, STK028).</li>
+<li>Auto-Approval-Regeln werden geprueft (SWR-045): Wenn die E-Mail-Domain</li>
+  auf der Whitelist des Tenants steht, wird der Status direkt auf</li>
+  APPROVED gesetzt.</li>
+<li>Die TenantId wird aus dem Request-Kontext (Host-Header) ermittelt.</li>
+<li>Bei erfolgreicher Registrierung wird HTTP 201 Created mit dem</li>
+  Benutzerprofil (ohne Passwort-Hash) zurueckgegeben.</li>
+<li>Die Registrierung wird im Audit-Log protokolliert (SWR-056).</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK046">STK046 Lokale Benutzerregistrierung</a></p>
+<h1 id="SWR060">60 Thymeleaf-Registrierungsseite fuer lokale Benutzer <small>SWR060</small></h1>
+<p>Der User-Management-Service muss eine Thymeleaf-basierte
+Registrierungsseite bereitstellen (ADR-0032):
+<ul>
+<li>Unter /auth/register wird ein Registrierungsformular mit den</li>
+  Feldern Username, E-Mail, Anzeigename und Passwort (mit</li>
+  Bestaetigungsfeld) angezeigt.</li>
+<li>Die Registrierungsseite ist nur verfuegbar, wenn der LoginMode des</li>
+  Tenants INTERNAL oder BOTH ist (SWR-044). Bei LoginMode OIDC wird</li>
+  auf die Login-Seite weitergeleitet.</li>
+<li>Auf der Login-Seite wird ein Link "Registrieren" angezeigt, wenn</li>
+  lokale Registrierung fuer den Tenant erlaubt ist.</li>
+<li>Clientseitige Validierung: Passwort und Passwort-Bestaetigung muessen</li>
+  uebereinstimmen, alle Pflichtfelder muessen ausgefuellt sein.</li>
+<li>Serverseitige Validierung: Bei Fehlern wird das Formular mit</li>
+  Fehlermeldungen und den eingegebenen Werten (ausser Passwort) erneut</li>
+  angezeigt.</li>
+<li>Nach erfolgreicher Registrierung wird eine Bestaetigungsseite</li>
+  angezeigt, die den Benutzer darueber informiert, dass sein Account</li>
+  auf Freigabe durch den Tenant-Administrator wartet (STK028).</li>
+<li>Der Controller greift direkt auf den lokalen UserProfileUseCase</li>
+  zu, um die Registrierung durchzufuehren (kein gRPC-Umweg).</li>
+<li>Die View nutzt ein gemeinsames Layout-Grundgeruest via Thymeleaf</li>
+  Layout Dialect.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK046">STK046 Lokale Benutzerregistrierung</a>, <a href="SWR.html#SWR059">SWR059 REST-API fuer lokale Benutzerregistrierung</a></p>
+<h1 id="SWR061">61 Tenant-spezifische OIDC-Provider-Konfiguration im User Management Service <small>SWR061</small></h1>
+<p>Der User Management Service speichert pro Tenant die OIDC-Provider-Konfiguration
+als Teil der TenantSettings. Folgende Felder werden unterstützt:</p>
+<ul>
+<li>oidcIssuerUrl (String, optional): Issuer-URL des OIDC-Providers
+  (z.B. https://auth.example.com/application/o/myapp/)</li>
+<li>oidcClientId (String, optional): Client-ID für die OIDC-Registrierung</li>
+<li>oidcClientSecret (String, optional): Client-Secret (verschlüsselt gespeichert)</li>
+</ul>
+<p>Aus der Issuer-URL werden die Standard-OIDC-Endpunkte automatisch abgeleitet
+(Authorization, Token, UserInfo, JWKS) per OpenID Connect Discovery
+(.well-known/openid-configuration).</p>
+<p>Die Felder sind über die bestehende gRPC-Schnittstelle (UpdateTenantSettingsRequest/
+TenantSettingsResponse) und den REST-API-Endpunkt abrufbar und änderbar.</p>
+<p>Validierung:
+<ul>
+<li>Wenn loginMode OIDC oder BOTH ist, müssen oidcIssuerUrl und oidcClientId</li>
+  gesetzt sein.</li>
+<li>oidcClientSecret darf in Responses nicht im Klartext zurückgegeben werden</li>
+  (maskiert als "***" wenn gesetzt, leer wenn nicht gesetzt).</li>
+<li>oidcIssuerUrl muss ein gültiges HTTPS-URL-Format haben.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK033">STK033 OIDC Konfiguration über Infrastruktur oder Admin UI</a>, <a href="STK.html#STK047">STK047 OIDC-Konfiguration pro Tenant über Admin-Interface</a></p>
+<h1 id="SWR062">62 OIDC-Konfiguration in der Admin-Oberfläche (Thymeleaf) <small>SWR062</small></h1>
+<p>Die bestehende Admin-Einstellungsseite (/admin/settings) wird um eine
+OIDC-Konfigurationssektion erweitert. Die Sektion ist nur sichtbar,
+wenn die Login-Methode OIDC oder BOTH ist.</p>
+<p>Formularfelder:
+<ul>
+<li>Issuer-URL (text, Pflichtfeld bei OIDC/BOTH)</li>
+<li>Client-ID (text, Pflichtfeld bei OIDC/BOTH)</li>
+<li>Client-Secret (password, optional, Platzhalter "***" wenn bereits gesetzt)</p></li>
+</ul>
+<p>Verhalten:
+<ul>
+<li>Beim Laden der Seite werden die bestehenden Werte angezeigt</li>
+  (Secret maskiert als "***").</li>
+<li>Beim Speichern wird das Secret nur aktualisiert, wenn ein neuer Wert</li>
+  eingegeben wurde (leeres Feld = bestehender Wert bleibt erhalten).</li>
+<li>Validierungsfehler (z.B. fehlende Pflichtfelder bei OIDC-Login-Modus)</li>
+  werden als Fehlermeldung auf der Seite angezeigt.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK047">STK047 OIDC-Konfiguration pro Tenant über Admin-Interface</a>, <a href="SWR.html#SWR061">SWR061 Tenant-spezifische OIDC-Provider-Konfiguration im User Management Service</a></p>
+<h1 id="SWR063">63 Dynamische OIDC-Client-Registrierung pro Tenant <small>SWR063</small></h1>
+<p>Der User-Management-Service nutzt die tenant-spezifische
+OIDC-Konfiguration aus den eigenen TenantSettings, um den Spring
+Security OAuth2 Client dynamisch zu konfigurieren (ADR-0032). Dazu
+wird ein ClientRegistrationRepository implementiert, das die
+OIDC-Konfiguration pro Tenant direkt aus der lokalen Datenbank laedt.</p>
+<p>Verhalten:
+<ul>
+<li>Bei jedem OIDC-Login-Versuch wird die aktuelle Tenant-Konfiguration</li>
+  aus den TenantSettings geladen (mit Caching, TTL 5 Minuten).</li>
+<li>Ist keine tenant-spezifische Konfiguration vorhanden, wird die</li>
+  globale OIDC-Konfiguration aus application.yml als Fallback</li>
+  verwendet.</li>
+<li>Aenderungen an der OIDC-Konfiguration werden nach Ablauf des</li>
+  Cache-TTL wirksam (kein Neustart erforderlich).</li>
+<li>Die Issuer-URL wird fuer OpenID Connect Discovery verwendet, um</li>
+  die konkreten Endpunkte (Authorization, Token, UserInfo, JWKS)</li>
+  automatisch aufzuloesen.</li>
+<li>Da der OIDC-Flow vollstaendig im User-Management-Service ablaeuft,</li>
+  entfaellt der gRPC-Umweg ueber den Blog Content Service.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK047">STK047 OIDC-Konfiguration pro Tenant über Admin-Interface</a>, <a href="SWR.html#SWR061">SWR061 Tenant-spezifische OIDC-Provider-Konfiguration im User Management Service</a></p>
+<h1 id="SWR064">64 Shared Redis Session zwischen Blog Content und User Management Service <small>SWR064</small></h1>
+<p>Die Authentifizierungs-UI (Login, Registrierung, Admin-UI) wird vom User
+Management Service bereitgestellt (ADR-0032). Damit der Blog Content
+Service die dort erstellten Sessions nutzen kann, verwenden beide Services
+einen gemeinsamen Redis Session Store (ADR-0030):
+<ul>
+<li>Beide Services nutzen Spring Session Data Redis mit identischer</li>
+  Konfiguration (gleicher Redis-Namespace, gleicher Cookie-Name,</li>
+  gleiche Serialisierung).</li>
+<li>Der User Management Service erstellt nach erfolgreichem Login</li>
+  (OIDC oder formbasiert) eine Session in Redis mit den</li>
+  Benutzerrollen als Spring Security Authorities.</li>
+<li>Der Blog Content Service liest die bestehende Session aus Redis</li>
+  und nutzt die enthaltenen Authorities fuer die Zugriffskontrolle.</li>
+<li>Der Blog Content Service fuehrt keinen eigenen OIDC-Flow durch.</li>
+  Er verweist unauthentifizierte Benutzer per Redirect auf</li>
+  /auth/login (User Management Service).</li>
+<li>Nach dem Login leitet der User Management Service zurueck auf</li>
+  die urspruenglich angeforderte Seite im Blog Content Service.</li>
+<li>Die Session-TTL und Cookie-Konfiguration (Name, Domain, Path,</li>
+  Secure, HttpOnly) muessen zwischen beiden Services identisch sein.</li>
+<li>Setzt ADR-0030 (Redis Session Store) als Voraussetzung voraus.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK045">STK045 Horizontale Skalierbarkeit und unterbrechungsfreie Updates</a></p>
+<h1 id="SWR065">65 Shared UI Library als Maven-Modul <small>SWR065</small></h1>
+<p>Es muss ein Maven-Modul libs/shared-ui bereitgestellt werden, das
+gemeinsame Thymeleaf-Templates, Fragmente und CSS-Styles als
+Classpath-Ressourcen enthält. Die Ressourcen werden unter dem Pfad
+templates/shared/ und static/css/ im Classpath bereitgestellt.
+Services binden das Modul als Maven-Dependency ein und können die
+gemeinsamen Templates über Thymeleaf-Referenzen nutzen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK048">STK048 Gemeinsame UI-Bibliothek für Thymeleaf-Templates und Styles</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA033">SWA033 Shared UI Library Architektur</a></p>
+<h1 id="SWR066">66 Gemeinsames Layout-Template in der Shared UI Library <small>SWR066</small></h1>
+<p>Die Shared UI Library muss ein Master-Layout-Template
+(templates/shared/layout/default.html) bereitstellen, das von allen
+Services als Basis-Layout verwendet wird. Das Layout definiert die
+HTML-Grundstruktur (Head mit Pico CSS, Body mit Header-, Content-
+und Footer-Bereichen) und nutzt das Thymeleaf Layout Dialect für
+Content-Injection. Services können das gemeinsame Layout über
+layout:decorate="~{shared/layout/default}" referenzieren.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK048">STK048 Gemeinsame UI-Bibliothek für Thymeleaf-Templates und Styles</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA033">SWA033 Shared UI Library Architektur</a></p>
+<h1 id="SWR067">67 Gemeinsame CSS-Styles in der Shared UI Library <small>SWR067</small></h1>
+<p>Die Shared UI Library muss die gemeinsamen CSS-Styles
+(static/css/custom.css) bereitstellen, die das Basisdesign der
+Plattform definieren (Pico CSS Anpassungen, Sticky-Footer-Layout,
+Tenant-Branding-Hooks). Alle Services verwenden diese gemeinsame
+CSS-Datei anstelle eigener Kopien. Service-spezifische
+Erweiterungen können über zusätzliche CSS-Dateien im jeweiligen
+Service ergänzt werden.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK048">STK048 Gemeinsame UI-Bibliothek für Thymeleaf-Templates und Styles</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA033">SWA033 Shared UI Library Architektur</a></p>
+<h1 id="SWR068">68 Gemeinsamer Footer in der Shared UI Library <small>SWR068</small></h1>
+<p>Die Shared UI Library muss ein Footer-Fragment
+(templates/shared/fragments/footer.html) bereitstellen, das
+Copyright-Hinweis, Impressum-Link, Datenschutz-Link und
+Versionsnummer einheitlich über alle Services darstellt. Services
+referenzieren diesen Footer über
+th:replace="~{shared/fragments/footer :: footer}".</p>
+<p><em>Parent links:</em> <a href="STK.html#STK048">STK048 Gemeinsame UI-Bibliothek für Thymeleaf-Templates und Styles</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA033">SWA033 Shared UI Library Architektur</a></p>
+<h1 id="SWR069">69 Separate Formulare für Tenant-Einstellungsgruppen <small>SWR069</small></h1>
+<p>Die Admin-Oberfläche für Tenant-Einstellungen muss die Einstellungen
+in separate Formulare pro Einstellungsgruppe aufteilen. Jedes Formular
+wird über einen eigenen HTTP-Endpunkt geladen und gespeichert. Die
+folgenden Einstellungsgruppen müssen als eigenständige Formulare
+dargestellt werden: Allgemeine Einstellungen (Blog-Name,
+Login-Methode, Auto-Approval), OIDC-Konfiguration (Issuer URL,
+Client ID, Client Secret), Impressum und Datenschutzerklärung.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK049">STK049 Tenant-Einstellungen in separaten Formularen pro Einstellungsgruppe</a></p>
+<h1 id="SWR070">70 Navigation zwischen Tenant-Einstellungsgruppen <small>SWR070</small></h1>
+<p>Die Admin-Oberfläche muss eine Navigation (z.B. Tabs oder
+Seitenleiste) bereitstellen, über die der Administrator zwischen
+den verschiedenen Einstellungsgruppen eines Tenants wechseln kann,
+ohne die Seite vollständig neu laden zu müssen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK049">STK049 Tenant-Einstellungen in separaten Formularen pro Einstellungsgruppe</a></p>
+<h1 id="SWR071">71 Unabhängige Speicherung pro Einstellungsgruppe <small>SWR071</small></h1>
+<p>Jedes Einstellungsformular muss über eine eigene Speichern-Aktion
+verfügen, die nur die Felder der jeweiligen Einstellungsgruppe
+persistiert. Das Speichern einer Einstellungsgruppe darf keine
+Auswirkungen auf die Werte anderer Einstellungsgruppen haben.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK049">STK049 Tenant-Einstellungen in separaten Formularen pro Einstellungsgruppe</a></p>
+<h1 id="SWR072">72 Tenant-Management-Service als eigenständiger Microservice <small>SWR072</small></h1>
+<p>Ein eigenständiger tenant-management Service (services/tenant-management/)
+verwaltet den gesamten Tenant-Lifecycle. Der Service implementiert:</p>
+<ul>
+<li>Tenant-CRUD: Erstellen, Lesen, Aktualisieren von Tenants</li>
+<li>Tenant-Konfiguration: Login-Mode, Auto-Approval, Branding</li>
+<li>OIDC-Provider-Konfiguration pro Tenant (Issuer URL, Client ID, Client Secret)</li>
+<li>Impressum und Datenschutzerklärung pro Tenant</li>
+<li>Thymeleaf-Admin-UI unter /tenant/admin/** für SuperAdmin-Zugriff</li>
+</ul>
+<p>Der Service besitzt eine eigene PostgreSQL-Datenbank (Database per Service,
+ADR-0019) und verwendet Flyway für Schema-Migrationen (ADR-0015).</p>
+<p>Die hexagonale Architektur (ADR-0001) wird analog zu den bestehenden
+Services eingehalten: domain/, application/ (ports), adapter/ (inbound + outbound).</p>
+<p><em>Parent links:</em> <a href="STK.html#STK050">STK050 Eigenständiger Tenant-Verwaltungsservice mit Admin-UI</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA034">SWA034 Tenant-Management-Service Architektur</a></p>
+<h1 id="SWR073">73 Tenant-Admin-UI mit Shared UI Library <small>SWR073</small></h1>
+<p>Der tenant-management Service stellt eine Thymeleaf-basierte Admin-UI
+unter /tenant/admin/** bereit. Die UI verwendet die Shared UI Library
+(libs/shared-ui, SWR-065) für Layout, Footer und CSS-Styles.</p>
+<p>Folgende Seiten werden bereitgestellt:</p>
+<ul>
+<li>/tenant/admin/login: Break-Glass-SuperAdmin-Login (formbasiert)</li>
+<li>/tenant/admin/tenants: Übersicht aller Tenants mit Status</li>
+<li>/tenant/admin/tenants/new: Formular zum Anlegen eines neuen Tenants</li>
+<li>/tenant/admin/tenants/{id}/settings: Tenant-Einstellungen bearbeiten
+  (allgemein, OIDC, Impressum/Datenschutz) in separaten Tab-Formularen</li>
+</ul>
+<p>Der Zugriff erfordert die Rolle SUPERADMIN. Die Authentifizierung
+erfolgt über einen Break-Glass-Login analog zum User Management Service
+(Umgebungsvariable BLOG_ADMIN_PASSWORD).</p>
+<p><em>Parent links:</em> <a href="STK.html#STK050">STK050 Eigenständiger Tenant-Verwaltungsservice mit Admin-UI</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA034">SWA034 Tenant-Management-Service Architektur</a></p>
+<h1 id="SWR074">74 Tenant-Management gRPC-Schnittstelle <small>SWR074</small></h1>
+<p>Der tenant-management Service stellt eine gRPC-Schnittstelle bereit,
+über die andere Services Tenant-Informationen abfragen können (ADR-0010):</p>
+<ul>
+<li>GetTenantSettings: Tenant-Einstellungen (Login-Mode, Auto-Approval,
+  OIDC-Konfiguration) für einen gegebenen TenantId abrufen</li>
+<li>ListTenants: Alle aktiven Tenants auflisten</li>
+</ul>
+<p>Die Proto-Datei wird in libs/grpc-contracts/ gepflegt. Die bestehende
+TenantSettingsService-Definition aus user_management.proto wird in eine
+eigene tenant_management.proto Datei migriert.</p>
+<p>User-Management und Blog-Content konsumieren diese gRPC-Schnittstelle
+statt direkt auf die Tenant-Datenbank zuzugreifen.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK002">STK002 Multi-Tenancy</a>, <a href="STK.html#STK050">STK050 Eigenständiger Tenant-Verwaltungsservice mit Admin-UI</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA034">SWA034 Tenant-Management-Service Architektur</a></p>
+<h1 id="SWR075">75 Kubernetes-Deployment für Tenant-Management-Service <small>SWR075</small></h1>
+<p>Der tenant-management Service wird mit folgenden Kubernetes-Ressourcen
+deployt:</p>
+<ul>
+<li>Deployment: 2 Replicas, Rolling-Update-Strategie</li>
+<li>Service: ClusterIP mit HTTP- und gRPC-Ports</li>
+<li>Ingress: Pfad-basiertes Routing für /tenant/admin/** auf
+  blog.tomirgang.de (gemeinsames TLS-Secret blog-content-tls)</li>
+<li>NetworkPolicy: Ingress nur von Traefik (HTTP) und Intra-Namespace (gRPC)</li>
+<li>Linkerd Server + AuthorizationPolicy: Traefik-Identity für HTTP,
+  Service-Identities für gRPC</li>
+<li>Secret: SOPS-verschlüsselt (admin-password)</li>
+<li>ServiceAccount: Dedizierter ServiceAccount</li>
+</ul>
+<p>Redis-Session-Sharing wird für die Admin-UI konfiguriert (SWR-064).
+Die Manifeste liegen unter infra/k8s/tenant-management/.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK050">STK050 Eigenständiger Tenant-Verwaltungsservice mit Admin-UI</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA034">SWA034 Tenant-Management-Service Architektur</a></p>
+<h1 id="SWR076">76 Post-Vorschau-Endpoint für DRAFT-Posts <small>SWR076</small></h1>
+<p>Der Blog-Content-Service stellt einen dedizierten Vorschau-Endpoint
+GET /posts/{id}/preview bereit, der einen Post unabhängig von seinem
+Status (insbesondere DRAFT) vollständig gerendert zurückgibt.</p>
+<p>Anforderungen:
+<ul>
+<li>Markdown-Posts werden zu HTML gerendert (Flexmark, inklusive</li>
+  Syntax-Highlighting und Mermaid-Diagramme)</li>
+<li>HTML-Posts werden unverändert dargestellt</li>
+<li>Die Darstellung entspricht exakt der Detailansicht eines</li>
+  veröffentlichten Posts (show.html Template)</li>
+<li>Der Endpoint ist nur für authentifizierte Benutzer mit Rolle</li>
+  AUTHOR, ADMIN oder SUPERADMIN zugänglich</li>
+<li>Nicht-authentifizierte Benutzer erhalten HTTP 401/302 (Redirect</li>
+  zum Login)</li>
+<li>Bei ungültiger Post-ID wird HTTP 404 zurückgegeben</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK051">STK051 Vollständige Vorschau für unveröffentlichte Posts</a></p>
+<h1 id="SWR077">77 Vorschau-Button im Post-Formular <small>SWR077</small></h1>
+<p>Das Post-Bearbeitungsformular (form.html) enthält einen
+Vorschau-Button, der den Post in einem neuen Browser-Tab als
+vollständig gerenderte Vorschau öffnet (Link zu /posts/{id}/preview).</p>
+<p>Der Button ist sowohl beim Erstellen (nach erstem Speichern) als auch
+beim Bearbeiten eines bestehenden Posts sichtbar. Für neue Posts, die
+noch nicht gespeichert wurden (kein ID vorhanden), ist der Button
+deaktiviert oder ausgeblendet.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK051">STK051 Vollständige Vorschau für unveröffentlichte Posts</a></p>
+<h1 id="SWR078">78 E2E-Test-Infrastruktur mit Selenium WebDriver <small>SWR078</small></h1>
+<p>Ein separates Maven-Modul e2e-tests/ stellt die E2E-Test-Infrastruktur
+bereit. Es enthält:
+<ul>
+<li>Selenium WebDriver mit Testcontainers-Selenium (Chrome-Container)</li>
+<li>JUnit 5 Basis-Testklasse mit WebDriver-Lifecycle-Management</li>
+<li>Page Object Model (POM) Basisklasse für alle Seiten-Abstraktionen</li>
+<li>Screenshot-on-Failure JUnit 5 Extension (target/screenshots/)</li>
+<li>Maven-Profil 'e2e' für gezielte Ausführung (mvn verify -Pe2e)</li>
+<li>Lokale Ausführung ohne externen Browser (Testcontainers-Chrome)</li>
+<li>Integration in das Release-Script (scripts/release.sh)</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK052">STK052 E2E-Selenium-Tests für alle relevanten UI-Use-Cases</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA035">SWA035 E2E-Test-Modul Architektur</a></p>
+<h1 id="SWR079">79 E2E-Tests: Blog-Content öffentliche Ansichten <small>SWR079</small></h1>
+<p>Selenium-E2E-Tests verifizieren alle öffentlich zugänglichen
+Blog-Content-Seiten im Browser:
+<ul>
+<li>Landing Page: Featured Posts und Recent Posts werden angezeigt</li>
+<li>Post-Liste: Vollständige Liste mit Volltextsuche funktioniert</li>
+<li>Post-Detailansicht: Slug-basierter Zugriff, Markdown korrekt gerendert</li>
+<li>Legal Pages: Impressum und Datenschutzerklärung erreichbar</li>
+<li>Fehlerseiten: 404-Seite bei unbekanntem Slug</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK052">STK052 E2E-Selenium-Tests für alle relevanten UI-Use-Cases</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA035">SWA035 E2E-Test-Modul Architektur</a></p>
+<h1 id="SWR080">80 E2E-Tests: Blog-Content Autoren-Workflows <small>SWR080</small></h1>
+<p>Selenium-E2E-Tests verifizieren die authentifizierten
+Autoren-Workflows im Browser:
+<ul>
+<li>Post erstellen: Login, Formular ausfüllen, Speichern, Post in Liste sichtbar</li>
+<li>Post bearbeiten: Bestehenden Post öffnen, Änderungen vornehmen, Speichern</li>
+<li>Markdown-Vorschau: Formular-Vorschau zeigt gerendertes Markdown</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK052">STK052 E2E-Selenium-Tests für alle relevanten UI-Use-Cases</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA035">SWA035 E2E-Test-Modul Architektur</a></p>
+<h1 id="SWR081">81 E2E-Tests: Authentifizierung und Registrierung <small>SWR081</small></h1>
+<p>Selenium-E2E-Tests verifizieren die Authentifizierungs- und
+Registrierungs-Workflows im Browser:
+<ul>
+<li>Login mit internem Account (Formular, Credentials, Redirect)</li>
+<li>Registrierung: Formular mit Validierung (Client- und Server-seitig)</li>
+<li>Registrierung: Erfolgsseite nach erfolgreicher Absendung</li>
+<li>Break-Glass Admin-Login: SuperAdmin-Zugang unter /auth/admin/login</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK052">STK052 E2E-Selenium-Tests für alle relevanten UI-Use-Cases</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA035">SWA035 E2E-Test-Modul Architektur</a></p>
+<h1 id="SWR082">82 E2E-Tests: Admin-Workflows (User/Tenant) <small>SWR082</small></h1>
+<p>Selenium-E2E-Tests verifizieren die Admin-Workflows im Browser:
+<ul>
+<li>Benutzerliste: Alle Benutzer des Tenants werden angezeigt</li>
+<li>Benutzer freigeben/ablehnen: Approve/Reject-Buttons funktionieren</li>
+<li>Rollenänderung: Benutzerrolle kann über UI geändert werden</li>
+<li>Tenant-Einstellungen: Login Mode, OIDC-Konfiguration, Branding ändern</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK052">STK052 E2E-Selenium-Tests für alle relevanten UI-Use-Cases</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA035">SWA035 E2E-Test-Modul Architektur</a></p>
+<h1 id="SWR083">83 E2E-Tests: SuperAdmin Tenant-Verwaltung <small>SWR083</small></h1>
+<p>Selenium-E2E-Tests verifizieren die SuperAdmin-Workflows im Browser:
+<ul>
+<li>SuperAdmin-Login: Zugang über /tenant/admin/login</li>
+<li>Tenant-Liste: Alle Tenants werden angezeigt</li>
+<li>Neuen Tenant anlegen: Formular ausfüllen und speichern</li>
+<li>Globale Tenant-Settings: Tabs (General, OIDC, Legal) bearbeiten</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK052">STK052 E2E-Selenium-Tests für alle relevanten UI-Use-Cases</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA035">SWA035 E2E-Test-Modul Architektur</a></p>
+<h1 id="SWR084">84 Tag-Verwaltung im Admin-Backend <small>SWR084</small></h1>
+<p>Der Blog Content Service stellt unter /admin/tags eine Thymeleaf-Seite
+bereit, die alle Tags des aktuellen Tenants auflistet. Administratoren
+und Autoren können:
+<ul>
+<li>Neue Tags anlegen (Name eingeben, Slug wird automatisch generiert).</li>
+<li>Bestehende Tags umbenennen.</li>
+<li>Tags löschen.</li>
+Die Seite ist nur für authentifizierte Benutzer zugänglich.</li>
+Der Controller nutzt den bestehenden TagUseCase (SWR-020).</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK053">STK053 Tag-Verwaltung und Tag-Anzeige im Blog</a></p>
+<h1 id="SWR085">85 Tag-Auswahl im Post-Formular <small>SWR085</small></h1>
+<p>Das Post-Formular (Erstellen und Bearbeiten) zeigt eine Multi-Select-
+Auswahl aller bestehenden Tags des Tenants. Autoren können:
+<ul>
+<li>Einen oder mehrere bestehende Tags auswählen.</li>
+<li>Neue Tags direkt im Formular anlegen (Inline-Erstellung).</li>
+Beim Speichern des Posts werden die ausgewählten Tags als TagIds am Post</li>
+gespeichert. Das PostFormData wird um ein tags-Feld erweitert. Der</li>
+BlogViewController übergibt die verfügbaren Tags an das Template und</li>
+verarbeitet die Auswahl beim Erstellen und Aktualisieren.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="STK.html#STK053">STK053 Tag-Verwaltung und Tag-Anzeige im Blog</a></p>
+<h1 id="SWR086">86 Tag-Anzeige in Post-Übersicht und Detailansicht <small>SWR086</small></h1>
+<p>Die öffentliche Post-Übersicht (/posts und Landing Page) und die Post-
+Detailansicht (/posts/{slug}) zeigen die zugewiesenen Tags jedes Posts
+an. Tags werden als klickbare Labels dargestellt. Der BlogViewController
+löst die TagIds jedes Posts zu vollständigen Tag-Objekten auf und übergibt
+sie an die Templates. Die Tag-Auflösung nutzt den bestehenden TagUseCase.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK053">STK053 Tag-Verwaltung und Tag-Anzeige im Blog</a>, <a href="SWR.html#SWR026">SWR026 Öffentliche Blog-Ansicht (Post-Liste und Einzelansicht)</a></p>
+<h1 id="SWR087">87 Auditlog-Abfrage-Port und Repository <small>SWR087</small></h1>
+<p>Jeder Service (Blog Content, User Management, Tenant Management) erhält
+einen Inbound Port (AuditLogQueryUseCase) zur Abfrage von Audit-Einträgen.
+Der Port bietet folgende Operationen:</p>
+<ul>
+<li>findAll(tenantId, pageable): Paginierte Abfrage aller Einträge eines
+  Tenants, sortiert nach Zeitstempel absteigend</li>
+<li>search(tenantId, criteria, pageable): Gefilterte und/oder durchsuchte
+  Abfrage mit optionalen Kriterien (Aktionstyp, Entitätstyp, Akteur,
+  Zeitraum von/bis, Freitextsuche)</li>
+</ul>
+<p>Die Outbound-Adapter (SpringDataAuditLogRepository) werden um die
+entsprechenden Abfragemethoden erweitert (Spring Data JPA Specifications
+oder Query Methods).</p>
+<p><em>Parent links:</em> <a href="STK.html#STK054">STK054 Auditlog-Ansicht in der Admin-UI</a>, <a href="SWR.html#SWR056">SWR056 Audit-Logging für alle relevanten Aktionen</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA036">SWA036 Auditlog-View Architektur</a></p>
+<h1 id="SWR088">88 Auditlog-Admin-View im Blog Content Service <small>SWR088</small></h1>
+<p>Der Blog Content Service erhält einen AuditLogAdminController unter
+/admin/audit-logs mit folgenden Endpunkten:</p>
+<ul>
+<li>GET /admin/audit-logs: Zeigt eine paginierte, filterbare Tabelle
+  aller Audit-Einträge des aktuellen Tenants an</li>
+<li>Query-Parameter: action, entityType, actor, from, to, search, page</li>
+</ul>
+<p>Die Thymeleaf-View (admin/audit-logs.html) zeigt:
+<ul>
+<li>Filterformular (Aktionstyp, Entitätstyp, Akteur, Zeitraum, Suche)</li>
+<li>Ergebnistabelle mit Spalten: Zeitstempel, Akteur, Aktion, Entitätstyp,</li>
+  Entitäts-ID, Details</li>
+<li>Paginierung (Seite vor/zurück, aktuelle Seite)</li>
+<li>Zeitstempel in lesbarem Format (dd.MM.yyyy HH:mm:ss)</p></li>
+</ul>
+<p>Zugriff nur für Benutzer mit Rolle ADMIN oder SUPERADMIN.</p>
+<p>Das Navigationsmenü (Header-Fragment) erhält einen Link zur
+Auditlog-Ansicht, sichtbar nur für ADMIN/SUPERADMIN.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK054">STK054 Auditlog-Ansicht in der Admin-UI</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA036">SWA036 Auditlog-View Architektur</a></p>
+<h1 id="SWR089">89 TaskPublisher als Outbound Port für RabbitMQ-Task-Verteilung <small>SWR089</small></h1>
+<p>Der Blog Content Service erhält einen Outbound Port TaskPublisher
+im Application Layer, der Task-Nachrichten an RabbitMQ-Queues
+versendet (ADR-0018, SWA-014). Folgende Task-Typen werden
+unterstützt:</p>
+<ul>
+<li>TranslationTaskMessage: KI-Übersetzungsauftrag mit postId,
+  tenantId, sourceLocale, targetLocale und content</li>
+<li>TtsGenerationTaskMessage: Text-to-Speech-Auftrag mit postId,
+  tenantId, locale und title</li>
+<li>SnapshotTaskMessage: Web-Snapshot-Auftrag mit postId, tenantId,
+  url und sourceTitle</li>
+</ul>
+<p>Der TaskPublisher wird als Spring-Profil-gesteuert implementiert:
+RabbitMqTaskPublisher (Profil rabbitmq) und LoggingTaskPublisher
+(Fallback ohne rabbitmq-Profil).</p>
+<p><em>Parent links:</em> <a href="STK.html#STK038">STK038 Asynchrone Service-Kommunikation via Kafka oder RabbitMQ</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA037">SWA037 RabbitMQ-Adapter mit Quorum Queues und Dead-Letter-Handling</a></p>
+<h1 id="SWR090">90 Feed Event Consumer <small>SWR090</small></h1>
+<p>Der Feed-Service konsumiert PostPublishedEvent und PostUpdatedEvent
+via Kafka (Consumer Group feed-service). Beim Empfang eines
+PostPublishedEvent wird ein FeedEntry erstellt oder aktualisiert.
+Beim Empfang eines PostUpdatedEvent wird ein bestehender FeedEntry
+aktualisiert (Titel, Slug, Locale). Alle Eintraege sind
+tenant-isoliert. Nicht publizierte Posts werden bei PostUpdatedEvent
+ignoriert (kein FeedEntry vorhanden).</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR008">SWR008 RSS/Atom Feed-Generierung</a></p>
+<p><em>Child links:</em> <a href="SWA.html#SWA038">SWA038 Feed Service Kafka Consumer Architektur</a></p>
+<h1 id="SWR091">91 Logo und FavIcon in Tenant-Branding-Einstellungen <small>SWR091</small></h1>
+<p>Der Tenant-Service erhält einen neuen Upload-Endpunkt
+POST /admin/settings/branding/logo (multipart/form-data) und
+POST /admin/settings/branding/favicon (multipart/form-data),
+der die hochgeladene Datei im S3-kompatiblen Storage (Garage)
+unter dem Pfad tenants/{tenantId}/logo bzw. tenants/{tenantId}/favicon
+ablegt.</p>
+<p>Das Domain-Modell TenantSettings wird um die Felder logoUrl (String,
+optional) und faviconUrl (String, optional) erweitert. Nach
+erfolgreichem Upload wird die generierte S3-URL im TenantSettings
+gespeichert.</p>
+<p>Validierung:
+<ul>
+<li>Erlaubte MIME-Types: image/png, image/svg+xml, image/x-icon,</li>
+  image/jpeg, image/webp</li>
+<li>Maximale Dateigröße: 512 KB (Logo), 64 KB (FavIcon)</li>
+<li>Content-Type-Validierung gegen tatsächlichen Dateiinhalt</li>
+  (nicht nur Header)</p></li>
+</ul>
+<p>DELETE /admin/settings/branding/logo und
+DELETE /admin/settings/branding/favicon entfernen die Datei aus S3
+und setzen das entsprechende Feld in TenantSettings auf null.</p>
+<p>Der Blog-Content-Service ruft die Branding-Daten über gRPC vom
+Tenant-Service ab und stellt logoUrl und faviconUrl als
+Model-Attribute für die Thymeleaf-Templates bereit.</p>
+<p>Das Header-Fragment zeigt das Logo neben dem Tenant-Namen an, wenn
+eine logoUrl konfiguriert ist. Das Layout-Template setzt das FavIcon
+im HTML-Head, wenn eine faviconUrl konfiguriert ist.</p>
+<p>Die Admin-UI zeigt im Branding-Bereich der Tenant-Einstellungen
+Upload-Felder für Logo und FavIcon mit Vorschau des aktuellen Bildes
+und einem Löschen-Button.</p>
+<p>Fallback: Wenn kein Logo konfiguriert ist, wird kein Logo angezeigt.
+Wenn kein FavIcon konfiguriert ist, wird das Browser-Standardverhalten
+beibehalten.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK055">STK055 Logo und FavIcon pro Tenant konfigurierbar</a></p>
+<h1 id="SWR092">92 Konfigurierbarer OIDC-Login-Button-Text pro Tenant <small>SWR092</small></h1>
+<p>Das Domain-Modell TenantSettings wird um das Feld oidcButtonText
+(String, optional) erweitert.</p>
+<p>Die Login-Seite des User-Management-Service verwendet den
+konfigurierten oidcButtonText als Beschriftung des OIDC-Login-Buttons.
+Wenn kein benutzerdefinierter Text gesetzt ist, wird der Standardtext
+"Mit OIDC anmelden" verwendet.</p>
+<p>Die Admin-UI zeigt im OIDC-Bereich der Tenant-Einstellungen ein
+Eingabefeld für den Button-Text. Die maximale Länge beträgt
+100 Zeichen.</p>
+<p>Der oidcButtonText wird über gRPC an den Blog-Content-Service
+propagiert, falls dort Login-Links angezeigt werden.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK056">STK056 OIDC-Button-Text über Admin-UI konfigurierbar</a></p>
+<h1 id="SWR093">93 Benutzer-Löschung über Admin-UI <small>SWR093</small></h1>
+<p>Der User-Management-Service erhält einen neuen Endpunkt
+DELETE /admin/users/{userId} (nur ADMIN und SUPERADMIN),
+der die Tenant-Mitgliedschaft und die Benutzerdaten löscht.</p>
+<p>Geschäftsregeln:
+<ul>
+<li>Der eigene Account darf nicht gelöscht werden (HTTP 409 Conflict).</li>
+<li>Der SUPERADMIN-Account darf nicht gelöscht werden (HTTP 409 Conflict).</li>
+<li>Nur Benutzer des eigenen Tenants dürfen gelöscht werden</li>
+  (Tenant-Isolation).</li>
+<li>Das Löschen wird im Audit-Log protokolliert.</p></li>
+</ul>
+<p>Die Admin-UI zeigt in der Benutzerliste einen Lösch-Button pro
+Benutzer (außer für den eigenen Account und SUPERADMIN). Beim Klick
+erscheint ein Bestätigungsdialog. Nach erfolgreichem Löschen wird
+die Benutzerliste aktualisiert und eine Erfolgsmeldung angezeigt.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK057">STK057 Nutzer über die Admin-UI löschen</a></p>
+<h1 id="SWR094">94 Konfigurierbare Standard-Rolle für neue Benutzer pro Tenant <small>SWR094</small></h1>
+<p>Das Domain-Modell TenantSettings wird um das Feld defaultRole
+(Role, default READER) erweitert.</p>
+<p>Erlaubte Werte für die Standard-Rolle: READER, REVIEWER, AUTHOR.
+Die Rollen ADMIN und SUPERADMIN sind als Standard-Rolle nicht
+zulässig und werden bei Eingabe abgelehnt (HTTP 400 Bad Request).</p>
+<p>Bei der Registrierung oder beim ersten OIDC-Login eines neuen
+Benutzers wird die konfigurierte Standard-Rolle statt der
+fest codierten Rolle READER zugewiesen.</p>
+<p>Die Admin-UI zeigt in den Tenant-Einstellungen ein Dropdown-Feld
+für die Standard-Rolle mit den Optionen READER, REVIEWER und
+AUTHOR. Der aktuelle Wert wird vorausgewählt.</p>
+<p><em>Parent links:</em> <a href="STK.html#STK058">STK058 Standard-Rolle für neue Benutzer über Admin-UI einstellbar</a></p>
+<h1 id="SWR095">95 Automatisches Rollen-Mapping über OIDC-Claims <small>SWR095</small></h1>
+<p>Das Domain-Modell TenantSettings wird um die Felder
+oidcRoleMappingEnabled (boolean, default false) und
+oidcRoleMappings (Map<String, Role>) erweitert.</p>
+<p>oidcRoleMappings definiert ein Mapping von OIDC-Gruppennamen
+auf plattforminterne Rollen (z.B. {"blog-authors": "AUTHOR",
+"blog-admins": "ADMIN"}).</p>
+<p>Wenn oidcRoleMappingEnabled aktiviert ist, wird bei jedem
+OIDC-Login der groups-Claim des ID-Tokens ausgewertet:
+<ul>
+<li>Für jede Gruppe im Claim wird das konfigurierte Mapping geprüft.</li>
+<li>Die höchste gemappte Rolle wird dem Benutzer zugewiesen.</li>
+<li>Wenn keine Gruppe matcht, wird die Standard-Rolle (SWR-094)</li>
+  zugewiesen.</li>
+<li>Manuell vergebene Rollen werden durch die OIDC-Rolle</li>
+  überschrieben.</p></li>
+</ul>
+<p>Die Admin-UI zeigt im OIDC-Bereich der Tenant-Einstellungen:
+<ul>
+<li>Einen Toggle für oidcRoleMappingEnabled.</li>
+<li>Eine dynamische Liste von Mapping-Einträgen (OIDC-Gruppenname</li>
+  → Rolle) mit Hinzufügen/Entfernen-Funktionalität.</p></li>
+</ul>
+<p>Das SUPERADMIN-Mapping ist nicht erlaubt (wird bei Eingabe
+abgelehnt).</p>
+<p><em>Parent links:</em> <a href="STK.html#STK059">STK059 Benutzer-Rollen über OIDC-Claims automatisch setzen</a>, <a href="SWR.html#SWR016">SWR016 OIDC Login mit Authentik als externem Provider</a></p>
+    </div>
+  </main>
+</div>
+<script src="../template/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

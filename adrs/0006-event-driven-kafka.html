@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0006: Event-Driven Architecture mit Apache Kafka</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0006-event-driven-architecture-mit-apache-kafka">ADR-0006:
+Event-Driven Architecture mit Apache Kafka</h1>
+<h2 id="status">Status</h2>
+<p>Superseded by <a
+href="0018-dual-broker-kafka-rabbitmq.md">ADR-0018</a></p>
+<h2 id="context">Context</h2>
+<p>Die Microservices der Plattform müssen asynchron kommunizieren.
+Bestimmte Aktionen (Post veröffentlicht) lösen Folgeprozesse aus:</p>
+<ul>
+<li>Feed-Generierung</li>
+<li>Übersetzung (KI)</li>
+<li>Podcast-Generierung (TTS)</li>
+<li>Web-Snapshot-Erstellung</li>
+</ul>
+<p>Wir brauchen einen Mechanismus für lose Kopplung zwischen
+Services.</p>
+<h2 id="decision">Decision</h2>
+<p>Wir verwenden <strong>Apache Kafka</strong> als Event-Broker für die
+asynchrone Service-Kommunikation.</p>
+<p><strong>Event-Design:</strong></p>
+<ul>
+<li>Events als Java Records in <code>libs/event-contracts/</code>
+(geteiltes Schema)</li>
+<li>Jedes Event trägt <code>EventMetadata</code> (eventId, occurredAt,
+tenantId, correlationId)</li>
+<li>Event-Typen: <code>post.created</code>, <code>post.updated</code>,
+<code>post.published</code></li>
+<li>Services produzieren Events nach erfolgreicher Domain-Operation</li>
+<li>Consumer-Services reagieren unabhängig auf Events</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Lose Kopplung: Producer kennt Consumer nicht</li>
+<li>Replay-Fähigkeit: Events können wiederholt werden</li>
+<li>Skalierbarkeit: Consumer können unabhängig skalieren</li>
+<li>Audit-Trail: Kafka als Event-Log</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>Eventual Consistency statt sofortige Konsistenz</li>
+<li>Komplexeres Debugging (verteilte Traces nötig → Tempo)</li>
+<li>Infrastruktur-Overhead (Kafka-Cluster betreiben → Strimzi
+Operator)</li>
+<li>Schema-Evolution muss bewusst gemanagt werden</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

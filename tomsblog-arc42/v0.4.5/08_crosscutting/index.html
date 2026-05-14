@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>8. Querschnittliche Konzepte :: Toms Blog: Dokumentation</title>
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../index.html">Toms Blog: Dokumentation</a>
+      <button class="navbar-burger" aria-label="Toggle navigation" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="../../../tomsblog-arc42/main/index.html">Architektur (arc42)</a>
+        <a class="navbar-item" href="../../../tomsblog-design/main/index.html">Software Detail Design</a>
+        <a class="navbar-item" href="../../../tomsblog-infra/main/index.html">Infrastruktur</a>
+        <a class="navbar-item" href="../../../requirements/index.html">Requirements</a>
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field">
+            <input id="search-input" type="text" placeholder="Dokumentation durchsuchen">
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="tomsblog-arc42" data-version="v0.4.5">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Toms Blog: Architekturdokumentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Überblick</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../01_introduction/index.html">1. Einführung und Ziele</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../02_constraints/index.html">2. Randbedingungen</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../03_context/index.html">3. Kontextabgrenzung</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../04_solution_strategy/index.html">4. Lösungsstrategie</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../05_building_blocks/index.html">5. Bausteinsicht</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../06_runtime/index.html">6. Laufzeitsicht</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../07_deployment/index.html">7. Verteilungssicht</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="index.html">8. Querschnittliche Konzepte</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../09_decisions/index.html">9. Architekturentscheidungen</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../10_quality/index.html">10. Qualitätsanforderungen</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../11_risks/index.html">11. Risiken und technische Schulden</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../12_glossary/index.html">12. Glossar</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Toms Blog: Architekturdokumentation</span>
+    <span class="version">v0.4.5</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../../v0.10.6/index.html">Toms Blog: Architekturdokumentation</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-infra/main/index.html">Toms Blog: Infrastruktur-Dokumentation</a></div>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../tomsblog-infra/main/index.html">main-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.6/index.html">v0.9.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.5/index.html">v0.9.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.4/index.html">v0.9.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.3/index.html">v0.9.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.2/index.html">v0.9.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.1/index.html">v0.9.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.0/index.html">v0.9.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.9/index.html">v0.8.9-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.8/index.html">v0.8.8-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.7/index.html">v0.8.7-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.6/index.html">v0.8.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.5/index.html">v0.8.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.4/index.html">v0.8.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.3/index.html">v0.8.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.2/index.html">v0.8.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.1/index.html">v0.8.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.0/index.html">v0.8.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.3/index.html">v0.7.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.2/index.html">v0.7.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.1/index.html">v0.7.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.5.3/index.html">v0.5.3-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-design/v0.10.6/index.html">Toms Blog: Software Detail Design</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../tomsblog-design/main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../../tomsblog-design/v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../v0.10.6/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Toms Blog: Architekturdokumentation</a></li>
+    <li><a href="index.html">8. Querschnittliche Konzepte</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v0.4.5</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/08_crosscutting/index.html">main-dev</a>
+    <a class="version" href="../../v0.10.6/08_crosscutting/index.html">v0.10.6</a>
+    <a class="version" href="../../v0.10.5/08_crosscutting/index.html">v0.10.5</a>
+    <a class="version" href="../../v0.10.4/08_crosscutting/index.html">v0.10.4</a>
+    <a class="version" href="../../v0.10.3/08_crosscutting/index.html">v0.10.3</a>
+    <a class="version" href="../../v0.10.2/08_crosscutting/index.html">v0.10.2</a>
+    <a class="version" href="../../v0.10.1/08_crosscutting/index.html">v0.10.1</a>
+    <a class="version" href="../../v0.10.0/08_crosscutting/index.html">v0.10.0</a>
+    <a class="version" href="../../v0.9.6/08_crosscutting/index.html">v0.9.6</a>
+    <a class="version" href="../../v0.9.5/08_crosscutting/index.html">v0.9.5</a>
+    <a class="version" href="../../v0.9.4/08_crosscutting/index.html">v0.9.4</a>
+    <a class="version" href="../../v0.9.3/08_crosscutting/index.html">v0.9.3</a>
+    <a class="version" href="../../v0.9.2/08_crosscutting/index.html">v0.9.2</a>
+    <a class="version" href="../../v0.9.1/08_crosscutting/index.html">v0.9.1</a>
+    <a class="version" href="../../v0.9.0/08_crosscutting/index.html">v0.9.0</a>
+    <a class="version" href="../../v0.8.9/08_crosscutting/index.html">v0.8.9</a>
+    <a class="version" href="../../v0.8.8/08_crosscutting/index.html">v0.8.8</a>
+    <a class="version" href="../../v0.8.7/08_crosscutting/index.html">v0.8.7</a>
+    <a class="version" href="../../v0.8.6/08_crosscutting/index.html">v0.8.6</a>
+    <a class="version" href="../../v0.8.5/08_crosscutting/index.html">v0.8.5</a>
+    <a class="version" href="../../v0.8.4/08_crosscutting/index.html">v0.8.4</a>
+    <a class="version" href="../../v0.8.3/08_crosscutting/index.html">v0.8.3</a>
+    <a class="version" href="../../v0.8.2/08_crosscutting/index.html">v0.8.2</a>
+    <a class="version" href="../../v0.8.1/08_crosscutting/index.html">v0.8.1</a>
+    <a class="version" href="../../v0.8.0/08_crosscutting/index.html">v0.8.0</a>
+    <a class="version" href="../../v0.7.3/08_crosscutting/index.html">v0.7.3</a>
+    <a class="version" href="../../v0.7.2/08_crosscutting/index.html">v0.7.2</a>
+    <a class="version" href="../../v0.7.1/08_crosscutting/index.html">v0.7.1</a>
+    <a class="version" href="../../v0.5.3/08_crosscutting/index.html">v0.5.3</a>
+    <a class="version" href="../../v0.5.2/08_crosscutting/index.html">v0.5.2</a>
+    <a class="version" href="../../v0.5.1/08_crosscutting/index.html">v0.5.1</a>
+    <a class="version" href="../../v0.5.0/08_crosscutting/index.html">v0.5.0</a>
+    <a class="version" href="../../v0.4.6/08_crosscutting/index.html">v0.4.6</a>
+    <a class="version is-current" href="index.html">v0.4.5</a>
+    <a class="version" href="../../v0.4.4/08_crosscutting/index.html">v0.4.4</a>
+    <a class="version" href="../../v0.4.3/08_crosscutting/index.html">v0.4.3</a>
+    <a class="version" href="../../v0.4.1/08_crosscutting/index.html">v0.4.1</a>
+    <a class="version" href="../../v0.4.0/08_crosscutting/index.html">v0.4.0</a>
+    <a class="version" href="../../v0.3.3/08_crosscutting/index.html">v0.3.3</a>
+    <a class="version" href="../../v0.3.0/08_crosscutting/index.html">v0.3.0-dev</a>
+    <a class="version" href="../../v0.2.0/08_crosscutting/index.html">v0.2.0-dev</a>
+    <a class="version" href="../../v0.1.0/08_crosscutting/index.html">v0.1.0-dev</a>
+  </div>
+</div>
+<div class="edit-this-page"><a href="https://github.com/tomirgang/tomsblog/blob/v0.4.5/docs/arc42/modules/ROOT/pages/08_crosscutting/index.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">8. Querschnittliche Konzepte</h1>
+<div class="sect1">
+<h2 id="_multi_tenancy"><a class="anchor" href="#_multi_tenancy"></a>1. Multi-Tenancy</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Die Multi-Tenancy-Fähigkeit setzt die Stakeholder-Anforderung STK-002 um und wird durch SWR-003 (Tenant-Isolation auf Datenebene) detailliert.</p>
+</div>
+<div class="paragraph">
+<p>Jede Domain-Entity trägt eine <code>TenantId</code>. Die Tenant-Zuordnung eines Requests erfolgt über die verwendete Domain (SWR-017, SWA-011): Der Host-Header wird am Ingress in eine TenantId aufgelöst und als <code>X-Tenant-Id</code> an Backend-Services propagiert. Ein Tenant kann mehrere Domains besitzen. Tenant-Isolation wird auf Datenbank-Ebene sichergestellt (Row-Level-Security oder Schema-basiert, noch zu entscheiden).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_database_per_service"><a class="anchor" href="#_database_per_service"></a>2. Database per Service</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Jeder Microservice besitzt seine eigene, dedizierte Datenbank-Instanz (SWA-015, ADR-0019). Die Technologiewahl (PostgreSQL oder MongoDB) erfolgt pro Service anhand des Datenmodells. Kein Service darf direkt auf die Datenbank eines anderen Services zugreifen.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Blog Content Service: PostgreSQL (relationale Daten, Flyway-Migrationen)</p>
+</li>
+<li>
+<p>Auth Service: PostgreSQL (User/Role-Management)</p>
+</li>
+<li>
+<p>Service-übergreifender Datenzugriff ausschließlich über gRPC (SWA-009) oder Domain Events (SWA-005)</p>
+</li>
+<li>
+<p>Lokale Entwicklung: dedizierte Datenbank-Container pro Service</p>
+</li>
+<li>
+<p>Kubernetes: CloudNativePG Operator (PostgreSQL), MongoDB Community Operator</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_audit"><a class="anchor" href="#_audit"></a>3. Audit</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Das Audit-Konzept erfüllt die Anforderungen STK-004 (Audit-Fähigkeit) und SWR-006 (Audit-Trail für Posts).</p>
+</div>
+<div class="paragraph">
+<p>Alle persistierten Entities implementieren das <code>Auditable</code>-Interface:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>createdAt</code> / <code>updatedAt</code> (automatisch gesetzt)</p>
+</li>
+<li>
+<p><code>createdBy</code> / <code>updatedBy</code> (aus Security Context)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_domain_events"><a class="anchor" href="#_domain_events"></a>4. Domain Events</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Domain Events bilden die Grundlage für die serviceübergreifende Kommunikation (SWR-009) und werden über Kafka als zentralen Event-Broker (SWA-005) verteilt. Die Event-Contracts sind als geteilte Library (SWA-003) definiert.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Events werden im Aggregate gesammelt (<code>AggregateRoot.registerEvent()</code>)</p>
+</li>
+<li>
+<p>Nach erfolgreicher Persistierung werden sie über Kafka publiziert</p>
+</li>
+<li>
+<p>Event-Contracts als geteilte Library (<code>libs/event-contracts</code>) (SWA-003)</p>
+</li>
+<li>
+<p>Jedes Event trägt <code>EventMetadata</code> (ID, Timestamp, TenantId, CorrelationId)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_queues_rabbitmq"><a class="anchor" href="#_task_queues_rabbitmq"></a>5. Task-Queues (RabbitMQ)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Für Job-Verteilung und asynchrone Arbeitsaufträge wird RabbitMQ eingesetzt. Die Trennung von Event-Streaming (Kafka) und Task-Queues (RabbitMQ) folgt ADR-0018.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Übersetzungsaufträge, TTS-Generierung, Snapshot-Erstellung, Benachrichtigungen</p>
+</li>
+<li>
+<p>Work-Queue-Pattern: konkurrierende Consumer verarbeiten Jobs fair</p>
+</li>
+<li>
+<p>Dead-Letter-Exchanges für fehlgeschlagene Nachrichten</p>
+</li>
+<li>
+<p>Quorum Queues für Durability und Hochverfügbarkeit</p>
+</li>
+<li>
+<p>Request/Reply-Pattern für synchrone Interaktion über Messages</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_synchrone_service_kommunikation"><a class="anchor" href="#_synchrone_service_kommunikation"></a>6. Synchrone Service-Kommunikation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Für synchrone Aufrufe zwischen Microservices wird gRPC eingesetzt (SWA-009). Die asynchrone Kommunikation teilt sich in Event-Streaming (Kafka) und Task-Queues (RabbitMQ) auf (ADR-0018). Die Aufteilung erlaubt lose Kopplung bei Events, zuverlässige Job-Verteilung bei Tasks und typsichere, performante Abfragen zwischen Services.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Service-Interfaces werden als <code>.proto</code>-Dateien in einer geteilten Library definiert</p>
+</li>
+<li>
+<p>Protobuf sorgt für typsichere Contracts und effizientes Binary-Protokoll</p>
+</li>
+<li>
+<p>Streaming-Unterstützung für größere Datenmengen</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_error_handling"><a class="anchor" href="#_error_handling"></a>7. Error Handling</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Domain-Exceptions für fachliche Fehler</p>
+</li>
+<li>
+<p>Globaler Exception Handler im REST-Adapter (Problem Details RFC 9457)</p>
+</li>
+<li>
+<p>Keine Framework-Exceptions in der Domain-Schicht</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_internationalisierung"><a class="anchor" href="#_internationalisierung"></a>8. Internationalisierung</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Die Mehrsprachigkeit setzt STK-003 um. Übersetzungen können manuell (SWR-005) oder KI-gestützt (SWR-004) erstellt werden, wobei das Translation-Aggregate einen eigenen Lifecycle besitzt (SWA-008). Bei KI-Ausfällen greift Graceful Degradation (SWR-014).</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Blog-Posts werden pro Locale gespeichert</p>
+</li>
+<li>
+<p>Ein Post hat eine Haupt-Locale und optionale Übersetzungen</p>
+</li>
+<li>
+<p>Übersetzungen werden vom Autor über die UI ausgelöst (nicht automatisch)</p>
+</li>
+<li>
+<p>KI-gestützte Übersetzung: Autor startet Anfrage, AI Service liefert Vorschlag, Autor prüft und übernimmt (SWR-004, SWA-006)</p>
+</li>
+<li>
+<p>Manuelle Übersetzung: Autor gibt Übersetzung direkt ein (SWR-005)</p>
+</li>
+<li>
+<p>Kein automatisches Übersetzen bei Veröffentlichung; der Autor behält die volle Kontrolle</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_security"><a class="anchor" href="#_security"></a>9. Security</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Die Sicherheitsanforderungen leiten sich aus STK-012 (Sicherheit) und STK-005 (Benutzerverwaltung) ab. SWR-015 definiert die Input-Validierung und den OWASP-Schutz, SWR-007 die rollenbasierte Zugriffskontrolle.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Authentication über eigenen Auth Service mit OIDC-Unterstützung (SWR-016, SWA-010)</p>
+</li>
+<li>
+<p>RBAC: Admin, Autor, Leser (SWR-007)</p>
+</li>
+<li>
+<p>JWT-basierte Token-Validierung in allen Services (Public Key lokal)</p>
+</li>
+<li>
+<p>OWASP Top 10 wird bei Code-Reviews geprüft (SWR-015)</p>
+</li>
+<li>
+<p>Input-Validierung an den Systemgrenzen (SWR-015)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

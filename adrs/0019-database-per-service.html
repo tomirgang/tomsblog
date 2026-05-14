@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0019: Database per Service</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0019-database-per-service">ADR-0019: Database per
+Service</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>In einer Microservice-Architektur teilen sich Services häufig eine
+gemeinsame Datenbank. Das führt zu enger Kopplung auf Datenebene:
+Schema-Änderungen eines Services können andere Services brechen,
+Performance-Probleme strahlen aus, und unabhängige Deployments werden
+erschwert.</p>
+<p>Unsere Plattform setzt auf hexagonale Architektur (ADR-0001) und
+unabhängige Microservices (STK-009). Die Datenbank-Strategie muss diese
+Unabhängigkeit auf Persistenzebene widerspiegeln.</p>
+<p>Zusätzlich haben verschiedene Services unterschiedliche
+Datenzugriffsprofile: Der Blog Content Service arbeitet mit
+strukturierten, relationalen Daten (Posts, Tags, Übersetzungen), während
+ein zukünftiger Kommentar-Service oder Media-Service möglicherweise
+besser mit einem Dokumentenmodell bedient wäre.</p>
+<h2 id="decision">Decision</h2>
+<p>Wir verwenden das <strong>Database per Service</strong>-Pattern:</p>
+<h3 id="grundregel">Grundregel</h3>
+<p>Jeder Microservice besitzt seine eigene, dedizierte
+Datenbank-Instanz. Kein Service darf direkt auf die Datenbank eines
+anderen Services zugreifen.</p>
+<h3 id="technologiewahl-pro-service">Technologiewahl pro Service</h3>
+<p>Die Wahl der Datenbank-Technologie (PostgreSQL oder MongoDB) wird
+<strong>pro Service</strong> entschieden, basierend auf dem Datenmodell
+und den Zugriffsmustern:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Kriterium</th>
+<th>PostgreSQL</th>
+<th>MongoDB</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Datenmodell</td>
+<td>Relationale, stark strukturierte Daten</td>
+<td>Dokumentenbasierte, flexible Schemas</td>
+</tr>
+<tr class="even">
+<td>Konsistenz</td>
+<td>ACID-Transaktionen</td>
+<td>Eventual Consistency (default)</td>
+</tr>
+<tr class="odd">
+<td>Abfragen</td>
+<td>Komplexe JOINs, Aggregationen</td>
+<td>Dokumentenabfragen, Aggregation Pipeline</td>
+</tr>
+<tr class="even">
+<td>Schema-Evolution</td>
+<td>Flyway-Migrationen</td>
+<td>Schema-Versionierung im Code</td>
+</tr>
+<tr class="odd">
+<td>Typische Services</td>
+<td>Blog Content, Auth, Feed</td>
+<td>Kommentare, Media Metadata, Analytics</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aktuelle-zuordnung">Aktuelle Zuordnung</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Service</th>
+<th>Datenbank</th>
+<th>Begründung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Blog Content</td>
+<td>PostgreSQL</td>
+<td>Stark relationale Daten (Posts, Tags, Translations, Sources)</td>
+</tr>
+<tr class="even">
+<td>Auth Service</td>
+<td>PostgreSQL</td>
+<td>User/Role-Management mit referentieller Integrität</td>
+</tr>
+</tbody>
+</table>
+<p>Weitere Services werden bei ihrer Erstellung zugeordnet.</p>
+<h3 id="isolation">Isolation</h3>
+<p>Auch wenn mehrere Services PostgreSQL verwenden, erhält jeder eine
+<strong>eigene Datenbank-Instanz</strong> (eigener Container in Dev,
+eigener CloudNativePG-Cluster oder dedizierte Datenbank in Prod). Es
+gibt keine geteilten Schemas, keine Cross-Database-Queries.</p>
+<h3 id="datenzugriff-zwischen-services">Datenzugriff zwischen
+Services</h3>
+<p>Wenn ein Service Daten eines anderen Services benötigt:</p>
+<ul>
+<li><strong>Synchron</strong>: gRPC-Aufruf an den besitzenden Service
+(SWA-009)</li>
+<li><strong>Asynchron</strong>: Domain Events über Kafka konsumieren
+(SWA-005)</li>
+<li><strong>Lokale Projektion</strong>: Eventuelle Konsistenz durch
+lokale Read-Models (Event-basiert)</li>
+</ul>
+<p>Direkter Datenbankzugriff über Service-Grenzen hinweg ist
+<strong>verboten</strong>.</p>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Volle Service-Unabhängigkeit: Schema-Änderungen betreffen nur den
+eigenen Service</li>
+<li>Unabhängige Skalierung der Datenbankschicht pro Service</li>
+<li>Technologie-Heterogenität: Jeder Service nutzt die optimale
+Datenbank</li>
+<li>Klare Ownership: Daten gehören einem Service, keine Ambiguität</li>
+<li>Unabhängige Deployments ohne Koordination der Datenbankschicht</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>Mehr Datenbank-Instanzen zu betreiben (CloudNativePG Operator
+mildert das)</li>
+<li>Keine Cross-Service-JOINs (muss über APIs oder lokale Projektionen
+gelöst werden)</li>
+<li>Eventuelle Konsistenz zwischen Services (statt
+DB-Transaktionen)</li>
+<li>Höherer Ressourcenverbrauch im Cluster</li>
+</ul>
+<h2 id="mitigations">Mitigations</h2>
+<ul>
+<li>CloudNativePG Operator verwaltet PostgreSQL-Instanzen deklarativ auf
+Kubernetes</li>
+<li>MongoDB Community Operator für MongoDB-Instanzen</li>
+<li>Lokale Entwicklung: Ein Docker-Container pro Service-Datenbank
+(Init-Scripts für Multi-DB-Setup)</li>
+<li>Shared Kernel (libs/shared-kernel) für gemeinsame Domain Primitives,
+nicht für Datenzugriff</li>
+<li>Konsistenz zwischen Services wird über Domain Events und lokale
+Read-Models sichergestellt</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

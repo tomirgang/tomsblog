@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html>
+<head><title>doc-SWA</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="../template/bootstrap.min.css" />
+  <link rel="stylesheet" href="../template/general.css" />
+  <link type="text/css" rel="stylesheet" href="../template/doorstop.css" />
+  <script src="../template/tex-mml-chtml.js" id="MathJax-script" async></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+  </script>
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a></div>
+
+  <header class="navbar navbar-expand-lg navbar-dark bd-navbar sticky-top text-bg-secondary">
+  <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap" aria-label="Document attributes">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">Documents</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../traceability.html">Traceability</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Contents
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#toc">Table of Contents</a></li>
+                <ul>
+                <li><a class="dropdown-item" href="#SWA001">1.0 Hexagonale Architektur pro Service</a></li>
+                <li><a class="dropdown-item" href="#SWA002">2.0 Shared Kernel als Framework-freie Library</a></li>
+                <li><a class="dropdown-item" href="#SWA003">3.0 Event-Contracts als geteilte Library</a></li>
+                <li><a class="dropdown-item" href="#SWA004">4.0 Blog Content Service als Spring Boot Applikation</a></li>
+                <li><a class="dropdown-item" href="#SWA005">5.0 Kafka als Event-Broker</a></li>
+                <li><a class="dropdown-item" href="#SWA006">6.0 AI Service als separater Adapter</a></li>
+                <li><a class="dropdown-item" href="#SWA007">7.0 Domain-Modell mit Aggregates, Entities und Value Objects</a></li>
+                <li><a class="dropdown-item" href="#SWA008">8.0 Translation als separates Aggregate mit eigenem Lifecycle</a></li>
+                <li><a class="dropdown-item" href="#SWA009">9.0 gRPC für synchrone Service-Kommunikation</a></li>
+                <li><a class="dropdown-item" href="#SWA010">10 Authentik OIDC und leichtgewichtiger User-Management-Service</a></li>
+                <li><a class="dropdown-item" href="#SWA011">11 Domain-basierte Tenant-Resolution am Ingress</a></li>
+                <li><a class="dropdown-item" href="#SWA012">12 LLM-basierte Kommentar-Moderation als Adapter</a></li>
+                <li><a class="dropdown-item" href="#SWA013">13 Flyway für versionierte Datenbank-Migrationen</a></li>
+                <li><a class="dropdown-item" href="#SWA014">14 RabbitMQ als Task-Queue-Broker</a></li>
+                <li><a class="dropdown-item" href="#SWA015">15 Database per Service</a></li>
+                <li><a class="dropdown-item" href="#SWA016">16 springdoc-openapi für API-Dokumentation</a></li>
+                <li><a class="dropdown-item" href="#SWA017">17 Kubernetes-Cluster-Provisionierung mit hetzner-k3s</a></li>
+                <li><a class="dropdown-item" href="#SWA018">18 PostgreSQL-Betrieb mit CloudNativePG Operator</a></li>
+                <li><a class="dropdown-item" href="#SWA019">19 Cross-Namespace Secret-Synchronisation mit Reflector</a></li>
+                <li><a class="dropdown-item" href="#SWA020">20 SOPS+age Verschlüsselung für Secrets im Git-Repository</a></li>
+                <li><a class="dropdown-item" href="#SWA021">21 TLS-Terminierung am Ingress mit cert-manager und Let&#039;s Encrypt</a></li>
+                <li><a class="dropdown-item" href="#SWA022">22 Linkerd Service Mesh Deployment via Flux und cert-manager</a></li>
+                <li><a class="dropdown-item" href="#SWA023">23 Default-Deny AuthorizationPolicies fuer Linkerd Service Mesh</a></li>
+                <li><a class="dropdown-item" href="#SWA024">24 Outbound Port und Adapter für Markdown-Rendering</a></li>
+                <li><a class="dropdown-item" href="#SWA025">25 ControllerAdvice für globale Modellattribute (VersionModelAdvice)</a></li>
+                <li><a class="dropdown-item" href="#SWA026">26 Landing Page mit begrenzter Post-Anzahl und Paginierung am Repository</a></li>
+                <li><a class="dropdown-item" href="#SWA027">27 ContentType im Domain-Modell und Persistenz-Schema</a></li>
+                <li><a class="dropdown-item" href="#SWA028">28 Featured-Post-Abfrage im Persistence Adapter</a></li>
+                <li><a class="dropdown-item" href="#SWA029">29 User-Management-Service Architektur (hexagonal)</a></li>
+                <li><a class="dropdown-item" href="#SWA030">30 Deklarative Datenbank-Ressourcen pro Service</a></li>
+                <li><a class="dropdown-item" href="#SWA031">31 Audit-Logging-Architektur</a></li>
+                <li><a class="dropdown-item" href="#SWA032">32 Redis als externer Session-Store</a></li>
+                <li><a class="dropdown-item" href="#SWA033">33 Shared UI Library Architektur</a></li>
+                <li><a class="dropdown-item" href="#SWA034">34 Tenant-Management-Service Architektur</a></li>
+                <li><a class="dropdown-item" href="#SWA035">35 E2E-Test-Modul Architektur</a></li>
+                <li><a class="dropdown-item" href="#SWA036">36 Auditlog-View Architektur</a></li>
+                <li><a class="dropdown-item" href="#SWA037">37 RabbitMQ-Adapter mit Quorum Queues und Dead-Letter-Handling</a></li>
+                <li><a class="dropdown-item" href="#SWA038">38 Feed Service Kafka Consumer Architektur</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <!-- Insert logotype. -->
+            <img src="../template/logo-black-white.png" alt="Doorstop" height="128" class="d-inline-block align-text-top">
+          </div>
+        </div>
+        <div class="col-6 align-self-center">
+          <div class="bd-lead text-nowrap text-center">
+            <span class="text-monospace"><strong>doc-SWA</strong></span>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">Ref</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">By</span>
+            <p><span class="text-monospace">-</span></p>
+            <span class="text-muted">Issue</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </nav>
+</header>
+<div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout">
+  <main class="bd-main order-1">
+    <div class="bd-intro ps-lg-4">
+      <H1><p>Test document for development of <em>Doorstop</em></p></H1>
+      <h1 id="SWA001">1.0 Hexagonale Architektur pro Service <small>SWA001</small></h1>
+<p>Jeder Microservice folgt der hexagonalen Architektur mit den Schichten:
+domain/ (reine Fachlogik, keine Framework-Abhängigkeiten),
+application/ (Ports, Use Cases),
+adapter/inbound (REST Controller, Event Listener),
+adapter/outbound (JPA Repositories, Kafka Producer, HTTP Clients).</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR001">SWR001 Post CRUD API</a>, <a href="SWR.html#SWR009">SWR009 Domain Events via Kafka</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP001">IMP001 Post Aggregate Root</a>, <a href="IMP.html#IMP002">IMP002 PostService (Application Layer)</a>, <a href="IMP.html#IMP003">IMP003 PostController (REST Inbound Adapter)</a>, <a href="IMP.html#IMP004">IMP004 JpaPostRepository (Persistence Outbound Adapter)</a>, <a href="IMP.html#IMP013">IMP013 TagService und TagUseCase</a>, <a href="IMP.html#IMP014">IMP014 TagController (REST Inbound Adapter)</a>, <a href="IMP.html#IMP015">IMP015 JpaTagRepository (Outbound Adapter)</a>, <a href="IMP.html#IMP016">IMP016 TranslationService und TranslationUseCase</a>, <a href="IMP.html#IMP017">IMP017 TranslationController (REST Inbound Adapter)</a>, <a href="IMP.html#IMP018">IMP018 JpaTranslationRepository (Outbound Adapter)</a></p>
+<h1 id="SWA002">2.0 Shared Kernel als Framework-freie Library <small>SWA002</small></h1>
+<p>Gemeinsame Domain Primitives (EntityId, TenantId, AuthorId, AggregateRoot, DomainEvent,
+Auditable) werden in libs/shared-kernel bereitgestellt.
+Diese Library darf keine Spring- oder Framework-Abhängigkeiten haben.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR001">SWR001 Post CRUD API</a>, <a href="SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP006">IMP006 Shared Kernel Domain Primitives</a>, <a href="IMP.html#IMP012">IMP012 AuthorId im Shared Kernel</a></p>
+<h1 id="SWA003">3.0 Event-Contracts als geteilte Library <small>SWA003</small></h1>
+<p>Alle Cross-Service Events (PostCreatedEvent, PostUpdatedEvent,
+PostPublishedEvent) und die gemeinsame EventMetadata werden in
+libs/event-contracts definiert. Consumer und Producer verwenden
+dieselben Event-Klassen.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR009">SWR009 Domain Events via Kafka</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP005">IMP005 LoggingEventPublisher (Interim Event Adapter)</a></p>
+<h1 id="SWA004">4.0 Blog Content Service als Spring Boot Applikation <small>SWA004</small></h1>
+<p>Der Blog Content Service wird als Spring Boot 3.x Applikation
+mit Spring Web (REST), Spring Data JPA (PostgreSQL) und
+Thymeleaf (SSR UI) implementiert.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR001">SWR001 Post CRUD API</a>, <a href="SWR.html#SWR002">SWR002 Post veröffentlichen</a>, <a href="SWR.html#SWR006">SWR006 Audit-Trail für Posts</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP001">IMP001 Post Aggregate Root</a>, <a href="IMP.html#IMP002">IMP002 PostService (Application Layer)</a>, <a href="IMP.html#IMP003">IMP003 PostController (REST Inbound Adapter)</a>, <a href="IMP.html#IMP004">IMP004 JpaPostRepository (Persistence Outbound Adapter)</a>, <a href="IMP.html#IMP014">IMP014 TagController (REST Inbound Adapter)</a>, <a href="IMP.html#IMP015">IMP015 JpaTagRepository (Outbound Adapter)</a>, <a href="IMP.html#IMP017">IMP017 TranslationController (REST Inbound Adapter)</a>, <a href="IMP.html#IMP018">IMP018 JpaTranslationRepository (Outbound Adapter)</a>, <a href="IMP.html#IMP019">IMP019 Flyway Migrationen für Blog Content Service</a></p>
+<h1 id="SWA005">5.0 Kafka als Event-Broker <small>SWA005</small></h1>
+<p>Apache Kafka (KRaft Mode) dient als Event-Broker für Domain Events
+(Event Sourcing, Audit-Trail, Replay). Topics werden pro Event-Typ
+angelegt. Consumer Groups ermöglichen unabhängige Verarbeitung.
+Kafka ist zuständig für: Event-Streaming, Log Aggregation, Stream
+Processing, Datenpipelines und Replay-Szenarien. Für Task-Queues
+und Job-Verteilung wird stattdessen RabbitMQ verwendet (SWA-014).</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR008">SWR008 RSS/Atom Feed-Generierung</a>, <a href="SWR.html#SWR009">SWR009 Domain Events via Kafka</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP005">IMP005 LoggingEventPublisher (Interim Event Adapter)</a></p>
+<h1 id="SWA006">6.0 AI Service als separater Adapter <small>SWA006</small></h1>
+<p>Die KI-Integration (OpenRouter) wird als Outbound-Adapter im
+Blog Content Service implementiert. Bei Ausfall liefert der
+Adapter einen definierten Fehler; die restliche Funktionalität
+bleibt unberührt (Circuit Breaker Pattern).</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR004">SWR004 Übersetzung per KI (Author-getriggert)</a>, <a href="SWR.html#SWR014">SWR014 Graceful Degradation bei KI-Ausfall</a></p>
+<h1 id="SWA007">7.0 Domain-Modell mit Aggregates, Entities und Value Objects <small>SWA007</small></h1>
+<p>Das Domain-Modell des Blog Content Service besteht aus folgenden Bausteinen:
+<ul>
+<li>Post (Aggregate Root): PostId, TenantId, AuthorId (Referenz), title, slug, content, status, locale, tags (Set<TagId>), sources (List<Source>), attachments (List<Attachment>)</li>
+<li>Tag (Entity): TagId, TenantId, name, slug</li>
+<li>Translation (Aggregate Root): TranslationId, PostId, TenantId, locale, title, content, status, source</li>
+<li>Source (Value Object): url, title</li>
+<li>Attachment (Value Object): AttachmentId, filename, contentType, size, show, storageKey</li>
+<li>AuthorId liegt im shared-kernel als reine Referenz (keine Author-Entity im blog-content)</li>
+Alle Aggregates und Entities tragen eine TenantId fuer Multi-Tenant-Isolation.</li>
+Attachments mit show=true werden im Blog-Rendering angezeigt, mit show=false fuer eingebettete Inhalte.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="SWR.html#SWR001">SWR001 Post CRUD API</a>, <a href="SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a>, <a href="SWR.html#SWR012">SWR012 Quellen-Verwaltung</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP001">IMP001 Post Aggregate Root</a>, <a href="IMP.html#IMP008">IMP008 Tag Entity mit Identity</a>, <a href="IMP.html#IMP010">IMP010 Source Value Object</a>, <a href="IMP.html#IMP011">IMP011 Attachment Value Object mit show-Flag</a>, <a href="IMP.html#IMP013">IMP013 TagService und TagUseCase</a></p>
+<h1 id="SWA008">8.0 Translation als separates Aggregate mit eigenem Lifecycle <small>SWA008</small></h1>
+<p>Uebersetzungen werden als eigenes Aggregate modelliert (nicht als Child im Post).
+Der Lifecycle ist: DRAFT -&gt; REVIEW_PENDING -&gt; APPROVED oder REJECTED.
+AI-generierte Uebersetzungen starten in REVIEW_PENDING (Autor muss pruefen).
+Manuelle Uebersetzungen starten in DRAFT.
+Bei Aenderung einer approbierten Uebersetzung wechselt der Status auf REVIEW_PENDING.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR004">SWR004 Übersetzung per KI (Author-getriggert)</a>, <a href="SWR.html#SWR005">SWR005 Manuelle Übersetzung</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP009">IMP009 Translation Aggregate</a>, <a href="IMP.html#IMP016">IMP016 TranslationService und TranslationUseCase</a></p>
+<h1 id="SWA009">9.0 gRPC für synchrone Service-Kommunikation <small>SWA009</small></h1>
+<p>Für synchrone Kommunikation zwischen Microservices wird gRPC verwendet.
+Kafka bleibt für asynchrone, event-basierte Kommunikation zuständig.
+gRPC bietet typsichere Contracts via Protobuf, effizientes Binary-Protokoll
+und native Streaming-Unterstützung. Service-Interfaces werden als
+.proto-Dateien in einer geteilten Library definiert.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR009">SWR009 Domain Events via Kafka</a></p>
+<h1 id="SWA010">10 Authentik OIDC und leichtgewichtiger User-Management-Service <small>SWA010</small></h1>
+<p>Die Authentifizierung erfolgt über Authentik (https://auth.do9ita.de)
+als externem OIDC Provider (ADR-0027). Ein leichtgewichtiger interner
+User-Management-Service verwaltet plattformspezifische Benutzerprofile,
+Rollen (ADMIN, AUTHOR, READER) und Tenant-Zuordnungen. Services mit
+Web-UI agieren als OAuth2 Client (Spring Security OAuth2 Login).
+API-Endpunkte werden als OAuth2 Resource Server geschützt. Der
+User-Management-Service synchronisiert Benutzerdaten aus dem OIDC
+ID Token und stellt eine REST-API für Profil- und Rollenabfragen
+bereit.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR007">SWR007 Rollenbasierte Zugriffskontrolle</a>, <a href="SWR.html#SWR016">SWR016 OIDC Login mit Authentik als externem Provider</a></p>
+<h1 id="SWA011">11 Domain-basierte Tenant-Resolution am Ingress <small>SWA011</small></h1>
+<p>Die Tenant-Auflösung erfolgt am Ingress-Level über den Host-Header.
+Ein Tenant-Resolution-Service mappt Domains auf TenantIds.
+Ein Tenant kann mehrere Domains besitzen (Custom-Domain + Plattform-Subdomain).
+Die aufgelöste TenantId wird als Header (X-Tenant-Id) an nachgelagerte
+Services propagiert.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a>, <a href="SWR.html#SWR017">SWR017 Domain-basierte Tenant-Auswahl</a></p>
+<h1 id="SWA012">12 LLM-basierte Kommentar-Moderation als Adapter <small>SWA012</small></h1>
+<p>Die automatisierte Kommentar-Überprüfung wird als Outbound-Adapter im
+Kommentar-Service implementiert. Der Adapter nutzt das OpenRouter-Backend
+(analog zum AI-Adapter im Blog Content Service, SWA-006).
+Das Moderation-Interface ist als Port definiert, sodass der LLM-Adapter
+austauschbar bleibt (z.B. durch regelbasierte Moderation als Fallback).</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR018">SWR018 Automatisierte Kommentar-Moderation via LLM</a></p>
+<h1 id="SWA013">13 Flyway für versionierte Datenbank-Migrationen <small>SWA013</small></h1>
+<p>Alle Datenbank-Schema-Änderungen werden über Flyway-Migrationen verwaltet.
+Migrationsdateien liegen unter src/main/resources/db/migration/ mit dem
+Benennungsschema V{nummer}__{beschreibung}.sql.
+Hibernate ddl-auto ist auf validate gesetzt (nur Validierung, keine Änderung).
+Flyway wird beim Service-Start automatisch ausgeführt.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR001">SWR001 Post CRUD API</a>, <a href="SWR.html#SWR020">SWR020 Tag CRUD API</a>, <a href="SWR.html#SWR021">SWR021 Translation CRUD API</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP015">IMP015 JpaTagRepository (Outbound Adapter)</a>, <a href="IMP.html#IMP018">IMP018 JpaTranslationRepository (Outbound Adapter)</a>, <a href="IMP.html#IMP019">IMP019 Flyway Migrationen für Blog Content Service</a></p>
+<h1 id="SWA014">14 RabbitMQ als Task-Queue-Broker <small>SWA014</small></h1>
+<p>RabbitMQ dient als Broker für Task-Queues und Job-Verteilung.
+Einsatzgebiete: Übersetzungsaufträge, TTS-Generierung, Snapshot-
+Erstellung, Benachrichtigungen, Request/Reply-Patterns und klassische
+Service-zu-Service-Kommunikation mit komplexem Routing.
+Quorum Queues sichern Durability. Dead-Letter-Exchanges behandeln
+fehlgeschlagene Nachrichten. Die Abgrenzung zu Kafka (SWA-005) folgt
+ADR-0018: Kafka für Event-Streaming, RabbitMQ für Task-Queues.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR009">SWR009 Domain Events via Kafka</a></p>
+<h1 id="SWA015">15 Database per Service <small>SWA015</small></h1>
+<p>Jeder Microservice besitzt seine eigene, dedizierte Datenbank-Instanz.
+Die Technologiewahl (PostgreSQL oder MongoDB) wird pro Service entschieden.
+Auch wenn mehrere Services PostgreSQL verwenden, erhaelt jeder eine eigene
+Instanz. Kein Service darf direkt auf die Datenbank eines anderen Services
+zugreifen. Service-uebergreifender Datenzugriff erfolgt ausschliesslich
+ueber gRPC (SWA-009) oder Domain Events (SWA-005).</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR001">SWR001 Post CRUD API</a>, <a href="SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a></p>
+<h1 id="SWA016">16 springdoc-openapi für API-Dokumentation <small>SWA016</small></h1>
+<p>Die API-Dokumentation wird mit springdoc-openapi (v2.x) automatisch aus dem
+Code generiert. springdoc-openapi-starter-webmvc-ui stellt sowohl die
+OpenAPI-Spezifikation als auch das Swagger UI bereit. Die Annotationen
+@Operation, @ApiResponse und @Tag aus io.swagger.v3.oas.annotations werden
+an den REST-Controllern verwendet. Ein globaler OperationCustomizer fügt
+den X-Tenant-Id Header automatisch zu allen Operationen hinzu.
+Die Version wird zentral im Parent POM verwaltet.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR024">SWR024 OpenAPI/Swagger API-Dokumentation</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP020">IMP020 OpenAPI-Konfiguration und Annotationen im Blog Content Service</a></p>
+<h1 id="SWA017">17 Kubernetes-Cluster-Provisionierung mit hetzner-k3s <small>SWA017</small></h1>
+<p>Das Kubernetes-Cluster wird mit dem CLI-Tool hetzner-k3s
+auf Hetzner Cloud provisioniert. Konfiguration: 1 Controller (CPX22, 2 vCPU, 4 GB),
+2 Worker-Nodes (CPX22, 2 vCPU, 4 GB), Standort Nuernberg (nbg1).
+CNI: Flannel (k3s-Standard). Hetzner CSI (hcloud-volumes) und CCM sind integriert.
+Updates erfolgen manuell via hetzner-k3s upgrade.
+Die Cluster-Provisionierung liegt in einem separaten Repository (kubernetes-playground/k3s/),
+getrennt von den applikationsspezifischen Kubernetes-Ressourcen.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR010">SWR010 Container-Image und Health-Checks</a></p>
+<h1 id="SWA018">18 PostgreSQL-Betrieb mit CloudNativePG Operator <small>SWA018</small></h1>
+<p>PostgreSQL wird ueber den CloudNativePG Operator als Kubernetes Custom Resource
+verwaltet. Der Operator wird als Plattform-Voraussetzung im IaC-Repository
+installiert. Die konkreten Cluster-Definitionen (Instanz-Anzahl, Sizing,
+Storage) liegen applikationsspezifisch im tomsblog-Repository unter
+infra/k8s/postgres/. Initiale Konfiguration: 1 Instanz, 10 Gi Storage
+(hcloud-volumes), 256 MB shared_buffers, 512 Mi bis 1 Gi RAM.
+Spaeter wird auf HA (2+ Instanzen) und S3-Backup erweitert.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR010">SWR010 Container-Image und Health-Checks</a></p>
+<h1 id="SWA019">19 Cross-Namespace Secret-Synchronisation mit Reflector <small>SWA019</small></h1>
+<p>Cross-Namespace Secret-Synchronisation wird ueber Reflector (emberstack)
+realisiert. Operator-generierte Secrets (z.B. CloudNativePG postgres-cluster-app)
+werden per Annotation automatisch in die Ziel-Namespaces der konsumierenden
+Services gespiegelt. Die Synchronisation erfolgt bei jeder Aenderung am
+Quell-Secret (einschliesslich Credential-Rotation). Reflector wird als
+Flux HelmRelease im IaC-Repository installiert und laeuft im flux-system
+Namespace mit minimalen Ressourcen (64Mi-128Mi RAM).</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR031">SWR031 Secrets verschlüsselt im Repository und automatisch synchronisiert</a></p>
+<h1 id="SWA020">20 SOPS+age Verschlüsselung für Secrets im Git-Repository <small>SWA020</small></h1>
+<p>Applikationsspezifische Secrets (Admin-Passwörter, API-Keys) werden mit
+SOPS (Mozilla) und age-Verschlüsselung im Git-Repository gespeichert.
+Nur die data/stringData-Felder der Kubernetes Secret-Manifeste werden
+verschlüsselt, Metadaten bleiben lesbar für Code-Reviews. Die Datei
+.sops.yaml definiert Creation Rules mit Pfad-Pattern und age Public Key.
+Der Flux kustomize-controller entschlüsselt die Secrets automatisch beim
+Apply über den Decryption Provider (sops) mit dem age Private Key aus
+dem sops-age Secret im flux-system Namespace.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR031">SWR031 Secrets verschlüsselt im Repository und automatisch synchronisiert</a></p>
+<h1 id="SWA021">21 TLS-Terminierung am Ingress mit cert-manager und Let's Encrypt <small>SWA021</small></h1>
+<p>Die TLS-Terminierung für externen Traffic erfolgt am Traefik Ingress-Controller
+(k3s-Standard). Zertifikate werden automatisch über cert-manager mit einem
+Let's Encrypt ClusterIssuer (HTTP-01 Challenge) bereitgestellt.</p>
+<p>Architektur:
+<ul>
+<li>cert-manager wird als Cluster-Operator im IaC-Repository installiert</li>
+  (analog zu CloudNativePG und Reflector).</li>
+<li>Ein ClusterIssuer (letsencrypt-prod) konfiguriert den ACME HTTP-01 Solver</li>
+  mit Traefik als Ingress-Class.</li>
+<li>Kubernetes Ingress-Ressourcen referenzieren den ClusterIssuer via Annotation</li>
+  und erhalten automatisch TLS-Zertifikate.</li>
+<li>HTTP-zu-HTTPS-Redirect wird am Ingress konfiguriert.</p></li>
+</ul>
+<p>Voraussetzungen:
+<ul>
+<li>cert-manager CRDs und Controller im Cluster (IaC-Repository)</li>
+<li>DNS A-Record zeigt auf den Hetzner Load Balancer</li>
+<li>Port 80 am LB offen für ACME HTTP-01 Challenge-Validierung</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="SWR.html#SWR032">SWR032 HTTPS-Verschlüsselung für externe Zugriffe</a></p>
+<h1 id="SWA022">22 Linkerd Service Mesh Deployment via Flux und cert-manager <small>SWA022</small></h1>
+<p>Linkerd wird als Service Mesh im Kubernetes-Cluster installiert und ueber
+Flux GitOps verwaltet. Die Installation besteht aus zwei Helm Charts
+(linkerd-crds und linkerd-control-plane), die als HelmRelease Custom
+Resources im tomsblog-Repository definiert sind.</p>
+<p>Certificate-Management:
+<ul>
+<li>Ein self-signed ClusterIssuer erzeugt den Trust Anchor (Root CA, 10 Jahre).</li>
+<li>Ein CA Issuer basierend auf dem Trust Anchor signiert den Identity Issuer</li>
+  (48h Gueltigkeit, automatische Rotation durch cert-manager).</li>
+<li>Der Linkerd Identity Controller verwendet das Identity Issuer Certificate</li>
+  fuer die Ausstellung von Proxy-Zertifikaten.</p></li>
+</ul>
+<p>Mesh-Injection:
+<ul>
+<li>Namespaces erhalten die Annotation linkerd.io/inject: enabled.</li>
+<li>Pods werden beim naechsten Rollout automatisch mit dem Linkerd Sidecar-Proxy</li>
+  versehen.</li>
+<li>Der tomsblog-Namespace ist mit der Injection-Annotation konfiguriert.</li>
+<li>Der traefik-Namespace wird ebenfalls mit linkerd.io/inject: enabled annotiert,</li>
+  damit Ingress-Traffic zum blog-content Service per mTLS gesichert ist.</p></li>
+</ul>
+<p>Ressourcen-Limits:
+<ul>
+<li>Proxy: 64Mi Request, 128Mi Limit (angepasst an 3-Node-Cluster).</li>
+<li>Control Plane: Standardwerte mit angepassten Requests fuer kleinen Cluster.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="SWR.html#SWR029">SWR029 Service Mesh mit automatischem mTLS (Linkerd)</a></p>
+<h1 id="SWA023">23 Default-Deny AuthorizationPolicies fuer Linkerd Service Mesh <small>SWA023</small></h1>
+<p>Linkerd AuthorizationPolicies werden im Default-Deny-Modus konfiguriert. Pro
+Service wird ein Server-Objekt (policy.linkerd.io/v1beta3) fuer den
+Applikations-Port erstellt. Ohne eine passende AuthorizationPolicy ist kein
+eingehender Traffic erlaubt (Default-Deny).</p>
+<p>Erlaubte Kommunikationspfade fuer blog-content:
+<ul>
+<li>Traefik Ingress Controller (identifiziert ueber MeshTLSAuthentication mit</li>
+  der ServiceAccount-Identitaet traefik.traefik) darf HTTP-Traffic an den</li>
+  blog-content Service senden.</li>
+<li>Kubelet Health-Probes (identifiziert ueber NetworkAuthentication) duerfen</li>
+  die Liveness- und Readiness-Endpunkte erreichen.</p></li>
+</ul>
+<p>Alle anderen eingehenden Verbindungen werden vom Linkerd-Proxy abgelehnt.
+Neue Services muessen explizit durch eine AuthorizationPolicy freigeschaltet
+werden, bevor sie blog-content erreichen koennen.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR029">SWR029 Service Mesh mit automatischem mTLS (Linkerd)</a></p>
+<h1 id="SWA024">24 Outbound Port und Adapter für Markdown-Rendering <small>SWA024</small></h1>
+<p>Das Markdown-Rendering wird über einen dedizierten Outbound Port
+(MarkdownRenderer) abstrahiert. Die Implementierung
+(FlexmarkMarkdownRenderer) nutzt flexmark-java 0.64.8 zur serverseitigen
+Konvertierung von Markdown zu HTML. Der Port liegt im Package
+application.port.outbound, der Adapter im Package adapter.outbound.markdown.
+Diese Trennung ermöglicht den späteren Austausch der Rendering-Engine ohne
+Änderung an der Domain oder den Inbound-Adaptern.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR035">SWR035 HTML- und Markdown-Unterstützung mit Rendering</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP024">IMP024 FlexmarkMarkdownRenderer Outbound Adapter</a></p>
+<h1 id="SWA025">25 ControllerAdvice für globale Modellattribute (VersionModelAdvice) <small>SWA025</small></h1>
+<p>Querschnittliche Modellattribute (z.B. Anwendungsversion) werden über
+Spring @ControllerAdvice bereitgestellt. Der VersionModelAdvice injiziert
+die Build-Version aus Spring Boot BuildProperties (mit Fallback auf
+spring.application.version) als globales Modelattribut „appVersion" in
+alle Thymeleaf-Views. Dieses Pattern vermeidet Duplikation in jedem
+einzelnen Controller-Handler.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR034">SWR034 Versionsnummer im Footer anzeigen</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP025">IMP025 VersionModelAdvice ControllerAdvice</a></p>
+<h1 id="SWA026">26 Landing Page mit begrenzter Post-Anzahl und Paginierung am Repository <small>SWA026</small></h1>
+<p>Die Landing Page beschränkt die Anzeige auf maximal drei Posts. Dafür
+wird am PostRepository-Port eine neue Methode
+findRecentPublishedByTenantId(TenantId, int limit) definiert. Die
+JPA-Implementierung nutzt Spring Data Pageable (PageRequest.of(0, limit))
+um die Begrenzung effizient auf Datenbankebene durchzuführen, statt alle
+Posts zu laden und im Speicher zu beschneiden.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR033">SWR033 Landing Page zeigt maximal drei neueste Posts</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP026">IMP026 Landing Page Begrenzung auf drei Posts</a></p>
+<h1 id="SWA027">27 ContentType im Domain-Modell und Persistenz-Schema <small>SWA027</small></h1>
+<p>Das Domain-Modell wird um ein ContentType-Enum (HTML, MARKDOWN) erweitert.
+Das Feld wird im Post-Aggregate gespeichert und über eine Flyway-Migration
+(V4) als VARCHAR(20)-Spalte mit Default 'HTML' in der Datenbank angelegt.
+Der ContentType steuert, ob der Inhalt vor der Anzeige durch den
+MarkdownRenderer verarbeitet werden muss.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR035">SWR035 HTML- und Markdown-Unterstützung mit Rendering</a>, <a href="SWR.html#SWR036">SWR036 Gerenderte Vorschau in der Post-Liste</a>, <a href="SWR.html#SWR037">SWR037 Vorschau zeigt den ersten Abschnitt</a></p>
+<p><em>Child links:</em> <a href="IMP.html#IMP027">IMP027 ContentType-Feld und Flyway-Migration V4</a>, <a href="IMP.html#IMP028">IMP028 Gerenderte Vorschau mit erstem Absatz</a></p>
+<h1 id="SWA028">28 Featured-Post-Abfrage im Persistence Adapter <small>SWA028</small></h1>
+<p>Der JPA Persistence Adapter wird um eine Abfrage für aktuell gefeatured
+Posts erweitert:
+<ul>
+<li>Das PostRepository-Interface (Outbound Port) erhält die Methode</li>
+  findFeaturedByTenantId(TenantId, LocalDate): List<Post>.</li>
+<li>Die JPA-Implementierung verwendet eine JPQL-Query mit Filterung auf</li>
+  Status PUBLISHED, featuredFrom &lt;= aktuelles Datum und</li>
+  featuredUntil &gt;= aktuelles Datum.</li>
+<li>Sortierung nach featuredFrom absteigend.</li>
+<li>Der Thymeleaf-Controller (LandingPageController oder PostViewController)</li>
+  ruft die neue Repository-Methode auf und übergibt das Ergebnis als</li>
+  Modell-Attribut an das Template.</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="SWR.html#SWR041">SWR041 Featured-Zeitraum im Domain-Modell</a>, <a href="SWR.html#SWR042">SWR042 Featured Posts auf der Landing Page anzeigen</a></p>
+<h1 id="SWA029">29 User-Management-Service Architektur (hexagonal) <small>SWA029</small></h1>
+<p>Der User-Management-Service folgt der hexagonalen Architektur (SWA-001):
+<ul>
+<li>Domain Layer: UserProfile (Aggregate Root) mit OidcSubject, E-Mail,</li>
+  DisplayName, ApprovalStatus (PENDING, APPROVED, REJECTED), Rollen</li>
+  (Set<Role>) und TenantMemberships (Set<TenantMembership>).</li>
+  Role ist ein Enum (SUPERADMIN, ADMIN, AUTHOR, REVIEWER, READER).</li>
+  Der SUPERADMIN-Account wird beim Service-Start aus Infrastruktur-</li>
+  Konfiguration (Umgebungsvariable/Secret) angelegt oder aktualisiert.</li>
+  TenantMembership ist ein Value Object (TenantId, Role).</li>
+  TenantSettings Value Object mit LoginMode (INTERNAL, OIDC, BOTH),</li>
+  autoApproveOidc (boolean) und autoApproveEmailDomains (Set<String>).</li>
+<li>Application Layer: UserProfileUseCase (Inbound Port) mit Operationen</li>
+  syncFromOidc, syncFromInternal, findByOidcSubject, findByUsername,</li>
+  assignRole, removeRole, approveUser, addTenantMembership,</li>
+  removeTenantMembership. TenantSettingsUseCase fuer Login-Modus-</li>
+  Konfiguration. UserProfileRepository (Outbound Port) fuer Persistenz.</li>
+<li>Adapter Layer Inbound: REST-Controller (UserController) unter /api/users.</li>
+<li>Adapter Layer Outbound: JPA-basierte PostgreSQL-Persistenz mit Flyway-</li>
+  Migrationen. Eigene Datenbank (Database per Service).</li>
+<li>Optional: OIDC-Gruppen-Attribute werden aus dem ID Token extrahiert</li>
+  und auf plattforminterne Rollen gemappt (konfigurierbar).</li>
+<li>Der Service hat keine eigene Web-UI. Administration erfolgt ueber</li>
+  die Blog-Content-Service-Admin-Oberflaeche (spaeter).</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="SWR.html#SWR007">SWR007 Rollenbasierte Zugriffskontrolle</a>, <a href="SWR.html#SWR043">SWR043 User-Management-Service fuer Profile, Rollen und Tenant-Zuordnung</a></p>
+<h1 id="SWA030">30 Deklarative Datenbank-Ressourcen pro Service <small>SWA030</small></h1>
+<p>Jeder Service, der eine PostgreSQL-Datenbank benoetigt, erhaelt eine
+dedizierte CloudNativePG Database-Ressource (CRD). Die Database-Ressource
+definiert den Datenbanknamen, den Owner und die Zuordnung zum Cluster.
+Aktuelle Datenbanken:
+<ul>
+<li>blog_content (blog-content Service)</li>
+<li>user_management (user-management Service)</li>
+<li>tenant_management (tenant-management Service)</li>
+Die Cluster-Definition nutzt einen neutralen Platzhalter (database: app)</li>
+im initdb-Block. Weitere Service-Datenbanken werden durch Hinzufuegen</li>
+weiterer Database-Manifeste erstellt. Die Migration bestehender Datenbanken</li>
+erfolgt durch Erstellen der Database-Ressource (adopt existing).</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="SWR.html#SWR010">SWR010 Container-Image und Health-Checks</a></p>
+<h1 id="SWA031">31 Audit-Logging-Architektur <small>SWA031</small></h1>
+<p>Audit-Logging wird als Cross-Cutting Concern über den Shared Kernel
+bereitgestellt und in jedem Service lokal persistiert.</p>
+<p>Shared Kernel stellt bereit:
+<ul>
+<li>AuditLogEntry: Framework-freies Record mit id, timestamp, tenantId,</li>
+  actor, action, entityType, entityId, details</li>
+<li>AuditLogger: Interface (Outbound Port) mit log(AuditLogEntry)</p></li>
+</ul>
+<p>Jeder Service implementiert:
+<ul>
+<li>JpaAuditLogEntity: JPA-Entity für die audit_log Tabelle</li>
+<li>JpaAuditLogger: Adapter der AuditLogger implementiert</li>
+<li>Flyway-Migration für die audit_log Tabelle</p></li>
+</ul>
+<p>Die audit_log Tabelle ist append-only. Es gibt keine UPDATE- oder
+DELETE-Operationen auf dieser Tabelle. Die Application Services
+rufen AuditLogger.log() nach erfolgreichen schreibenden Operationen auf.</p>
+<p>Der actor wird über den SecurityContext ermittelt
+(SecurityAuditorAware-Pattern analog zur JPA-Auditing-Konfiguration).</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR056">SWR056 Audit-Logging für alle relevanten Aktionen</a></p>
+<h1 id="SWA032">32 Redis als externer Session-Store <small>SWA032</small></h1>
+<p>HTTP-Sessions werden über Spring Session Data Redis in einer externen
+Redis-Instanz gespeichert (ADR-0030). Redis läuft als Single-Instance
+Deployment im eigenen Kubernetes-Namespace (redis). Die Verbindung
+zwischen Blog-Pod und Redis ist durch Linkerd mTLS gesichert. Redis
+wird ohne Persistenz (kein RDB/AOF) betrieben, da Sessions kurzlebig
+und reproduzierbar sind. Passwort-Authentifizierung ist über ein
+Kubernetes-Secret konfiguriert. Network Policies beschränken den
+Zugriff auf Redis auf den tomsblog Namespace.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR057">SWR057 Externer Session-Store für Blog Content Service</a></p>
+<h1 id="SWA033">33 Shared UI Library Architektur <small>SWA033</small></h1>
+<p>Die gemeinsame UI-Bibliothek wird als Maven-Modul libs/shared-ui
+bereitgestellt (analog zu libs/shared-kernel, SWA-002). Die Library
+enthält ausschließlich Thymeleaf-Template-Fragmente und statische
+CSS-Ressourcen, keine Java-Klassen.</p>
+<p>Struktur:
+<ul>
+<li>src/main/resources/templates/shared/layout/default.html</li>
+  Master-Layout mit Pico CSS, Header-/Footer-Einbindung</li>
+<li>src/main/resources/templates/shared/fragments/footer.html</li>
+  Einheitlicher Footer (Copyright, Impressum, Datenschutz, Version)</li>
+<li>src/main/resources/static/css/custom.css</li>
+  Plattformweite CSS-Anpassungen (Sticky Footer, Branding-Hooks)</p></li>
+</ul>
+<p>Services binden shared-ui als Maven-Dependency ein. Thymeleaf
+löst Templates über den Classpath auf, sodass shared/ Prefix
+Templates aus dem JAR der Library geladen werden. Header-Fragmente
+verbleiben in den jeweiligen Services, da sie service-spezifische
+Navigation enthalten.</p>
+<p>Die Library hat Spring Boot Starter Thymeleaf und Thymeleaf Layout
+Dialect als provided Dependencies. Sie enthält keine
+Spring-Konfiguration oder Auto-Configuration.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR065">SWR065 Shared UI Library als Maven-Modul</a>, <a href="SWR.html#SWR066">SWR066 Gemeinsames Layout-Template in der Shared UI Library</a>, <a href="SWR.html#SWR067">SWR067 Gemeinsame CSS-Styles in der Shared UI Library</a>, <a href="SWR.html#SWR068">SWR068 Gemeinsamer Footer in der Shared UI Library</a></p>
+<h1 id="SWA034">34 Tenant-Management-Service Architektur <small>SWA034</small></h1>
+<p>Der tenant-management Service folgt der hexagonalen Architektur (SWA-001)
+und dem Database-per-Service-Prinzip (ADR-0019).</p>
+<p>Domain Layer:
+<ul>
+<li>Tenant (Aggregate Root): TenantId, slug, displayName, tagline,</li>
+  TenantStatus (ACTIVE, SUSPENDED, DEACTIVATED), LoginMode, Auto-Approval,</li>
+  OIDC-Konfiguration, Impressum, Datenschutzerklärung</li>
+<li>LoginMode (Enum): INTERNAL, OIDC, BOTH (migriert aus user-management)</p></li>
+</ul>
+<p>Application Layer:
+<ul>
+<li>TenantManagementUseCase (Inbound Port): createTenant, getTenant,</li>
+  updateGeneralSettings, updateOidcSettings, updateLegalSettings,</li>
+  listAllTenants</li>
+<li>TenantRepository (Outbound Port): save, findByTenantId, findAll</p></li>
+</ul>
+<p>Adapter Layer (Inbound):
+<ul>
+<li>TenantAdminController: Thymeleaf-Admin-UI unter /tenant/admin/**</li>
+<li>TenantManagementGrpcService: gRPC-Endpunkte für Service-zu-Service-Abfragen</li>
+<li>SecurityConfiguration: Break-Glass-Admin-Login, Redis-Session</p></li>
+</ul>
+<p>Adapter Layer (Outbound):
+<ul>
+<li>JpaTenantRepository: PostgreSQL-Persistenz via JPA</li>
+<li>JpaAuditLogger: Audit-Log-Persistenz (SWR-056)</p></li>
+</ul>
+<p>Datenbank:
+<ul>
+<li>Eigene PostgreSQL-Datenbank tenant_management (CloudNativePG, ADR-0023)</li>
+<li>Flyway-Migrationen (ADR-0015) für Schema-Verwaltung</li>
+<li>Tabellen: tenants, tenant_auto_approve_domains</p></li>
+</ul>
+<p>Kommunikation:
+<ul>
+<li>gRPC (ADR-0010) für synchrone Abfragen durch andere Services</li>
+<li>Linkerd mTLS (ADR-0021) für Pod-zu-Pod-Verschlüsselung</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="SWR.html#SWR072">SWR072 Tenant-Management-Service als eigenständiger Microservice</a>, <a href="SWR.html#SWR073">SWR073 Tenant-Admin-UI mit Shared UI Library</a>, <a href="SWR.html#SWR074">SWR074 Tenant-Management gRPC-Schnittstelle</a>, <a href="SWR.html#SWR075">SWR075 Kubernetes-Deployment für Tenant-Management-Service</a></p>
+<h1 id="SWA035">35 E2E-Test-Modul Architektur <small>SWA035</small></h1>
+<p>Das E2E-Test-Modul (e2e-tests/) ist ein separates Maven-Modul auf
+Root-Ebene, das serviceubergreifende Browser-Tests mit Selenium
+WebDriver ausfuehrt.</p>
+<p>Architektur:
+<ul>
+<li>Maven-Modul mit Profil 'e2e' (nicht im Default-Build)</li>
+<li>Testcontainers-Selenium fuer Chrome-Browser-Container</li>
+<li>Testcontainers-PostgreSQL fuer Datenbankinstanzen</li>
+<li>Spring Boot Test fuer das Starten der Services</li>
+<li>Page Object Model (POM) fuer Template-Abstraktion</li>
+<li>JUnit 5 Extension fuer Screenshot-on-Failure</p></li>
+</ul>
+<p>Ausfuehrung:
+<ul>
+<li>Lokal: ./mvnw verify -Pe2e</li>
+<li>CI: separater GitHub Actions Job</li>
+<li>Release: Pflichtschritt in scripts/release.sh</p></li>
+</ul>
+<p>Abhaengigkeiten:
+<ul>
+<li>blog-content (test scope)</li>
+<li>user-management (test scope)</li>
+<li>tenant-management (test scope)</li>
+<li>selenium-java</li>
+<li>testcontainers (selenium, postgresql)</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="SWR.html#SWR078">SWR078 E2E-Test-Infrastruktur mit Selenium WebDriver</a>, <a href="SWR.html#SWR079">SWR079 E2E-Tests: Blog-Content öffentliche Ansichten</a>, <a href="SWR.html#SWR080">SWR080 E2E-Tests: Blog-Content Autoren-Workflows</a>, <a href="SWR.html#SWR081">SWR081 E2E-Tests: Authentifizierung und Registrierung</a>, <a href="SWR.html#SWR082">SWR082 E2E-Tests: Admin-Workflows (User/Tenant)</a>, <a href="SWR.html#SWR083">SWR083 E2E-Tests: SuperAdmin Tenant-Verwaltung</a></p>
+<h1 id="SWA036">36 Auditlog-View Architektur <small>SWA036</small></h1>
+<p>Die Auditlog-View folgt der hexagonalen Architektur jedes Services:</p>
+<p>Inbound Port:
+<ul>
+<li>AuditLogQueryUseCase: Interface im Application Layer mit Methoden</li>
+  zur paginierten und gefilterten Abfrage von Audit-Einträgen</li>
+<li>AuditLogSearchCriteria: Record mit optionalen Filterfeldern</li>
+  (action, entityType, actor, from, to, searchTerm)</p></li>
+</ul>
+<p>Application Service:
+<ul>
+<li>AuditLogQueryService: Implementiert AuditLogQueryUseCase,</li>
+  delegiert an den Outbound Port</p></li>
+</ul>
+<p>Outbound Port:
+<ul>
+<li>AuditLogRepository (Erweiterung): Methoden für paginierte und</li>
+  gefilterte Abfragen</p></li>
+</ul>
+<p>Inbound Adapter:
+<ul>
+<li>AuditLogAdminController: Thymeleaf-Controller unter /admin/audit-logs</li>
+<li>AuditLogViewDto: DTO für die Template-Darstellung</p></li>
+</ul>
+<p>Outbound Adapter:
+<ul>
+<li>SpringDataAuditLogRepository: Erweiterung um JPA Specification-</li>
+  basierte Abfragen für dynamische Filterung</p></li>
+</ul>
+<p>Da jeder Service seine eigene audit_log-Tabelle besitzt (Database per
+Service), zeigt jeder Service nur seine eigenen Audit-Einträge an.
+Der Blog Content Service wird als erster Service mit der Auditlog-View
+ausgestattet. Die Architektur ist so gestaltet, dass User Management
+und Tenant Management Service dieselbe Struktur übernehmen können.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR087">SWR087 Auditlog-Abfrage-Port und Repository</a>, <a href="SWR.html#SWR088">SWR088 Auditlog-Admin-View im Blog Content Service</a></p>
+<h1 id="SWA037">37 RabbitMQ-Adapter mit Quorum Queues und Dead-Letter-Handling <small>SWA037</small></h1>
+<p>Der RabbitMQ Outbound Adapter konfiguriert eine Topic Exchange
+(tomsblog.tasks) mit folgenden Quorum Queues:</p>
+<ul>
+<li>translation.requests (Routing Key: task.translation)</li>
+<li>tts.generation (Routing Key: task.tts)</li>
+<li>snapshot.requests (Routing Key: task.snapshot)</li>
+</ul>
+<p>Jede Queue besitzt eine Dead-Letter-Exchange (tomsblog.tasks.dlx)
+mit zugehöriger Dead-Letter-Queue (*.dlq) für fehlgeschlagene
+Nachrichten. Die Konfiguration erfolgt deklarativ über Spring AMQP
+Beans (Queue, Exchange, Binding).</p>
+<p>Das Package adapter.outbound.rabbitmq enthält:
+<ul>
+<li>RabbitMqTaskPublisher: Implementiert TaskPublisher Port</li>
+<li>RabbitMqConfiguration: Deklariert Exchanges, Queues, Bindings</li>
+<li>TaskRoutingKeyResolver: Bestimmt den Routing Key pro Nachrichtentyp</p></li>
+</ul>
+<p><em>Parent links:</em> <a href="SWR.html#SWR089">SWR089 TaskPublisher als Outbound Port für RabbitMQ-Task-Verteilung</a></p>
+<h1 id="SWA038">38 Feed Service Kafka Consumer Architektur <small>SWA038</small></h1>
+<p>Der Feed-Service folgt der hexagonalen Architektur:</p>
+<p>Inbound Adapter:
+<ul>
+<li>PostEventConsumer: Kafka Consumer mit @KafkaListener fuer</li>
+  post.published und post.updated Topics. Nur aktiv unter</li>
+  Spring-Profil kafka. Consumer Group: feed-service.</p></li>
+</ul>
+<p>Domain:
+<ul>
+<li>FeedEntry: Entity mit id, tenantId, postId, title, slug,</li>
+  locale, publishedAt, updatedAt. Unique Constraint auf</li>
+  (tenantId, postId).</p></li>
+</ul>
+<p>Application Layer:
+<ul>
+<li>FeedEntryUseCase: Inbound Port mit onPostPublished() und</li>
+  onPostUpdated() Methoden</li>
+<li>FeedEntryService: Implementierung, orchestriert Persistenz</li>
+<li>FeedEntryRepository: Outbound Port</p></li>
+</ul>
+<p>Outbound Adapter:
+<ul>
+<li>SpringDataFeedEntryRepository: JPA/PostgreSQL Implementierung</li>
+<li>FeedEntryJpaEntity: JPA Entity mit Flyway-Migration</li>
+<li>FeedEntryMapper: Domain zu JPA Konvertierung</p></li>
+</ul>
+<p>Datenhaltung: Eigene PostgreSQL-Instanz (Database per Service,
+ADR-0019). Fehlerhafte Events werden geloggt, blockieren aber
+nicht die Verarbeitung weiterer Events.</p>
+<p><em>Parent links:</em> <a href="SWR.html#SWR090">SWR090 Feed Event Consumer</a></p>
+    </div>
+  </main>
+</div>
+<script src="../template/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

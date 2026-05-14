@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Blog Content Service: Detail Design :: Toms Blog: Dokumentation</title>
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../index.html">Toms Blog: Dokumentation</a>
+      <button class="navbar-burger" aria-label="Toggle navigation" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="../../../tomsblog-arc42/main/index.html">Architektur (arc42)</a>
+        <a class="navbar-item" href="../../../tomsblog-design/main/index.html">Software Detail Design</a>
+        <a class="navbar-item" href="../../../tomsblog-infra/main/index.html">Infrastruktur</a>
+        <a class="navbar-item" href="../../../requirements/index.html">Requirements</a>
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field">
+            <input id="search-input" type="text" placeholder="Dokumentation durchsuchen">
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="tomsblog-design" data-version="v0.8.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Toms Blog: Software Detail Design</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Überblick</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="index.html">Blog Content Service</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../user-management/index.html">User Management Service</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Toms Blog: Software Detail Design</span>
+    <span class="version">v0.8.3</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-arc42/v0.10.6/index.html">Toms Blog: Architekturdokumentation</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../tomsblog-arc42/main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../../tomsblog-arc42/v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-infra/main/index.html">Toms Blog: Infrastruktur-Dokumentation</a></div>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../tomsblog-infra/main/index.html">main-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.6/index.html">v0.9.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.5/index.html">v0.9.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.4/index.html">v0.9.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.3/index.html">v0.9.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.2/index.html">v0.9.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.1/index.html">v0.9.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.0/index.html">v0.9.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.9/index.html">v0.8.9-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.8/index.html">v0.8.8-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.7/index.html">v0.8.7-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.6/index.html">v0.8.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.5/index.html">v0.8.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.4/index.html">v0.8.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.3/index.html">v0.8.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.2/index.html">v0.8.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.1/index.html">v0.8.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.0/index.html">v0.8.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.3/index.html">v0.7.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.2/index.html">v0.7.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.1/index.html">v0.7.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.5.3/index.html">v0.5.3-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <div class="title"><a href="../../v0.10.6/index.html">Toms Blog: Software Detail Design</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../tomsblog-arc42/v0.10.6/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Toms Blog: Software Detail Design</a></li>
+    <li><a href="index.html">Blog Content Service</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v0.8.3</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/blog-content/index.html">main-dev</a>
+    <a class="version" href="../../v0.10.6/blog-content/index.html">v0.10.6</a>
+    <a class="version" href="../../v0.10.5/blog-content/index.html">v0.10.5</a>
+    <a class="version" href="../../v0.10.4/blog-content/index.html">v0.10.4</a>
+    <a class="version" href="../../v0.10.3/blog-content/index.html">v0.10.3</a>
+    <a class="version" href="../../v0.10.2/blog-content/index.html">v0.10.2</a>
+    <a class="version" href="../../v0.10.1/blog-content/index.html">v0.10.1</a>
+    <a class="version" href="../../v0.10.0/blog-content/index.html">v0.10.0</a>
+    <a class="version" href="../../v0.9.6/blog-content/index.html">v0.9.6</a>
+    <a class="version" href="../../v0.9.5/blog-content/index.html">v0.9.5</a>
+    <a class="version" href="../../v0.9.4/blog-content/index.html">v0.9.4</a>
+    <a class="version" href="../../v0.9.3/blog-content/index.html">v0.9.3</a>
+    <a class="version" href="../../v0.9.2/blog-content/index.html">v0.9.2</a>
+    <a class="version" href="../../v0.9.1/blog-content/index.html">v0.9.1</a>
+    <a class="version" href="../../v0.9.0/blog-content/index.html">v0.9.0</a>
+    <a class="version" href="../../v0.8.9/blog-content/index.html">v0.8.9</a>
+    <a class="version" href="../../v0.8.8/blog-content/index.html">v0.8.8</a>
+    <a class="version" href="../../v0.8.7/blog-content/index.html">v0.8.7</a>
+    <a class="version" href="../../v0.8.6/blog-content/index.html">v0.8.6</a>
+    <a class="version" href="../../v0.8.5/blog-content/index.html">v0.8.5</a>
+    <a class="version" href="../../v0.8.4/blog-content/index.html">v0.8.4</a>
+    <a class="version is-current" href="index.html">v0.8.3</a>
+    <a class="version" href="../../v0.8.2/blog-content/index.html">v0.8.2</a>
+    <a class="version" href="../../v0.8.1/blog-content/index.html">v0.8.1</a>
+    <a class="version" href="../../v0.8.0/blog-content/index.html">v0.8.0</a>
+    <a class="version" href="../../v0.7.3/blog-content/index.html">v0.7.3</a>
+    <a class="version" href="../../v0.7.2/blog-content/index.html">v0.7.2</a>
+    <a class="version" href="../../v0.7.1/blog-content/index.html">v0.7.1</a>
+    <a class="version" href="../../v0.5.3/blog-content/index.html">v0.5.3</a>
+    <a class="version" href="../../v0.5.2/blog-content/index.html">v0.5.2</a>
+    <a class="version" href="../../v0.5.1/blog-content/index.html">v0.5.1</a>
+    <a class="version" href="../../v0.5.0/blog-content/index.html">v0.5.0</a>
+    <a class="version" href="../../v0.4.6/blog-content/index.html">v0.4.6</a>
+    <a class="version" href="../../v0.4.5/blog-content/index.html">v0.4.5</a>
+    <a class="version" href="../../v0.4.4/blog-content/index.html">v0.4.4</a>
+    <a class="version" href="../../v0.4.3/blog-content/index.html">v0.4.3</a>
+    <a class="version" href="../../v0.4.1/blog-content/index.html">v0.4.1</a>
+    <a class="version" href="../../v0.4.0/blog-content/index.html">v0.4.0</a>
+    <a class="version" href="../../v0.3.3/blog-content/index.html">v0.3.3</a>
+    <a class="version" href="../../v0.3.0/blog-content/index.html">v0.3.0-dev</a>
+    <a class="version" href="../../v0.2.0/blog-content/index.html">v0.2.0-dev</a>
+    <a class="version" href="../../v0.1.0/blog-content/index.html">v0.1.0-dev</a>
+  </div>
+</div>
+<div class="edit-this-page"><a href="https://github.com/tomirgang/tomsblog/blob/v0.8.3/docs/design/modules/ROOT/pages/blog-content/index.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Blog Content Service: Detail Design</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_überblick">1. Überblick</a></li>
+<li><a href="#_domain_modell">2. Domain-Modell</a>
+<ul class="sectlevel2">
+<li><a href="#_post_aggregate">2.1. Post Aggregate</a></li>
+<li><a href="#_translation_aggregate">2.2. Translation Aggregate</a></li>
+<li><a href="#_value_objects">2.3. Value Objects</a></li>
+</ul>
+</li>
+<li><a href="#_application_layer">3. Application Layer</a>
+<ul class="sectlevel2">
+<li><a href="#_inbound_ports">3.1. Inbound Ports</a></li>
+<li><a href="#_outbound_ports">3.2. Outbound Ports</a></li>
+<li><a href="#_postservice">3.3. PostService</a></li>
+<li><a href="#_tagservice">3.4. TagService</a></li>
+<li><a href="#_translationservice">3.5. TranslationService</a></li>
+</ul>
+</li>
+<li><a href="#_adapter_layer">4. Adapter Layer</a>
+<ul class="sectlevel2">
+<li><a href="#_inbound_adapter_rest_api">4.1. Inbound Adapter: REST API</a>
+<ul class="sectlevel3">
+<li><a href="#_postcontroller">4.1.1. PostController</a></li>
+<li><a href="#_tagcontroller">4.1.2. TagController</a></li>
+<li><a href="#_translationcontroller">4.1.3. TranslationController</a></li>
+<li><a href="#_sourcecontroller">4.1.4. SourceController</a></li>
+<li><a href="#_openapiswagger_konfiguration">4.1.5. OpenAPI/Swagger-Konfiguration</a></li>
+</ul>
+</li>
+<li><a href="#_inbound_adapter_thymeleaf_web_ui">4.2. Inbound Adapter: Thymeleaf Web UI</a>
+<ul class="sectlevel3">
+<li><a href="#_architektur">4.2.1. Architektur</a></li>
+<li><a href="#_öffentliche_blog_ansicht_swr_026_swr_033_swr_036_swr_037">4.2.2. Öffentliche Blog-Ansicht (SWR-026, SWR-033, SWR-036, SWR-037)</a></li>
+<li><a href="#_formular_zum_erstellen_und_bearbeiten_von_posts_swr_027">4.2.3. Formular zum Erstellen und Bearbeiten von Posts (SWR-027)</a></li>
+<li><a href="#_template_struktur">4.2.4. Template-Struktur</a></li>
+<li><a href="#_default_tenant_filter_mvp_betrieb">4.2.5. Default-Tenant-Filter (MVP-Betrieb)</a></li>
+<li><a href="#_css_framework_picocss">4.2.6. CSS-Framework: PicoCSS</a></li>
+</ul>
+</li>
+<li><a href="#_outbound_adapter_jpa_persistence">4.3. Outbound Adapter: JPA Persistence</a>
+<ul class="sectlevel3">
+<li><a href="#_jpapostrepository">4.3.1. JpaPostRepository</a></li>
+<li><a href="#_jpatagrepository">4.3.2. JpaTagRepository</a></li>
+<li><a href="#_jpatranslationrepository">4.3.3. JpaTranslationRepository</a></li>
+</ul>
+</li>
+<li><a href="#_outbound_adapter_event_publishing">4.4. Outbound Adapter: Event Publishing</a></li>
+<li><a href="#_outbound_adapter_markdown_rendering_swa_024">4.5. Outbound Adapter: Markdown Rendering (SWA-024)</a></li>
+</ul>
+</li>
+<li><a href="#_datenbank_schema_flyway">5. Datenbank-Schema (Flyway)</a></li>
+<li><a href="#_ablauf_post_erstellen_und_veröffentlichen">6. Ablauf: Post erstellen und veröffentlichen</a></li>
+<li><a href="#_konfiguration">7. Konfiguration</a></li>
+<li><a href="#_anforderungsabdeckung">8. Anforderungsabdeckung</a></li>
+<li><a href="#_sicherheit_admin_login_swr_028">9. Sicherheit: Admin-Login (SWR-028)</a>
+<ul class="sectlevel2">
+<li><a href="#_schutzkonzept">9.1. Schutzkonzept</a></li>
+<li><a href="#_architektur_2">9.2. Architektur</a></li>
+<li><a href="#_ablauf_login_und_geschützte_operation">9.3. Ablauf: Login und geschützte Operation</a></li>
+<li><a href="#_login_template">9.4. Login-Template</a></li>
+<li><a href="#_header_integration">9.5. Header-Integration</a></li>
+<li><a href="#_konfiguration_2">9.6. Konfiguration</a></li>
+</ul>
+</li>
+<li><a href="#_admin_oberfläche_swr_051_swr_052_swr_053">10. Admin-Oberfläche (SWR-051, SWR-052, SWR-053)</a>
+<ul class="sectlevel2">
+<li><a href="#_architektur_3">10.1. Architektur</a></li>
+<li><a href="#_tenant_branding_swr_050">10.2. Tenant-Branding (SWR-050)</a></li>
+<li><a href="#_superadmin_tenant_umschaltung_swr_053">10.3. SuperAdmin Tenant-Umschaltung (SWR-053)</a></li>
+<li><a href="#_benutzerverwaltung_swr_051">10.4. Benutzerverwaltung (SWR-051)</a></li>
+<li><a href="#_tenant_einstellungen_swr_052">10.5. Tenant-Einstellungen (SWR-052)</a></li>
+<li><a href="#_template_struktur_2">10.6. Template-Struktur</a></li>
+<li><a href="#_security_konfiguration">10.7. Security-Konfiguration</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="_überblick"><a class="anchor" href="#_überblick"></a>1. Überblick</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der Blog Content Service ist der zentrale Service für die Verwaltung von Blog-Inhalten.
+Er implementiert die Post-CRUD-Operationen (SWR-001), das Veröffentlichen von Posts (SWR-002), Tenant-Isolation (SWR-003), Quellenverwaltung mit Web-Snapshots (SWR-012, SWR-013) und den Audit-Trail (SWR-006).</p>
+</div>
+<div class="paragraph">
+<p>Die Architektur folgt der hexagonalen Architektur (SWA-001) mit einer klaren Trennung von Domain, Application und Adapter Layer. Gemeinsame Domain Primitives wie EntityId, TenantId und AggregateRoot stammen aus dem Shared Kernel (SWA-002).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_domain_modell"><a class="anchor" href="#_domain_modell"></a>2. Domain-Modell</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Das Domain-Modell basiert auf DDD-Prinzipien mit Aggregates, Entities und Value Objects (SWA-007).
+Das folgende Diagramm zeigt die Klassenstruktur des Domain Layers:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-c35497e6f3430dab91a1974ba2252e567cf5006f.svg" alt="Diagram">
+</div>
+</div>
+<div class="sect2">
+<h3 id="_post_aggregate"><a class="anchor" href="#_post_aggregate"></a>2.1. Post Aggregate</h3>
+<div class="paragraph">
+<p>Das <code>Post</code>-Aggregate ist das zentrale Aggregate Root und kapselt die gesamte Fachlogik rund um Blog-Posts.
+Es erfüllt die Anforderungen SWR-001 (CRUD-Operationen) und SWR-002 (Veröffentlichung).</p>
+</div>
+<div class="paragraph">
+<p>Jeder Post ist einem Tenant zugeordnet (SWR-003) und registriert bei Zustandsänderungen Domain Events (SWR-009), die für die serviceübergreifende Kommunikation genutzt werden.</p>
+</div>
+<div class="paragraph">
+<p>Für die Serien-Navigation (SWR-040) enthält jeder Post zwei optionale Referenzen (<code>seriesPreviousPostId</code>, <code>seriesNextPostId</code>) auf andere Posts derselben Serie. Diese werden über <code>updateSeriesNavigation()</code> gesetzt und ermöglichen eine thematische Verkettung unabhängig von der chronologischen Reihenfolge.</p>
+</div>
+<div class="paragraph">
+<p>Für Featured Posts (SWR-041) enthält jeder Post zwei optionale Datumsfelder <code>featuredFrom</code> und <code>featuredUntil</code> (jeweils <code>LocalDate</code>, nullable). Beide Felder müssen gemeinsam gesetzt oder gemeinsam <code>null</code> sein, und <code>featuredUntil</code> darf nicht vor <code>featuredFrom</code> liegen. Die Methode <code>isFeatured(LocalDate today)</code> prüft, ob der Post am gegebenen Tag als featured gilt (Datum im Intervall <code>[featuredFrom, featuredUntil]</code>). Die Methode <code>updateFeatured(LocalDate from, LocalDate until)</code> setzt oder entfernt den Featured-Zeitraum.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_translation_aggregate"><a class="anchor" href="#_translation_aggregate"></a>2.2. Translation Aggregate</h3>
+<div class="paragraph">
+<p>Das <code>Translation</code>-Aggregate hat gemäß SWA-008 einen eigenen Lifecycle, der unabhängig vom Post verwaltet wird.
+Es unterstützt sowohl manuelle Übersetzungen (SWR-005) als auch KI-gestützte Übersetzungen (SWR-004).</p>
+</div>
+<div class="paragraph">
+<p>Der Übersetzungsprozess durchläuft die Status DRAFT &#8594; REVIEW_PENDING &#8594; APPROVED/REJECTED, sodass eine Qualitätskontrolle gewährleistet ist.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_value_objects"><a class="anchor" href="#_value_objects"></a>2.3. Value Objects</h3>
+<div class="paragraph">
+<p>Die Value Objects <code>Slug</code>, <code>PostLocale</code>, <code>Source</code> und <code>Attachment</code> sorgen für Validierung direkt im Konstruktor.
+<code>Source</code> implementiert die Quellenverwaltung gemäß SWR-012. <code>Attachment</code> unterscheidet über das <code>show</code>-Flag zwischen angezeigten und eingebetteten Inhalten.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_application_layer"><a class="anchor" href="#_application_layer"></a>3. Application Layer</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der Application Layer definiert die Ports und Use Cases gemäß der hexagonalen Architektur (SWA-001).
+Das folgende Diagramm zeigt die Zusammenhänge:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-8524603ba1a1f6906782bf94d85d0827b046a10c.svg" alt="Diagram">
+</div>
+</div>
+<div class="sect2">
+<h3 id="_inbound_ports"><a class="anchor" href="#_inbound_ports"></a>3.1. Inbound Ports</h3>
+<div class="paragraph">
+<p>Das Interface <code>PostUseCase</code> definiert alle fachlichen Operationen, die der Service nach außen anbietet.
+Es bildet die Grundlage für die REST-API (SWR-001) und stellt sicher, dass die Fachlogik unabhängig vom Aufrufkontext bleibt.</p>
+</div>
+<div class="paragraph">
+<p>Für die Volltextsuche (SWR-038) bietet <code>PostUseCase</code> die Methode <code>searchPublishedPosts(query, tenantId)</code>, die bei vorhandenem Suchbegriff an das Repository delegiert und bei leerem Query alle veröffentlichten Posts zurückgibt.</p>
+</div>
+<div class="paragraph">
+<p>Für die chronologische Navigation (SWR-039) stehen <code>findPreviousPublishedPost(slug, tenantId)</code> und <code>findNextPublishedPost(slug, tenantId)</code> zur Verfügung. Diese ermitteln anhand des <code>publishedAt</code>-Zeitstempels den zeitlich vorherigen bzw. nächsten veröffentlichten Post.</p>
+</div>
+<div class="paragraph">
+<p>Für die Serien-Navigation (SWR-040) ermöglicht <code>getPostIfPublished(postId, tenantId)</code> das Laden eines veröffentlichten Posts über seine ID, um die Serien-Verknüpfungen aufzulösen.</p>
+</div>
+<div class="paragraph">
+<p>Das Interface <code>TagUseCase</code> kapselt die Tag-Verwaltung (SWR-020) mit Operationen für Erstellen, Umbenennen, Löschen und Lesen.
+Das Interface <code>TranslationUseCase</code> kapselt den Übersetzungs-Workflow (SWR-021) inklusive manueller und KI-gestützter Erstellung sowie Freigabe und Ablehnung.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_outbound_ports"><a class="anchor" href="#_outbound_ports"></a>3.2. Outbound Ports</h3>
+<div class="paragraph">
+<p>Die Outbound Ports <code>PostRepository</code>, <code>TagRepository</code>, <code>TranslationRepository</code> und <code>EventPublisher</code> abstrahieren die technischen Abhängigkeiten.
+<code>PostRepository</code> stellt die Persistenz sicher, wobei alle Abfragen Tenant-scoped sind (SWR-003).</p>
+</div>
+<div class="paragraph">
+<p>Für die Volltextsuche (SWR-038) bietet <code>PostRepository</code> die Methode <code>searchPublished(query, tenantId)</code>, die PostgreSQL <code>plainto_tsquery</code> für die Suche nutzt.
+Für die chronologische Navigation (SWR-039) stehen <code>findPreviousPublished(tenantId, publishedAt)</code> und <code>findNextPublished(tenantId, publishedAt)</code> zur Verfügung, die den nächsten bzw. vorherigen Post nach Veröffentlichungszeitpunkt ermitteln.</p>
+</div>
+<div class="paragraph">
+<p><code>TagRepository</code> bietet zusätzlich eine Duplikat-Prüfung über <code>existsByTenantIdAndName()</code> (SWR-020).
+<code>TranslationRepository</code> unterstützt Abfragen nach PostId und Locale (SWR-021).
+<code>EventPublisher</code> ermöglicht die asynchrone Kommunikation via Domain Events (SWR-009).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_postservice"><a class="anchor" href="#_postservice"></a>3.3. PostService</h3>
+<div class="paragraph">
+<p>Der <code>PostService</code> orchestriert Domain-Objekte und Ports. Er sorgt dafür, dass bei jeder Post-Erstellung ein <code>PostCreatedEvent</code> und bei jeder Veröffentlichung ein <code>PostPublishedEvent</code> publiziert wird.</p>
+</div>
+<div class="paragraph">
+<p>Bei der Volltextsuche (SWR-038) prüft der Service, ob der Suchbegriff leer oder null ist. Ist dies der Fall, werden alle veröffentlichten Posts zurückgegeben. Andernfalls wird die Suche an das Repository delegiert.</p>
+</div>
+<div class="paragraph">
+<p>Für die chronologische Navigation (SWR-039) ermittelt der Service zunächst den aktuellen Post über den Slug, extrahiert den <code>publishedAt</code>-Zeitstempel und fragt dann den zeitlich vorherigen bzw. nächsten Post ab.</p>
+</div>
+<div class="paragraph">
+<p>Bei Create und Update werden optionale Serien-Navigationsfelder (SWR-040) über <code>Post.updateSeriesNavigation()</code> gesetzt.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tagservice"><a class="anchor" href="#_tagservice"></a>3.4. TagService</h3>
+<div class="paragraph">
+<p>Der <code>TagService</code> implementiert den <code>TagUseCase</code> und prüft vor der Tag-Erstellung, ob bereits ein Tag mit gleichem Namen im Tenant existiert.
+Bei Duplikat wird eine <code>IllegalArgumentException</code> geworfen. Das Umbenennen delegiert an die Domain-Methode <code>Tag.rename()</code>, die den Slug automatisch aktualisiert.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_translationservice"><a class="anchor" href="#_translationservice"></a>3.5. TranslationService</h3>
+<div class="paragraph">
+<p>Der <code>TranslationService</code> implementiert den <code>TranslationUseCase</code> und orchestriert den Übersetzungs-Lifecycle:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-c54db9ca7da7b0ff2cdfb962cf4879913766c0ab.svg" alt="Diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Bei jeder Erstellung wird ein <code>TranslationCreatedEvent</code> publiziert, bei Freigabe ein <code>TranslationApprovedEvent</code> (SWR-009).</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_adapter_layer"><a class="anchor" href="#_adapter_layer"></a>4. Adapter Layer</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der Adapter Layer implementiert die technische Anbindung an Spring Boot (SWA-004) und externe Systeme.</p>
+</div>
+<div class="sect2">
+<h3 id="_inbound_adapter_rest_api"><a class="anchor" href="#_inbound_adapter_rest_api"></a>4.1. Inbound Adapter: REST API</h3>
+<div class="sect3">
+<h4 id="_postcontroller"><a class="anchor" href="#_postcontroller"></a>4.1.1. PostController</h4>
+<div class="paragraph">
+<p>Der <code>PostController</code> bildet den REST Inbound Adapter und setzt die in SWR-001 definierten Endpunkte um:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">HTTP-Methode</th>
+<th class="tableblock halign-left valign-top">Pfad</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Post erstellen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/{id}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Post lesen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/{id}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Post aktualisieren</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DELETE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/{id}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Post löschen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/{id}/publish</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Post veröffentlichen (SWR-002)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/search?q=</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Volltextsuche über veröffentlichte Posts (SWR-038)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Die Antwort von <code>GET /api/posts/{id}</code> enthält die optionalen Felder <code>seriesPreviousPostId</code> und <code>seriesNextPostId</code> (SWR-040), sofern der Post Teil einer Serie ist.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_tagcontroller"><a class="anchor" href="#_tagcontroller"></a>4.1.2. TagController</h4>
+<div class="paragraph">
+<p>Der <code>TagController</code> setzt die Tag-Verwaltungs-API (SWR-020) um:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">HTTP-Methode</th>
+<th class="tableblock halign-left valign-top">Pfad</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/tags</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tag erstellen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/tags</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alle Tags des Tenants auflisten</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/tags/{id}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Einzelnen Tag lesen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/tags/{id}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tag umbenennen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DELETE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/tags/{id}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tag löschen</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_translationcontroller"><a class="anchor" href="#_translationcontroller"></a>4.1.3. TranslationController</h4>
+<div class="paragraph">
+<p>Der <code>TranslationController</code> setzt die Übersetzungs-API (SWR-021) als Sub-Ressource von Posts um:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">HTTP-Methode</th>
+<th class="tableblock halign-left valign-top">Pfad</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/{postId}/translations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Übersetzung erstellen (manuell oder KI)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/{postId}/translations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alle Übersetzungen eines Posts</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/{postId}/translations/{id}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Einzelne Übersetzung lesen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/{postId}/translations/{id}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Übersetzung aktualisieren</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/{postId}/translations/{id}/approve</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Übersetzung freigeben</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/{postId}/translations/{id}/reject</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Übersetzung ablehnen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DELETE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/{postId}/translations/{id}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Übersetzung löschen</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_sourcecontroller"><a class="anchor" href="#_sourcecontroller"></a>4.1.4. SourceController</h4>
+<div class="paragraph">
+<p>Der <code>SourceController</code> setzt die Quellenverwaltungs-API (SWR-012) als Sub-Ressource von Posts um:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">HTTP-Methode</th>
+<th class="tableblock halign-left valign-top">Pfad</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/{postId}/sources</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quelle hinzufügen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/{postId}/sources</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alle Quellen eines Posts auflisten</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DELETE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/api/posts/{postId}/sources</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quelle entfernen (URL+Title im Body)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Die Tenant-ID wird über einen HTTP-Header (<code>X-Tenant-Id</code>) übergeben, um die Tenant-Isolation (SWR-003) auf API-Ebene sicherzustellen.</p>
+</div>
+<div class="paragraph">
+<p>Fehler werden über den <code>GlobalExceptionHandler</code> als Problem Details nach RFC 9457 zurückgegeben. Input-Validierung erfolgt gemäß SWR-015 zum Schutz vor ungültigen Eingaben.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_openapiswagger_konfiguration"><a class="anchor" href="#_openapiswagger_konfiguration"></a>4.1.5. OpenAPI/Swagger-Konfiguration</h4>
+<div class="paragraph">
+<p>Die automatische API-Dokumentation (SWR-024) wird über springdoc-openapi (SWA-016) realisiert. Die <code>OpenApiConfiguration</code> enthält:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>API-Metadaten (Titel, Version, Beschreibung)</p>
+</li>
+<li>
+<p>Einen globalen <code>OperationCustomizer</code>, der den <code>X-Tenant-Id</code>-Header automatisch als optionalen Parameter zu allen Operationen hinzufügt</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Alle Controller verwenden die folgenden Swagger-Annotationen:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>@Tag</code> zur Gruppierung der Endpunkte (Posts, Tags, Translations, Sources)</p>
+</li>
+<li>
+<p><code>@Operation</code> mit Summary und Beschreibung für jede Methode</p>
+</li>
+<li>
+<p><code>@ApiResponse</code> für die möglichen HTTP-Statuscodes</p>
+</li>
+<li>
+<p><code>@Parameter(hidden = true)</code> auf dem X-Tenant-Id-Header-Parameter, da dieser global dokumentiert wird</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Die Spezifikation ist unter <code>/api-docs</code> (JSON) und die interaktive Oberfläche unter <code>/swagger-ui.html</code> erreichbar.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_inbound_adapter_thymeleaf_web_ui"><a class="anchor" href="#_inbound_adapter_thymeleaf_web_ui"></a>4.2. Inbound Adapter: Thymeleaf Web UI</h3>
+<div class="paragraph">
+<p>Der Thymeleaf Web UI Adapter (SWR-025) stellt die serverseitig gerenderte Benutzeroberfläche bereit.
+Er bildet einen separaten Inbound Adapter neben der REST API und nutzt dieselben Application Ports.</p>
+</div>
+<div class="sect3">
+<h4 id="_architektur"><a class="anchor" href="#_architektur"></a>4.2.1. Architektur</h4>
+<div class="paragraph">
+<p>Das folgende Klassendiagramm zeigt die Struktur des Thymeleaf Web UI Adapters mit den Abhängigkeiten zum MarkdownRenderer-Port (SWA-024) und PostUseCase:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-c0d7ed4a952840fdae139d0e93b5fccb182972ad.svg" alt="Diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Der <code>BlogViewController</code> liegt im Package <code>adapter.inbound.web</code> und greift über die bestehenden Inbound Ports (<code>PostUseCase</code>) auf die Fachlogik zu.
+Er gibt Thymeleaf-View-Namen zurück, die vom Spring MVC ViewResolver aufgelöst werden.
+Für Markdown-Posts delegiert er das Rendering an den <code>MarkdownRenderer</code>-Port (SWA-024).</p>
+</div>
+<div class="paragraph">
+<p>Für die Volltextsuche (SWR-038) akzeptiert <code>listPosts()</code> einen optionalen Query-Parameter <code>q</code>. Ist dieser gesetzt, werden die Suchergebnisse angezeigt und der Suchbegriff im Formular vorbelegt.</p>
+</div>
+<div class="paragraph">
+<p>Für die chronologische Navigation (SWR-039) ermittelt <code>showPost()</code> den vorherigen und nächsten veröffentlichten Post und fügt sie dem Model hinzu. Die Navigation wird in der Detailansicht als Previous/Next-Links dargestellt.</p>
+</div>
+<div class="paragraph">
+<p>Für die Serien-Navigation (SWR-040) prüft die Methode <code>addSeriesNavigation()</code>, ob der aktuelle Post Serien-Verknüpfungen hat. Falls die Serien-Posts sich von den chronologischen Nachbarn unterscheiden, werden sie als zusätzliche Links angezeigt. Sind sie identisch, wird die doppelte Anzeige unterdrückt.</p>
+</div>
+<div class="paragraph">
+<p>Die <code>PostFormData</code>-Klasse dient als Form-Backing-Bean für die Thymeleaf-Formulare und kapselt die Eingabefelder mit Bean-Validation-Annotationen.
+Das Feld <code>contentType</code> erlaubt die Auswahl zwischen HTML und Markdown (SWR-035).</p>
+</div>
+<div class="paragraph">
+<p>Der <code>VersionModelAdvice</code> (SWR-034, SWA-025) stellt die Anwendungsversion als globales Modellattribut <code>appVersion</code> für alle Views bereit, ohne dass jeder Controller-Handler dies explizit setzen muss.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_öffentliche_blog_ansicht_swr_026_swr_033_swr_036_swr_037"><a class="anchor" href="#_öffentliche_blog_ansicht_swr_026_swr_033_swr_036_swr_037"></a>4.2.2. Öffentliche Blog-Ansicht (SWR-026, SWR-033, SWR-036, SWR-037)</h4>
+<div class="paragraph">
+<p>Die öffentliche Blog-Ansicht besteht aus drei logischen Seiten:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Landing Page</strong> (<code>/</code>, SWR-033, SWR-042): Zeigt die drei neuesten veröffentlichten Posts des Tenants. Die Begrenzung erfolgt über <code>listRecentPublishedPosts(tenantId, 3)</code> direkt auf Datenbankebene (SWA-026). Ein Link führt zur vollständigen Post-Liste. Zusätzlich werden aktuell gefeatured Posts in einem eigenen, visuell abgesetzten Bereich oberhalb der neuesten Posts angezeigt (SWR-042). Die Abfrage erfolgt über <code>listFeaturedPosts(tenantId, today)</code> (SWA-028). Ein Post kann in beiden Bereichen erscheinen, wenn er sowohl featured als auch unter den neuesten drei ist.</p>
+</li>
+<li>
+<p><strong>Post-Liste</strong> (<code>/posts</code>): Zeigt alle veröffentlichten Posts des Tenants in absteigender chronologischer Reihenfolge.</p>
+</li>
+<li>
+<p><strong>Einzelansicht</strong> (<code>/posts/{slug}</code>, SWR-035): Zeigt einen einzelnen veröffentlichten Post. Markdown-Inhalte werden vor der Anzeige serverseitig zu HTML gerendert. Code-Blöcke erhalten clientseitiges Syntax-Highlighting (highlight.js), Mermaid-Codeblöcke werden als Diagramme dargestellt (mermaid.js).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Nicht veröffentlichte Posts (DRAFT, ARCHIVED) sind in der öffentlichen Ansicht nicht sichtbar.
+Die Slug-basierte URL sorgt für SEO-freundliche, leserliche Adressen.</p>
+</div>
+<div class="sect4">
+<h5 id="_gerenderte_vorschau_swr_036_swr_037"><a class="anchor" href="#_gerenderte_vorschau_swr_036_swr_037"></a>Gerenderte Vorschau (SWR-036, SWR-037)</h5>
+<div class="paragraph">
+<p>Die <code>buildExcerpts()</code>-Methode erzeugt für jeden Post eine gerenderte HTML-Vorschau. Der Ablauf:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>renderContent(post)</code> prüft den ContentType: bei MARKDOWN wird der MarkdownRenderer aufgerufen, bei HTML wird der Content direkt verwendet.</p>
+</li>
+<li>
+<p><code>extractFirstParagraph(html)</code> extrahiert das erste <code>&lt;p&gt;</code>-Element per Regex (<code>FIRST_PARAGRAPH_PATTERN</code>).</p>
+</li>
+<li>
+<p>Ist kein <code>&lt;p&gt;</code>-Element vorhanden, wird der gesamte gerenderte Inhalt als Vorschau verwendet.</p>
+</li>
+<li>
+<p>Die Excerpts werden als <code>Map&lt;UUID, String&gt;</code> im Model bereitgestellt und in der Post-Liste via <code>th:utext</code> gerendert dargestellt.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Das folgende Sequenzdiagramm zeigt den Ablauf für Landing Page und Einzelansicht inklusive Markdown-Rendering:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-6027f082fe8f7e7bc560596feaf670afa5a94403.svg" alt="Diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Für die öffentliche Ansicht werden drei Methoden am <code>PostRepository</code>-Port benötigt:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>findPublishedByTenantId(TenantId)</code> - Gibt alle veröffentlichten Posts zurück, sortiert nach <code>publishedAt</code> absteigend.</p>
+</li>
+<li>
+<p><code>findRecentPublishedByTenantId(TenantId, int limit)</code> - Gibt die neuesten veröffentlichten Posts zurück, begrenzt auf <code>limit</code> Einträge (SWR-033, SWA-026). Nutzt Spring Data <code>Pageable</code>.</p>
+</li>
+<li>
+<p><code>findBySlugAndTenantId(Slug, TenantId)</code> - Sucht einen Post anhand seines Slugs.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Am <code>PostUseCase</code>-Port werden entsprechend drei Methoden definiert:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>listPublishedPosts(TenantId)</code> - Delegiert an das Repository und gibt nur PUBLISHED-Posts zurück.</p>
+</li>
+<li>
+<p><code>listRecentPublishedPosts(TenantId, int limit)</code> - Gibt maximal <code>limit</code> neueste PUBLISHED-Posts zurück (SWR-033).</p>
+</li>
+<li>
+<p><code>getPublishedPostBySlug(Slug, TenantId)</code> - Gibt den Post zurück, wenn er existiert und den Status PUBLISHED hat. Wirft <code>PostNotFoundException</code> falls nicht gefunden oder nicht veröffentlicht.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_formular_zum_erstellen_und_bearbeiten_von_posts_swr_027"><a class="anchor" href="#_formular_zum_erstellen_und_bearbeiten_von_posts_swr_027"></a>4.2.3. Formular zum Erstellen und Bearbeiten von Posts (SWR-027)</h4>
+<div class="paragraph">
+<p>Das Formular ermöglicht das Erstellen neuer Posts und das Bearbeiten bestehender Posts über eine einheitliche Template-Datei (<code>posts/form.html</code>).
+Es nutzt die bestehenden Inbound Ports <code>PostUseCase.createPost()</code> und <code>PostUseCase.updatePost()</code>.</p>
+</div>
+<div class="sect4">
+<h5 id="_form_backing_bean"><a class="anchor" href="#_form_backing_bean"></a>Form-Backing-Bean</h5>
+<div class="paragraph">
+<p>Die Klasse <code>PostFormData</code> kapselt die Formulareingaben und stellt die serverseitige Validierung über Bean Validation sicher:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>title</code> (NotBlank) - Titel des Posts</p>
+</li>
+<li>
+<p><code>content</code> (NotBlank) - Inhalt des Posts</p>
+</li>
+<li>
+<p><code>contentType</code> (NotBlank) - Format des Inhalts: „HTML" oder „MARKDOWN" (SWR-035)</p>
+</li>
+<li>
+<p><code>locale</code> (NotBlank) - Sprache des Posts (z.B. "de", "en")</p>
+</li>
+<li>
+<p><code>socialMediaTitle</code> (optional) - Titel für Social Media</p>
+</li>
+<li>
+<p><code>socialMediaSummary</code> (optional) - Zusammenfassung für Social Media</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_endpunkte"><a class="anchor" href="#_endpunkte"></a>Endpunkte</h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">HTTP-Methode</th>
+<th class="tableblock halign-left valign-top">Pfad</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/posts/new</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Leeres Formular anzeigen (Erstellen)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/posts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Neuen Post erstellen (Form-Submit)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/posts/{id}/edit</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vorausgefülltes Formular anzeigen (Bearbeiten)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/posts/{id}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bestehenden Post aktualisieren (Form-Submit)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_ablauf_post_erstellen"><a class="anchor" href="#_ablauf_post_erstellen"></a>Ablauf: Post erstellen</h5>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-bea4d2dc9ca8862553be3e52afd8ed28d9c914cf.svg" alt="Diagram">
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_ablauf_post_bearbeiten"><a class="anchor" href="#_ablauf_post_bearbeiten"></a>Ablauf: Post bearbeiten</h5>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-8ad644f407ec3b83ad99ccab7de1b931da2915aa.svg" alt="Diagram">
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_template_struktur"><a class="anchor" href="#_template_struktur"></a>4.2.4. Template-Struktur</h4>
+<div class="paragraph">
+<p>Die Templates folgen einer hierarchischen Struktur mit dem Thymeleaf Layout Dialect:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-43bb1a32c5020f34829263bed2b565d6eb02d692.svg" alt="Diagram">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>layout/default.html</strong>: Basis-Layout mit HTML5-Grundgerüst, PicoCSS-Einbindung (CDN), semantischer Struktur (header, nav, main, footer)</p>
+</li>
+<li>
+<p><strong>fragments/header.html</strong>: Seitenkopf mit Blog-Titel und Navigationslinks (inkl. Link auf /posts)</p>
+</li>
+<li>
+<p><strong>fragments/footer.html</strong>: Fußzeile mit Copyright, Links und Anwendungsversion (SWR-034)</p>
+</li>
+<li>
+<p><strong>posts/list.html</strong>: Post-Liste mit gerenderten HTML-Vorschauen (SWR-036, SWR-037) aus <code>excerpts</code>-Map via <code>th:utext</code>, „Alle Posts"-Link bei Landing Page (SWR-033), Links zum Erstellen und Bearbeiten (SWR-027)</p>
+</li>
+<li>
+<p><strong>posts/show.html</strong>: Einzelansicht eines Posts mit gerendertem Inhalt (SWR-035), highlight.js für Syntax-Highlighting, mermaid.js für Diagramme</p>
+</li>
+<li>
+<p><strong>posts/form.html</strong>: Wiederverwendbares Formular für Erstellen und Bearbeiten eines Posts mit ContentType-Auswahl (SWR-035, SWR-027)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_default_tenant_filter_mvp_betrieb"><a class="anchor" href="#_default_tenant_filter_mvp_betrieb"></a>4.2.5. Default-Tenant-Filter (MVP-Betrieb)</h4>
+<div class="paragraph">
+<p>Der <code>DefaultTenantFilter</code> injiziert automatisch Default-Werte für <code>X-Tenant-Id</code> und <code>X-Author-Id</code>, wenn diese HTTP-Header in der Anfrage fehlen.
+Die Werte sind über Spring-Properties konfigurierbar (<code>blog.default-tenant-id</code>, <code>blog.default-author-id</code>).</p>
+</div>
+<div class="paragraph">
+<p>Dies ermöglicht den produktiven MVP-Betrieb als Single-Tenant-Blog, ohne dass ein API-Gateway oder eine Authentifizierung vorgeschaltet sein muss.
+In Phase 4 wird dieser Filter durch domain-basierte Tenant-Resolution (ADR-0012) und Authentifizierung ersetzt.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_css_framework_picocss"><a class="anchor" href="#_css_framework_picocss"></a>4.2.6. CSS-Framework: PicoCSS</h4>
+<div class="paragraph">
+<p>PicoCSS (v2.x) wurde als classless CSS-Framework gewählt (ADR-0005). Es bietet:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Responsives Design ohne CSS-Klassen (semantic HTML genügt)</p>
+</li>
+<li>
+<p>Dark/Light Mode via <code>prefers-color-scheme</code></p>
+</li>
+<li>
+<p>~10 KB Größe, kein Frontend-Build-Tooling erforderlich</p>
+</li>
+<li>
+<p>Einbindung via CDN (<code>unpkg.com/\@picocss/pico@2/css/pico.min.css</code>)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Eine zusätzliche <code>custom.css</code> ermöglicht minimale Anpassungen und Tenant-Branding-Hooks.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_outbound_adapter_jpa_persistence"><a class="anchor" href="#_outbound_adapter_jpa_persistence"></a>4.3. Outbound Adapter: JPA Persistence</h3>
+<div class="sect3">
+<h4 id="_jpapostrepository"><a class="anchor" href="#_jpapostrepository"></a>4.3.1. JpaPostRepository</h4>
+<div class="paragraph">
+<p>Der <code>JpaPostRepository</code> implementiert den <code>PostRepository</code>-Port mit Spring Data JPA.
+Die <code>PostJpaEntity</code> enthält Audit-Felder (<code>createdAt</code>, <code>updatedAt</code>), die über <code>@PrePersist</code> und <code>@PreUpdate</code> automatisch befüllt werden und den Audit-Trail (SWR-006) auf Datenbankebene unterstützen.</p>
+</div>
+<div class="paragraph">
+<p>Der <code>PostMapper</code> übernimmt das bidirektionale Mapping zwischen Domain-Modell und JPA-Entity, sodass die Domain-Schicht frei von JPA-Annotationen bleibt (SWA-001).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_jpatagrepository"><a class="anchor" href="#_jpatagrepository"></a>4.3.2. JpaTagRepository</h4>
+<div class="paragraph">
+<p>Der <code>JpaTagRepository</code> implementiert den <code>TagRepository</code>-Port. Die <code>TagJpaEntity</code> bildet die tags-Tabelle ab mit Unique-Constraints auf <code>(tenant_id, name)</code> und <code>(tenant_id, slug)</code>.
+Der <code>TagMapper</code> konvertiert zwischen Domain-Tag (mit <code>Slug</code> Value Object) und JPA-Entity.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_jpatranslationrepository"><a class="anchor" href="#_jpatranslationrepository"></a>4.3.3. JpaTranslationRepository</h4>
+<div class="paragraph">
+<p>Der <code>JpaTranslationRepository</code> implementiert den <code>TranslationRepository</code>-Port. Die <code>TranslationJpaEntity</code> bildet die translations-Tabelle ab mit FK auf posts und Unique Constraint auf <code>(post_id, locale)</code>.
+Status und Source werden als Strings persistiert und im <code>TranslationMapper</code> über <code>valueOf()</code> und <code>PostLocale.of()</code> zurückgemappt.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_outbound_adapter_event_publishing"><a class="anchor" href="#_outbound_adapter_event_publishing"></a>4.4. Outbound Adapter: Event Publishing</h3>
+<div class="paragraph">
+<p>Der <code>LoggingEventPublisher</code> ist ein Interim-Adapter, der Domain Events zunächst nur loggt.
+Er wird in einer späteren Phase durch einen Kafka-Producer ersetzt (SWA-005), der die Events an den zentralen Event-Broker sendet (SWR-009).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_outbound_adapter_markdown_rendering_swa_024"><a class="anchor" href="#_outbound_adapter_markdown_rendering_swa_024"></a>4.5. Outbound Adapter: Markdown Rendering (SWA-024)</h3>
+<div class="paragraph">
+<p>Der <code>FlexmarkMarkdownRenderer</code> implementiert den <code>MarkdownRenderer</code>-Port (SWR-035) mit flexmark-java 0.64.8.
+Er liegt im Package <code>adapter.outbound.markdown</code> und ist als Spring <code>@Component</code> registriert.</p>
+</div>
+<div class="paragraph">
+<p>Das folgende Klassendiagramm zeigt die Port-Adapter-Beziehung:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-c1a0ead1adea7137c9333f800c8a41490ad5dd19.svg" alt="Diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Der Renderer wird im <code>BlogViewController</code> für zwei Zwecke eingesetzt:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Einzelansicht</strong> (<code>showPost</code>): Rendert den gesamten Markdown-Inhalt zu HTML, bevor er als <code>renderedContent</code> an das Template übergeben wird.</p>
+</li>
+<li>
+<p><strong>Vorschau</strong> (<code>buildExcerpts</code>): Rendert den Content zu HTML, damit <code>extractFirstParagraph()</code> das erste <code>&lt;p&gt;</code>-Element extrahieren kann.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Clientseitig werden Code-Blöcke durch highlight.js (CDN, v11.11.1) mit Syntax-Highlighting versehen. Mermaid-Codeblöcke (mit der Klasse <code>language-mermaid</code>) werden durch mermaid.js (CDN, v11) als SVG-Diagramme gerendert.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_datenbank_schema_flyway"><a class="anchor" href="#_datenbank_schema_flyway"></a>5. Datenbank-Schema (Flyway)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Die Schema-Verwaltung erfolgt über Flyway-Migrationen (SWA-013, ADR-0015). Hibernate validiert das Schema gegen die Entity-Klassen (<code>ddl-auto: validate</code>), nimmt aber keine Änderungen vor.</p>
+</div>
+<div class="paragraph">
+<p>Das folgende ER-Diagramm zeigt das aktuelle Datenbankschema:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-ab017ea581322af05a0bfdfddef4443623d30308.svg" alt="Diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Die Migrationen liegen unter <code>src/main/resources/db/migration/</code> und werden beim Service-Start automatisch ausgeführt.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Migration</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">V1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Posts-Grundschema (posts, post_tags, post_sources, post_attachments)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">V2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tags-Schema mit Unique-Index auf (tenant_id, name) und (tenant_id, slug)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">V3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Translations-Schema mit FK auf posts, Unique auf (post_id, locale)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">V4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">content_type-Spalte (VARCHAR(20), NOT NULL, Default 'HTML') zu posts (SWA-027)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">V5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GIN-Index für Volltextsuche über title und content mit tsvector (SWR-038)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">V6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optionale Serien-Navigationsfelder series_previous_post_id und series_next_post_id (SWR-040)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">V7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optionale Featured-Felder featured_from und featured_until (SWR-041)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ablauf_post_erstellen_und_veröffentlichen"><a class="anchor" href="#_ablauf_post_erstellen_und_veröffentlichen"></a>6. Ablauf: Post erstellen und veröffentlichen</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der folgende Ablauf zeigt den typischen Lifecycle eines Posts von der Erstellung bis zur Veröffentlichung:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-e41d25a72a0e9fdc3c54bb01a5f076f31712cba2.svg" alt="Diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Dieser Ablauf erfüllt die Anforderungen SWR-001 (Post erstellen) und SWR-002 (Post veröffentlichen) und zeigt, wie Domain Events (SWR-009) bei jeder Zustandsänderung registriert und publiziert werden.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_konfiguration"><a class="anchor" href="#_konfiguration"></a>7. Konfiguration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Die <code>BlogContentConfiguration</code> ist die zentrale Spring-Konfiguration, die das Wiring der Adapter an die Ports vornimmt.
+Sie stellt sicher, dass die hexagonale Architektur (SWA-001) eingehalten wird: Der <code>PostService</code> erhält seine Abhängigkeiten ausschließlich über Constructor Injection der Port-Interfaces.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_anforderungsabdeckung"><a class="anchor" href="#_anforderungsabdeckung"></a>8. Anforderungsabdeckung</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Die folgende Tabelle zeigt, welche Anforderungen durch diesen Service abgedeckt werden:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 50%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">ID</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+<th class="tableblock halign-left valign-top">Abdeckung im Service</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-001</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Post CRUD API</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PostController, PostUseCase, PostService</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-002</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Post veröffentlichen</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Post.publish(), PostService.publishPost()</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-003</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tenant-Isolation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TenantId in allen Queries, X-Tenant-Id Header</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-004</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">KI-Übersetzung</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TranslationService.createAiTranslation()</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-005</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Manuelle Übersetzung</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TranslationService.createManualTranslation()</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-006</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Audit-Trail</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JPA Audit-Felder, Domain Events</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-009</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain Events</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EventPublisher, Post/Translation Events</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-012</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quellenverwaltung</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SourceController, Source Value Object, Post.addSource(), PostService.addSource/removeSource/listSources</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-013</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Web-Snapshot von Quellen</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Snapshot-Adapter (S3 Storage, Phase 2)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-015</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Input-Validierung</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GlobalExceptionHandler, Jakarta Validation</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-020</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tag CRUD API</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TagController, TagUseCase, TagService</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-021</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Translation CRUD API</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TranslationController, TranslationUseCase, TranslationService</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-001</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hexagonale Architektur</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain/Application/Adapter Trennung</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-002</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shared Kernel</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EntityId, TenantId, AuthorId, AggregateRoot aus libs/shared-kernel</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-004</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spring Boot Applikation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BlogContentConfiguration, Starter Dependencies</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-007</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain-Modell (DDD)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Post, Translation, Tag, Value Objects</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-008</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Translation als separates Aggregate</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Translation mit eigenem Lifecycle</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-013</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Flyway Migrationen</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">db/migration/ SQL-Skripte, validate-Modus</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-024</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OpenAPI/Swagger API-Dokumentation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OpenApiConfiguration, Controller-Annotationen (@Operation, @ApiResponse, @Tag)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-016</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">springdoc-openapi für API-Dokumentation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">springdoc-openapi-starter-webmvc-ui, OperationCustomizer</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-025</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Thymeleaf Layout-Grundgerüst</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BlogViewController, layout/default.html, PicoCSS, custom.css</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-026</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Öffentliche Blog-Ansicht (Post-Liste, Einzelansicht)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BlogViewController.listPosts/showPost, posts/list.html, posts/show.html, PostRepository.findPublishedByTenantId/findBySlugAndTenantId</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-027</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Thymeleaf Post-Formular</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BlogViewController.newPostForm/createPost/editPostForm/updatePost, posts/form.html</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-028</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Admin-Login zum Schutz der Schreiboperationen</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SecurityConfiguration, login.html, HTTP Basic für REST API</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-033</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Landing Page zeigt maximal drei neueste Posts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BlogViewController.index(), PostUseCase.listRecentPublishedPosts(), PostRepository.findRecentPublishedByTenantId()</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-034</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Versionsnummer im Footer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VersionModelAdvice, BuildProperties, fragments/footer.html</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-035</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTML- und Markdown-Unterstützung mit Rendering</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ContentType, MarkdownRenderer, FlexmarkMarkdownRenderer, BlogViewController.renderContent(), posts/show.html (highlight.js, mermaid.js)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-036</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gerenderte Vorschau in der Post-Liste</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BlogViewController.buildExcerpts(), posts/list.html (th:utext)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-037</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vorschau zeigt den ersten Abschnitt</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BlogViewController.extractFirstParagraph(), FIRST_PARAGRAPH_PATTERN</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-024</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Outbound Port für Markdown-Rendering</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MarkdownRenderer (Port), FlexmarkMarkdownRenderer (Adapter)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-025</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ControllerAdvice für globale Modellattribute</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VersionModelAdvice</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-026</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Landing Page mit Paginierung am Repository</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PostRepository.findRecentPublishedByTenantId(TenantId, int), PageRequest</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-027</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ContentType im Domain-Modell und Persistenz</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ContentType Enum, V4 Migration, PostJpaEntity.contentType</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-038</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Volltextsuche für Blog Posts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BlogViewController.listPosts(q), PostUseCase.searchPublishedPosts(), PostRepository.searchPublished(), V5 GIN-Index, posts/list.html Suchformular</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-039</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Chronologische Previous/Next-Navigation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BlogViewController.showPost(), PostUseCase.findPreviousPublishedPost/findNextPublishedPost(), PostRepository.findPreviousPublished/findNextPublished(), posts/show.html</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-040</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Serien-Navigation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Post.seriesPreviousPostId/seriesNextPostId, BlogViewController.addSeriesNavigation(), PostUseCase.getPostIfPublished(), V6 Migration, posts/show.html, posts/form.html</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-041</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Featured-Zeitraum im Domain-Modell</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Post.featuredFrom/featuredUntil, Post.updateFeatured(), Post.isFeatured(), CreatePostCommand, UpdatePostCommand, PostResponse, V7 Migration</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-042</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Featured Posts auf der Landing Page</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BlogViewController.index(), PostUseCase.listFeaturedPosts(), PostRepository.findFeaturedByTenantId(), posts/list.html</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWA-028</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Featured-Post-Abfrage im Persistence Adapter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PostRepository.findFeaturedByTenantId(), JPA Query mit Datumsfilterung</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-050</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tenant-Branding im Header</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TenantBrandingAdvice, UserManagementClient.getTenantSettings(), fragments/header.html</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-051</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Admin-UI Benutzerliste und -verwaltung</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AdminController.listUsers/approveUser/rejectUser/changeRole, admin/users.html</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-052</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Admin-UI Tenant-Einstellungen</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AdminController.showSettings/updateSettings, admin/settings.html</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SWR-053</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SuperAdmin Tenant-Umschaltung</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AdminController.switchTenant, TenantBrandingAdvice.tenants(), DefaultTenantFilter Session-Override</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sicherheit_admin_login_swr_028"><a class="anchor" href="#_sicherheit_admin_login_swr_028"></a>9. Sicherheit: Admin-Login (SWR-028)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der Blog Content Service schützt alle Schreiboperationen über Spring Security mit einem einfachen formbasierten Login.
+Dies ist eine MVP-Lösung für Phase 2. In Phase 4 wird sie durch den Custom Identity Provider (SWR-016, SWA-010) ersetzt.</p>
+</div>
+<div class="sect2">
+<h3 id="_schutzkonzept"><a class="anchor" href="#_schutzkonzept"></a>9.1. Schutzkonzept</h3>
+<div class="paragraph">
+<p>Die Zugriffsregeln teilen die Endpunkte in öffentliche (lesende) und geschützte (schreibende) Bereiche:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Bereich</th>
+<th class="tableblock halign-left valign-top">Endpunkte</th>
+<th class="tableblock halign-left valign-top">Zugriff</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Öffentlich (Web)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET /, GET /posts, GET /posts/{slug}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Anonym (nur PUBLISHED-Posts sichtbar)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Geschützt (Web)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET /posts/new, GET /posts/{id}/edit, POST /posts, POST /posts/{id}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Formular-Login (ADMIN)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Geschützt (API)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET/POST/PUT/DELETE /api/posts/<strong>, /api/tags/</strong>, /api/posts/{id}/translations/<strong>, /api/posts/{id}/sources/</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP Basic (ADMIN)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Öffentlich (Infra)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Swagger UI (/swagger-ui.html, /api-docs), Actuator Health</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Anonym</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Login</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET/POST /login, POST /logout</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Anonym</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Die öffentliche Post-Liste (<code>/</code> und <code>/posts</code>) verwendet <code>listPublishedPosts()</code> und zeigt nur veröffentlichte Posts.
+Nach Login verwendet dieselbe Route <code>listPosts()</code> und zeigt alle Posts mit Status-Badge (DRAFT, PUBLISHED, ARCHIVED).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_architektur_2"><a class="anchor" href="#_architektur_2"></a>9.2. Architektur</h3>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-4974f6cdee805cecfb45c1abcbfe25b8d495644f.svg" alt="Diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Die <code>SecurityConfiguration</code> ist ein Inbound-Adapter (Package <code>adapter.inbound.web</code>), da sie die HTTP-Zugangsschicht konfiguriert.
+Die Admin-Credentials werden über <code>@ConfigurationProperties</code> aus den Spring-Properties <code>blog.admin.username</code> und <code>blog.admin.password</code> gelesen.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ablauf_login_und_geschützte_operation"><a class="anchor" href="#_ablauf_login_und_geschützte_operation"></a>9.3. Ablauf: Login und geschützte Operation</h3>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-b1d23f1e13713e57803bb015edc6a8d2dbd90423.svg" alt="Diagram">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_login_template"><a class="anchor" href="#_login_template"></a>9.4. Login-Template</h3>
+<div class="paragraph">
+<p>Das Login-Template (<code>login.html</code>) nutzt das bestehende Layout-Grundgerüst (SWR-025) und zeigt:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Ein Formular mit Feldern für Benutzername und Passwort</p>
+</li>
+<li>
+<p>Eine Fehlermeldung bei fehlgeschlagenem Login</p>
+</li>
+<li>
+<p>Eine Erfolgsmeldung nach Logout</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_header_integration"><a class="anchor" href="#_header_integration"></a>9.5. Header-Integration</h3>
+<div class="paragraph">
+<p>Der Header-Fragment (<code>fragments/header.html</code>) zeigt kontextabhängig:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Wenn eingeloggt: den Benutzernamen und einen Logout-Link</p>
+</li>
+<li>
+<p>Wenn nicht eingeloggt: einen Login-Link</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_konfiguration_2"><a class="anchor" href="#_konfiguration_2"></a>9.6. Konfiguration</h3>
+<div class="paragraph">
+<p>Die Admin-Credentials werden über Spring-Properties konfiguriert:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">blog:
+  admin:
+    username: admin
+    password: ${BLOG_ADMIN_PASSWORD}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Das Admin-Passwort ist eine Pflichtangabe ohne Default-Wert. Der Service bricht den Start ab, wenn <code>BLOG_ADMIN_PASSWORD</code> nicht gesetzt oder leer ist. In der lokalen Entwicklung muss die Variable explizit gesetzt werden (z.B. über <code>.env</code> oder die IDE-Konfiguration).</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_admin_oberfläche_swr_051_swr_052_swr_053"><a class="anchor" href="#_admin_oberfläche_swr_051_swr_052_swr_053"></a>10. Admin-Oberfläche (SWR-051, SWR-052, SWR-053)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Die Admin-Oberfläche stellt Thymeleaf-basierte Verwaltungsseiten für Benutzerverwaltung und Tenant-Einstellungen bereit.
+Sie ist nur für Benutzer mit den Rollen ADMIN oder SUPERADMIN zugänglich.</p>
+</div>
+<div class="sect2">
+<h3 id="_architektur_3"><a class="anchor" href="#_architektur_3"></a>10.1. Architektur</h3>
+<div class="paragraph">
+<p>Das folgende Klassendiagramm zeigt die Struktur des Admin-UI-Adapters:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-964a7d02c1b0bc24c186ffab03c3708445d3c92e.svg" alt="Diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Der <code>AdminController</code> liegt im Package <code>adapter.inbound.web</code> und kommuniziert über den <code>UserManagementClient</code> (gRPC) mit dem User-Management-Service.
+Der <code>TenantBrandingAdvice</code> ist ein <code>@ControllerAdvice</code>, der den Tenant-Namen und die Tenant-Liste als globale Model-Attribute bereitstellt.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tenant_branding_swr_050"><a class="anchor" href="#_tenant_branding_swr_050"></a>10.2. Tenant-Branding (SWR-050)</h3>
+<div class="paragraph">
+<p>Der <code>TenantBrandingAdvice</code> lädt bei jedem Request die TenantSettings (inkl. <code>displayName</code> und <code>tagline</code>) über gRPC und stellt sie als Model-Attribute bereit:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>tenantName</code>: Der konfigurierte Anzeigename des Tenants (Fallback: "Toms Blog")</p>
+</li>
+<li>
+<p><code>tenantTagline</code>: Die optionale Tagline des Tenants</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Das Header-Fragment (<code>fragments/header.html</code>) verwendet <code>${tenantName}</code> statt eines hardcodierten Blog-Titels.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_superadmin_tenant_umschaltung_swr_053"><a class="anchor" href="#_superadmin_tenant_umschaltung_swr_053"></a>10.3. SuperAdmin Tenant-Umschaltung (SWR-053)</h3>
+<div class="paragraph">
+<p>Der SuperAdmin kann über einen Tenant-Selector in der Navigation den aktiven Tenant wechseln:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-9cf575221f977c367137975c44f944bacf3c33fc.svg" alt="Diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Die Tenant-Liste wird über <code>UserManagementClient.listTenants()</code> geladen und im Header-Fragment als Dropdown angezeigt (nur für SUPERADMIN sichtbar).
+Der <code>DefaultTenantFilter</code> prüft, ob ein Session-Override vorhanden ist, und verwendet diesen statt des Default-Tenants.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_benutzerverwaltung_swr_051"><a class="anchor" href="#_benutzerverwaltung_swr_051"></a>10.4. Benutzerverwaltung (SWR-051)</h3>
+<div class="paragraph">
+<p>Die Seite <code>/admin/users</code> zeigt eine Tabelle aller Benutzer des aktuellen Tenants:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Spalte</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Display-Name des Benutzers</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">E-Mail</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">E-Mail-Adresse</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rolle</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Aktuelle Rolle im Tenant</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Approval-Status (PENDING, APPROVED, REJECTED)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Aktionen</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Approve/Reject-Buttons, Rollen-Dropdown</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Aktionen werden als POST-Formulare mit CSRF-Token abgesetzt und leiten nach Ausführung zurück auf <code>/admin/users</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tenant_einstellungen_swr_052"><a class="anchor" href="#_tenant_einstellungen_swr_052"></a>10.5. Tenant-Einstellungen (SWR-052)</h3>
+<div class="paragraph">
+<p>Die Seite <code>/admin/settings</code> zeigt ein Formular mit den konfigurierbaren Tenant-Einstellungen:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Login-Methode</strong>: Radio-Buttons für INTERNAL, OIDC, BOTH</p>
+</li>
+<li>
+<p><strong>Auto-Approval OIDC</strong>: Checkbox</p>
+</li>
+<li>
+<p><strong>Auto-Approval E-Mail-Domains</strong>: Textfeld (kommagetrennt)</p>
+</li>
+<li>
+<p><strong>Display-Name</strong>: Textfeld für den Blog-Titel</p>
+</li>
+<li>
+<p><strong>Tagline</strong>: Textfeld für die optionale Tagline</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Änderungen werden über <code>POST /admin/settings</code> an den User-Management-Service propagiert.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_template_struktur_2"><a class="anchor" href="#_template_struktur_2"></a>10.6. Template-Struktur</h3>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-80d7dd1d6dad7a9e29b43ae9df242f73c4c71a8c.svg" alt="Diagram">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_security_konfiguration"><a class="anchor" href="#_security_konfiguration"></a>10.7. Security-Konfiguration</h3>
+<div class="paragraph">
+<p>Die bestehende <code>SecurityConfiguration</code> wird erweitert:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>/admin/users</code> und <code>/admin/settings</code>: Zugriff nur mit Rolle <code>ADMIN</code> oder <code>SUPERADMIN</code></p>
+</li>
+<li>
+<p><code>/admin/switch-tenant</code>: Zugriff nur mit Rolle <code>SUPERADMIN</code></p>
+</li>
+<li>
+<p>Der Break-Glass-Login unter <code>/admin/login</code> bleibt unverändert (nur SUPERADMIN)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

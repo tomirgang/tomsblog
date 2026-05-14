@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Provisionierung (IaC) :: Toms Blog: Dokumentation</title>
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../index.html">Toms Blog: Dokumentation</a>
+      <button class="navbar-burger" aria-label="Toggle navigation" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="../../../tomsblog-arc42/main/index.html">Architektur (arc42)</a>
+        <a class="navbar-item" href="../../../tomsblog-design/main/index.html">Software Detail Design</a>
+        <a class="navbar-item" href="../../../tomsblog-infra/main/index.html">Infrastruktur</a>
+        <a class="navbar-item" href="../../../requirements/index.html">Requirements</a>
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field">
+            <input id="search-input" type="text" placeholder="Dokumentation durchsuchen">
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="tomsblog-infra" data-version="v0.8.9">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Toms Blog: Infrastruktur-Dokumentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Überblick</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Cluster-Setup</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="provisioning.html">Provisionierung (IaC)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="networking.html">Netzwerk &amp; DNS</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../gitops/index.html">GitOps &amp; Deployment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gitops/flux.html">Flux-Konfiguration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gitops/image-automation.html">Image-Automation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gitops/secrets.html">Secrets-Management (SOPS)</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../service-mesh/index.html">Service Mesh</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-mesh/mtls.html">mTLS</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-mesh/authorization.html">AuthorizationPolicies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../networking/index.html">Networking &amp; Ingress</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../networking/traefik.html">Traefik Ingress Controller</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../networking/tls.html">TLS &amp; Zertifikate</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../networking/network-policies.html">Network Policies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../data/index.html">Datenhaltung</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../data/cloudnativepg.html">CloudNativePG</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../data/redis.html">Redis</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../data/backup.html">Backup &amp; Recovery</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../operations/index.html">Operations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../operations/rollback.html">Rollback-Verfahren</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../operations/disaster-recovery.html">Disaster Recovery</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../operations/monitoring.html">Monitoring &amp; Alerting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Toms Blog: Infrastruktur-Dokumentation</span>
+    <span class="version">v0.8.9-dev</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-arc42/v0.10.6/index.html">Toms Blog: Architekturdokumentation</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../tomsblog-arc42/main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../../tomsblog-arc42/v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <div class="title"><a href="../../main/index.html">Toms Blog: Infrastruktur-Dokumentation</a></div>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../main/index.html">main-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.6/index.html">v0.9.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.5/index.html">v0.9.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.4/index.html">v0.9.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.3/index.html">v0.9.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.2/index.html">v0.9.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.1/index.html">v0.9.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.0/index.html">v0.9.0-dev</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">v0.8.9-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.8/index.html">v0.8.8-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.7/index.html">v0.8.7-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.6/index.html">v0.8.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.5/index.html">v0.8.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.4/index.html">v0.8.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.3/index.html">v0.8.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.2/index.html">v0.8.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.1/index.html">v0.8.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.0/index.html">v0.8.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.3/index.html">v0.7.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.2/index.html">v0.7.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.1/index.html">v0.7.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.3/index.html">v0.5.3-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-design/v0.10.6/index.html">Toms Blog: Software Detail Design</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../tomsblog-design/main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../../tomsblog-design/v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../tomsblog-arc42/v0.10.6/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Toms Blog: Infrastruktur-Dokumentation</a></li>
+    <li><a href="index.html">Cluster-Setup</a></li>
+    <li><a href="provisioning.html">Provisionierung (IaC)</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v0.8.9-dev</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/cluster-setup/provisioning.html">main-dev</a>
+    <a class="version" href="../../v0.9.6/cluster-setup/provisioning.html">v0.9.6-dev</a>
+    <a class="version" href="../../v0.9.5/cluster-setup/provisioning.html">v0.9.5-dev</a>
+    <a class="version" href="../../v0.9.4/cluster-setup/provisioning.html">v0.9.4-dev</a>
+    <a class="version" href="../../v0.9.3/cluster-setup/provisioning.html">v0.9.3-dev</a>
+    <a class="version" href="../../v0.9.2/cluster-setup/provisioning.html">v0.9.2-dev</a>
+    <a class="version" href="../../v0.9.1/cluster-setup/provisioning.html">v0.9.1-dev</a>
+    <a class="version" href="../../v0.9.0/cluster-setup/provisioning.html">v0.9.0-dev</a>
+    <a class="version is-current" href="provisioning.html">v0.8.9-dev</a>
+    <a class="version" href="../../v0.8.8/cluster-setup/provisioning.html">v0.8.8-dev</a>
+    <a class="version" href="../../v0.8.7/cluster-setup/provisioning.html">v0.8.7-dev</a>
+    <a class="version" href="../../v0.8.6/cluster-setup/provisioning.html">v0.8.6-dev</a>
+    <a class="version" href="../../v0.8.5/cluster-setup/provisioning.html">v0.8.5-dev</a>
+    <a class="version" href="../../v0.8.4/cluster-setup/provisioning.html">v0.8.4-dev</a>
+    <a class="version" href="../../v0.8.3/cluster-setup/provisioning.html">v0.8.3-dev</a>
+    <a class="version" href="../../v0.8.2/cluster-setup/provisioning.html">v0.8.2-dev</a>
+    <a class="version" href="../../v0.8.1/cluster-setup/provisioning.html">v0.8.1-dev</a>
+    <a class="version" href="../../v0.8.0/cluster-setup/provisioning.html">v0.8.0-dev</a>
+    <a class="version" href="../../v0.7.3/cluster-setup/provisioning.html">v0.7.3-dev</a>
+    <a class="version" href="../../v0.7.2/cluster-setup/provisioning.html">v0.7.2-dev</a>
+    <a class="version" href="../../v0.7.1/cluster-setup/provisioning.html">v0.7.1-dev</a>
+    <a class="version" href="../../v0.5.3/cluster-setup/provisioning.html">v0.5.3-dev</a>
+  </div>
+</div>
+<div class="edit-this-page"><a href="https://github.com/tomirgang/tomsblog/blob/v0.8.9/docs/infra/modules/ROOT/pages/cluster-setup/provisioning.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Provisionierung (IaC)</h1>
+<div class="sect1">
+<h2 id="_iac_repository"><a class="anchor" href="#_iac_repository"></a>1. IaC-Repository</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Die Cluster-Provisionierung erfolgt im Repository <code>kubernetes-playground/K8nCluster</code> mit OpenTofu (INF-001, SWA-017). Dieses Repository enthält:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>OpenTofu-Konfiguration für Hetzner Cloud Ressourcen</p>
+</li>
+<li>
+<p>kube-hetzner Modul-Konfiguration (Nodes, Netzwerk, Load Balancer)</p>
+</li>
+<li>
+<p>Basis-Operatoren (CloudNativePG, Linkerd)</p>
+</li>
+<li>
+<p>Flux-Bootstrap-Konfiguration</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_provisionierungs_workflow"><a class="anchor" href="#_provisionierungs_workflow"></a>1.1. Provisionierungs-Workflow</h3>
+<div class="paragraph">
+<p>Der folgende Ablauf beschreibt die initiale Cluster-Erstellung und Updates:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-80eb08047654bb44006ab7928839922897217243.svg" alt="Diagram">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_trennung_der_verantwortlichkeiten"><a class="anchor" href="#_trennung_der_verantwortlichkeiten"></a>1.2. Trennung der Verantwortlichkeiten</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Schicht</th>
+<th class="tableblock halign-left valign-top">Verantwortung</th>
+<th class="tableblock halign-left valign-top">Repository</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Plattform</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Nodes, Netzwerk, LB, Basis-Operatoren</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IaC-Repo</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Applikation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DB-Instanzen, Services, Ingress, Policies</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">App-Repo (infra/k8s/)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Diese Trennung stellt sicher, dass Plattform-Änderungen (z.B. Node-Upgrade) unabhängig von Applikations-Deployments durchgeführt werden können.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_node_konfiguration"><a class="anchor" href="#_node_konfiguration"></a>2. Node-Konfiguration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Alle Nodes verwenden Ubuntu 22.04 mit automatischen Security-Updates. k3s wird in der aktuellen stabilen Version installiert.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Rolle</th>
+<th class="tableblock halign-left valign-top">Typ</th>
+<th class="tableblock halign-left valign-top">vCPU</th>
+<th class="tableblock halign-left valign-top">RAM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Control Plane</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CX33</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8 GB</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Worker 1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CX23</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4 GB</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Worker 2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CX23</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4 GB</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_basis_operatoren_via_iac"><a class="anchor" href="#_basis_operatoren_via_iac"></a>3. Basis-Operatoren (via IaC)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Die folgenden Operatoren werden im IaC-Repository via Helm installiert:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>CloudNativePG</strong>&#8201;&#8212;&#8201;PostgreSQL-Operator (CRDs + Controller)</p>
+</li>
+<li>
+<p><strong>Linkerd</strong>&#8201;&#8212;&#8201;Service Mesh (CRDs + Control Plane)</p>
+</li>
+<li>
+<p><strong>Reflector</strong>&#8201;&#8212;&#8201;Cross-Namespace Secret-Synchronisation</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>cert-manager wird über Flux verwaltet (siehe <code>flux/cert-manager-release.yaml</code>).</p>
+</div>
+<div class="paragraph">
+<p>Die applikationsspezifischen Custom Resources (z.B. PostgreSQL-Cluster-Definition, ClusterIssuer) liegen im App-Repository unter <code>infra/k8s/</code>.</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

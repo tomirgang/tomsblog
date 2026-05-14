@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0009: Domain-Modell für Blog Content Service</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0009-domain-modell-für-blog-content-service">ADR-0009:
+Domain-Modell für Blog Content Service</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Der Blog Content Service benötigt ein vollständiges Domain-Modell,
+das folgende Konzepte abbildet:</p>
+<ul>
+<li><strong>Post</strong>: Kern-Aggregate für Blog-Beiträge</li>
+<li><strong>Author</strong>: Wer hat den Post verfasst</li>
+<li><strong>Tenant</strong>: Multi-Mandanten-Isolation</li>
+<li><strong>Tag</strong>: Kategorisierung/Verschlagwortung</li>
+<li><strong>Attachment</strong>: Dateianhänge (Bilder, PDFs)</li>
+<li><strong>Translation</strong>: Mehrsprachige Versionen eines
+Posts</li>
+<li><strong>Source</strong>: Quellenangaben/Referenzen</li>
+</ul>
+<p>Die Herausforderung besteht darin, diese Konzepte DDD-konform zu
+modellieren (Aggregates, Entities, Value Objects) und gleichzeitig die
+Anforderungen an Mehrsprachigkeit (SWR-004, SWR-005), Quellenverwaltung
+(SWR-012) und Multi-Tenancy (SWR-003) zu erfüllen.</p>
+<h2 id="decision">Decision</h2>
+<h3 id="post-aggregate-root">Post (Aggregate Root)</h3>
+<p>Post bleibt das zentrale Aggregate. Es wird erweitert um:</p>
+<ul>
+<li><code>AuthorId</code> als Referenz auf den Autor (nicht embedded, um
+Konsistenz zu wahren)</li>
+<li><code>Set&lt;TagId&gt;</code> statt <code>Set&lt;Tag&gt;</code> —
+lose Kopplung, Tags haben eigenen Lifecycle</li>
+<li><code>List&lt;Source&gt;</code> als Value Objects direkt im
+Post</li>
+<li><code>List&lt;Attachment&gt;</code> als Value Objects direkt im
+Post</li>
+</ul>
+<h3 id="author-nur-authorid-referenz">Author (nur
+AuthorId-Referenz)</h3>
+<p>Author wird <strong>nicht</strong> als eigene Entity im blog-content
+Bounded Context modelliert. Der Post trägt lediglich eine
+<code>AuthorId</code>-Referenz. Begründung:</p>
+<ul>
+<li>Keine Datenduplikation zwischen Content-Service und
+Auth-Service</li>
+<li>Author-Stammdaten (displayName, email, bio) werden vom Auth-Service
+(Phase 3) verwaltet</li>
+<li>Der blog-content Service löst AuthorId bei Bedarf über einen
+Read-Adapter auf</li>
+<li><code>AuthorId</code> liegt im shared-kernel und ist
+service-übergreifend nutzbar</li>
+</ul>
+<h3 id="tag-entity-mit-identity">Tag (Entity mit Identity)</h3>
+<p>Tag wird von einem einfachen Value Object (nur <code>name</code>) zu
+einer vollwertigen Entity mit eigener ID aufgewertet:</p>
+<ul>
+<li><code>TagId</code>, <code>TenantId</code>, <code>name</code>,
+<code>slug</code></li>
+<li>Ermöglicht Tag-Management-API (Umbenennen, Zusammenführen)</li>
+<li>Slug für URL-freundliche Tag-basierte Feeds (SWR-008)</li>
+<li>Tenant-Scoped: Tags sind pro Mandant isoliert</li>
+</ul>
+<h3 id="translation-eigenes-aggregate">Translation (eigenes
+Aggregate)</h3>
+<p>Übersetzungen werden als separates Aggregate modelliert (nicht als
+Child im Post):</p>
+<ul>
+<li>Eigener Lifecycle: DRAFT → REVIEW_PENDING → APPROVED/REJECTED</li>
+<li>AI-generierte Übersetzungen starten in REVIEW_PENDING (Autor muss
+prüfen)</li>
+<li>Manuelle Übersetzungen starten in DRAFT</li>
+<li>Referenziert Post via <code>PostId</code></li>
+<li>Eigene Domain Events: <code>TranslationCreatedEvent</code>,
+<code>TranslationApprovedEvent</code></li>
+</ul>
+<p>Begründung: Der KI-Übersetzungs-Workflow (SWR-004) erfordert einen
+eigenen Freigabe-Prozess. Dies wäre als Child-Entity im Post-Aggregate
+zu komplex und würde die Transaktionsgrenze unnötig aufblähen.</p>
+<h3 id="tenant">Tenant</h3>
+<p>Tenant wird <strong>nicht</strong> als eigene Entity im blog-content
+modelliert. Es bleibt bei <code>TenantId</code> als Referenz.
+Begründung: Tenant-Verwaltung (Name, Konfiguration, Abrechnung) gehört
+in einen separaten Service (Phase 3). Der blog-content Service nutzt
+<code>TenantId</code> nur zur Datenfilterung.</p>
+<h3 id="source-value-object">Source (Value Object)</h3>
+<p>Quellen werden als Value Object <code>Source(url, title)</code> im
+Post-Aggregate gehalten. Sie haben keinen eigenen Lifecycle und keine
+eigene Identity.</p>
+<h3 id="attachment-value-object">Attachment (Value Object)</h3>
+<p>Attachments werden als Value Object mit einer generierten
+<code>AttachmentId</code> modelliert. Die ID ermöglicht gezieltes
+Entfernen. Der <code>storageKey</code> referenziert den Speicherort im
+S3-Backend (Phase 7).</p>
+<p>Ein <code>show</code>-Flag steuert die Darstellung im
+Blog-Rendering:</p>
+<ul>
+<li><code>show=true</code>: Attachment wird in der Blog-Ansicht
+angezeigt (z.B. als Galerie-Element oder Download-Link)</li>
+<li><code>show=false</code>: Attachment ist für eingebettete Inhalte
+gedacht (z.B. Inline-Bilder im Content)</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Klare Aggregate-Grenzen: Post, Tag, Translation sind unabhängig
+persistierbar</li>
+<li>Translation als eigenes Aggregate ermöglicht den KI-Workflow ohne
+Post zu belasten</li>
+<li>TagId-Referenzen im Post ermöglichen Tag-Rename ohne
+Post-Update</li>
+<li>Source und Attachment als VOs im Post halten die Konsistenz
+einfach</li>
+<li>Alle Entities tragen TenantId für Multi-Tenant-Isolation</li>
+<li>Keine Datenduplikation durch reine AuthorId-Referenz</li>
+<li>show-Flag ermöglicht flexible Attachment-Darstellung ohne
+zusätzliche Entitäten</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>Eventual Consistency zwischen Post und Translation (separate
+Aggregates)</li>
+<li>Tag-Löschung erfordert Cleanup der TagId-Referenzen in Posts</li>
+<li>Autor-Anzeigename erfordert Lookup beim Auth-Service (Latenz,
+Ausfallrisiko)</li>
+<li>Mehr Mapping-Aufwand im Persistence-Adapter (Source-Embeddable,
+Attachment-Embeddable)</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li>SWR-001: Post CRUD API</li>
+<li>SWR-003: Tenant-Isolation</li>
+<li>SWR-004: KI-Übersetzung</li>
+<li>SWR-005: Manuelle Übersetzung</li>
+<li>SWR-007: Rollenbasierte Zugriffskontrolle</li>
+<li>SWR-012: Quellenverwaltung</li>
+<li>ADR-0001: Hexagonale Architektur</li>
+<li>ADR-0008: Shared Kernel Framework-frei</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

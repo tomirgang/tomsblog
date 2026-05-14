@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0002: Java und Maven als Technologie-Basis</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0002-java-und-maven-als-technologie-basis">ADR-0002: Java
+und Maven als Technologie-Basis</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Für die Backend-Services brauchen wir eine Programmiersprache und ein
+Build-System. Das Projekt dient als Lernplattform für
+Cloud-Native-Architekturen.</p>
+<p><strong>Sprach-Alternativen:</strong></p>
+<ul>
+<li><strong>Kotlin</strong>: moderner, weniger Boilerplate, aber
+zusätzliche Lernkurve</li>
+<li><strong>Java</strong>: ausgereiftes Ökosystem, breite
+Tooling-Unterstützung, Java Records reduzieren Boilerplate</li>
+</ul>
+<p><strong>Build-Alternativen:</strong></p>
+<ul>
+<li><strong>Gradle (Kotlin DSL)</strong>: flexibel, schneller bei
+inkrementellen Builds</li>
+<li><strong>Maven</strong>: konventionsbasiert, deklarativ, breiter
+IDE-Support, einfachere Reproduzierbarkeit</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p>Wir verwenden <strong>Java 25 (LTS)</strong> als Programmiersprache
+und <strong>Maven</strong> als Build-System mit
+Multi-Module-Struktur.</p>
+<ul>
+<li>Java Records für DTOs, Events und Value Objects</li>
+<li>Maven Parent POM mit Spring Boot Starter Parent</li>
+<li>Maven Wrapper (<code>mvnw</code>) im Repository für reproduzierbare
+Builds</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Breite Tooling-Unterstützung (IDE, CI, Analyse-Tools)</li>
+<li>Deklaratives Build-System, weniger "Build-Logik-Bugs"</li>
+<li>Java 25 bringt Records, Pattern Matching, Virtual Threads</li>
+<li>Maven Central hat das breiteste Ökosystem</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>Java ist verbosier als Kotlin (gemildert durch Records und moderne
+Features)</li>
+<li>Maven ist langsamer als Gradle bei großen Projekten</li>
+<li>XML-basierte Konfiguration (POM) ist weniger elegant als Kotlin
+DSL</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0029: Deklarative Datenbankverwaltung mit CloudNativePG
+Database CRD</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1
+id="adr-0029-deklarative-datenbankverwaltung-mit-cloudnativepg-database-crd">ADR-0029:
+Deklarative Datenbankverwaltung mit CloudNativePG Database CRD</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Die Blog-Plattform nutzt das Database-per-Service-Pattern (ADR-0019).
+Aktuell werden die Datenbanken asymmetrisch angelegt:</p>
+<ul>
+<li><code>blog_content</code> über die <code>initdb</code>-Konfiguration
+der Cluster-Ressource</li>
+<li><code>user_management</code> über
+<code>postInitApplicationSQL</code> (einmalig beim Bootstrap)</li>
+<li><code>tenant_management</code> über
+<code>postInitApplicationSQL</code> (einmalig beim Bootstrap)</li>
+</ul>
+<p>Diese Lösung hat mehrere Schwächen:</p>
+<ol type="1">
+<li><strong>Asymmetrie</strong>: Die primäre Datenbank hat eine
+Sonderrolle gegenüber weiteren Datenbanken</li>
+<li><strong>Keine Reconciliation</strong>:
+<code>postInitApplicationSQL</code> läuft nur einmalig beim Bootstrap.
+Drift wird nicht erkannt oder korrigiert</li>
+<li><strong>Fehler unsichtbar</strong>: Probleme beim Anlegen
+zusätzlicher Datenbanken erscheinen nur in Pod-Logs statt in einer
+dedizierten Kubernetes-Ressource</li>
+<li><strong>Kein Lifecycle-Management</strong>: Es gibt keine
+deklarative Möglichkeit, Datenbanken zu entfernen oder deren
+Konfiguration zu ändern</li>
+<li><strong>Owner-Inkonsistenz</strong>: <code>initdb</code> nutzt
+<code>owner: blog_content</code>, <code>postInitApplicationSQL</code>
+nutzt <code>OWNER app</code> (der CNPG-Default-User), was zu Verwirrung
+führt</li>
+</ol>
+<p>Seit CloudNativePG v1.25 existiert eine dedizierte
+<code>Database</code>-CRD, die den Lebenszyklus von
+PostgreSQL-Datenbanken als eigenständige Kubernetes-Ressourcen
+verwaltet.</p>
+<h3 id="evaluierte-alternativen">Evaluierte Alternativen</h3>
+<p><strong>Aktuelle Lösung (initdb +
+postInitApplicationSQL):</strong></p>
+<ul>
+<li>Einfach, aber asymmetrisch</li>
+<li>Kein Drift-Detection oder Status-Reporting</li>
+<li>Bootstrap-Only: nachträgliche Änderungen nicht möglich</li>
+</ul>
+<p><strong>Database CRD (ab CNPG ≥ 1.25):</strong></p>
+<ul>
+<li>Jede Datenbank ist ein eigenes Kubernetes-Objekt</li>
+<li>Reconciliation durch den Operator</li>
+<li>Status und Fehler im <code>.status</code>-Feld sichtbar</li>
+<li><code>databaseReclaimPolicy</code> steuert Löschverhalten
+(retain/delete)</li>
+<li>GitOps-fähig: jedes Team/Service pflegt sein eigenes Manifest</li>
+<li>Erweiterbar um Extensions und Schemas</li>
+</ul>
+<p><strong>Manuelle SQL-Skripte:</strong></p>
+<ul>
+<li>Volle Kontrolle, aber kein Kubernetes-nativer Workflow</li>
+<li>Kein Reconciliation, kein Status-Reporting</li>
+<li>Nicht GitOps-kompatibel</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p>Wir migrieren auf die <strong>CloudNativePG Database CRD</strong> für
+die deklarative Verwaltung aller Service-Datenbanken. Jede Datenbank
+wird als eigenständige <code>Database</code>-Ressource definiert.</p>
+<h3 id="voraussetzungen">Voraussetzungen</h3>
+<ul>
+<li>CloudNativePG Operator ≥ 1.25 (Upgrade des Operators im
+IaC-Repository)</li>
+</ul>
+<h3 id="ziel-konfiguration">Ziel-Konfiguration</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apiVersion</span><span class="kw">:</span><span class="at"> postgresql.cnpg.io/v1</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kind</span><span class="kw">:</span><span class="at"> Cluster</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> postgres-cluster</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">namespace</span><span class="kw">:</span><span class="at"> postgres</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">spec</span><span class="kw">:</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">instances</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">bootstrap</span><span class="kw">:</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">initdb</span><span class="kw">:</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">database</span><span class="kw">:</span><span class="at"> app</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">owner</span><span class="kw">:</span><span class="at"> app</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">apiVersion</span><span class="kw">:</span><span class="at"> postgresql.cnpg.io/v1</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">kind</span><span class="kw">:</span><span class="at"> Database</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> blog-content-db</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">namespace</span><span class="kw">:</span><span class="at"> postgres</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">spec</span><span class="kw">:</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> blog_content</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">owner</span><span class="kw">:</span><span class="at"> app</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">cluster</span><span class="kw">:</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> postgres-cluster</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">databaseReclaimPolicy</span><span class="kw">:</span><span class="at"> retain</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">apiVersion</span><span class="kw">:</span><span class="at"> postgresql.cnpg.io/v1</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">kind</span><span class="kw">:</span><span class="at"> Database</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> user-management-db</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">namespace</span><span class="kw">:</span><span class="at"> postgres</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">spec</span><span class="kw">:</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> user_management</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">owner</span><span class="kw">:</span><span class="at"> app</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">cluster</span><span class="kw">:</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> postgres-cluster</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">databaseReclaimPolicy</span><span class="kw">:</span><span class="at"> retain</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">apiVersion</span><span class="kw">:</span><span class="at"> postgresql.cnpg.io/v1</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="fu">kind</span><span class="kw">:</span><span class="at"> Database</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> tenant-management-db</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">namespace</span><span class="kw">:</span><span class="at"> postgres</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">spec</span><span class="kw">:</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> tenant_management</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">owner</span><span class="kw">:</span><span class="at"> app</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">cluster</span><span class="kw">:</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> postgres-cluster</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">databaseReclaimPolicy</span><span class="kw">:</span><span class="at"> retain</span></span></code></pre></div>
+<h3 id="rollen-konzept">Rollen-Konzept</h3>
+<p>Vorerst wird die vom Operator verwaltete <code>app</code>-Rolle als
+Owner für alle Datenbanken verwendet. Eine Trennung in dedizierte Rollen
+pro Service (<code>blog_content</code>, <code>user_management</code>)
+wird evaluiert, sobald die geplante <code>DatabaseRole</code>-CRD
+(erwartet in CNPG 1.30) stabil verfügbar ist.</p>
+<h3 id="migrationsplan">Migrationsplan</h3>
+<ol type="1">
+<li>CloudNativePG Operator auf ≥ 1.25 upgraden (IaC-Repository)</li>
+<li><code>Database</code>-Ressourcen für bestehende Datenbanken
+erstellen (adopt existing)</li>
+<li><code>initdb.postInitApplicationSQL</code> aus der
+Cluster-Definition entfernen</li>
+<li><code>initdb.database</code> auf neutralen Platzhalter
+<code>app</code> umstellen</li>
+<li>Validierung: Datenbanken und Berechtigungen unverändert</li>
+</ol>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Vorteile:</strong></p>
+<ul>
+<li>Symmetrische, deklarative Verwaltung aller Datenbanken</li>
+<li>GitOps-fähig: jede Datenbank als eigenständiges Manifest in
+<code>infra/k8s/postgres/</code></li>
+<li>Operator überwacht Zustand und reconciliert bei Drift</li>
+<li>Fehler im <code>.status</code>-Feld der Ressource sichtbar
+(<code>kubectl get database</code>)</li>
+<li><code>databaseReclaimPolicy: retain</code> schützt vor
+versehentlichem Datenverlust</li>
+<li>Konsistente Owner-Rolle für alle Datenbanken</li>
+<li>Einfaches Hinzufügen weiterer Service-Datenbanken (z. B.
+comment-service, feed-service)</li>
+</ul>
+<p><strong>Nachteile:</strong></p>
+<ul>
+<li>Erfordert CNPG-Operator-Upgrade auf ≥ 1.25</li>
+<li>Migration bestehender Datenbanken muss sorgfältig getestet werden
+(adopt)</li>
+<li>Dedizierte Rollen pro Service erst mit zukünftiger
+<code>DatabaseRole</code>-CRD möglich</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li>ADR-0019 (Database per Service)</li>
+<li>ADR-0023 (CloudNativePG Operator)</li>
+<li>INF-005 (PostgreSQL HA via CloudNativePG)</li>
+<li>SWA-018 (PostgreSQL-Betrieb mit CloudNativePG Operator)</li>
+<li>INF-013 (Deklarative Datenbankverwaltung mit Database CRD)</li>
+<li>SWA-030 (Deklarative Datenbank-Ressourcen pro Service)</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

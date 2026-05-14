@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0032: Eigenständige UI für Authentifizierung und
+Benutzerverwaltung</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1
+id="adr-0032-eigenständige-ui-für-authentifizierung-und-benutzerverwaltung">ADR-0032:
+Eigenständige UI für Authentifizierung und Benutzerverwaltung</h1>
+<h2 id="status">Status</h2>
+<p>Proposed</p>
+<h2 id="context">Context</h2>
+<p>Der Blog Content Service hostet aktuell die gesamte
+Authentifizierungs- und Benutzerverwaltungs-UI: LoginController,
+RegistrationController, AdminController (User/Settings),
+SyncingOidcUserService, TenantAwareClientRegistrationRepository,
+SecurityConfiguration (OIDC-Flows) sowie sechs Thymeleaf-Templates
+(login, register, admin-login, admin/users, admin/settings,
+registration-success). Diese Komponenten machen ca. 50% des
+Web-Adapter-Layers aus, gehören aber fachlich zur
+User-Management-Domäne.</p>
+<h3 id="probleme">Probleme</h3>
+<ol type="1">
+<li><p><strong>Bounded Context Verletzung</strong>: Blog Content kennt
+LoginMode, Passwort-Policies, User-Approval-Workflows und
+OIDC-Provider-Konfiguration. Das sind Konzepte der
+User-Management-Domäne.</p></li>
+<li><p><strong>Synchrone gRPC-Kopplung für eigene UI</strong>: Für jede
+Login-Seite muss der Blog Content Service per gRPC die TenantSettings
+abfragen, obwohl der User Management Service diese Daten lokal
+hat.</p></li>
+<li><p><strong>Deployment-Kopplung</strong>: Änderungen am
+Registrierungsflow oder Login-Mode erfordern ein Re-Deployment des Blog
+Content Service.</p></li>
+<li><p><strong>Widerspruch zu ADR-0016 (BFF)</strong>: Die User-UI im
+Blog Content Service ist ein implizites BFF für User
+Management.</p></li>
+<li><p><strong>Widerspruch zu ADR-0017 (API Gateway)</strong>: Das
+Gateway-Routing sieht <code>/auth/**</code> als eigene Route vor, aber
+die Auth-UI lebt unter Blog Content Routen (<code>/login</code>,
+<code>/register</code>, <code>/admin/users</code>).</p></li>
+</ol>
+<h3 id="evaluierte-alternativen">Evaluierte Alternativen</h3>
+<p><strong>Status Quo (UI im Blog Content Service):</strong></p>
+<ul>
+<li>Vorteil: Kein Migrationsaufwand</li>
+<li>Nachteil: Wachsende Kopplung, Blog Content wird zur Sammelstelle für
+fremde Domänenlogik</li>
+</ul>
+<p><strong>Eigene UI im User Management Service:</strong></p>
+<ul>
+<li>Vorteil: Saubere Bounded Contexts, unabhängige Deployments, keine
+gRPC-Umwege für eigene Daten</li>
+<li>Nachteil: Redirect-basierter Login-Flow, Shared Session Store
+(Redis) wird Pflicht</li>
+</ul>
+<p><strong>Separate Auth-UI als eigener BFF-Service:</strong></p>
+<ul>
+<li>Vorteil: Maximale Trennung</li>
+<li>Nachteil: Dritter Service für reine UI-Orchestrierung,
+Over-Engineering für Meilenstein 1</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p>Die <strong>Authentifizierungs- und Benutzerverwaltungs-UI wird in
+den User Management Service verschoben</strong>. Der User Management
+Service erhält eine eigene Thymeleaf-basierte Web-Oberfläche.</p>
+<h3 id="was-zum-user-management-service-wandert">Was zum User Management
+Service wandert</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Komponente</th>
+<th>Neuer Pfad</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>LoginController + login.html</td>
+<td>/auth/login</td>
+</tr>
+<tr class="even">
+<td>Admin-Login + admin-login.html</td>
+<td>/auth/admin/login</td>
+</tr>
+<tr class="odd">
+<td>RegistrationController + register.html</td>
+<td>/auth/register</td>
+</tr>
+<tr class="even">
+<td>registration-success.html</td>
+<td>/auth/registration-success</td>
+</tr>
+<tr class="odd">
+<td>AdminController (Users) + users.html</td>
+<td>/auth/admin/users</td>
+</tr>
+<tr class="even">
+<td>AdminController (Settings) + settings.html</td>
+<td>/auth/admin/settings</td>
+</tr>
+<tr class="odd">
+<td>SyncingOidcUserService</td>
+<td>Intern im User Mgmt Service</td>
+</tr>
+<tr class="even">
+<td>TenantAwareClientRegistrationRepository</td>
+<td>Intern im User Mgmt Service</td>
+</tr>
+<tr class="odd">
+<td>SecurityConfiguration (OIDC/Form-Login)</td>
+<td>Intern im User Mgmt Service</td>
+</tr>
+<tr class="even">
+<td>LoginRateLimitFilter</td>
+<td>Intern im User Mgmt Service</td>
+</tr>
+</tbody>
+</table>
+<h3 id="was-im-blog-content-service-bleibt">Was im Blog Content Service
+bleibt</h3>
+<ul>
+<li>BlogViewController + Blog-Templates (Post-Lese- und
+Schreibansichten)</li>
+<li>PostFormData + Post-Formulare</li>
+<li>LegalController + Impressum/Privacy (bis ADR-0031 aktiv, dann zum
+Tenant Service)</li>
+<li>Vereinfachte SecurityConfiguration: nur Session-Validierung via
+Redis, kein OIDC-Flow</li>
+<li>TenantBrandingAdvice, DefaultTenantFilter, VersionModelAdvice</li>
+</ul>
+<h3 id="authentifizierungsflow-ziel">Authentifizierungsflow (Ziel)</h3>
+<pre><code>Benutzer          Blog Content Service        User Mgmt Service          Redis
+   │                     │                          │                      │
+   │── GET /posts ──────►│                          │                      │
+   │◄── Öffentliche ─────│                          │                      │
+   │    Seite            │                          │                      │
+   │                     │                          │                      │
+   │── Klick &quot;Login&quot; ───►│                          │                      │
+   │◄── Redirect ────────│─── /auth/login ─────────►│                      │
+   │                     │                          │                      │
+   │── GET /auth/login ────────────────────────────►│                      │
+   │◄── Login-Formular ─────────────────────────────│                      │
+   │    (oder OIDC-Redirect)                        │                      │
+   │                     │                          │                      │
+   │── POST /auth/login ───────────────────────────►│                      │
+   │                     │                          │── Session ──────────►│
+   │◄── Redirect /posts ────────────────────────────│                      │
+   │                     │                          │                      │
+   │── GET /posts ──────►│                          │                      │
+   │                     │── Session lesen ───────────────────────────────►│
+   │                     │◄── Rollen ──────────────────────────────────────│
+   │◄── Geschützte ──────│                          │                      │
+   │    Seite            │                          │                      │</code></pre>
+<h3 id="gateway-routing-ergänzung-zu-adr-0017">Gateway-Routing
+(Ergänzung zu ADR-0017)</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Route</th>
+<th>Ziel</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>/auth/**</td>
+<td>User Management Service</td>
+</tr>
+<tr class="even">
+<td>/api/**</td>
+<td>Web BFF / Blog Content</td>
+</tr>
+<tr class="odd">
+<td>/posts/**, /</td>
+<td>Blog Content Service</td>
+</tr>
+<tr class="even">
+<td>/impressum, /privacy</td>
+<td>Blog Content Service</td>
+</tr>
+</tbody>
+</table>
+<h3 id="abhängigkeiten">Abhängigkeiten</h3>
+<ul>
+<li><strong>ADR-0030 (Redis Session Store)</strong>: Wird zur
+Voraussetzung, da beide Services die gleiche Session lesen/schreiben
+müssen (SWR-064).</li>
+<li><strong>ADR-0031 (Tenant Service)</strong>: Wenn umgesetzt, wandern
+die Tenant-Settings-Teile der Admin-UI perspektivisch weiter zum Tenant
+Service. Die User-Verwaltungs-UI bleibt beim User Management
+Service.</li>
+<li><strong>Shared CSS/Layout</strong>: Ein gemeinsames
+Thymeleaf-Layout-Fragment oder CSS-Paket sorgt für konsistentes Branding
+über Service-Grenzen hinweg.</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Saubere Bounded Contexts: Jeder Service hostet nur UI für seine
+eigene Domäne</li>
+<li>Unabhängige Deployments: Login-Flow-Änderungen erfordern kein Blog
+Content Deployment</li>
+<li>User Management Service greift für seine UI direkt auf die eigene DB
+zu (kein gRPC-Umweg)</li>
+<li>Konsistent mit ADR-0016 (BFF) und ADR-0017 (Gateway Routing)</li>
+<li>Blog Content Service wird deutlich schlanker (ca. 50% weniger
+Web-Adapter-Code)</li>
+<li>Folgt dem Standard-OIDC-Pattern (Auth-Server hat eigene UI)</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>Initialer Migrationsaufwand (Code + Templates verschieben, Tests
+anpassen)</li>
+<li>Redirect-basierter Login-Flow (zusätzlicher HTTP-Roundtrip)</li>
+<li>Redis wird zur harten Abhängigkeit für Mehrbenutzerbetrieb</li>
+<li>Template-Styling muss über Service-Grenzen konsistent bleiben</li>
+<li>Zwei Services brauchen Thymeleaf-Konfiguration</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li>SWR-016: OIDC Login</li>
+<li>SWR-028: Break-Glass Admin-Login</li>
+<li>SWR-044: Konfigurierbare Login-Methode</li>
+<li>SWR-051: Admin-UI Benutzerliste</li>
+<li>SWR-052: Admin-UI Tenant-Einstellungen</li>
+<li>SWR-053: SuperAdmin Tenant-Umschaltung</li>
+<li>SWR-059: REST-API lokale Benutzerregistrierung</li>
+<li>SWR-060: Thymeleaf-Registrierungsseite</li>
+<li>SWR-063: Dynamische OIDC-Client-Registrierung</li>
+<li>SWR-064: Shared Redis Session</li>
+<li>ADR-0016: Backend for Frontend</li>
+<li>ADR-0017: API Gateway</li>
+<li>ADR-0027: Authentik OIDC</li>
+<li>ADR-0030: Redis Session Store</li>
+<li>ADR-0031: Eigenständiger Tenant Service</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

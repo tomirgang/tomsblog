@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>5. Bausteinsicht :: Toms Blog: Dokumentation</title>
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../index.html">Toms Blog: Dokumentation</a>
+      <button class="navbar-burger" aria-label="Toggle navigation" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="../../../tomsblog-arc42/main/index.html">Architektur (arc42)</a>
+        <a class="navbar-item" href="../../../tomsblog-design/main/index.html">Software Detail Design</a>
+        <a class="navbar-item" href="../../../tomsblog-infra/main/index.html">Infrastruktur</a>
+        <a class="navbar-item" href="../../../requirements/index.html">Requirements</a>
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field">
+            <input id="search-input" type="text" placeholder="Dokumentation durchsuchen">
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="tomsblog-arc42" data-version="v0.9.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Toms Blog: Architekturdokumentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Überblick</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../01_introduction/index.html">1. Einführung und Ziele</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../02_constraints/index.html">2. Randbedingungen</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../03_context/index.html">3. Kontextabgrenzung</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../04_solution_strategy/index.html">4. Lösungsstrategie</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="index.html">5. Bausteinsicht</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../06_runtime/index.html">6. Laufzeitsicht</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../07_deployment/index.html">7. Verteilungssicht</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../08_crosscutting/index.html">8. Querschnittliche Konzepte</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../09_decisions/index.html">9. Architekturentscheidungen</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../10_quality/index.html">10. Qualitätsanforderungen</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../11_risks/index.html">11. Risiken und technische Schulden</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../12_glossary/index.html">12. Glossar</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Toms Blog: Architekturdokumentation</span>
+    <span class="version">v0.9.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../../v0.10.6/index.html">Toms Blog: Architekturdokumentation</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-infra/main/index.html">Toms Blog: Infrastruktur-Dokumentation</a></div>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../tomsblog-infra/main/index.html">main-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.6/index.html">v0.9.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.5/index.html">v0.9.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.4/index.html">v0.9.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.3/index.html">v0.9.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.2/index.html">v0.9.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.1/index.html">v0.9.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.9.0/index.html">v0.9.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.9/index.html">v0.8.9-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.8/index.html">v0.8.8-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.7/index.html">v0.8.7-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.6/index.html">v0.8.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.5/index.html">v0.8.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.4/index.html">v0.8.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.3/index.html">v0.8.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.2/index.html">v0.8.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.1/index.html">v0.8.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.8.0/index.html">v0.8.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.3/index.html">v0.7.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.2/index.html">v0.7.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.7.1/index.html">v0.7.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-infra/v0.5.3/index.html">v0.5.3-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-design/v0.10.6/index.html">Toms Blog: Software Detail Design</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../tomsblog-design/main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../../tomsblog-design/v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../v0.10.6/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Toms Blog: Architekturdokumentation</a></li>
+    <li><a href="index.html">5. Bausteinsicht</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v0.9.0</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/05_building_blocks/index.html">main-dev</a>
+    <a class="version" href="../../v0.10.6/05_building_blocks/index.html">v0.10.6</a>
+    <a class="version" href="../../v0.10.5/05_building_blocks/index.html">v0.10.5</a>
+    <a class="version" href="../../v0.10.4/05_building_blocks/index.html">v0.10.4</a>
+    <a class="version" href="../../v0.10.3/05_building_blocks/index.html">v0.10.3</a>
+    <a class="version" href="../../v0.10.2/05_building_blocks/index.html">v0.10.2</a>
+    <a class="version" href="../../v0.10.1/05_building_blocks/index.html">v0.10.1</a>
+    <a class="version" href="../../v0.10.0/05_building_blocks/index.html">v0.10.0</a>
+    <a class="version" href="../../v0.9.6/05_building_blocks/index.html">v0.9.6</a>
+    <a class="version" href="../../v0.9.5/05_building_blocks/index.html">v0.9.5</a>
+    <a class="version" href="../../v0.9.4/05_building_blocks/index.html">v0.9.4</a>
+    <a class="version" href="../../v0.9.3/05_building_blocks/index.html">v0.9.3</a>
+    <a class="version" href="../../v0.9.2/05_building_blocks/index.html">v0.9.2</a>
+    <a class="version" href="../../v0.9.1/05_building_blocks/index.html">v0.9.1</a>
+    <a class="version is-current" href="index.html">v0.9.0</a>
+    <a class="version" href="../../v0.8.9/05_building_blocks/index.html">v0.8.9</a>
+    <a class="version" href="../../v0.8.8/05_building_blocks/index.html">v0.8.8</a>
+    <a class="version" href="../../v0.8.7/05_building_blocks/index.html">v0.8.7</a>
+    <a class="version" href="../../v0.8.6/05_building_blocks/index.html">v0.8.6</a>
+    <a class="version" href="../../v0.8.5/05_building_blocks/index.html">v0.8.5</a>
+    <a class="version" href="../../v0.8.4/05_building_blocks/index.html">v0.8.4</a>
+    <a class="version" href="../../v0.8.3/05_building_blocks/index.html">v0.8.3</a>
+    <a class="version" href="../../v0.8.2/05_building_blocks/index.html">v0.8.2</a>
+    <a class="version" href="../../v0.8.1/05_building_blocks/index.html">v0.8.1</a>
+    <a class="version" href="../../v0.8.0/05_building_blocks/index.html">v0.8.0</a>
+    <a class="version" href="../../v0.7.3/05_building_blocks/index.html">v0.7.3</a>
+    <a class="version" href="../../v0.7.2/05_building_blocks/index.html">v0.7.2</a>
+    <a class="version" href="../../v0.7.1/05_building_blocks/index.html">v0.7.1</a>
+    <a class="version" href="../../v0.5.3/05_building_blocks/index.html">v0.5.3</a>
+    <a class="version" href="../../v0.5.2/05_building_blocks/index.html">v0.5.2</a>
+    <a class="version" href="../../v0.5.1/05_building_blocks/index.html">v0.5.1</a>
+    <a class="version" href="../../v0.5.0/05_building_blocks/index.html">v0.5.0</a>
+    <a class="version" href="../../v0.4.6/05_building_blocks/index.html">v0.4.6</a>
+    <a class="version" href="../../v0.4.5/05_building_blocks/index.html">v0.4.5</a>
+    <a class="version" href="../../v0.4.4/05_building_blocks/index.html">v0.4.4</a>
+    <a class="version" href="../../v0.4.3/05_building_blocks/index.html">v0.4.3</a>
+    <a class="version" href="../../v0.4.1/05_building_blocks/index.html">v0.4.1</a>
+    <a class="version" href="../../v0.4.0/05_building_blocks/index.html">v0.4.0</a>
+    <a class="version" href="../../v0.3.3/05_building_blocks/index.html">v0.3.3</a>
+    <a class="version" href="../../v0.3.0/05_building_blocks/index.html">v0.3.0-dev</a>
+    <a class="version" href="../../v0.2.0/05_building_blocks/index.html">v0.2.0-dev</a>
+    <a class="version" href="../../v0.1.0/05_building_blocks/index.html">v0.1.0-dev</a>
+  </div>
+</div>
+<div class="edit-this-page"><a href="https://github.com/tomirgang/tomsblog/blob/v0.9.0/docs/arc42/modules/ROOT/pages/05_building_blocks/index.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">5. Bausteinsicht</h1>
+<div class="sect1">
+<h2 id="_ebene_1_system_übersicht"><a class="anchor" href="#_ebene_1_system_übersicht"></a>1. Ebene 1: System-Übersicht</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Das folgende Diagramm zeigt die Gesamtstruktur des Systems mit seinen Services und externen Schnittstellen:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-18cdd18e3b2f292558b0041fdd511480d0000308.svg" alt="Diagram">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ebene_2_blog_content_service"><a class="anchor" href="#_ebene_2_blog_content_service"></a>2. Ebene 2: Blog Content Service</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der Blog Content Service setzt die zentrale Blog-Funktionalität um (SWR-001, SWR-002, SWR-003, SWR-006, SWR-012, SWR-013, SWR-024, SWR-033, SWR-034, SWR-035, SWR-036, SWR-037). Seine hexagonale Struktur (SWA-001) wird im folgenden Diagramm dargestellt:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-d2922d30166182ed73b7867ea3d6aac17e30108f.svg" alt="Diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Das Detail Design des Blog Content Service mit Klassendiagrammen und Ablaufbeschreibungen ist in der <a href="../../../tomsblog-design/v0.10.6/blog-content/index.html" class="xref page">Software Detail Design Dokumentation</a> beschrieben.</p>
+</div>
+<div class="sect2">
+<h3 id="_domain_layer_domain"><a class="anchor" href="#_domain_layer_domain"></a>2.1. Domain Layer (domain/)</h3>
+<div class="paragraph">
+<p>Reine Java-Klassen ohne Framework-Abhaengigkeiten. Die gemeinsamen Domain Primitives (EntityId, TenantId, AuthorId, AggregateRoot, DomainEvent, Auditable) werden über das Shared Kernel (SWA-002) als Framework-freie Library bereitgestellt.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Baustein</th>
+<th class="tableblock halign-left valign-top">Typ</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Post</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Aggregate Root</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Titel, Slug, Content, ContentType (HTML/MARKDOWN), Status, Locale, AuthorId (Referenz), TagIds, Sources, Attachments. Registriert Domain Events.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ContentType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enum</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTML, MARKDOWN. Steuert die Rendering-Logik fuer die Anzeige (SWR-035, SWA-027).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Translation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Aggregate Root</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Uebersetzung eines Posts mit eigenem Lifecycle (DRAFT/REVIEW_PENDING/APPROVED/REJECTED).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Tag</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Entity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TagId, TenantId, name, slug. Tenant-scoped mit eigener Identitaet.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PostId</code>, <code>TagId</code>, <code>TranslationId</code>, <code>AttachmentId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Value Objects</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Typsichere IDs (Records)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Slug</code>, <code>PostLocale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Value Objects</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validierung im Konstruktor</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Source</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Value Object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quellenreferenz: URL + Titel</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Attachment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Value Object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AttachmentId, filename, contentType, size, show, storageKey. show=true fuer angezeigte, show=false fuer eingebettete Inhalte.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PostStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enum</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DRAFT, PUBLISHED, ARCHIVED</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TranslationStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enum</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DRAFT, REVIEW_PENDING, APPROVED, REJECTED</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TranslationSource</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enum</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MANUAL, AI_GENERATED</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PostCreatedEvent</code>, <code>PostPublishedEvent</code>, <code>PostUpdatedEvent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain Events</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Post-Lifecycle-Events</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TranslationCreatedEvent</code>, <code>TranslationApprovedEvent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain Events</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Translation-Lifecycle-Events</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>AuthorId</code> liegt im <code>shared-kernel</code> (SWA-002). Der blog-content Service haelt keine Author-Stammdaten vor (werden vom Auth-Service in Phase 3 bereitgestellt).
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_application_layer_application"><a class="anchor" href="#_application_layer_application"></a>2.2. Application Layer (application/)</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Baustein</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PostUseCase</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inbound Port: Interface fuer alle Post-Operationen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TagUseCase</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inbound Port: Interface fuer alle Tag-Operationen (SWR-020)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TranslationUseCase</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inbound Port: Interface fuer alle Uebersetzungs-Operationen (SWR-021)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CreatePostCommand</code>, <code>UpdatePostCommand</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Command Records fuer Post-Operationen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CreateTagCommand</code>, <code>RenameTagCommand</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Command Records fuer Tag-Operationen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CreateTranslationCommand</code>, <code>UpdateTranslationCommand</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Command Records fuer Uebersetzungs-Operationen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PostRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Outbound Port: Persistence-Abstraktion fuer Posts (inkl. findRecentPublishedByTenantId fuer Landing Page, SWR-033)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TagRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Outbound Port: Persistence-Abstraktion fuer Tags</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TranslationRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Outbound Port: Persistence-Abstraktion fuer Uebersetzungen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MarkdownRenderer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Outbound Port: Markdown-zu-HTML-Rendering-Abstraktion (SWR-035, SWA-024)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EventPublisher</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Outbound Port: Event-Publishing-Abstraktion</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PostService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implementiert PostUseCase, orchestriert Domain und Ports</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TagService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implementiert TagUseCase, prueft Duplikate bei Erstellung</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TranslationService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implementiert TranslationUseCase, publiziert Domain Events bei Lifecycle-Uebergaengen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PostNotFoundException</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fachliche Exception</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TagNotFoundException</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fachliche Exception</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TranslationNotFoundException</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fachliche Exception</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_adapter_layer_adapter"><a class="anchor" href="#_adapter_layer_adapter"></a>2.3. Adapter Layer (adapter/)</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Baustein</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PostController</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST Inbound Adapter: CRUD + Publish, Tenant via Header</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TagController</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST Inbound Adapter: Tag CRUD (SWR-020), Tenant via Header</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TranslationController</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST Inbound Adapter: Translation CRUD + Workflow (SWR-021), Tenant via Header</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SourceController</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST Inbound Adapter: Quellenverwaltung (SWR-012), Tenant via Header</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BlogViewController</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Thymeleaf Inbound Adapter: Landing Page (SWR-033), Post-Liste, Einzelansicht mit Markdown-Rendering (SWR-035), Vorschau (SWR-036, SWR-037)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>VersionModelAdvice</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ControllerAdvice: Stellt appVersion global bereit (SWR-034, SWA-025)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GlobalExceptionHandler</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Problem Details (RFC 9457) Fehlerbehandlung</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OpenApiConfiguration</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OpenAPI/Swagger Konfiguration: API-Metadaten, X-Tenant-Id Header (SWR-024, SWA-016)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>JpaPostRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JPA Outbound Adapter: Implementiert PostRepository</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>JpaTagRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JPA Outbound Adapter: Implementiert TagRepository</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>JpaTranslationRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JPA Outbound Adapter: Implementiert TranslationRepository</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SpringDataPostRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spring Data JPA Interface fuer Post CRUD-Operationen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SpringDataTagRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spring Data JPA Interface fuer Tag CRUD-Operationen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SpringDataTranslationRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spring Data JPA Interface fuer Translation CRUD-Operationen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PostJpaEntity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JPA-Entity mit Audit-Feldern (@PrePersist/@PreUpdate)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TagJpaEntity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JPA-Entity fuer Tags mit Unique-Constraints</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TranslationJpaEntity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JPA-Entity fuer Uebersetzungen mit FK auf Posts</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PostMapper</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bidirektionales Mapping zwischen Domain-Post und PostJpaEntity</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TagMapper</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bidirektionales Mapping zwischen Domain-Tag und TagJpaEntity</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TranslationMapper</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bidirektionales Mapping zwischen Domain-Translation und TranslationJpaEntity</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FlexmarkMarkdownRenderer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Outbound Adapter: Markdown-Rendering mit flexmark-java (SWR-035, SWA-024)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LoggingEventPublisher</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Interim Event Adapter (wird durch Kafka ersetzt)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>JpaAuditLogger</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Outbound Adapter: Persistiert Audit-Einträge in audit_log-Tabelle (SWR-056, SWA-031)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuditLogJpaEntity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JPA-Entity fuer Audit-Log-Einträge</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SpringDataAuditLogRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spring Data JPA Interface fuer Audit-Log CRUD</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BlogContentConfiguration</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spring-Konfiguration: Wiring der Adapter an die Ports</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_datenbank_migrationen_flyway"><a class="anchor" href="#_datenbank_migrationen_flyway"></a>2.4. Datenbank-Migrationen (Flyway)</h3>
+<div class="paragraph">
+<p>Die Datenbank-Schema-Verwaltung erfolgt über Flyway (SWA-013). Alle Migrationen liegen unter <code>src/main/resources/db/migration/</code> und werden beim Service-Start automatisch ausgefuehrt. Hibernate validiert das Schema gegen die Entity-Klassen (<code>ddl-auto: validate</code>).</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Migration</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>V1__create_posts_schema.sql</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">posts, post_tags, post_sources, post_attachments</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>V2__create_tags_schema.sql</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">tags mit Unique-Index auf (tenant_id, name) und (tenant_id, slug)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>V3__create_translations_schema.sql</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">translations mit FK auf posts, Unique auf (post_id, locale)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>V4__add_content_type_to_posts.sql</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">content_type VARCHAR(20) NOT NULL DEFAULT 'HTML' (SWR-035, SWA-027)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>V5__add_fulltext_search_index.sql</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GIN-Index fuer Volltextsuche ueber title und content mit tsvector (SWR-038)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>V6__add_series_navigation.sql</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optionale Serien-Navigationsfelder series_previous_post_id und series_next_post_id (SWR-040)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>V7__add_featured_fields.sql</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optionale Featured-Felder featured_from und featured_until (SWR-041)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>V8__create_audit_log.sql</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Audit-Log-Tabelle mit Indizes auf tenant_id und timestamp (SWR-056, SWA-031)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Weitere Services werden analog strukturiert. Details werden ergänzt, sobald sie implementiert sind.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ebene_2_user_management_service"><a class="anchor" href="#_ebene_2_user_management_service"></a>3. Ebene 2: User Management Service</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Der User Management Service verwaltet plattformspezifische Benutzerprofile, Rollen und Tenant-Zuordnungen (SWR-043, SWA-029). Er agiert als Ergänzung zum externen OIDC Provider Authentik (ADR-0027, SWR-016). Authentik übernimmt Authentifizierung (Login, MFA, Passwort-Policies), während der User Management Service die Autorisierungsdaten (Rollen, Tenant-Mitgliedschaften) intern verwaltet.</p>
+</div>
+<div class="sect2">
+<h3 id="_domain_layer_domain_2"><a class="anchor" href="#_domain_layer_domain_2"></a>3.1. Domain Layer (domain/)</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Baustein</th>
+<th class="tableblock halign-left valign-top">Typ</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserProfile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Aggregate Root</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OidcSubject (eindeutige OIDC-Kennung), Username, PasswordHash, AuthSource, E-Mail, DisplayName, ApprovalStatus (PENDING/APPROVED/REJECTED), Rollen, TenantMemberships. Synchronisiert sich aus OIDC-Claims oder internem Login.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TenantSettings</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Entity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TenantId, LoginMode, autoApproveOidc, autoApproveEmailDomains. Konfiguriert Login-Verhalten und Auto-Approval pro Tenant (SWR-044, SWR-045).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Role</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enum</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SUPERADMIN, ADMIN, AUTHOR, REVIEWER, READER (SWR-007). SUPERADMIN wird ueber Infrastruktur-Konfiguration angelegt.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthSource</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enum</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">INTERNAL, OIDC. Gibt an, ob der Benutzer ueber internes Konto oder OIDC authentifiziert wird.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ApprovalStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enum</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PENDING, APPROVED, REJECTED. Status der Benutzerfreigabe (STK028).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LoginMode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enum</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">INTERNAL, OIDC, BOTH. Konfigurierbare Login-Methode pro Tenant (SWR-044).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TenantMembership</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Value Object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TenantId + Role. Ein Benutzer kann in verschiedenen Tenants unterschiedliche Rollen haben.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserProfileId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Value Object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Typsichere ID (Record)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_application_layer_application_2"><a class="anchor" href="#_application_layer_application_2"></a>3.2. Application Layer (application/)</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Baustein</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserProfileUseCase</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inbound Port: syncFromOidc, syncFromInternal, findByOidcSubject, findByUsername, approveUser, rejectUser, assignRole, removeRole, addTenantMembership, removeTenantMembership</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TenantSettingsUseCase</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inbound Port: getSettings, updateSettings, listTenants (SWR-044, SWR-052)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SyncOidcUserCommand</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Command Record fuer OIDC-Synchronisation</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SyncInternalUserCommand</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Command Record fuer internen Login</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserProfileRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Outbound Port: Persistence-Abstraktion fuer UserProfiles</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TenantSettingsRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Outbound Port: Persistence-Abstraktion fuer TenantSettings</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserProfileService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implementiert UserProfileUseCase, orchestriert Domain und Ports</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TenantSettingsService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implementiert TenantSettingsUseCase</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserProfileNotFoundException</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fachliche Exception</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_adapter_layer_adapter_2"><a class="anchor" href="#_adapter_layer_adapter_2"></a>3.3. Adapter Layer (adapter/)</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Baustein</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserController</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST Inbound Adapter: POST /api/users/sync, GET /api/users/{oidcSubject}, POST /api/users/{oidcSubject}/approve, POST /api/users/{oidcSubject}/reject</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TenantSettingsController</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST Inbound Adapter: GET/PUT /api/tenant-settings/{tenantId}</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserManagementGrpcService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gRPC Inbound Adapter: Profil-Synchronisation und -Abfragen fuer den Blog Content Service</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TenantSettingsGrpcService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gRPC Inbound Adapter: Tenant-Einstellungen fuer den Blog Content Service</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GrpcExceptionInterceptor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Globaler gRPC-Interceptor fuer einheitliche Fehlerbehandlung</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SecurityConfiguration</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spring Security Konfiguration: API-Key-Authentifizierung fuer REST-Endpunkte</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ApiKeyAuthenticationFilter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">X-API-Key-basierte Authentifizierung fuer Service-zu-Service-Kommunikation</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GlobalExceptionHandler</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Problem Details (RFC 9457) Fehlerbehandlung fuer REST</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>JpaUserProfileRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JPA Outbound Adapter: Implementiert UserProfileRepository</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>JpaTenantSettingsRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JPA Outbound Adapter: Implementiert TenantSettingsRepository</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SpringDataUserProfileRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spring Data JPA Interface fuer UserProfile CRUD</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SpringDataTenantSettingsRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spring Data JPA Interface fuer TenantSettings CRUD</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserProfileJpaEntity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JPA-Entity fuer Benutzerprofile</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TenantSettingsJpaEntity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JPA-Entity fuer Tenant-Einstellungen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TenantMembershipEmbeddable</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JPA Embeddable fuer Tenant-Zuordnungen</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserProfileMapper</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bidirektionales Mapping zwischen Domain und JPA</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TenantSettingsMapper</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bidirektionales Mapping zwischen Domain und JPA</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>JpaAuditLogger</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Outbound Adapter: Persistiert Audit-Einträge in audit_log-Tabelle (SWR-056, SWA-031)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuditLogJpaEntity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JPA-Entity fuer Audit-Log-Einträge</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SpringDataAuditLogRepository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spring Data JPA Interface fuer Audit-Log CRUD</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_datenbank_migrationen_flyway_2"><a class="anchor" href="#_datenbank_migrationen_flyway_2"></a>3.4. Datenbank-Migrationen (Flyway)</h3>
+<div class="paragraph">
+<p>Die Datenbank-Schema-Verwaltung des User Management Service erfolgt analog zum Blog Content Service ueber Flyway (SWA-013).</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Migration</th>
+<th class="tableblock halign-left valign-top">Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>V1__create_user_profiles.sql</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">user_profiles Grundschema mit OIDC-Subject, Username, Auth-Source</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>V2__create_tenant_settings.sql</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">tenant_settings mit Login-Mode und Auto-Approval-Konfiguration</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>V3__create_user_roles_and_memberships.sql</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">user_global_roles und user_tenant_memberships</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>V4__add_branding_fields.sql</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Branding-Felder (display_name, tagline, impressum, privacy_policy) fuer TenantSettings</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>V5__create_audit_log.sql</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Audit-Log-Tabelle mit Indizes auf tenant_id und timestamp (SWR-056, SWA-031)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

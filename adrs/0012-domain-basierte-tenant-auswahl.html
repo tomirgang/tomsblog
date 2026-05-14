@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0012: Domain-basierte Tenant-Auswahl</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0012-domain-basierte-tenant-auswahl">ADR-0012:
+Domain-basierte Tenant-Auswahl</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Multi-Tenancy erfordert eine Strategie zur Tenant-Identifikation bei
+eingehenden Requests. Übliche Ansätze:</p>
+<ol type="1">
+<li><strong>Subdomain</strong>: <code>tenant1.example.com</code>
+(häufigster Ansatz)</li>
+<li><strong>Custom Domain</strong>: Jeder Tenant nutzt seine eigene
+Domain</li>
+<li><strong>URL-Pfad</strong>: <code>/tenant1/posts/...</code>
+(unüblich, SEO-Nachteile)</li>
+<li><strong>Header/Token</strong>: Tenant wird im Auth-Token
+mitgeliefert</li>
+</ol>
+<p>Für eine Blog-Plattform ist die Domain das natürliche
+Identifikationsmerkmal: Jeder Blog hat seine eigene Web-Adresse. Sowohl
+eigene Domains als auch Subdomains der Plattform sollen unterstützt
+werden.</p>
+<h2 id="decision">Decision</h2>
+<p>Die <strong>Tenant-Auswahl erfolgt über die Domain</strong>
+(Host-Header) des eingehenden Requests.</p>
+<p><strong>Design:</strong></p>
+<ul>
+<li>Ein Tenant kann mehrere Domains besitzen (z.B.
+<code>blog.example.com</code> + <code>toms-blog.platform.io</code>)</li>
+<li>Subdomains der Plattform werden ebenfalls unterstützt (z.B.
+<code>tenant1.platform.io</code>)</li>
+<li>Ein Domain-zu-Tenant-Mapping wird in einer zentralen Konfiguration
+gepflegt</li>
+<li>Die Auflösung erfolgt am Ingress-Level (oder in einem vorgelagerten
+Filter)</li>
+<li>Die aufgelöste TenantId wird als <code>X-Tenant-Id</code> Header an
+Backend-Services propagiert</li>
+<li>Unbekannte Domains erhalten einen 404-Response</li>
+</ul>
+<p><strong>Datenmodell:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>Feld</th>
+<th>Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>domain</td>
+<td>FQDN (eindeutig)</td>
+</tr>
+<tr class="even">
+<td>tenant_id</td>
+<td>Zugeordneter Tenant</td>
+</tr>
+<tr class="odd">
+<td>is_primary</td>
+<td>Primärdomain für Canonical-URLs</td>
+</tr>
+<tr class="even">
+<td>verified</td>
+<td>DNS-Verifikation abgeschlossen</td>
+</tr>
+</tbody>
+</table>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Natürliches Modell für Blog-Plattformen (jeder Blog hat eigene
+URL)</li>
+<li>Unterstützt sowohl Custom Domains als auch Plattform-Subdomains</li>
+<li>Saubere Trennung: Backend-Services arbeiten nur mit TenantId</li>
+<li>SEO-freundlich (eigene Domains statt Pfad-basierte Trennung)</li>
+<li>TLS-Zertifikate pro Domain via Let's Encrypt (Wildcard oder
+per-Domain)</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>DNS-Konfiguration durch Tenant nötig (Custom Domains)</li>
+<li>TLS-Zertifikat-Management wird komplexer (viele Domains)</li>
+<li>Domain-Verification-Prozess muss implementiert werden</li>
+<li>Ingress-Konfiguration muss dynamisch sein (neue Domains zur
+Laufzeit)</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li>SWR-017: Domain-basierte Tenant-Auswahl</li>
+<li>SWR-003: Tenant-Isolation auf Datenebene</li>
+<li>SWA-011: Domain-basierte Tenant-Resolution am Ingress</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

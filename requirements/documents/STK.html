@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html>
+<head><title>doc-STK</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="../template/bootstrap.min.css" />
+  <link rel="stylesheet" href="../template/general.css" />
+  <link type="text/css" rel="stylesheet" href="../template/doorstop.css" />
+  <script src="../template/tex-mml-chtml.js" id="MathJax-script" async></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+  </script>
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a></div>
+
+  <header class="navbar navbar-expand-lg navbar-dark bd-navbar sticky-top text-bg-secondary">
+  <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap" aria-label="Document attributes">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">Documents</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../traceability.html">Traceability</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Contents
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#toc">Table of Contents</a></li>
+                <ul>
+                <li><a class="dropdown-item" href="#STK001">1.0 Blog-Posts erstellen und veröffentlichen</a></li>
+                <li><a class="dropdown-item" href="#STK002">2.0 Multi-Tenancy</a></li>
+                <li><a class="dropdown-item" href="#STK003">3.0 Mehrsprachige Inhalte</a></li>
+                <li><a class="dropdown-item" href="#STK004">4.0 Audit-Fähigkeit</a></li>
+                <li><a class="dropdown-item" href="#STK005">5.0 Benutzerverwaltung und Rollen</a></li>
+                <li><a class="dropdown-item" href="#STK006">6.0 RSS/Atom Feeds</a></li>
+                <li><a class="dropdown-item" href="#STK007">7.0 Cloud-Native Deployment</a></li>
+                <li><a class="dropdown-item" href="#STK008">8.0 Observability</a></li>
+                <li><a class="dropdown-item" href="#STK009">9.0 Erweiterbarkeit um Podcast und Video</a></li>
+                <li><a class="dropdown-item" href="#STK010">10 Quellenverwaltung für Posts</a></li>
+                <li><a class="dropdown-item" href="#STK011">11 KI-Unterstützung für Autoren</a></li>
+                <li><a class="dropdown-item" href="#STK012">12 Sicherheit (OWASP Top 10)</a></li>
+                <li><a class="dropdown-item" href="#STK013">13 Zeitgesteuerte Veröffentlichung</a></li>
+                <li><a class="dropdown-item" href="#STK014">14 Sichere Service-zu-Service-Kommunikation (Zero Trust)</a></li>
+                <li><a class="dropdown-item" href="#STK015">15 KI-Features nur für autorisierte Benutzer</a></li>
+                <li><a class="dropdown-item" href="#STK016">16 Sichere Verwaltung von Secrets im Cluster</a></li>
+                <li><a class="dropdown-item" href="#STK017">17 Landing Page zeigt neueste Posts</a></li>
+                <li><a class="dropdown-item" href="#STK018">18 Versionsnummer im Footer</a></li>
+                <li><a class="dropdown-item" href="#STK019">19 HTML- und Markdown-Unterstützung für Blog-Inhalte</a></li>
+                <li><a class="dropdown-item" href="#STK020">20 Gerenderte Vorschau in der Post-Liste</a></li>
+                <li><a class="dropdown-item" href="#STK021">21 Vorschau umfasst den ersten Abschnitt</a></li>
+                <li><a class="dropdown-item" href="#STK022">22 Volltextsuche über Tenant-Inhalte</a></li>
+                <li><a class="dropdown-item" href="#STK023">23 HTTPS-Redirect für alle Requests</a></li>
+                <li><a class="dropdown-item" href="#STK024">24 Default-Domain-Redirect auf blog.tomirgang.de</a></li>
+                <li><a class="dropdown-item" href="#STK025">25 Chronologische Navigation auf Post-Detailseiten</a></li>
+                <li><a class="dropdown-item" href="#STK026">26 Serien-Navigation für thematisch zusammenhängende Posts</a></li>
+                <li><a class="dropdown-item" href="#STK027">27 Featured Posts auf der Landing Page</a></li>
+                <li><a class="dropdown-item" href="#STK028">28 Benutzer-Freigabe durch Tenant-Admin</a></li>
+                <li><a class="dropdown-item" href="#STK029">29 Nicht angemeldete Benutzer als Reader behandeln</a></li>
+                <li><a class="dropdown-item" href="#STK030">30 E-Mail-Benachrichtigungen und Abonnements</a></li>
+                <li><a class="dropdown-item" href="#STK031">31 Konfigurierbare Login-Methode pro Tenant</a></li>
+                <li><a class="dropdown-item" href="#STK032">32 Auto-Approval neuer Benutzer</a></li>
+                <li><a class="dropdown-item" href="#STK033">33 OIDC Konfiguration über Infrastruktur oder Admin UI</a></li>
+                <li><a class="dropdown-item" href="#STK034">34 Administrationsdokumentation für generisches Kubernetes</a></li>
+                <li><a class="dropdown-item" href="#STK035">35 HTTPS-Umleitung für alle Requests außer Let&#039;s Encrypt</a></li>
+                <li><a class="dropdown-item" href="#STK036">36 Umleitung unbekannter Domains auf Hauptdomain</a></li>
+                <li><a class="dropdown-item" href="#STK037">37 Synchrone Service-Kommunikation via gRPC</a></li>
+                <li><a class="dropdown-item" href="#STK038">38 Asynchrone Service-Kommunikation via Kafka oder RabbitMQ</a></li>
+                <li><a class="dropdown-item" href="#STK039">39 REST und GraphQL ausschließlich für Clients</a></li>
+                <li><a class="dropdown-item" href="#STK040">40 Tenant-Branding in Navigation</a></li>
+                <li><a class="dropdown-item" href="#STK041">41 Admin-Oberfläche für Benutzerverwaltung</a></li>
+                <li><a class="dropdown-item" href="#STK042">42 Admin-Oberfläche für Tenant-Einstellungen</a></li>
+                <li><a class="dropdown-item" href="#STK043">43 Impressum und Datenschutzerklärung im Footer</a></li>
+                <li><a class="dropdown-item" href="#STK044">44 Tenant-spezifisches Impressum und Datenschutzerklärung</a></li>
+                <li><a class="dropdown-item" href="#STK045">45 Horizontale Skalierbarkeit und unterbrechungsfreie Updates</a></li>
+                <li><a class="dropdown-item" href="#STK046">46 Lokale Benutzerregistrierung</a></li>
+                <li><a class="dropdown-item" href="#STK047">47 OIDC-Konfiguration pro Tenant über Admin-Interface</a></li>
+                <li><a class="dropdown-item" href="#STK048">48 Gemeinsame UI-Bibliothek für Thymeleaf-Templates und Styles</a></li>
+                <li><a class="dropdown-item" href="#STK049">49 Tenant-Einstellungen in separaten Formularen pro Einstellungsgruppe</a></li>
+                <li><a class="dropdown-item" href="#STK050">50 Eigenständiger Tenant-Verwaltungsservice mit Admin-UI</a></li>
+                <li><a class="dropdown-item" href="#STK051">51 Vollständige Vorschau für unveröffentlichte Posts</a></li>
+                <li><a class="dropdown-item" href="#STK052">52 E2E-Selenium-Tests für alle relevanten UI-Use-Cases</a></li>
+                <li><a class="dropdown-item" href="#STK053">53 Tag-Verwaltung und Tag-Anzeige im Blog</a></li>
+                <li><a class="dropdown-item" href="#STK054">54 Auditlog-Ansicht in der Admin-UI</a></li>
+                <li><a class="dropdown-item" href="#STK055">55 Logo und FavIcon pro Tenant konfigurierbar</a></li>
+                <li><a class="dropdown-item" href="#STK056">56 OIDC-Button-Text über Admin-UI konfigurierbar</a></li>
+                <li><a class="dropdown-item" href="#STK057">57 Nutzer über die Admin-UI löschen</a></li>
+                <li><a class="dropdown-item" href="#STK058">58 Standard-Rolle für neue Benutzer über Admin-UI einstellbar</a></li>
+                <li><a class="dropdown-item" href="#STK059">59 Benutzer-Rollen über OIDC-Claims automatisch setzen</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <!-- Insert logotype. -->
+            <img src="../template/logo-black-white.png" alt="Doorstop" height="128" class="d-inline-block align-text-top">
+          </div>
+        </div>
+        <div class="col-6 align-self-center">
+          <div class="bd-lead text-nowrap text-center">
+            <span class="text-monospace"><strong>doc-STK</strong></span>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">Ref</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">By</span>
+            <p><span class="text-monospace">-</span></p>
+            <span class="text-muted">Issue</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </nav>
+</header>
+<div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout">
+  <main class="bd-main order-1">
+    <div class="bd-intro ps-lg-4">
+      <H1><p>Test document for development of <em>Doorstop</em></p></H1>
+      <h1 id="STK001">1.0 Blog-Posts erstellen und veröffentlichen <small>STK001</small></h1>
+<p>Als Autor möchte ich Blog-Posts im Markdown- oder WYSIWYG-Format erstellen,
+bearbeiten und veröffentlichen können.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR001">SWR001 Post CRUD API</a>, <a href="SWR.html#SWR002">SWR002 Post veröffentlichen</a>, <a href="SWR.html#SWR018">SWR018 Automatisierte Kommentar-Moderation via LLM</a>, <a href="SWR.html#SWR019">SWR019 Shadow-Banning für Kommentare</a>, <a href="SWR.html#SWR020">SWR020 Tag CRUD API</a>, <a href="SWR.html#SWR021">SWR021 Translation CRUD API</a>, <a href="SWR.html#SWR025">SWR025 Thymeleaf Layout-Grundgerüst (responsiv)</a>, <a href="SWR.html#SWR026">SWR026 Öffentliche Blog-Ansicht (Post-Liste und Einzelansicht)</a>, <a href="SWR.html#SWR027">SWR027 Thymeleaf-Formular zum Erstellen und Bearbeiten von Posts</a></p>
+<h1 id="STK002">2.0 Multi-Tenancy <small>STK002</small></h1>
+<p>Die Plattform muss mehrere Mandanten (Tenants) unterstützen.
+Jeder Tenant hat eigene Inhalte, Benutzer und Konfiguration.
+Daten müssen mandantenübergreifend isoliert sein.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a>, <a href="SWR.html#SWR017">SWR017 Domain-basierte Tenant-Auswahl</a>, <a href="SWR.html#SWR050">SWR050 Tenant-Branding im Header</a>, <a href="SWR.html#SWR053">SWR053 SuperAdmin Tenant-Umschaltung</a>, <a href="SWR.html#SWR074">SWR074 Tenant-Management gRPC-Schnittstelle</a></p>
+<h1 id="STK003">3.0 Mehrsprachige Inhalte <small>STK003</small></h1>
+<p>Als Autor möchte ich Posts in mehreren Sprachen anbieten können.
+Die Übersetzung kann manuell oder KI-gestützt erfolgen.
+KI-Übersetzungen müssen vom Autor geprüft und freigegeben werden.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR004">SWR004 Übersetzung per KI (Author-getriggert)</a>, <a href="SWR.html#SWR005">SWR005 Manuelle Übersetzung</a></p>
+<h1 id="STK004">4.0 Audit-Fähigkeit <small>STK004</small></h1>
+<p>Alle relevanten Aktionen (Erstellen, Bearbeiten, Veröffentlichen, Löschen)
+müssen nachvollziehbar protokolliert werden (Wer, Was, Wann).</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR006">SWR006 Audit-Trail für Posts</a>, <a href="SWR.html#SWR056">SWR056 Audit-Logging für alle relevanten Aktionen</a></p>
+<h1 id="STK005">5.0 Benutzerverwaltung und Rollen <small>STK005</small></h1>
+<p>Das System muss verschiedene Benutzerrollen unterstützen:
+Super-Administrator (Plattform- und Tenant-Verwaltung),
+Administrator (Benutzer- und Inhaltsverwaltung innerhalb eines Tenants),
+Autor, Reviewer und Leser. Zugriffsrechte werden rollenbasiert vergeben.
+Nicht angemeldete Benutzer werden wie Leser behandelt.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR007">SWR007 Rollenbasierte Zugriffskontrolle</a>, <a href="SWR.html#SWR016">SWR016 OIDC Login mit Authentik als externem Provider</a>, <a href="SWR.html#SWR028">SWR028 Einfacher Admin-Login zum Schutz der Schreiboperationen</a>, <a href="SWR.html#SWR043">SWR043 User-Management-Service fuer Profile, Rollen und Tenant-Zuordnung</a>, <a href="SWR.html#SWR051">SWR051 Admin-UI Benutzerliste und -verwaltung</a>, <a href="SWR.html#SWR053">SWR053 SuperAdmin Tenant-Umschaltung</a></p>
+<h1 id="STK006">6.0 RSS/Atom Feeds <small>STK006</small></h1>
+<p>Leser müssen Blog-Inhalte über standardisierte Feeds (RSS/Atom)
+abonnieren können. Feeds sollen nach Tags filterbar sein.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR008">SWR008 RSS/Atom Feed-Generierung</a></p>
+<h1 id="STK007">7.0 Cloud-Native Deployment <small>STK007</small></h1>
+<p>Die Plattform muss containerisiert auf Kubernetes betrieben werden können.
+Deployment erfolgt via GitOps (Flux).</p>
+<p><em>Child links:</em> <a href="INF.html#INF001">INF001 Kubernetes-Cluster auf Hetzner Cloud</a>, <a href="INF.html#INF002">INF002 GitOps-Deployment mit Flux</a>, <a href="INF.html#INF003">INF003 TLS-Terminierung mit cert-manager und Let's Encrypt</a>, <a href="INF.html#INF005">INF005 PostgreSQL HA via CloudNativePG</a>, <a href="INF.html#INF006">INF006 Service Mesh mit Linkerd (mTLS)</a>, <a href="INF.html#INF007">INF007 Network Policies (Default Deny)</a>, <a href="INF.html#INF008">INF008 Versionierte Image-Tags und automatische Manifest-Updates</a>, <a href="INF.html#INF009">INF009 Backup-Strategie fuer PostgreSQL</a>, <a href="INF.html#INF010">INF010 Monitoring-Infrastruktur</a>, <a href="SWR.html#SWR010">SWR010 Container-Image und Health-Checks</a>, <a href="INF.html#INF013">INF013 Deklarative Datenbankverwaltung mit CloudNativePG Database CRD</a></p>
+<h1 id="STK008">8.0 Observability <small>STK008</small></h1>
+<p>Das System muss überwachbar sein: Metriken (Prometheus), Logs (Loki),
+Traces (Tempo) und Dashboards (Grafana) müssen integriert werden.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR011">SWR011 Metriken und Tracing</a></p>
+<h1 id="STK009">9.0 Erweiterbarkeit um Podcast und Video <small>STK009</small></h1>
+<p>Die Architektur muss so gestaltet sein, dass später Audio-Podcast-
+und Video-Podcast-Services ergänzt werden können, ohne den
+bestehenden Blog-Service umzubauen.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR009">SWR009 Domain Events via Kafka</a>, <a href="SWR.html#SWR024">SWR024 OpenAPI/Swagger API-Dokumentation</a></p>
+<h1 id="STK010">10 Quellenverwaltung für Posts <small>STK010</small></h1>
+<p>Als Autor möchte ich Quellen und Referenzen zu meinen Posts verwalten
+können. Referenzierte Webseiten sollen automatisch archiviert werden.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR012">SWR012 Quellen-Verwaltung</a>, <a href="SWR.html#SWR013">SWR013 Web-Snapshot von Quellen</a></p>
+<h1 id="STK011">11 KI-Unterstützung für Autoren <small>STK011</small></h1>
+<p>Das System soll KI-Features anbieten (Übersetzung, Schreibassistenz,
+Titelbild-Generierung). Alle KI-Features sind optional und werden
+vom Autor explizit ausgelöst. Ergebnisse müssen geprüft werden.
+Bei Ausfall des KI-Providers muss das System ohne KI funktionieren.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR004">SWR004 Übersetzung per KI (Author-getriggert)</a>, <a href="SWR.html#SWR014">SWR014 Graceful Degradation bei KI-Ausfall</a></p>
+<h1 id="STK012">12 Sicherheit (OWASP Top 10) <small>STK012</small></h1>
+<p>Das System muss gegen die OWASP Top 10 Schwachstellen abgesichert sein.
+Security-Reviews sind Bestandteil des Entwicklungsprozesses.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR015">SWR015 Input-Validierung und OWASP-Schutz</a>, <a href="SWR.html#SWR023">SWR023 Fuzz Testing externer Interfaces</a>, <a href="SWR.html#SWR032">SWR032 HTTPS-Verschlüsselung für externe Zugriffe</a></p>
+<h1 id="STK013">13 Zeitgesteuerte Veröffentlichung <small>STK013</small></h1>
+<p>Als Autor möchte ich Blog-Posts mit einem zukünftigen Veröffentlichungszeitpunkt
+planen können, damit diese automatisch zur geplanten Zeit publiziert werden.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR022">SWR022 Time-based Auto Publishing</a></p>
+<h1 id="STK014">14 Sichere Service-zu-Service-Kommunikation (Zero Trust) <small>STK014</small></h1>
+<p>Als Betreiber möchte ich, dass alle Microservices untereinander ausschließlich
+verschlüsselt und authentifiziert kommunizieren (mTLS), damit kein unautorisierter
+Service auf interne APIs zugreifen kann (Zero-Trust-Prinzip).</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR029">SWR029 Service Mesh mit automatischem mTLS (Linkerd)</a></p>
+<h1 id="STK015">15 KI-Features nur für autorisierte Benutzer <small>STK015</small></h1>
+<p>Als Betreiber möchte ich, dass KI-gestützte Features (Übersetzung, Schreibassistenz,
+Bildgenerierung) ausschließlich im Kontext eines authentifizierten und autorisierten
+Benutzers (Rolle AUTHOR oder ADMIN) ausgelöst werden können, damit ein Missbrauch
+der kostenpflichtigen KI-Dienste verhindert wird.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR030">SWR030 User-Kontext-Propagierung für geschützte Features</a></p>
+<h1 id="STK016">16 Sichere Verwaltung von Secrets im Cluster <small>STK016</small></h1>
+<p>Als Betreiber moechte ich, dass sensible Zugangsdaten (Datenbank-Credentials,
+API-Keys, OAuth-Secrets) automatisiert und sicher zwischen Kubernetes-Namespaces
+synchronisiert werden, damit keine manuellen Kopiervorgaenge notwendig sind und
+Credential-Rotationen automatisch an alle betroffenen Services propagiert werden.</p>
+<p><em>Child links:</em> <a href="INF.html#INF004">INF004 Secrets-Management mit SOPS und age</a>, <a href="SWR.html#SWR031">SWR031 Secrets verschlüsselt im Repository und automatisch synchronisiert</a></p>
+<h1 id="STK017">17 Landing Page zeigt neueste Posts <small>STK017</small></h1>
+<p>Als Leser möchte ich auf der Landing Page die neuesten 3 Blog-Posts sehen,
+damit ich sofort einen Überblick über aktuelle Inhalte erhalte, ohne navigieren
+zu müssen.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR033">SWR033 Landing Page zeigt maximal drei neueste Posts</a>, <a href="SWR.html#SWR042">SWR042 Featured Posts auf der Landing Page anzeigen</a></p>
+<h1 id="STK018">18 Versionsnummer im Footer <small>STK018</small></h1>
+<p>Als Betreiber möchte ich, dass die aktuelle Versionsnummer der Anwendung im
+Footer jeder Seite angezeigt wird, damit ich auf einen Blick erkennen kann,
+welche Version im Einsatz ist.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR034">SWR034 Versionsnummer im Footer anzeigen</a></p>
+<h1 id="STK019">19 HTML- und Markdown-Unterstützung für Blog-Inhalte <small>STK019</small></h1>
+<p>Als Autor möchte ich Blog-Posts wahlweise in HTML oder Markdown verfassen können,
+wobei Markdown gerendert dargestellt wird, inklusive Mermaid-Diagrammen und
+Code-Blöcken mit Syntax-Highlighting, damit ich technische Inhalte ansprechend
+präsentieren kann.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR035">SWR035 HTML- und Markdown-Unterstützung mit Rendering</a></p>
+<h1 id="STK020">20 Gerenderte Vorschau in der Post-Liste <small>STK020</small></h1>
+<p>Als Leser möchte ich in der Post-Liste eine gerenderte Vorschau (kein Plaintext)
+sehen, damit die Vorschau visuell dem tatsächlichen Post-Inhalt entspricht.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR036">SWR036 Gerenderte Vorschau in der Post-Liste</a></p>
+<h1 id="STK021">21 Vorschau umfasst den ersten Abschnitt <small>STK021</small></h1>
+<p>Als Leser möchte ich, dass die Vorschau in der Post-Liste den ersten Abschnitt
+des Posts umfasst, damit ich einen inhaltlich sinnvollen Einstieg in den Beitrag
+erhalte.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR037">SWR037 Vorschau zeigt den ersten Abschnitt</a></p>
+<h1 id="STK022">22 Volltextsuche über Tenant-Inhalte <small>STK022</small></h1>
+<p>Als Leser möchte ich eine Volltextsuche über alle Inhalte meines Tenants
+durchführen können, damit ich schnell relevante Blog-Posts und andere Inhalte
+finde, ohne manuell durch alle Beiträge navigieren zu müssen.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR038">SWR038 Volltextsuche für veröffentlichte Blog Posts</a></p>
+<h1 id="STK023">23 HTTPS-Redirect für alle Requests <small>STK023</small></h1>
+<p>Alle HTTP-Requests müssen automatisch auf HTTPS umgeleitet werden
+(301 Permanent Redirect), mit Ausnahme von ACME HTTP-01 Challenge-Requests
+(Let's Encrypt Zertifikatsvalidierung), die über Port 80 erreichbar
+bleiben müssen.</p>
+<h1 id="STK024">24 Default-Domain-Redirect auf blog.tomirgang.de <small>STK024</small></h1>
+<p>Requests an unbekannte Domains (also Domains, die keinem explizit
+konfigurierten Routing zugeordnet sind) müssen automatisch auf
+blog.tomirgang.de umgeleitet werden (301 Permanent Redirect).</p>
+<h1 id="STK025">25 Chronologische Navigation auf Post-Detailseiten <small>STK025</small></h1>
+<p>Auf der Detailseite eines Blog-Posts sollen Links zum chronologisch
+vorherigen und nächsten Post angezeigt werden (basierend auf dem
+Veröffentlichungsdatum). Damit können Leser bequem durch alle
+veröffentlichten Posts navigieren.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR039">SWR039 Chronologische Previous/Next-Navigation auf Post-Detailseiten</a></p>
+<h1 id="STK026">26 Serien-Navigation für thematisch zusammenhängende Posts <small>STK026</small></h1>
+<p>Posts sollen Serien zu bestimmten Themen unterstützen. Ein Post kann
+optional einen vorherigen und einen nächsten Post innerhalb derselben
+Serie referenzieren. Diese Serien-Links sollen in der UI angezeigt
+werden, sofern sie nicht mit der chronologischen Navigation (vorheriger/
+nächster Post nach Veröffentlichungsdatum) übereinstimmen.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR040">SWR040 Serien-Navigation für thematisch zusammenhängende Posts</a></p>
+<h1 id="STK027">27 Featured Posts auf der Landing Page <small>STK027</small></h1>
+<p>Als Betreiber möchte ich Posts für einen definierten Zeitraum als
+„Featured" kennzeichnen können, damit diese auf der Landing Page
+hervorgehoben dargestellt werden. Featured Posts erscheinen zusätzlich
+zu den neuesten Posts in einem eigenen, visuell abgesetzten Bereich.
+Der Feature-Zeitraum wird durch ein Start- und Enddatum definiert.
+Nach Ablauf des Zeitraums verliert der Post automatisch seinen
+Featured-Status, ohne dass eine manuelle Aktion erforderlich ist.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR041">SWR041 Featured-Zeitraum im Domain-Modell</a>, <a href="SWR.html#SWR042">SWR042 Featured Posts auf der Landing Page anzeigen</a></p>
+<h1 id="STK028">28 Benutzer-Freigabe durch Tenant-Admin <small>STK028</small></h1>
+<p>Die Plattform muss unterstützen, dass neue Benutzer durch den
+Tenant-Administrator freigegeben (approved) werden müssen, bevor sie
+über die Rolle Reader hinausgehende Rechte erhalten. Bis zur
+Freigabe hat ein registrierter Benutzer nur Lesezugriff.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR007">SWR007 Rollenbasierte Zugriffskontrolle</a>, <a href="SWR.html#SWR043">SWR043 User-Management-Service fuer Profile, Rollen und Tenant-Zuordnung</a>, <a href="SWR.html#SWR045">SWR045 Auto-Approval bei OIDC-Login und E-Mail-Domain</a>, <a href="SWR.html#SWR051">SWR051 Admin-UI Benutzerliste und -verwaltung</a></p>
+<h1 id="STK029">29 Nicht angemeldete Benutzer als Reader behandeln <small>STK029</small></h1>
+<p>Nicht angemeldete Benutzer (anonyme Besucher) sollen wie Benutzer
+mit der Rolle Reader behandelt werden. Sie haben Lesezugriff auf
+alle veröffentlichten Inhalte ohne Registrierung oder Login.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR007">SWR007 Rollenbasierte Zugriffskontrolle</a>, <a href="SWR.html#SWR043">SWR043 User-Management-Service fuer Profile, Rollen und Tenant-Zuordnung</a></p>
+<h1 id="STK030">30 E-Mail-Benachrichtigungen und Abonnements <small>STK030</small></h1>
+<p>Die Plattform soll E-Mail-Benachrichtigungen unterstützen:
+<ul>
+<li>Passwort-Reset per E-Mail.</li>
+<li>Passwortloser Login durch E-Mail-Bestätigung (Magic Link).</li>
+<li>Benachrichtigungen bei neuen Posts und bei anstehenden Reviews.</li>
+<li>Pro Tenant optional konfigurierbare Abonnements (Subscriptions):</li>
+  Benutzer können Benachrichtigungen abonnieren für alle neuen Posts,</li>
+  bestimmte Tags, Suchbegriffe oder bestimmte Autoren.</p></li>
+<h1 id="STK031">31 Konfigurierbare Login-Methode pro Tenant <small>STK031</small></h1></li>
+</ul>
+<p>Der Tenant-Administrator soll festlegen können, ob der Login für
+Benutzer über interne Accounts (formbasiert), über OIDC oder über
+beides erfolgt. Auch wenn nur OIDC-Login für reguläre Benutzer
+aktiviert ist, muss ein separates Admin-Login-Formular unter einer
+eigenen URL als Break-Glass-Lösung verfügbar bleiben.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR043">SWR043 User-Management-Service fuer Profile, Rollen und Tenant-Zuordnung</a>, <a href="SWR.html#SWR044">SWR044 Konfigurierbare Login-Methode und Break-Glass Admin-Login</a>, <a href="SWR.html#SWR052">SWR052 Admin-UI Tenant-Einstellungen</a></p>
+<h1 id="STK032">32 Auto-Approval neuer Benutzer <small>STK032</small></h1>
+<p>Die Plattform soll optional eine automatische Freigabe (Auto-Approval)
+neuer Benutzer unterstützen. Auto-Approval kann aktiviert werden für:
+<ul>
+<li>Benutzer, die sich über OIDC anmelden (Login-Quelle ist vertrauenswürdig).</li>
+<li>Benutzer, deren E-Mail-Adresse zu einer konfigurierbaren Liste</li>
+  erlaubter E-Mail-Domains gehört.</li>
+Die Konfiguration erfolgt pro Tenant.</p></li>
+</ul>
+<p><em>Child links:</em> <a href="SWR.html#SWR043">SWR043 User-Management-Service fuer Profile, Rollen und Tenant-Zuordnung</a>, <a href="SWR.html#SWR045">SWR045 Auto-Approval bei OIDC-Login und E-Mail-Domain</a></p>
+<h1 id="STK033">33 OIDC Konfiguration über Infrastruktur oder Admin UI <small>STK033</small></h1>
+<p>Die OIDC-Konfiguration (Client-ID, Client-Secret, Endpunkt-URLs)
+soll über die Infrastruktur-Konfiguration (Umgebungsvariablen,
+Kubernetes Secrets) oder über die Admin-UI möglich sein.
+Eine Änderung der OIDC-Konfiguration darf kein Neubauen des
+Container-Images erfordern.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR061">SWR061 Tenant-spezifische OIDC-Provider-Konfiguration im User Management Service</a></p>
+<h1 id="STK034">34 Administrationsdokumentation für generisches Kubernetes <small>STK034</small></h1>
+<p>Konfiguration und Deployment der Applikation auf einem generischen
+Kubernetes Cluster soll in docs/ADMINS.md beschrieben sein.
+Die Dokumentation muss alle notwendigen Schritte, Konfigurationsparameter,
+Secrets und Beispiele enthalten, damit ein Administrator die Plattform
+ohne projektspezifisches Vorwissen deployen kann.</p>
+<h1 id="STK035">35 HTTPS-Umleitung für alle Requests außer Let's Encrypt <small>STK035</small></h1>
+<p>Alle HTTP-Requests müssen automatisch auf HTTPS umgeleitet werden.
+Ausgenommen sind Requests auf den Pfad /.well-known/acme-challenge/,
+die für die Let's Encrypt ACME HTTP-01 Challenge-Validierung
+unverschlüsselt erreichbar bleiben müssen.</p>
+<p><em>Child links:</em> <a href="INF.html#INF011">INF011 Traefik HTTPS-Redirect für alle Nicht-ACME-Requests</a></p>
+<h1 id="STK036">36 Umleitung unbekannter Domains auf Hauptdomain <small>STK036</small></h1>
+<p>Alle Requests von unbekannten bzw. nicht konfigurierten Domains
+müssen auf https://blog.tomirgang.de umgeleitet werden.
+Dies stellt sicher, dass fehlgeleiteter Traffic oder nicht
+autorisierte Domain-Zuordnungen auf die Hauptseite verweisen.</p>
+<p><em>Child links:</em> <a href="INF.html#INF012">INF012 Traefik Default-Redirect für unbekannte Domains</a></p>
+<h1 id="STK037">37 Synchrone Service-Kommunikation via gRPC <small>STK037</small></h1>
+<p>Als Architekt möchte ich, dass die synchrone Kommunikation zwischen
+Microservices ausschließlich über gRPC erfolgt, damit eine effiziente,
+typsichere und versionierbare Schnittstelle gewährleistet ist.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR046">SWR046 gRPC für synchrone Inter-Service-Aufrufe</a></p>
+<h1 id="STK038">38 Asynchrone Service-Kommunikation via Kafka oder RabbitMQ <small>STK038</small></h1>
+<p>Als Architekt möchte ich, dass die asynchrone Kommunikation zwischen
+Microservices über Kafka (Event-Streaming) oder RabbitMQ (Task-Queues)
+abgewickelt wird, je nach Use-Case, damit eine lose Kopplung und
+zuverlässige Nachrichtenzustellung sichergestellt ist.</p>
+<p><em>Child links:</em> <a href="INF.html#INF015">INF015 Kafka-Cluster auf Kubernetes (Strimzi Operator)</a>, <a href="INF.html#INF016">INF016 RabbitMQ-Cluster auf Kubernetes (RabbitMQ Cluster Operator)</a>, <a href="SWR.html#SWR047">SWR047 Kafka für Event-Streaming zwischen Services</a>, <a href="SWR.html#SWR048">SWR048 RabbitMQ für Task-Queues zwischen Services</a>, <a href="SWR.html#SWR089">SWR089 TaskPublisher als Outbound Port für RabbitMQ-Task-Verteilung</a></p>
+<h1 id="STK039">39 REST und GraphQL ausschließlich für Clients <small>STK039</small></h1>
+<p>Als Architekt möchte ich, dass REST- und GraphQL-Schnittstellen
+ausschließlich für die Kommunikation mit externen Clients (Web-UI,
+Mobile-Apps, BFF) verwendet werden und nicht für die Kommunikation
+zwischen Services, damit eine klare Trennung zwischen Client-APIs
+und internen Service-Schnittstellen besteht.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR049">SWR049 REST und GraphQL nur für Client-Kommunikation</a></p>
+<h1 id="STK040">40 Tenant-Branding in Navigation <small>STK040</small></h1>
+<p>Als Betreiber möchte ich, dass die Blog-Navigation den Namen und
+optional eine Tagline des aktuellen Tenants anzeigt, damit Besucher
+die Zugehörigkeit zum jeweiligen Blog erkennen.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR050">SWR050 Tenant-Branding im Header</a></p>
+<h1 id="STK041">41 Admin-Oberfläche für Benutzerverwaltung <small>STK041</small></h1>
+<p>Als Tenant-Administrator möchte ich eine Web-Oberfläche zur Verwaltung
+der Benutzer meines Tenants (Auflisten, Freigeben, Ablehnen, Rollen
+zuweisen), damit ich keine API-Aufrufe manuell ausführen muss.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR051">SWR051 Admin-UI Benutzerliste und -verwaltung</a></p>
+<h1 id="STK042">42 Admin-Oberfläche für Tenant-Einstellungen <small>STK042</small></h1>
+<p>Als Administrator möchte ich eine Web-Oberfläche zur Konfiguration
+der Tenant-Einstellungen (Login-Methode, Auto-Approval, Branding),
+damit die Verwaltung ohne technische Kenntnisse möglich ist.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR052">SWR052 Admin-UI Tenant-Einstellungen</a></p>
+<h1 id="STK043">43 Impressum und Datenschutzerklärung im Footer <small>STK043</small></h1>
+<p>Als Besucher möchte ich im Footer Links zu Impressum und Datenschutzerklärung
+sehen, um die rechtlichen Informationen des Betreibers aufrufen zu können.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR054">SWR054 Standard-Impressum und Datenschutzerklärung</a></p>
+<h1 id="STK044">44 Tenant-spezifisches Impressum und Datenschutzerklärung <small>STK044</small></h1>
+<p>Als Tenant-Admin möchte ich ein eigenes Impressum und eine eigene
+Datenschutzerklärung hinterlegen können, damit mein Blog die korrekten
+rechtlichen Informationen des jeweiligen Betreibers anzeigt.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR055">SWR055 Tenant-spezifisches Impressum und Datenschutzerklärung</a></p>
+<h1 id="STK045">45 Horizontale Skalierbarkeit und unterbrechungsfreie Updates <small>STK045</small></h1>
+<p>Als Betreiber möchte ich den Blog Content Service mit mehreren Instanzen
+betreiben können, damit Benutzer bei Rolling Updates oder Pod-Ausfällen
+nicht ausgeloggt werden und die Verfügbarkeit steigt.</p>
+<p><em>Child links:</em> <a href="INF.html#INF014">INF014 Redis Deployment auf Kubernetes</a>, <a href="SWR.html#SWR057">SWR057 Externer Session-Store für Blog Content Service</a>, <a href="SWR.html#SWR058">SWR058 Mehrere Replicas für Blog Content Service</a>, <a href="SWR.html#SWR064">SWR064 Shared Redis Session zwischen Blog Content und User Management Service</a></p>
+<h1 id="STK046">46 Lokale Benutzerregistrierung <small>STK046</small></h1>
+<p>Als Besucher möchte ich mich auf der Plattform mit E-Mail-Adresse und
+Passwort registrieren können (lokaler Account), damit ich ohne einen
+externen Identity-Provider ein Benutzerkonto anlegen kann. Nach der
+Registrierung erhalte ich zunächst die Rolle Reader. Weitergehende
+Rechte werden erst nach Freigabe durch den Tenant-Administrator
+erteilt (siehe STK028).</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR059">SWR059 REST-API fuer lokale Benutzerregistrierung</a>, <a href="SWR.html#SWR060">SWR060 Thymeleaf-Registrierungsseite fuer lokale Benutzer</a></p>
+<h1 id="STK047">47 OIDC-Konfiguration pro Tenant über Admin-Interface <small>STK047</small></h1>
+<p>Administratoren sollen die OIDC-Provider-Konfiguration (Client-ID,
+Client-Secret, Issuer-URL) pro Tenant über die Admin-Oberfläche
+verwalten können. Die bestehende globale OIDC-Konfiguration über
+Umgebungsvariablen dient als Fallback, wenn keine tenant-spezifische
+Konfiguration hinterlegt ist. Eine Änderung der OIDC-Konfiguration
+darf keinen Neustart der Anwendung erfordern.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR061">SWR061 Tenant-spezifische OIDC-Provider-Konfiguration im User Management Service</a>, <a href="SWR.html#SWR062">SWR062 OIDC-Konfiguration in der Admin-Oberfläche (Thymeleaf)</a>, <a href="SWR.html#SWR063">SWR063 Dynamische OIDC-Client-Registrierung pro Tenant</a></p>
+<h1 id="STK048">48 Gemeinsame UI-Bibliothek für Thymeleaf-Templates und Styles <small>STK048</small></h1>
+<p>Die geteilten UI-Templates (Layout, Header, Footer) und CSS-Styles,
+die von mehreren Services (Blog Content, User Management) verwendet
+werden, sollen in eine gemeinsame UI-Bibliothek (shared-ui) ausgelagert
+werden. Dadurch wird Code-Duplikation vermieden, ein einheitliches
+Look-and-Feel über alle Services sichergestellt und die Wartbarkeit
+der UI-Komponenten verbessert.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR065">SWR065 Shared UI Library als Maven-Modul</a>, <a href="SWR.html#SWR066">SWR066 Gemeinsames Layout-Template in der Shared UI Library</a>, <a href="SWR.html#SWR067">SWR067 Gemeinsame CSS-Styles in der Shared UI Library</a>, <a href="SWR.html#SWR068">SWR068 Gemeinsamer Footer in der Shared UI Library</a></p>
+<h1 id="STK049">49 Tenant-Einstellungen in separaten Formularen pro Einstellungsgruppe <small>STK049</small></h1>
+<p>Die Tenant-Einstellungen in der Admin-Oberfläche sollen in separate
+Formulare pro Einstellungsgruppe aufgeteilt werden, statt alle
+Einstellungen in einem einzigen Formular darzustellen. Jede
+Einstellungsgruppe (z.B. OIDC-Konfiguration, Impressum und
+Datenschutzerklärung, Allgemeine Einstellungen) erhält ein eigenes
+Formular mit einer dedizierten Speichern-Aktion. Dadurch wird die
+Übersichtlichkeit verbessert und das versehentliche Überschreiben
+nicht zusammenhängender Einstellungen vermieden.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR069">SWR069 Separate Formulare für Tenant-Einstellungsgruppen</a>, <a href="SWR.html#SWR070">SWR070 Navigation zwischen Tenant-Einstellungsgruppen</a>, <a href="SWR.html#SWR071">SWR071 Unabhängige Speicherung pro Einstellungsgruppe</a></p>
+<h1 id="STK050">50 Eigenständiger Tenant-Verwaltungsservice mit Admin-UI <small>STK050</small></h1>
+<p>Die Tenant-Verwaltung soll über einen eigenständigen Service erfolgen,
+der unabhängig vom User Management Service betrieben wird. Der Service
+stellt die Admin-UI für die Tenant-Verwaltung selbst über Thymeleaf
+bereit (unter Verwendung der Shared UI Library) und wird über eigene
+Kubernetes-Ressourcen (Ingress, Linkerd AuthorizationPolicies,
+NetworkPolicies) exponiert.</p>
+<p>Der SuperAdmin soll über die Admin-UI neue Tenants anlegen, bestehende
+Tenants konfigurieren und Tenant-Einstellungen (Login-Mode, OIDC,
+Branding, Impressum, Datenschutz) verwalten können.</p>
+<p>Die Trennung von Tenant-Verwaltung und Benutzerverwaltung folgt dem
+Prinzip der Bounded Context Separation (DDD): Ein Tenant existiert
+unabhängig von einzelnen Benutzern.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR072">SWR072 Tenant-Management-Service als eigenständiger Microservice</a>, <a href="SWR.html#SWR073">SWR073 Tenant-Admin-UI mit Shared UI Library</a>, <a href="SWR.html#SWR074">SWR074 Tenant-Management gRPC-Schnittstelle</a>, <a href="SWR.html#SWR075">SWR075 Kubernetes-Deployment für Tenant-Management-Service</a></p>
+<h1 id="STK051">51 Vollständige Vorschau für unveröffentlichte Posts <small>STK051</small></h1>
+<p>Als Autor oder Admin möchte ich einen unveröffentlichten Post (Status DRAFT)
+in einer vollständigen Vorschau betrachten können, die exakt der späteren
+Darstellung nach Veröffentlichung entspricht (inklusive Markdown-Rendering,
+Syntax-Highlighting und Mermaid-Diagramme), damit ich das Ergebnis vor der
+Publikation prüfen kann.</p>
+<p>Die Vorschau muss nur für authentifizierte Benutzer mit Schreibberechtigung
+(AUTHOR, ADMIN, SUPERADMIN) zugänglich sein.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR076">SWR076 Post-Vorschau-Endpoint für DRAFT-Posts</a>, <a href="SWR.html#SWR077">SWR077 Vorschau-Button im Post-Formular</a></p>
+<h1 id="STK052">52 E2E-Selenium-Tests für alle relevanten UI-Use-Cases <small>STK052</small></h1>
+<p>Alle relevanten UI-Use-Cases der Plattform müssen durch End-to-End-Tests
+mit Selenium im Browser abgedeckt sein. Die Tests simulieren echte
+Benutzerinteraktionen (Navigation, Formulareingaben, Klicks, Validierungen)
+und verifizieren das korrekte Verhalten der Anwendung aus Benutzersicht.</p>
+<p>Die E2E-Tests müssen:
+<ul>
+<li>in einer realistischen Browserumgebung (Chrome/Firefox headless) laufen</li>
+<li>die vollständige Kette von UI über Backend bis Datenbank durchlaufen</li>
+<li>unabhängig voneinander und wiederholbar ausführbar sein</li>
+<li>in die CI/CD-Pipeline integriert sein</li>
+<li>bei Fehlschlag aussagekräftige Fehlermeldungen und Screenshots liefern</p></li>
+</ul>
+<p><em>Child links:</em> <a href="SWR.html#SWR078">SWR078 E2E-Test-Infrastruktur mit Selenium WebDriver</a>, <a href="SWR.html#SWR079">SWR079 E2E-Tests: Blog-Content öffentliche Ansichten</a>, <a href="SWR.html#SWR080">SWR080 E2E-Tests: Blog-Content Autoren-Workflows</a>, <a href="SWR.html#SWR081">SWR081 E2E-Tests: Authentifizierung und Registrierung</a>, <a href="SWR.html#SWR082">SWR082 E2E-Tests: Admin-Workflows (User/Tenant)</a>, <a href="SWR.html#SWR083">SWR083 E2E-Tests: SuperAdmin Tenant-Verwaltung</a></p>
+<h1 id="STK053">53 Tag-Verwaltung und Tag-Anzeige im Blog <small>STK053</small></h1>
+<p>Als Autor möchte ich Posts mit Tags versehen können, um Inhalte thematisch
+zu kategorisieren. Im Post-Formular sollen bestehende Tags ausgewählt und
+neue Tags direkt angelegt werden können.</p>
+<p>Als Administrator möchte ich Tags im Admin-Backend verwalten (anlegen,
+umbenennen, löschen) können.</p>
+<p>Als Leser möchte ich in der Post-Übersicht und der Post-Detailansicht die
+zugewiesenen Tags sehen, um thematisch verwandte Inhalte zu erkennen.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR084">SWR084 Tag-Verwaltung im Admin-Backend</a>, <a href="SWR.html#SWR085">SWR085 Tag-Auswahl im Post-Formular</a>, <a href="SWR.html#SWR086">SWR086 Tag-Anzeige in Post-Übersicht und Detailansicht</a></p>
+<h1 id="STK054">54 Auditlog-Ansicht in der Admin-UI <small>STK054</small></h1>
+<p>Als Administrator möchte ich in der Admin-UI eine Ansicht der Auditlogs
+haben, um nachvollziehen zu können, wer wann welche Aktionen durchgeführt
+hat.</p>
+<p>Die Ansicht soll folgende Funktionen bieten:
+<ul>
+<li>Chronologische Auflistung aller Audit-Einträge (neueste zuerst)</li>
+<li>Filterung nach Aktionstyp, Entitätstyp, Akteur und Zeitraum</li>
+<li>Volltextsuche über alle Felder (Aktion, Akteur, Entitätstyp, Details)</li>
+<li>Paginierung für große Datenmengen</li>
+<li>Detailansicht einzelner Einträge mit allen erfassten Informationen</p></li>
+</ul>
+<p>Die Auditlog-Ansicht soll nur für Benutzer mit Admin- oder
+SuperAdmin-Rolle zugänglich sein.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR087">SWR087 Auditlog-Abfrage-Port und Repository</a>, <a href="SWR.html#SWR088">SWR088 Auditlog-Admin-View im Blog Content Service</a></p>
+<h1 id="STK055">55 Logo und FavIcon pro Tenant konfigurierbar <small>STK055</small></h1>
+<p>Als Tenant-Administrator möchte ich ein Logo und ein FavIcon für meinen
+Tenant hochladen können, damit der Blog ein individuelles
+Erscheinungsbild erhält.</p>
+<p>Der Upload erfolgt über die Admin-UI in den Tenant-Einstellungen
+(Branding-Bereich). Unterstützte Formate: PNG, SVG, ICO, JPEG, WebP.
+Die maximale Dateigröße beträgt 512 KB für Logos und 64 KB für FavIcons.</p>
+<p>Das Logo wird im Header der Blog-Ansicht neben dem Tenant-Namen angezeigt.
+Das FavIcon erscheint im Browser-Tab. Wenn kein Logo oder FavIcon
+konfiguriert ist, wird ein Standard-Platzhalter verwendet.</p>
+<p>Ein bereits hochgeladenes Logo oder FavIcon kann durch erneuten Upload
+ersetzt oder über einen Löschen-Button entfernt werden.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR091">SWR091 Logo und FavIcon in Tenant-Branding-Einstellungen</a></p>
+<h1 id="STK056">56 OIDC-Button-Text über Admin-UI konfigurierbar <small>STK056</small></h1>
+<p>Als Tenant-Administrator möchte ich den Text des OIDC-Login-Buttons
+(z.B. "Mit Authentik anmelden", "SSO Login", "Firmen-Login") über die
+Admin-UI konfigurieren können, damit die Login-Seite für die Benutzer
+meines Tenants verständlich beschriftet ist.</p>
+<p>Der konfigurierbare Button-Text wird auf der Login-Seite angezeigt,
+wenn der Tenant OIDC als Login-Methode aktiviert hat. Wenn kein
+benutzerdefinierter Text gesetzt ist, wird ein Standardtext
+(z.B. "Mit OIDC anmelden") verwendet.</p>
+<p>Die Konfiguration erfolgt über die Admin-UI in den Tenant-Einstellungen
+(OIDC-Bereich).</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR092">SWR092 Konfigurierbarer OIDC-Login-Button-Text pro Tenant</a></p>
+<h1 id="STK057">57 Nutzer über die Admin-UI löschen <small>STK057</small></h1>
+<p>Als Tenant-Administrator möchte ich Benutzer meines Tenants über die
+Admin-UI löschen können, um Konten zu entfernen, die nicht mehr benötigt
+werden.</p>
+<p>Das Löschen eines Benutzers entfernt die Tenant-Mitgliedschaft und die
+zugehörigen Benutzerdaten. Posts des gelöschten Benutzers bleiben
+erhalten, der Autorenname wird beibehalten.</p>
+<p>Es muss eine Sicherheitsabfrage (Bestätigungsdialog) vor dem Löschen
+geben. Der eigene Account und der SUPERADMIN-Account dürfen nicht
+gelöscht werden.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR093">SWR093 Benutzer-Löschung über Admin-UI</a></p>
+<h1 id="STK058">58 Standard-Rolle für neue Benutzer über Admin-UI einstellbar <small>STK058</small></h1>
+<p>Als Tenant-Administrator möchte ich die Standard-Rolle, die neuen
+Benutzern bei der Registrierung oder beim ersten OIDC-Login
+zugewiesen wird, pro Tenant konfigurieren können.</p>
+<p>Aktuell erhalten alle neuen Benutzer die Rolle READER. Der
+Tenant-Administrator soll über die Admin-UI eine andere
+Standard-Rolle (READER, REVIEWER, AUTHOR) auswählen können.</p>
+<p>Die Rollen ADMIN und SUPERADMIN dürfen nicht als Standard-Rolle
+wählbar sein.</p>
+<p>Die Konfiguration erfolgt über die Admin-UI in den Tenant-Einstellungen.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR094">SWR094 Konfigurierbare Standard-Rolle für neue Benutzer pro Tenant</a></p>
+<h1 id="STK059">59 Benutzer-Rollen über OIDC-Claims automatisch setzen <small>STK059</small></h1>
+<p>Als Tenant-Administrator möchte ich konfigurieren können, dass
+Benutzer-Rollen automatisch aus OIDC-Claims (z.B. groups oder roles)
+übernommen werden, damit die Rollenverwaltung zentral über den
+Identity Provider erfolgen kann.</p>
+<p>Das Mapping von OIDC-Gruppen auf plattforminterne Rollen soll pro
+Tenant konfigurierbar sein (z.B. "blog-authors" → AUTHOR,
+"blog-admins" → ADMIN).</p>
+<p>Wenn das OIDC-Rollen-Mapping aktiviert ist, werden die Rollen bei
+jedem Login aus den Claims aktualisiert. Manuell vergebene Rollen
+werden in diesem Fall durch die OIDC-Rollen überschrieben.</p>
+<p>Die Konfiguration erfolgt über die Admin-UI in den OIDC-Einstellungen
+des Tenants.</p>
+<p><em>Child links:</em> <a href="SWR.html#SWR095">SWR095 Automatisches Rollen-Mapping über OIDC-Claims</a></p>
+    </div>
+  </main>
+</div>
+<script src="../template/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

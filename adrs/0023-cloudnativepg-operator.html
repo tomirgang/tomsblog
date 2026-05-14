@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0023: CloudNativePG für PostgreSQL auf Kubernetes</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0023-cloudnativepg-für-postgresql-auf-kubernetes">ADR-0023:
+CloudNativePG für PostgreSQL auf Kubernetes</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Die Blog-Plattform benötigt PostgreSQL als primäre Datenbank
+(SWA-015: Database per Service). Auf Kubernetes gibt es verschiedene
+Ansätze für den PostgreSQL-Betrieb.</p>
+<p>Bewertungskriterien:</p>
+<ul>
+<li><strong>Kubernetes-native Verwaltung</strong>: Deklarative
+Cluster-Definition als Custom Resource</li>
+<li><strong>Betriebssicherheit</strong>: Automatisches Failover, Backup,
+WAL-Archivierung</li>
+<li><strong>Ressourcenverbrauch</strong>: Relevant für den
+3-Node-Cluster</li>
+<li><strong>Community und Reife</strong>: Langfristige
+Unterstützung</li>
+</ul>
+<h3 id="evaluierte-alternativen">Evaluierte Alternativen</h3>
+<p><strong>CloudNativePG:</strong></p>
+<ul>
+<li>CNCF Sandbox-Projekt, von EDB (EnterpriseDB) entwickelt</li>
+<li>Operator verwaltet PostgreSQL-Cluster als Kubernetes Custom
+Resource</li>
+<li>Automatisches Failover, Backup zu S3, Point-in-Time Recovery</li>
+<li>Leichtgewichtig: kein zusätzlicher Proxy (wie PgBouncer) nötig für
+einfache Setups</li>
+<li>Native Hetzner-Volume-Integration über StorageClass</li>
+</ul>
+<p><strong>Zalando Postgres Operator:</strong></p>
+<ul>
+<li>Bewährt, aber komplex (Patroni-basiert)</li>
+<li>Höherer Ressourcenverbrauch durch Sidecar-Container</li>
+<li>Weniger aktive Entwicklung in letzter Zeit</li>
+</ul>
+<p><strong>CrunchyData PGO:</strong></p>
+<ul>
+<li>Enterprise-orientiert, umfangreiche Features</li>
+<li>Höhere Komplexität für ein Lern-/Entwicklungsprojekt</li>
+<li>Doppelte Lizenzierung (Open Source + Enterprise)</li>
+</ul>
+<p><strong>Manuelles StatefulSet:</strong></p>
+<ul>
+<li>Volle Kontrolle, aber kein automatisches Failover</li>
+<li>Backup und Recovery manuell zu implementieren</li>
+<li>Hoher Wartungsaufwand</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p>Wir verwenden den <strong>CloudNativePG Operator</strong> für den
+PostgreSQL-Betrieb auf Kubernetes.</p>
+<h3 id="konfiguration-phase-3--mvp">Konfiguration (Phase 3 / MVP)</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Wert</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Instanzen</td>
+<td>1 (Single Instance, kein HA)</td>
+</tr>
+<tr class="even">
+<td>Storage</td>
+<td>10 Gi (Hetzner CSI, hcloud-volumes)</td>
+</tr>
+<tr class="odd">
+<td>shared_buffers</td>
+<td>256 MB</td>
+</tr>
+<tr class="even">
+<td>effective_cache_size</td>
+<td>512 MB</td>
+</tr>
+<tr class="odd">
+<td>CPU Request/Limit</td>
+<td>250m / 1000m</td>
+</tr>
+<tr class="even">
+<td>Memory Request/Limit</td>
+<td>512 Mi / 1 Gi</td>
+</tr>
+<tr class="odd">
+<td>Namespace</td>
+<td>postgres</td>
+</tr>
+</tbody>
+</table>
+<h3 id="verantwortlichkeiten">Verantwortlichkeiten</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Aufgabe</th>
+<th>Wo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Operator-Installation (CRDs, Controller)</td>
+<td>IaC-Repository (Plattform-Voraussetzung)</td>
+</tr>
+<tr class="even">
+<td>Cluster-Definition (Instanz, Sizing, Storage)</td>
+<td>tomsblog/infra/k8s/postgres/</td>
+</tr>
+<tr class="odd">
+<td>Backup-Konfiguration (S3, WAL)</td>
+<td>tomsblog/infra/k8s/postgres/ (später)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="begründung">Begründung</h3>
+<ul>
+<li><strong>Kubernetes-nativ</strong>: PostgreSQL-Cluster als
+deklarative YAML-Ressource passt zum GitOps-Ansatz (ADR-0020)</li>
+<li><strong>Leichtgewichtig</strong>: Minimaler Overhead auf dem
+3-Node-Cluster</li>
+<li><strong>CNCF-Projekt</strong>: Aktive Community, langfristige
+Perspektive</li>
+<li><strong>Einfaches Scaling</strong>: Von Single Instance auf HA (2+
+Replicas) ohne Architekturwechsel</li>
+<li><strong>Hetzner-CSI-Integration</strong>: Storage über
+hcloud-volumes StorageClass</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Vorteile:</strong></p>
+<ul>
+<li>Deklarative Datenbank-Verwaltung im Git (Flux-kompatibel)</li>
+<li>Automatisches Secret-Management (Zugangsdaten als Kubernetes
+Secrets)</li>
+<li>Einfacher Pfad zu HA (Replica-Count erhöhen)</li>
+<li>Integrierte Backup-Möglichkeit zu S3 (für spätere
+Backup-Strategie)</li>
+</ul>
+<p><strong>Nachteile:</strong></p>
+<ul>
+<li>Abhängigkeit vom CloudNativePG Operator (muss auf Cluster
+installiert sein)</li>
+<li>Single Instance in Phase 3: kein automatisches Failover</li>
+<li>Operator-Updates müssen separat koordiniert werden</li>
+<li>Hetzner Volumes sind AZ-gebunden (kein Cross-AZ-Failover)</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li>SWA-015 (Database per Service)</li>
+<li>STK-007 (Cloud-Native Deployment)</li>
+<li>ADR-0022 (Kubernetes-Plattform mit kube-hetzner)</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

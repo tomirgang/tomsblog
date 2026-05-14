@@ -1,0 +1,2219 @@
+<!DOCTYPE html>
+<html>
+<head><title>Traceability</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="template/bootstrap.min.css" />
+  <link rel="stylesheet" href="template/general.css" />
+  <link type="text/css" rel="stylesheet" href="template/doorstop.css" />
+  <script src="template/tex-mml-chtml.js" id="MathJax-script" async></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+  </script>
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a></div>
+
+  <header class="navbar navbar-expand-lg navbar-dark bd-navbar sticky-top text-bg-secondary">
+  <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap" aria-label="Document attributes">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+        </ul>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <!-- Insert logotype. -->
+            <img src="template/logo-black-white.png" alt="Doorstop" height="128" class="d-inline-block align-text-top">
+          </div>
+        </div>
+        <div class="col-6 align-self-center">
+          <div class="bd-lead text-nowrap text-center">
+            <span class="text-monospace"><strong>Traceability</strong></span>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">Ref</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="bd-lead text-nowrap">
+            <span class="text-muted">By</span>
+            <p><span class="text-monospace">-</span></p>
+            <span class="text-muted">Issue</span>
+            <p><span class="text-monospace">-</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </nav>
+</header>
+<div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout">
+  <main class="bd-main order-1">
+    <div class="bd-intro ps-lg-4">
+      <H1>Doorstop traceability matrix</H1>
+      <table class="table">
+<thead>
+<tr>
+  <th scope="col"><a href="documents/STK.html">STK</a></th>
+  <th scope="col"><a href="documents/SWR.html">SWR</a></th>
+  <th scope="col"><a href="documents/TST.html">TST</a></th>
+  <th scope="col"><a href="documents/SWA.html">SWA</a></th>
+  <th scope="col"><a href="documents/IMP.html">IMP</a></th>
+  <th scope="col"><a href="documents/INF.html">INF</a></th>
+  <th scope="col"><a href="documents/OPS.html">OPS</a></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"><a href="documents/TST.html#TST001">TST001 Post erstellen generiert ID und Slug</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"><a href="documents/TST.html#TST002">TST002 Post erstellen registriert PostCreatedEvent</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"><a href="documents/TST.html#TST005">TST005 Post-Inhalt aktualisieren</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"><a href="documents/TST.html#TST006">TST006 Post mit leerem Titel wird abgelehnt</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"><a href="documents/TST.html#TST007">TST007 Persistenz und Tenant-Isolation (Integration)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"><a href="documents/TST.html#TST008">TST008 Posts nach Tenant auflisten (Integration)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP001">IMP001 Post Aggregate Root</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP002">IMP002 PostService (Application Layer)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP003">IMP003 PostController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP004">IMP004 JpaPostRepository (Persistence Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP013">IMP013 TagService und TagUseCase</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP014">IMP014 TagController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP015">IMP015 JpaTagRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP016">IMP016 TranslationService und TranslationUseCase</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP017">IMP017 TranslationController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP018">IMP018 JpaTranslationRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA002">SWA002 Shared Kernel als Framework-freie Library</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP006">IMP006 Shared Kernel Domain Primitives</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA002">SWA002 Shared Kernel als Framework-freie Library</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP012">IMP012 AuthorId im Shared Kernel</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP001">IMP001 Post Aggregate Root</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP002">IMP002 PostService (Application Layer)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP003">IMP003 PostController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP004">IMP004 JpaPostRepository (Persistence Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP014">IMP014 TagController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP015">IMP015 JpaTagRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP017">IMP017 TranslationController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP018">IMP018 JpaTranslationRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP019">IMP019 Flyway Migrationen für Blog Content Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP001">IMP001 Post Aggregate Root</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP008">IMP008 Tag Entity mit Identity</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP010">IMP010 Source Value Object</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP011">IMP011 Attachment Value Object mit show-Flag</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP013">IMP013 TagService und TagUseCase</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP015">IMP015 JpaTagRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP018">IMP018 JpaTranslationRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP019">IMP019 Flyway Migrationen für Blog Content Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR001">SWR001 Post CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA015">SWA015 Database per Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR002">SWR002 Post veröffentlichen</a></td>
+  <td scope="row"><a href="documents/TST.html#TST003">TST003 Post veröffentlichen ändert Status und Event</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR002">SWR002 Post veröffentlichen</a></td>
+  <td scope="row"><a href="documents/TST.html#TST004">TST004 Bereits veröffentlichter Post wirft Exception</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR002">SWR002 Post veröffentlichen</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP001">IMP001 Post Aggregate Root</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR002">SWR002 Post veröffentlichen</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP002">IMP002 PostService (Application Layer)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR002">SWR002 Post veröffentlichen</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP003">IMP003 PostController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR002">SWR002 Post veröffentlichen</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP004">IMP004 JpaPostRepository (Persistence Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR002">SWR002 Post veröffentlichen</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP014">IMP014 TagController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR002">SWR002 Post veröffentlichen</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP015">IMP015 JpaTagRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR002">SWR002 Post veröffentlichen</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP017">IMP017 TranslationController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR002">SWR002 Post veröffentlichen</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP018">IMP018 JpaTranslationRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR002">SWR002 Post veröffentlichen</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP019">IMP019 Flyway Migrationen für Blog Content Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR018">SWR018 Automatisierte Kommentar-Moderation via LLM</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA012">SWA012 LLM-basierte Kommentar-Moderation als Adapter</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR019">SWR019 Shadow-Banning für Kommentare</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR020">SWR020 Tag CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP015">IMP015 JpaTagRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR020">SWR020 Tag CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP018">IMP018 JpaTranslationRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR020">SWR020 Tag CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP019">IMP019 Flyway Migrationen für Blog Content Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR021">SWR021 Translation CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP015">IMP015 JpaTagRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR021">SWR021 Translation CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP018">IMP018 JpaTranslationRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR021">SWR021 Translation CRUD API</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA013">SWA013 Flyway für versionierte Datenbank-Migrationen</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP019">IMP019 Flyway Migrationen für Blog Content Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR025">SWR025 Thymeleaf Layout-Grundgerüst (responsiv)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR026">SWR026 Öffentliche Blog-Ansicht (Post-Liste und Einzelansicht)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK001">STK001 Blog-Posts erstellen und veröffentlichen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR027">SWR027 Thymeleaf-Formular zum Erstellen und Bearbeiten von Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a></td>
+  <td scope="row"><a href="documents/TST.html#TST007">TST007 Persistenz und Tenant-Isolation (Integration)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a></td>
+  <td scope="row"><a href="documents/TST.html#TST008">TST008 Posts nach Tenant auflisten (Integration)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA002">SWA002 Shared Kernel als Framework-freie Library</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP006">IMP006 Shared Kernel Domain Primitives</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA002">SWA002 Shared Kernel als Framework-freie Library</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP012">IMP012 AuthorId im Shared Kernel</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP001">IMP001 Post Aggregate Root</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP008">IMP008 Tag Entity mit Identity</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP010">IMP010 Source Value Object</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP011">IMP011 Attachment Value Object mit show-Flag</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP013">IMP013 TagService und TagUseCase</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA011">SWA011 Domain-basierte Tenant-Resolution am Ingress</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR003">SWR003 Tenant-Isolation auf Datenebene</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA015">SWA015 Database per Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR017">SWR017 Domain-basierte Tenant-Auswahl</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA011">SWA011 Domain-basierte Tenant-Resolution am Ingress</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR050">SWR050 Tenant-Branding im Header</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR053">SWR053 SuperAdmin Tenant-Umschaltung</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK002">STK002 Multi-Tenancy</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR074">SWR074 Tenant-Management gRPC-Schnittstelle</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA034">SWA034 Tenant-Management-Service Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK003">STK003 Mehrsprachige Inhalte</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR004">SWR004 Übersetzung per KI (Author-getriggert)</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA006">SWA006 AI Service als separater Adapter</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK003">STK003 Mehrsprachige Inhalte</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR004">SWR004 Übersetzung per KI (Author-getriggert)</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA008">SWA008 Translation als separates Aggregate mit eigenem Lifecycle</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP009">IMP009 Translation Aggregate</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK003">STK003 Mehrsprachige Inhalte</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR004">SWR004 Übersetzung per KI (Author-getriggert)</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA008">SWA008 Translation als separates Aggregate mit eigenem Lifecycle</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP016">IMP016 TranslationService und TranslationUseCase</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK003">STK003 Mehrsprachige Inhalte</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR005">SWR005 Manuelle Übersetzung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA008">SWA008 Translation als separates Aggregate mit eigenem Lifecycle</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP009">IMP009 Translation Aggregate</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK003">STK003 Mehrsprachige Inhalte</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR005">SWR005 Manuelle Übersetzung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA008">SWA008 Translation als separates Aggregate mit eigenem Lifecycle</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP016">IMP016 TranslationService und TranslationUseCase</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK004">STK004 Audit-Fähigkeit</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR006">SWR006 Audit-Trail für Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP001">IMP001 Post Aggregate Root</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK004">STK004 Audit-Fähigkeit</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR006">SWR006 Audit-Trail für Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP002">IMP002 PostService (Application Layer)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK004">STK004 Audit-Fähigkeit</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR006">SWR006 Audit-Trail für Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP003">IMP003 PostController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK004">STK004 Audit-Fähigkeit</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR006">SWR006 Audit-Trail für Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP004">IMP004 JpaPostRepository (Persistence Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK004">STK004 Audit-Fähigkeit</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR006">SWR006 Audit-Trail für Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP014">IMP014 TagController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK004">STK004 Audit-Fähigkeit</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR006">SWR006 Audit-Trail für Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP015">IMP015 JpaTagRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK004">STK004 Audit-Fähigkeit</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR006">SWR006 Audit-Trail für Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP017">IMP017 TranslationController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK004">STK004 Audit-Fähigkeit</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR006">SWR006 Audit-Trail für Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP018">IMP018 JpaTranslationRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK004">STK004 Audit-Fähigkeit</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR006">SWR006 Audit-Trail für Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA004">SWA004 Blog Content Service als Spring Boot Applikation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP019">IMP019 Flyway Migrationen für Blog Content Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK004">STK004 Audit-Fähigkeit</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR056">SWR056 Audit-Logging für alle relevanten Aktionen</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA031">SWA031 Audit-Logging-Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR007">SWR007 Rollenbasierte Zugriffskontrolle</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA010">SWA010 Authentik OIDC und leichtgewichtiger User-Management-Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR007">SWR007 Rollenbasierte Zugriffskontrolle</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA029">SWA029 User-Management-Service Architektur (hexagonal)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR016">SWR016 OIDC Login mit Authentik als externem Provider</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA010">SWA010 Authentik OIDC und leichtgewichtiger User-Management-Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR028">SWR028 Einfacher Admin-Login zum Schutz der Schreiboperationen</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR043">SWR043 User-Management-Service fuer Profile, Rollen und Tenant-Zuordnung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA029">SWA029 User-Management-Service Architektur (hexagonal)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR051">SWR051 Admin-UI Benutzerliste und -verwaltung</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK005">STK005 Benutzerverwaltung und Rollen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR053">SWR053 SuperAdmin Tenant-Umschaltung</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK006">STK006 RSS/Atom Feeds</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR008">SWR008 RSS/Atom Feed-Generierung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA005">SWA005 Kafka als Event-Broker</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP005">IMP005 LoggingEventPublisher (Interim Event Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK007">STK007 Cloud-Native Deployment</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR010">SWR010 Container-Image und Health-Checks</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA017">SWA017 Kubernetes-Cluster-Provisionierung mit hetzner-k3s</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK007">STK007 Cloud-Native Deployment</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR010">SWR010 Container-Image und Health-Checks</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA018">SWA018 PostgreSQL-Betrieb mit CloudNativePG Operator</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK007">STK007 Cloud-Native Deployment</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR010">SWR010 Container-Image und Health-Checks</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA030">SWA030 Deklarative Datenbank-Ressourcen pro Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK007">STK007 Cloud-Native Deployment</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF001">INF001 Kubernetes-Cluster auf Hetzner Cloud</a></td>
+  <td scope="row"><a href="documents/OPS.html#OPS002">OPS002 Disaster-Recovery-Plan</a></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK007">STK007 Cloud-Native Deployment</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF002">INF002 GitOps-Deployment mit Flux</a></td>
+  <td scope="row"><a href="documents/OPS.html#OPS001">OPS001 Rollback-Verfahren dokumentiert und getestet</a></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK007">STK007 Cloud-Native Deployment</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF003">INF003 TLS-Terminierung mit cert-manager und Let's Encrypt</a></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK007">STK007 Cloud-Native Deployment</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF005">INF005 PostgreSQL HA via CloudNativePG</a></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK007">STK007 Cloud-Native Deployment</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF006">INF006 Service Mesh mit Linkerd (mTLS)</a></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK007">STK007 Cloud-Native Deployment</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF007">INF007 Network Policies (Default Deny)</a></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK007">STK007 Cloud-Native Deployment</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF008">INF008 Versionierte Image-Tags und automatische Manifest-Updates</a></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK007">STK007 Cloud-Native Deployment</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF009">INF009 Backup-Strategie fuer PostgreSQL</a></td>
+  <td scope="row"><a href="documents/OPS.html#OPS002">OPS002 Disaster-Recovery-Plan</a></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK007">STK007 Cloud-Native Deployment</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF010">INF010 Monitoring-Infrastruktur</a></td>
+  <td scope="row"><a href="documents/OPS.html#OPS003">OPS003 Alerting bei kritischen Zustaenden</a></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK007">STK007 Cloud-Native Deployment</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF013">INF013 Deklarative Datenbankverwaltung mit CloudNativePG Database CRD</a></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK008">STK008 Observability</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR011">SWR011 Metriken und Tracing</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"><a href="documents/TST.html#TST002">TST002 Post erstellen registriert PostCreatedEvent</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP001">IMP001 Post Aggregate Root</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP002">IMP002 PostService (Application Layer)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP003">IMP003 PostController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP004">IMP004 JpaPostRepository (Persistence Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP013">IMP013 TagService und TagUseCase</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP014">IMP014 TagController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP015">IMP015 JpaTagRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP016">IMP016 TranslationService und TranslationUseCase</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP017">IMP017 TranslationController (REST Inbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA001">SWA001 Hexagonale Architektur pro Service</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP018">IMP018 JpaTranslationRepository (Outbound Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA003">SWA003 Event-Contracts als geteilte Library</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP005">IMP005 LoggingEventPublisher (Interim Event Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA005">SWA005 Kafka als Event-Broker</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP005">IMP005 LoggingEventPublisher (Interim Event Adapter)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA009">SWA009 gRPC für synchrone Service-Kommunikation</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR009">SWR009 Domain Events via Kafka</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA014">SWA014 RabbitMQ als Task-Queue-Broker</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR024">SWR024 OpenAPI/Swagger API-Dokumentation</a></td>
+  <td scope="row"><a href="documents/TST.html#TST009">TST009 OpenAPI-Spezifikation und Swagger UI (Integration)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK009">STK009 Erweiterbarkeit um Podcast und Video</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR024">SWR024 OpenAPI/Swagger API-Dokumentation</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA016">SWA016 springdoc-openapi für API-Dokumentation</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP020">IMP020 OpenAPI-Konfiguration und Annotationen im Blog Content Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK010">STK010 Quellenverwaltung für Posts</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR012">SWR012 Quellen-Verwaltung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP001">IMP001 Post Aggregate Root</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK010">STK010 Quellenverwaltung für Posts</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR012">SWR012 Quellen-Verwaltung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP008">IMP008 Tag Entity mit Identity</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK010">STK010 Quellenverwaltung für Posts</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR012">SWR012 Quellen-Verwaltung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP010">IMP010 Source Value Object</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK010">STK010 Quellenverwaltung für Posts</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR012">SWR012 Quellen-Verwaltung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP011">IMP011 Attachment Value Object mit show-Flag</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK010">STK010 Quellenverwaltung für Posts</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR012">SWR012 Quellen-Verwaltung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA007">SWA007 Domain-Modell mit Aggregates, Entities und Value Objects</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP013">IMP013 TagService und TagUseCase</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK010">STK010 Quellenverwaltung für Posts</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR013">SWR013 Web-Snapshot von Quellen</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK011">STK011 KI-Unterstützung für Autoren</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR004">SWR004 Übersetzung per KI (Author-getriggert)</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA006">SWA006 AI Service als separater Adapter</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK011">STK011 KI-Unterstützung für Autoren</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR004">SWR004 Übersetzung per KI (Author-getriggert)</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA008">SWA008 Translation als separates Aggregate mit eigenem Lifecycle</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP009">IMP009 Translation Aggregate</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK011">STK011 KI-Unterstützung für Autoren</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR004">SWR004 Übersetzung per KI (Author-getriggert)</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA008">SWA008 Translation als separates Aggregate mit eigenem Lifecycle</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP016">IMP016 TranslationService und TranslationUseCase</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK011">STK011 KI-Unterstützung für Autoren</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR014">SWR014 Graceful Degradation bei KI-Ausfall</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA006">SWA006 AI Service als separater Adapter</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK012">STK012 Sicherheit (OWASP Top 10)</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR015">SWR015 Input-Validierung und OWASP-Schutz</a></td>
+  <td scope="row"><a href="documents/TST.html#TST006">TST006 Post mit leerem Titel wird abgelehnt</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK012">STK012 Sicherheit (OWASP Top 10)</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR023">SWR023 Fuzz Testing externer Interfaces</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK012">STK012 Sicherheit (OWASP Top 10)</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR032">SWR032 HTTPS-Verschlüsselung für externe Zugriffe</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA021">SWA021 TLS-Terminierung am Ingress mit cert-manager und Let's Encrypt</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK013">STK013 Zeitgesteuerte Veröffentlichung</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR022">SWR022 Time-based Auto Publishing</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK014">STK014 Sichere Service-zu-Service-Kommunikation (Zero Trust)</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR029">SWR029 Service Mesh mit automatischem mTLS (Linkerd)</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA022">SWA022 Linkerd Service Mesh Deployment via Flux und cert-manager</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK014">STK014 Sichere Service-zu-Service-Kommunikation (Zero Trust)</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR029">SWR029 Service Mesh mit automatischem mTLS (Linkerd)</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA023">SWA023 Default-Deny AuthorizationPolicies fuer Linkerd Service Mesh</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK015">STK015 KI-Features nur für autorisierte Benutzer</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR030">SWR030 User-Kontext-Propagierung für geschützte Features</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK016">STK016 Sichere Verwaltung von Secrets im Cluster</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR031">SWR031 Secrets verschlüsselt im Repository und automatisch synchronisiert</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA019">SWA019 Cross-Namespace Secret-Synchronisation mit Reflector</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK016">STK016 Sichere Verwaltung von Secrets im Cluster</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR031">SWR031 Secrets verschlüsselt im Repository und automatisch synchronisiert</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA020">SWA020 SOPS+age Verschlüsselung für Secrets im Git-Repository</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK016">STK016 Sichere Verwaltung von Secrets im Cluster</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF004">INF004 Secrets-Management mit SOPS und age</a></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK017">STK017 Landing Page zeigt neueste Posts</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR033">SWR033 Landing Page zeigt maximal drei neueste Posts</a></td>
+  <td scope="row"><a href="documents/TST.html#TST010">TST010 Landing Page zeigt maximal drei Posts (Unit + WebMvcTest)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK017">STK017 Landing Page zeigt neueste Posts</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR033">SWR033 Landing Page zeigt maximal drei neueste Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA026">SWA026 Landing Page mit begrenzter Post-Anzahl und Paginierung am Repository</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP026">IMP026 Landing Page Begrenzung auf drei Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK017">STK017 Landing Page zeigt neueste Posts</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR042">SWR042 Featured Posts auf der Landing Page anzeigen</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA028">SWA028 Featured-Post-Abfrage im Persistence Adapter</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK018">STK018 Versionsnummer im Footer</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR034">SWR034 Versionsnummer im Footer anzeigen</a></td>
+  <td scope="row"><a href="documents/TST.html#TST011">TST011 Versionsnummer im Footer (ControllerAdvice Unit Test)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK018">STK018 Versionsnummer im Footer</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR034">SWR034 Versionsnummer im Footer anzeigen</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA025">SWA025 ControllerAdvice für globale Modellattribute (VersionModelAdvice)</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP025">IMP025 VersionModelAdvice ControllerAdvice</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK019">STK019 HTML- und Markdown-Unterstützung für Blog-Inhalte</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR035">SWR035 HTML- und Markdown-Unterstützung mit Rendering</a></td>
+  <td scope="row"><a href="documents/TST.html#TST012">TST012 Markdown-Rendering (Unit Test FlexmarkMarkdownRenderer)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK019">STK019 HTML- und Markdown-Unterstützung für Blog-Inhalte</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR035">SWR035 HTML- und Markdown-Unterstützung mit Rendering</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA024">SWA024 Outbound Port und Adapter für Markdown-Rendering</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP024">IMP024 FlexmarkMarkdownRenderer Outbound Adapter</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK019">STK019 HTML- und Markdown-Unterstützung für Blog-Inhalte</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR035">SWR035 HTML- und Markdown-Unterstützung mit Rendering</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA027">SWA027 ContentType im Domain-Modell und Persistenz-Schema</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP027">IMP027 ContentType-Feld und Flyway-Migration V4</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK019">STK019 HTML- und Markdown-Unterstützung für Blog-Inhalte</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR035">SWR035 HTML- und Markdown-Unterstützung mit Rendering</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA027">SWA027 ContentType im Domain-Modell und Persistenz-Schema</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP028">IMP028 Gerenderte Vorschau mit erstem Absatz</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK020">STK020 Gerenderte Vorschau in der Post-Liste</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR036">SWR036 Gerenderte Vorschau in der Post-Liste</a></td>
+  <td scope="row"><a href="documents/TST.html#TST013">TST013 Gerenderte Vorschau und erster Absatz (WebMvcTest)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK020">STK020 Gerenderte Vorschau in der Post-Liste</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR036">SWR036 Gerenderte Vorschau in der Post-Liste</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA027">SWA027 ContentType im Domain-Modell und Persistenz-Schema</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP027">IMP027 ContentType-Feld und Flyway-Migration V4</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK020">STK020 Gerenderte Vorschau in der Post-Liste</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR036">SWR036 Gerenderte Vorschau in der Post-Liste</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA027">SWA027 ContentType im Domain-Modell und Persistenz-Schema</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP028">IMP028 Gerenderte Vorschau mit erstem Absatz</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK021">STK021 Vorschau umfasst den ersten Abschnitt</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR037">SWR037 Vorschau zeigt den ersten Abschnitt</a></td>
+  <td scope="row"><a href="documents/TST.html#TST013">TST013 Gerenderte Vorschau und erster Absatz (WebMvcTest)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK021">STK021 Vorschau umfasst den ersten Abschnitt</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR037">SWR037 Vorschau zeigt den ersten Abschnitt</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA027">SWA027 ContentType im Domain-Modell und Persistenz-Schema</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP027">IMP027 ContentType-Feld und Flyway-Migration V4</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK021">STK021 Vorschau umfasst den ersten Abschnitt</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR037">SWR037 Vorschau zeigt den ersten Abschnitt</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA027">SWA027 ContentType im Domain-Modell und Persistenz-Schema</a></td>
+  <td scope="row"><a href="documents/IMP.html#IMP028">IMP028 Gerenderte Vorschau mit erstem Absatz</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK022">STK022 Volltextsuche über Tenant-Inhalte</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR038">SWR038 Volltextsuche für veröffentlichte Blog Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK023">STK023 HTTPS-Redirect für alle Requests</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK024">STK024 Default-Domain-Redirect auf blog.tomirgang.de</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK025">STK025 Chronologische Navigation auf Post-Detailseiten</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR039">SWR039 Chronologische Previous/Next-Navigation auf Post-Detailseiten</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK026">STK026 Serien-Navigation für thematisch zusammenhängende Posts</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR040">SWR040 Serien-Navigation für thematisch zusammenhängende Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK027">STK027 Featured Posts auf der Landing Page</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR041">SWR041 Featured-Zeitraum im Domain-Modell</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA028">SWA028 Featured-Post-Abfrage im Persistence Adapter</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK027">STK027 Featured Posts auf der Landing Page</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR042">SWR042 Featured Posts auf der Landing Page anzeigen</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA028">SWA028 Featured-Post-Abfrage im Persistence Adapter</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK028">STK028 Benutzer-Freigabe durch Tenant-Admin</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR007">SWR007 Rollenbasierte Zugriffskontrolle</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA010">SWA010 Authentik OIDC und leichtgewichtiger User-Management-Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK028">STK028 Benutzer-Freigabe durch Tenant-Admin</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR007">SWR007 Rollenbasierte Zugriffskontrolle</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA029">SWA029 User-Management-Service Architektur (hexagonal)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK028">STK028 Benutzer-Freigabe durch Tenant-Admin</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR043">SWR043 User-Management-Service fuer Profile, Rollen und Tenant-Zuordnung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA029">SWA029 User-Management-Service Architektur (hexagonal)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK028">STK028 Benutzer-Freigabe durch Tenant-Admin</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR045">SWR045 Auto-Approval bei OIDC-Login und E-Mail-Domain</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK028">STK028 Benutzer-Freigabe durch Tenant-Admin</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR051">SWR051 Admin-UI Benutzerliste und -verwaltung</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK029">STK029 Nicht angemeldete Benutzer als Reader behandeln</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR007">SWR007 Rollenbasierte Zugriffskontrolle</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA010">SWA010 Authentik OIDC und leichtgewichtiger User-Management-Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK029">STK029 Nicht angemeldete Benutzer als Reader behandeln</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR007">SWR007 Rollenbasierte Zugriffskontrolle</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA029">SWA029 User-Management-Service Architektur (hexagonal)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK029">STK029 Nicht angemeldete Benutzer als Reader behandeln</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR043">SWR043 User-Management-Service fuer Profile, Rollen und Tenant-Zuordnung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA029">SWA029 User-Management-Service Architektur (hexagonal)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK030">STK030 E-Mail-Benachrichtigungen und Abonnements</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK031">STK031 Konfigurierbare Login-Methode pro Tenant</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR043">SWR043 User-Management-Service fuer Profile, Rollen und Tenant-Zuordnung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA029">SWA029 User-Management-Service Architektur (hexagonal)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK031">STK031 Konfigurierbare Login-Methode pro Tenant</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR044">SWR044 Konfigurierbare Login-Methode und Break-Glass Admin-Login</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK031">STK031 Konfigurierbare Login-Methode pro Tenant</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR052">SWR052 Admin-UI Tenant-Einstellungen</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK032">STK032 Auto-Approval neuer Benutzer</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR043">SWR043 User-Management-Service fuer Profile, Rollen und Tenant-Zuordnung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA029">SWA029 User-Management-Service Architektur (hexagonal)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK032">STK032 Auto-Approval neuer Benutzer</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR045">SWR045 Auto-Approval bei OIDC-Login und E-Mail-Domain</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK033">STK033 OIDC Konfiguration über Infrastruktur oder Admin UI</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR061">SWR061 Tenant-spezifische OIDC-Provider-Konfiguration im User Management Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK034">STK034 Administrationsdokumentation für generisches Kubernetes</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK035">STK035 HTTPS-Umleitung für alle Requests außer Let's Encrypt</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF011">INF011 Traefik HTTPS-Redirect für alle Nicht-ACME-Requests</a></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK036">STK036 Umleitung unbekannter Domains auf Hauptdomain</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF012">INF012 Traefik Default-Redirect für unbekannte Domains</a></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK037">STK037 Synchrone Service-Kommunikation via gRPC</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR046">SWR046 gRPC für synchrone Inter-Service-Aufrufe</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK038">STK038 Asynchrone Service-Kommunikation via Kafka oder RabbitMQ</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR047">SWR047 Kafka für Event-Streaming zwischen Services</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK038">STK038 Asynchrone Service-Kommunikation via Kafka oder RabbitMQ</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR048">SWR048 RabbitMQ für Task-Queues zwischen Services</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK038">STK038 Asynchrone Service-Kommunikation via Kafka oder RabbitMQ</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR089">SWR089 TaskPublisher als Outbound Port für RabbitMQ-Task-Verteilung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA037">SWA037 RabbitMQ-Adapter mit Quorum Queues und Dead-Letter-Handling</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK038">STK038 Asynchrone Service-Kommunikation via Kafka oder RabbitMQ</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF015">INF015 Kafka-Cluster auf Kubernetes (Strimzi Operator)</a></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK038">STK038 Asynchrone Service-Kommunikation via Kafka oder RabbitMQ</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF016">INF016 RabbitMQ-Cluster auf Kubernetes (RabbitMQ Cluster Operator)</a></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK039">STK039 REST und GraphQL ausschließlich für Clients</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR049">SWR049 REST und GraphQL nur für Client-Kommunikation</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK040">STK040 Tenant-Branding in Navigation</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR050">SWR050 Tenant-Branding im Header</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK041">STK041 Admin-Oberfläche für Benutzerverwaltung</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR051">SWR051 Admin-UI Benutzerliste und -verwaltung</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK042">STK042 Admin-Oberfläche für Tenant-Einstellungen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR052">SWR052 Admin-UI Tenant-Einstellungen</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK043">STK043 Impressum und Datenschutzerklärung im Footer</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR054">SWR054 Standard-Impressum und Datenschutzerklärung</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK044">STK044 Tenant-spezifisches Impressum und Datenschutzerklärung</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR055">SWR055 Tenant-spezifisches Impressum und Datenschutzerklärung</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK045">STK045 Horizontale Skalierbarkeit und unterbrechungsfreie Updates</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR057">SWR057 Externer Session-Store für Blog Content Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA032">SWA032 Redis als externer Session-Store</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK045">STK045 Horizontale Skalierbarkeit und unterbrechungsfreie Updates</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR058">SWR058 Mehrere Replicas für Blog Content Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK045">STK045 Horizontale Skalierbarkeit und unterbrechungsfreie Updates</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR064">SWR064 Shared Redis Session zwischen Blog Content und User Management Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK045">STK045 Horizontale Skalierbarkeit und unterbrechungsfreie Updates</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/INF.html#INF014">INF014 Redis Deployment auf Kubernetes</a></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK046">STK046 Lokale Benutzerregistrierung</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR059">SWR059 REST-API fuer lokale Benutzerregistrierung</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK046">STK046 Lokale Benutzerregistrierung</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR060">SWR060 Thymeleaf-Registrierungsseite fuer lokale Benutzer</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK047">STK047 OIDC-Konfiguration pro Tenant über Admin-Interface</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR061">SWR061 Tenant-spezifische OIDC-Provider-Konfiguration im User Management Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK047">STK047 OIDC-Konfiguration pro Tenant über Admin-Interface</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR062">SWR062 OIDC-Konfiguration in der Admin-Oberfläche (Thymeleaf)</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK047">STK047 OIDC-Konfiguration pro Tenant über Admin-Interface</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR063">SWR063 Dynamische OIDC-Client-Registrierung pro Tenant</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK048">STK048 Gemeinsame UI-Bibliothek für Thymeleaf-Templates und Styles</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR065">SWR065 Shared UI Library als Maven-Modul</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA033">SWA033 Shared UI Library Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK048">STK048 Gemeinsame UI-Bibliothek für Thymeleaf-Templates und Styles</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR066">SWR066 Gemeinsames Layout-Template in der Shared UI Library</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA033">SWA033 Shared UI Library Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK048">STK048 Gemeinsame UI-Bibliothek für Thymeleaf-Templates und Styles</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR067">SWR067 Gemeinsame CSS-Styles in der Shared UI Library</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA033">SWA033 Shared UI Library Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK048">STK048 Gemeinsame UI-Bibliothek für Thymeleaf-Templates und Styles</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR068">SWR068 Gemeinsamer Footer in der Shared UI Library</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA033">SWA033 Shared UI Library Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK049">STK049 Tenant-Einstellungen in separaten Formularen pro Einstellungsgruppe</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR069">SWR069 Separate Formulare für Tenant-Einstellungsgruppen</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK049">STK049 Tenant-Einstellungen in separaten Formularen pro Einstellungsgruppe</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR070">SWR070 Navigation zwischen Tenant-Einstellungsgruppen</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK049">STK049 Tenant-Einstellungen in separaten Formularen pro Einstellungsgruppe</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR071">SWR071 Unabhängige Speicherung pro Einstellungsgruppe</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK050">STK050 Eigenständiger Tenant-Verwaltungsservice mit Admin-UI</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR072">SWR072 Tenant-Management-Service als eigenständiger Microservice</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA034">SWA034 Tenant-Management-Service Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK050">STK050 Eigenständiger Tenant-Verwaltungsservice mit Admin-UI</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR073">SWR073 Tenant-Admin-UI mit Shared UI Library</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA034">SWA034 Tenant-Management-Service Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK050">STK050 Eigenständiger Tenant-Verwaltungsservice mit Admin-UI</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR074">SWR074 Tenant-Management gRPC-Schnittstelle</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA034">SWA034 Tenant-Management-Service Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK050">STK050 Eigenständiger Tenant-Verwaltungsservice mit Admin-UI</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR075">SWR075 Kubernetes-Deployment für Tenant-Management-Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA034">SWA034 Tenant-Management-Service Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK051">STK051 Vollständige Vorschau für unveröffentlichte Posts</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR076">SWR076 Post-Vorschau-Endpoint für DRAFT-Posts</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK051">STK051 Vollständige Vorschau für unveröffentlichte Posts</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR077">SWR077 Vorschau-Button im Post-Formular</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK052">STK052 E2E-Selenium-Tests für alle relevanten UI-Use-Cases</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR078">SWR078 E2E-Test-Infrastruktur mit Selenium WebDriver</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA035">SWA035 E2E-Test-Modul Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK052">STK052 E2E-Selenium-Tests für alle relevanten UI-Use-Cases</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR079">SWR079 E2E-Tests: Blog-Content öffentliche Ansichten</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA035">SWA035 E2E-Test-Modul Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK052">STK052 E2E-Selenium-Tests für alle relevanten UI-Use-Cases</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR080">SWR080 E2E-Tests: Blog-Content Autoren-Workflows</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA035">SWA035 E2E-Test-Modul Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK052">STK052 E2E-Selenium-Tests für alle relevanten UI-Use-Cases</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR081">SWR081 E2E-Tests: Authentifizierung und Registrierung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA035">SWA035 E2E-Test-Modul Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK052">STK052 E2E-Selenium-Tests für alle relevanten UI-Use-Cases</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR082">SWR082 E2E-Tests: Admin-Workflows (User/Tenant)</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA035">SWA035 E2E-Test-Modul Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK052">STK052 E2E-Selenium-Tests für alle relevanten UI-Use-Cases</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR083">SWR083 E2E-Tests: SuperAdmin Tenant-Verwaltung</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA035">SWA035 E2E-Test-Modul Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK053">STK053 Tag-Verwaltung und Tag-Anzeige im Blog</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR084">SWR084 Tag-Verwaltung im Admin-Backend</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK053">STK053 Tag-Verwaltung und Tag-Anzeige im Blog</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR085">SWR085 Tag-Auswahl im Post-Formular</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK053">STK053 Tag-Verwaltung und Tag-Anzeige im Blog</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR086">SWR086 Tag-Anzeige in Post-Übersicht und Detailansicht</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK054">STK054 Auditlog-Ansicht in der Admin-UI</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR087">SWR087 Auditlog-Abfrage-Port und Repository</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA036">SWA036 Auditlog-View Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK054">STK054 Auditlog-Ansicht in der Admin-UI</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR088">SWR088 Auditlog-Admin-View im Blog Content Service</a></td>
+  <td scope="row"></td>
+  <td scope="row"><a href="documents/SWA.html#SWA036">SWA036 Auditlog-View Architektur</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK055">STK055 Logo und FavIcon pro Tenant konfigurierbar</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR091">SWR091 Logo und FavIcon in Tenant-Branding-Einstellungen</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK056">STK056 OIDC-Button-Text über Admin-UI konfigurierbar</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR092">SWR092 Konfigurierbarer OIDC-Login-Button-Text pro Tenant</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK057">STK057 Nutzer über die Admin-UI löschen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR093">SWR093 Benutzer-Löschung über Admin-UI</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr class="alt">
+  <td scope="row"><a href="documents/STK.html#STK058">STK058 Standard-Rolle für neue Benutzer über Admin-UI einstellbar</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR094">SWR094 Konfigurierbare Standard-Rolle für neue Benutzer pro Tenant</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+<tr>
+  <td scope="row"><a href="documents/STK.html#STK059">STK059 Benutzer-Rollen über OIDC-Claims automatisch setzen</a></td>
+  <td scope="row"><a href="documents/SWR.html#SWR095">SWR095 Automatisches Rollen-Mapping über OIDC-Claims</a></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+  <td scope="row"></td>
+</tr>
+</tbody>
+</table>
+    </div>
+  </main>
+</div>
+<script src="template/bootstrap.bundle.min.js"></script>
+</body>
+</html>

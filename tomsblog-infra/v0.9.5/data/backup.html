@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Backup &amp; Recovery :: Toms Blog: Dokumentation</title>
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../index.html">Toms Blog: Dokumentation</a>
+      <button class="navbar-burger" aria-label="Toggle navigation" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="../../../tomsblog-arc42/main/index.html">Architektur (arc42)</a>
+        <a class="navbar-item" href="../../../tomsblog-design/main/index.html">Software Detail Design</a>
+        <a class="navbar-item" href="../../../tomsblog-infra/main/index.html">Infrastruktur</a>
+        <a class="navbar-item" href="../../../requirements/index.html">Requirements</a>
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field">
+            <input id="search-input" type="text" placeholder="Dokumentation durchsuchen">
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="tomsblog-infra" data-version="v0.9.5">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Toms Blog: Infrastruktur-Dokumentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Überblick</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../cluster-setup/index.html">Cluster-Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cluster-setup/provisioning.html">Provisionierung (IaC)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cluster-setup/networking.html">Netzwerk &amp; DNS</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../gitops/index.html">GitOps &amp; Deployment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gitops/flux.html">Flux-Konfiguration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gitops/image-automation.html">Image-Automation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gitops/secrets.html">Secrets-Management (SOPS)</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../service-mesh/index.html">Service Mesh</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-mesh/mtls.html">mTLS</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-mesh/authorization.html">AuthorizationPolicies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../networking/index.html">Networking &amp; Ingress</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../networking/traefik.html">Traefik Ingress Controller</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../networking/tls.html">TLS &amp; Zertifikate</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../networking/network-policies.html">Network Policies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Datenhaltung</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="cloudnativepg.html">CloudNativePG</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="redis.html">Redis</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="backup.html">Backup &amp; Recovery</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../operations/index.html">Operations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../operations/rollback.html">Rollback-Verfahren</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../operations/disaster-recovery.html">Disaster Recovery</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../operations/monitoring.html">Monitoring &amp; Alerting</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Toms Blog: Infrastruktur-Dokumentation</span>
+    <span class="version">v0.9.5-dev</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-arc42/v0.10.6/index.html">Toms Blog: Architekturdokumentation</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../tomsblog-arc42/main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../../tomsblog-arc42/v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-arc42/v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <div class="title"><a href="../../main/index.html">Toms Blog: Infrastruktur-Dokumentation</a></div>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../main/index.html">main-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.6/index.html">v0.9.6-dev</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">v0.9.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.4/index.html">v0.9.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.3/index.html">v0.9.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.2/index.html">v0.9.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.1/index.html">v0.9.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.9.0/index.html">v0.9.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.9/index.html">v0.8.9-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.8/index.html">v0.8.8-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.7/index.html">v0.8.7-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.6/index.html">v0.8.6-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.5/index.html">v0.8.5-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.4/index.html">v0.8.4-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.3/index.html">v0.8.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.2/index.html">v0.8.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.1/index.html">v0.8.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.8.0/index.html">v0.8.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.3/index.html">v0.7.3-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.2/index.html">v0.7.2-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.7.1/index.html">v0.7.1-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../v0.5.3/index.html">v0.5.3-dev</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <div class="title"><a href="../../../tomsblog-design/v0.10.6/index.html">Toms Blog: Software Detail Design</a></div>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../tomsblog-design/main/index.html">main-dev</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../../tomsblog-design/v0.10.6/index.html">v0.10.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.5/index.html">v0.10.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.4/index.html">v0.10.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.3/index.html">v0.10.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.2/index.html">v0.10.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.1/index.html">v0.10.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.10.0/index.html">v0.10.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.6/index.html">v0.9.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.5/index.html">v0.9.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.4/index.html">v0.9.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.3/index.html">v0.9.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.2/index.html">v0.9.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.1/index.html">v0.9.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.9.0/index.html">v0.9.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.9/index.html">v0.8.9</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.8/index.html">v0.8.8</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.7/index.html">v0.8.7</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.6/index.html">v0.8.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.5/index.html">v0.8.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.4/index.html">v0.8.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.3/index.html">v0.8.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.2/index.html">v0.8.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.1/index.html">v0.8.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.8.0/index.html">v0.8.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.3/index.html">v0.7.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.2/index.html">v0.7.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.7.1/index.html">v0.7.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.3/index.html">v0.5.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.2/index.html">v0.5.2</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.1/index.html">v0.5.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.5.0/index.html">v0.5.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.6/index.html">v0.4.6</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.5/index.html">v0.4.5</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.4/index.html">v0.4.4</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.3/index.html">v0.4.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.1/index.html">v0.4.1</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.4.0/index.html">v0.4.0</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.3.3/index.html">v0.3.3</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.3.0/index.html">v0.3.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.2.0/index.html">v0.2.0-dev</a>
+        </li>
+        <li class="version">
+          <a href="../../../tomsblog-design/v0.1.0/index.html">v0.1.0-dev</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../tomsblog-arc42/v0.10.6/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Toms Blog: Infrastruktur-Dokumentation</a></li>
+    <li><a href="index.html">Datenhaltung</a></li>
+    <li><a href="backup.html">Backup &amp; Recovery</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v0.9.5-dev</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/data/backup.html">main-dev</a>
+    <a class="version" href="../../v0.9.6/data/backup.html">v0.9.6-dev</a>
+    <a class="version is-current" href="backup.html">v0.9.5-dev</a>
+    <a class="version" href="../../v0.9.4/data/backup.html">v0.9.4-dev</a>
+    <a class="version" href="../../v0.9.3/data/backup.html">v0.9.3-dev</a>
+    <a class="version" href="../../v0.9.2/data/backup.html">v0.9.2-dev</a>
+    <a class="version" href="../../v0.9.1/data/backup.html">v0.9.1-dev</a>
+    <a class="version" href="../../v0.9.0/data/backup.html">v0.9.0-dev</a>
+    <a class="version" href="../../v0.8.9/data/backup.html">v0.8.9-dev</a>
+    <a class="version" href="../../v0.8.8/data/backup.html">v0.8.8-dev</a>
+    <a class="version" href="../../v0.8.7/data/backup.html">v0.8.7-dev</a>
+    <a class="version" href="../../v0.8.6/data/backup.html">v0.8.6-dev</a>
+    <a class="version" href="../../v0.8.5/data/backup.html">v0.8.5-dev</a>
+    <a class="version" href="../../v0.8.4/data/backup.html">v0.8.4-dev</a>
+    <a class="version" href="../../v0.8.3/data/backup.html">v0.8.3-dev</a>
+    <a class="version" href="../../v0.8.2/data/backup.html">v0.8.2-dev</a>
+    <a class="version" href="../../v0.8.1/data/backup.html">v0.8.1-dev</a>
+    <a class="version" href="../../v0.8.0/data/backup.html">v0.8.0-dev</a>
+    <a class="version" href="../../v0.7.3/data/backup.html">v0.7.3-dev</a>
+    <a class="version" href="../../v0.7.2/data/backup.html">v0.7.2-dev</a>
+    <a class="version" href="../../v0.7.1/data/backup.html">v0.7.1-dev</a>
+    <a class="version" href="../../v0.5.3/data/backup.html">v0.5.3-dev</a>
+  </div>
+</div>
+<div class="edit-this-page"><a href="https://github.com/tomirgang/tomsblog/blob/v0.9.5/docs/infra/modules/ROOT/pages/data/backup.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Backup &amp; Recovery</h1>
+<div class="sect1">
+<h2 id="_übersicht"><a class="anchor" href="#_übersicht"></a>1. Übersicht</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>PostgreSQL-Backups werden über CloudNativePG Barman Object Store auf einen externen
+S3-kompatiblen Speicher (Garage auf Netcup VM) gesichert. Sowohl tägliche Base Backups
+als auch kontinuierliches WAL-Streaming sind konfiguriert.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_recovery_ziele"><a class="anchor" href="#_recovery_ziele"></a>2. Recovery-Ziele</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Zielwert</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RPO (Recovery Point Objective)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt; 1 Stunde (WAL-Streaming)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RTO (Recovery Time Objective)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt; 15 Minuten (Restore aus Backup)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_backup_architektur"><a class="anchor" href="#_backup_architektur"></a>3. Backup-Architektur</h2>
+<div class="sectionbody">
+<div class="imageblock kroki">
+<div class="content">
+<img src="../_images/diag-c3f97ee44c30d465a5a112baee5058aba5144266.svg" alt="Diagram">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_konfiguration"><a class="anchor" href="#_konfiguration"></a>4. Konfiguration</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_s3_credentials"><a class="anchor" href="#_s3_credentials"></a>4.1. S3-Credentials</h3>
+<div class="paragraph">
+<p>Die Zugangsdaten für den Garage-Bucket liegen als Kubernetes Secret im Namespace <code>postgres</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
+kind: Secret
+metadata:
+  name: backup-s3-credentials
+  namespace: postgres
+type: Opaque
+stringData:
+  ACCESS_KEY_ID: "&lt;Access Key aus Garage&gt;"
+  SECRET_ACCESS_KEY: "&lt;Secret Key aus Garage&gt;"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cloudnativepg_cluster_backup_sektion"><a class="anchor" href="#_cloudnativepg_cluster_backup_sektion"></a>4.2. CloudNativePG Cluster (Backup-Sektion)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">spec:
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://postgres-backup/
+      endpointURL: https://garage.do9ita.de
+      s3Credentials:
+        accessKeyId:
+          name: backup-s3-credentials
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: backup-s3-credentials
+          key: SECRET_ACCESS_KEY
+      wal:
+        compression: gzip
+        maxParallel: 2
+    retentionPolicy: "30d"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_scheduledbackup"><a class="anchor" href="#_scheduledbackup"></a>4.3. ScheduledBackup</h3>
+<div class="paragraph">
+<p>Tägliche Base Backups werden um 02:00 UTC erstellt:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: postgres-daily-backup
+  namespace: postgres
+spec:
+  schedule: "0 2 * * *"
+  backupOwnerReference: self
+  cluster:
+    name: postgres-cluster
+  method: barmanObjectStore
+  immediate: true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Das Flag <code>immediate: true</code> löst beim Erstellen der Ressource sofort ein initiales Backup aus.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_garage_bucket_einrichten"><a class="anchor" href="#_garage_bucket_einrichten"></a>5. Garage-Bucket einrichten</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Auf der Netcup VM muss ein dedizierter Bucket mit API-Key existieren:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker compose exec garage /garage bucket create postgres-backup
+docker compose exec garage /garage key create postgres-backup-key
+docker compose exec garage /garage bucket allow --read --write --owner postgres-backup --key postgres-backup-key</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Die Ausgabe von <code>garage key info postgres-backup-key</code> enthält Access Key und Secret Key
+für das Kubernetes Secret.</p>
+</div>
+<div class="sect2">
+<h3 id="_voraussetzungen_an_garage"><a class="anchor" href="#_voraussetzungen_an_garage"></a>5.1. Voraussetzungen an Garage</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Version</strong>: mindestens v1.3.0 (STREAMING-AWS4-HMAC-SHA256-PAYLOAD Support, benötigt von barman-cloud)</p>
+</li>
+<li>
+<p><strong>S3-Region</strong>: muss in <code>garage.toml</code> auf <code>us-east-1</code> gesetzt sein, da barman-cloud diese Region als Default verwendet und CloudNativePG kein Region-Feld unterstützt:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[s3_api]
+s3_region = "us-east-1"</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deployment_via_kustomize"><a class="anchor" href="#_deployment_via_kustomize"></a>5.2. Deployment via Kustomize</h3>
+<div class="paragraph">
+<p>Damit Flux die Backup-Ressourcen deployed, müssen sie in der Kustomization referenziert sein:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># infra/k8s/kustomization.yaml
+resources:
+  - postgres/namespace.yaml
+  - postgres/backup-s3-credentials.yaml
+  - postgres/cluster.yaml
+  - postgres/scheduled-backup.yaml</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_disaster_recovery"><a class="anchor" href="#_disaster_recovery"></a>6. Disaster Recovery</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_restore_aus_dem_letzten_backup"><a class="anchor" href="#_restore_aus_dem_letzten_backup"></a>6.1. Restore aus dem letzten Backup</h3>
+<div class="paragraph">
+<p>Ein neuer Cluster kann durch einen Recovery-Bootstrap aus dem Object Store erstellt werden:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres-cluster-restored
+  namespace: postgres
+spec:
+  instances: 2
+  bootstrap:
+    recovery:
+      source: postgres-cluster-backup
+  externalClusters:
+    - name: postgres-cluster-backup
+      barmanObjectStore:
+        destinationPath: s3://postgres-backup/
+        endpointURL: https://garage.do9ita.de
+        s3Credentials:
+          accessKeyId:
+            name: backup-s3-credentials
+            key: ACCESS_KEY_ID
+          secretAccessKey:
+            name: backup-s3-credentials
+            key: SECRET_ACCESS_KEY
+  storage:
+    size: 10Gi
+    storageClass: hcloud-volumes</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_point_in_time_recovery_pitr"><a class="anchor" href="#_point_in_time_recovery_pitr"></a>6.2. Point-in-Time Recovery (PITR)</h3>
+<div class="paragraph">
+<p>Für eine Wiederherstellung auf einen bestimmten Zeitpunkt wird <code>recoveryTarget</code> ergänzt:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">  bootstrap:
+    recovery:
+      source: postgres-cluster-backup
+      recoveryTarget:
+        targetTime: "2026-05-03T12:00:00Z"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ablauf_eines_disaster_recovery"><a class="anchor" href="#_ablauf_eines_disaster_recovery"></a>6.3. Ablauf eines Disaster Recovery</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Ausfall feststellen und Ursache analysieren</p>
+</li>
+<li>
+<p>Entscheiden: Restore letztes Backup oder PITR auf bestimmten Zeitpunkt</p>
+</li>
+<li>
+<p>Recovery-Cluster-Manifest erstellen (siehe oben)</p>
+</li>
+<li>
+<p><code>kubectl apply -f postgres-cluster-restored.yaml</code></p>
+</li>
+<li>
+<p>Warten bis der Cluster <code>Ready</code> ist: <code>kubectl -n postgres get cluster</code></p>
+</li>
+<li>
+<p>Services auf den neuen Cluster umkonfigurieren (JDBC-URL anpassen)</p>
+</li>
+<li>
+<p>Datenintegrität prüfen</p>
+</li>
+<li>
+<p>Alten Cluster entfernen</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_monitoring"><a class="anchor" href="#_monitoring"></a>7. Monitoring</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_backup_status_prüfen"><a class="anchor" href="#_backup_status_prüfen"></a>7.1. Backup-Status prüfen</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Letzte Backups anzeigen
+kubectl -n postgres get backups
+
+# Cluster-Status inkl. letztem erfolgreichem Backup
+kubectl -n postgres get cluster postgres-cluster -o yaml | grep -A5 lastSuccessfulBackup</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_alerting_empfohlen"><a class="anchor" href="#_alerting_empfohlen"></a>7.2. Alerting (empfohlen)</h3>
+<div class="paragraph">
+<p>Wenn Prometheus/Grafana eingerichtet ist (Phase 9), sollte ein Alert konfiguriert werden,
+der auslöst, wenn das letzte erfolgreiche Backup älter als 26 Stunden ist.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_offene_punkte"><a class="anchor" href="#_offene_punkte"></a>8. Offene Punkte</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Automatisierte Restore-Tests (z.B. wöchentlicher Test-Restore in separaten Namespace)</p>
+</li>
+<li>
+<p>Alerting bei fehlgeschlagenen Backups (nach Phase 9: Observability)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_troubleshooting"><a class="anchor" href="#_troubleshooting"></a>9. Troubleshooting</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_authorizationheadermalformed_bad_request_auf_headbucket"><a class="anchor" href="#_authorizationheadermalformed_bad_request_auf_headbucket"></a>9.1. AuthorizationHeaderMalformed / Bad Request auf HeadBucket</h3>
+<div class="paragraph">
+<p>Garage erwartet die korrekte Region in der S3v4-Signatur. Prüfen:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">grep s3_region /path/to/garage.toml
+# Muss "us-east-1" sein</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_invalid_content_sha256_hash_streaming_aws4_hmac_sha256_payload"><a class="anchor" href="#_invalid_content_sha256_hash_streaming_aws4_hmac_sha256_payload"></a>9.2. Invalid content sha256 hash (STREAMING-AWS4-HMAC-SHA256-PAYLOAD)</h3>
+<div class="paragraph">
+<p>Garage v1.0.x unterstützt kein Chunked Transfer Encoding mit SHA256. Upgrade auf mindestens v1.3.0.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_secret_backup_s3_credentials_not_found"><a class="anchor" href="#_secret_backup_s3_credentials_not_found"></a>9.3. Secret "backup-s3-credentials" not found</h3>
+<div class="paragraph">
+<p>Das Secret muss in der Kustomization referenziert sein und vor dem Cluster-Manifest deployed werden.</p>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

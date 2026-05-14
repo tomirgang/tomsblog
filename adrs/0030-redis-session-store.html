@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0030: Redis als externer Session-Store für horizontale
+Skalierung</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1
+id="adr-0030-redis-als-externer-session-store-für-horizontale-skalierung">ADR-0030:
+Redis als externer Session-Store für horizontale Skalierung</h1>
+<h2 id="status">Status</h2>
+<p>Proposed</p>
+<h2 id="context">Context</h2>
+<p>Der Blog Content Service nutzt aktuell HTTP-Sessions für die
+Authentifizierung (OIDC Login, Break-Glass SuperAdmin Login,
+Tenant-Umschaltung). Die Sessions werden im Tomcat Servlet Container im
+Speicher gehalten (In-Memory). Das bedeutet:</p>
+<ol type="1">
+<li><strong>Kein horizontales Scaling</strong>: Bei mehreren Replicas
+gehen Sessions verloren, wenn ein Request an einen anderen Pod geroutet
+wird</li>
+<li><strong>Session-Verlust bei Restart</strong>: Jeder Pod-Neustart
+(Deployment, Rolling Update) führt zum Logout aller Benutzer</li>
+<li><strong>Kein Zero-Downtime-Deployment</strong>: Obwohl die
+Rolling-Update-Strategie konfiguriert ist, verlieren Benutzer beim
+Switch auf den neuen Pod ihre Session</li>
+</ol>
+<p>Die Session speichert aktuell:</p>
+<ul>
+<li>Spring Security Authentication (OIDC oder formbasiert)</li>
+<li>Benutzerrollen als Spring Security Authorities</li>
+<li>SuperAdmin Tenant-Auswahl (SWR-053)</li>
+</ul>
+<h3 id="evaluierte-alternativen">Evaluierte Alternativen</h3>
+<p><strong>Sticky Sessions (sessionAffinity: ClientIP):</strong></p>
+<ul>
+<li>Einfachste Lösung, kein zusätzlicher Infrastruktur-Aufwand</li>
+<li>Nachteil: Sessions gehen bei Pod-Restart trotzdem verloren</li>
+<li>Nachteil: Ungleichmäßige Lastverteilung bei wenigen Clients</li>
+<li>Nachteil: Hinter NAT/Proxies landen viele Clients am selben Pod</li>
+</ul>
+<p><strong>Spring Session mit JDBC (PostgreSQL):</strong></p>
+<ul>
+<li>Kein zusätzlicher Infrastruktur-Service nötig</li>
+<li>Nachteil: Höhere Latenz pro Request (DB-Roundtrip für jede
+Session-Operation)</li>
+<li>Nachteil: Zusätzliche Last auf der PostgreSQL-Instanz</li>
+<li>Nachteil: Regelmäßiges Aufräumen abgelaufener Sessions nötig</li>
+</ul>
+<p><strong>Spring Session mit Redis:</strong></p>
+<ul>
+<li>Sub-Millisekunden-Latenz für Session-Operationen</li>
+<li>Automatisches Ablaufen von Sessions (TTL)</li>
+<li>Bewährt in Spring-Ökosystem (Spring Session Data Redis)</li>
+<li>Redis bereits in Docker Compose für lokale Entwicklung
+konfiguriert</li>
+<li>Nachteil: Zusätzlicher Infrastruktur-Service auf Kubernetes</li>
+</ul>
+<p><strong>Stateless Sessions (JWT in Cookie):</strong></p>
+<ul>
+<li>Kein serverseitiger Zustand nötig</li>
+<li>Nachteil: Inkompatibel mit Spring Security OAuth2 Client
+(Session-basierter Authorization Code Flow)</li>
+<li>Nachteil: Token-Revocation schwierig</li>
+<li>Nachteil: Cookie-Größe wächst mit Claims</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p>Wir verwenden <strong>Spring Session Data Redis</strong> als externen
+Session-Store. Redis wird als Single-Instance Deployment auf Kubernetes
+betrieben.</p>
+<h3 id="konfiguration">Konfiguration</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Wert</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Redis-Version</td>
+<td>7.x (Alpine)</td>
+</tr>
+<tr class="even">
+<td>Instanzen</td>
+<td>1 (Single Instance, kein Sentinel/Cluster)</td>
+</tr>
+<tr class="odd">
+<td>Namespace</td>
+<td>redis</td>
+</tr>
+<tr class="even">
+<td>Port</td>
+<td>6379</td>
+</tr>
+<tr class="odd">
+<td>Persistenz</td>
+<td>Keine (RDB/AOF deaktiviert)</td>
+</tr>
+<tr class="even">
+<td>Authentifizierung</td>
+<td>Passwort via Kubernetes Secret</td>
+</tr>
+<tr class="odd">
+<td>Memory Limit</td>
+<td>128 Mi</td>
+</tr>
+<tr class="even">
+<td>Session-Namespace</td>
+<td>spring:session:blog-content</td>
+</tr>
+<tr class="odd">
+<td>Session-Timeout</td>
+<td>30 Minuten (Spring Default)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="warum-kein-redis-sentinelcluster">Warum kein Redis
+Sentinel/Cluster?</h3>
+<p>Session-Daten sind kurzlebig und reproduzierbar:</p>
+<ul>
+<li>Bei Redis-Ausfall loggen sich Benutzer erneut ein (wenige Sekunden
+Unterbrechung)</li>
+<li>Kein Datenverlust-Risiko für geschäftskritische Daten</li>
+<li>Single Instance ist ausreichend für die erwartete Last</li>
+<li>Sentinel/Cluster kann bei Bedarf nachgerüstet werden</li>
+</ul>
+<h3 id="warum-keine-persistenz">Warum keine Persistenz?</h3>
+<ul>
+<li>Sessions haben eine TTL und werden automatisch gelöscht</li>
+<li>Bei Redis-Neustart müssen sich Benutzer nur neu einloggen</li>
+<li>Keine RDB/AOF-Snapshots spart Disk-I/O und vereinfacht das
+Deployment</li>
+</ul>
+<h3 id="verantwortlichkeiten">Verantwortlichkeiten</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Aufgabe</th>
+<th>Wo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Redis Deployment (K8s)</td>
+<td>infra/k8s/redis/</td>
+</tr>
+<tr class="even">
+<td>Spring Session Konfiguration</td>
+<td>blog-content application-k8s.yml</td>
+</tr>
+<tr class="odd">
+<td>Network Policy (Egress zu Redis)</td>
+<td>infra/k8s/blog-content/</td>
+</tr>
+<tr class="even">
+<td>Docker Compose (lokale Entwicklung)</td>
+<td>infra/docker/docker-compose.yml</td>
+</tr>
+</tbody>
+</table>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Vorteile:</strong></p>
+<ul>
+<li>Horizontale Skalierung des Blog Content Service möglich (Replicas
+&gt; 1)</li>
+<li>Zero-Downtime-Deployments: Sessions überleben Rolling Updates</li>
+<li>Sub-Millisekunden Session-Zugriff</li>
+<li>Spring Boot Auto-Configuration: minimaler Code-Aufwand (Dependency +
+YAML)</li>
+<li>Lokale Entwicklung nutzt bestehenden Redis-Container aus Docker
+Compose</li>
+</ul>
+<p><strong>Nachteile:</strong></p>
+<ul>
+<li>Zusätzlicher Infrastruktur-Service (Redis) auf Kubernetes</li>
+<li>Single Point of Failure: bei Redis-Ausfall Session-Verlust
+(akzeptables Risiko)</li>
+<li>Netzwerk-Latenz zwischen Blog-Pod und Redis-Pod (vernachlässigbar im
+Cluster)</li>
+</ul>
+<p><strong>Sicherheit:</strong></p>
+<ul>
+<li>Redis wird mit Passwort-Authentifizierung betrieben
+(requirepass)</li>
+<li>Network Policy beschränkt Zugriff auf Redis auf den tomsblog
+Namespace</li>
+<li>Linkerd mTLS verschlüsselt die Verbindung zwischen Blog-Pod und
+Redis</li>
+<li>Security Context: non-root, read-only Filesystem, keine Privilege
+Escalation</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li><a
+href="https://docs.spring.io/spring-session/reference/guides/boot-redis.html">Spring
+Session Data Redis</a></li>
+<li>ADR-0021: Zero Trust mit Linkerd (mTLS für Redis-Verbindung)</li>
+<li>ADR-0019: Database per Service (Redis als zusätzlicher
+Infrastruktur-Service)</li>
+<li>SWR-053: SuperAdmin Tenant-Umschaltung (Session-basiert)</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

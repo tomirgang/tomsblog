@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0013: LLM-basierte Kommentar-Moderation</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0013-llm-basierte-kommentar-moderation">ADR-0013:
+LLM-basierte Kommentar-Moderation</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Das Kommentar-Modul (Meilenstein 2) benötigt eine
+Moderationsstrategie. Manuelle Moderation skaliert nicht und belastet
+Autoren. Regelbasierte Filter (Wortlisten, Regex) sind leicht zu
+umgehen.</p>
+<p>LLM-basierte Moderation kann Kontext verstehen: Beleidigungen, Spam,
+Off-Topic-Inhalte und subtile Verstöße erkennen, die regelbasierte
+Systeme übersehen.</p>
+<h2 id="decision">Decision</h2>
+<p>Neue Kommentare werden <strong>automatisiert durch ein LLM über das
+OpenRouter-Backend überprüft</strong>.</p>
+<p><strong>Ablauf:</strong></p>
+<ol type="1">
+<li>Benutzer erstellt Kommentar</li>
+<li>Kommentar wird sofort gespeichert (Status:
+<code>PENDING</code>)</li>
+<li>Asynchron wird der Kommentar an das LLM zur Bewertung übergeben</li>
+<li>LLM klassifiziert: <code>APPROVED</code>, <code>REJECTED</code> oder
+<code>REVIEW_PENDING</code></li>
+<li>Bei <code>APPROVED</code> wird der Kommentar sofort sichtbar</li>
+<li>Bei <code>REJECTED</code> wird der Kommentar ausgeblendet
+(Autor/Admin kann manuell freigeben)</li>
+<li>Bei <code>REVIEW_PENDING</code> wartet der Kommentar auf manuelle
+Prüfung</li>
+</ol>
+<p><strong>Graceful Degradation:</strong></p>
+<ul>
+<li>Bei OpenRouter-Ausfall wird der Kommentar als
+<code>REVIEW_PENDING</code> markiert</li>
+<li>Autoren/Admins werden benachrichtigt, dass manuelle Moderation nötig
+ist</li>
+<li>Kein Kommentar geht verloren, kein Kommentar wird ungeprüft
+veröffentlicht</li>
+</ul>
+<p><strong>Architektur:</strong></p>
+<ul>
+<li>Moderation als Outbound-Port im Kommentar-Service (hexagonal,
+austauschbar)</li>
+<li>LLM-Adapter implementiert den Port via OpenRouter</li>
+<li>Fallback-Adapter mit regelbasierter Moderation als Alternative</li>
+<li>Event-getriggert: <code>CommentCreatedEvent</code> löst Moderation
+aus</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Skaliert ohne manuellen Aufwand</li>
+<li>Erkennt kontextuelle Verstöße (nicht nur Keyword-basiert)</li>
+<li>Wiederverwendung des vorhandenen OpenRouter-Backends</li>
+<li>Austauschbarer Adapter (andere LLMs oder regelbasiert als
+Fallback)</li>
+<li>Kein Kommentar wird ungeprüft öffentlich sichtbar</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>Kosten pro Kommentar (LLM-API-Aufruf)</li>
+<li>Latenz zwischen Absenden und Sichtbarkeit (async Moderation)</li>
+<li>False Positives möglich (legitime Kommentare werden
+zurückgehalten)</li>
+<li>Abhängigkeit von externem Service (Graceful Degradation nötig)</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li>SWR-018: Automatisierte Kommentar-Moderation via LLM</li>
+<li>SWA-012: LLM-basierte Kommentar-Moderation als Adapter</li>
+<li>SWA-006: AI Service als separater Adapter</li>
+<li>SWR-014: Graceful Degradation bei KI-Ausfall</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0007: Doorstop für Requirement Tracing
+(ASPICE-orientiert)</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1
+id="adr-0007-doorstop-für-requirement-tracing-aspice-orientiert">ADR-0007:
+Doorstop für Requirement Tracing (ASPICE-orientiert)</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Das Projekt soll nachvollziehbare Requirements mit durchgängiger
+Traceability haben, orientiert am ASPICE-Prozessmodell. Wir brauchen ein
+Tool, das:</p>
+<ul>
+<li>Git-native ist (Requirements im Repository, versioniert)</li>
+<li>Multi-Level-Hierarchie unterstützt (Stakeholder → Software → Design
+→ Test)</li>
+<li>Bidirektionale Links zwischen Requirement-Ebenen erlaubt</li>
+<li>CI-integrierbar ist (Validierung von Coverage und Links)</li>
+</ul>
+<p><strong>Alternativen:</strong></p>
+<ul>
+<li><strong>StrictDoc</strong>: moderner, aber weniger verbreitet</li>
+<li><strong>Doorstop</strong>: etabliert, YAML-basiert,
+CLI-getrieben</li>
+<li><strong>Eigenbau</strong>: maximale Kontrolle, hoher Aufwand</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p>Wir verwenden <strong>Doorstop</strong> für das Requirement
+Management.</p>
+<p><strong>Dokumenthierarchie:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>Prefix</th>
+<th>ASPICE-Level</th>
+<th>Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>STK</td>
+<td>SWE.1</td>
+<td>Stakeholder Requirements</td>
+</tr>
+<tr class="even">
+<td>SWR</td>
+<td>SWE.2</td>
+<td>Software Requirements</td>
+</tr>
+<tr class="odd">
+<td>SWA</td>
+<td>SWE.3</td>
+<td>Architecture/Design</td>
+</tr>
+<tr class="even">
+<td>TST</td>
+<td>SWE.5/6</td>
+<td>Test Specifications</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Traceability in Code:</strong></p>
+<ul>
+<li>Javadoc: <code>@req SWR-042</code></li>
+<li>Tests: <code>@DisplayName("SWR-042: ...")</code></li>
+<li>CI validiert: <code>doorstop</code> (Link-Integrität +
+Coverage)</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Positiv:</strong></p>
+<ul>
+<li>Requirements leben im Git-Repo (versioniert, reviewbar,
+mergebar)</li>
+<li>Kein externer Server nötig</li>
+<li>Automatische Coverage-Reports und Link-Validierung</li>
+<li>ASPICE-orientierte Struktur als Lernerfahrung</li>
+</ul>
+<p><strong>Negativ:</strong></p>
+<ul>
+<li>YAML-Dateien sind weniger komfortabel als GUI-Tools (mitigiert durch
+VS Code Extension)</li>
+<li>Doorstop-Community ist kleiner als kommerzielle Tools</li>
+<li>Manuelle Pflege der Requirement-Links nötig</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ADR-0024: Kustomize für Kubernetes-Manifeste</title>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    .content { max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+    h1 { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    h2 { margin-top: 24px; color: #333; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto; }
+    pre > code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    ul, ol { padding-left: 24px; }
+    a { color: #0366d6; }
+    .plantuml-diagram svg { max-width: 100%; height: auto; }
+    .plantuml-fallback { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; }
+    pre.mermaid { background: white; border: 1px solid #eee; text-align: center; }
+  </style>
+
+</head>
+<body>
+<div style="background:#343a40;padding:8px 16px;font-size:14px;font-family:sans-serif"><a href="../index.html" style="color:#fff;text-decoration:none;margin-right:16px">&larr; Dokumentation</a><a href="../tomsblog-arc42/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Architektur (arc42)</a><a href="../tomsblog-design/main/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Software Detail Design</a><a href="../requirements/index.html" style="color:#fff;text-decoration:none;margin-right:16px">Requirements</a><a href="index.html" style="color:#fff;text-decoration:none">ADRs</a></div>
+<div class="content">
+<h1 id="adr-0024-kustomize-für-kubernetes-manifeste">ADR-0024: Kustomize
+für Kubernetes-Manifeste</h1>
+<h2 id="status">Status</h2>
+<p>Accepted</p>
+<h2 id="context">Context</h2>
+<p>Für das Deployment der Services auf Kubernetes wird ein Werkzeug
+benötigt, das Kubernetes-Manifeste verwaltet, parametrisiert und über
+Umgebungen hinweg anpassbar macht. Die zwei etablierten Ansätze sind
+Helm (Chart-basiertes Templating) und Kustomize (Overlay-basiertes
+Patching).</p>
+<h3 id="bewertungskriterien">Bewertungskriterien</h3>
+<ul>
+<li><strong>Komplexität</strong>: Aufwand für Erstellung und
+Wartung</li>
+<li><strong>Transparenz</strong>: Lesbarkeit der resultierenden
+Manifeste bei Code-Reviews</li>
+<li><strong>Integration mit Flux</strong>: Kompatibilität mit dem
+bestehenden GitOps-Setup (ADR-0020)</li>
+<li><strong>Wiederverwendbarkeit</strong>: Skalierung auf mehrere
+Services</li>
+<li><strong>Tooling</strong>: Abhängigkeiten und Lernkurve</li>
+</ul>
+<h3 id="evaluierte-alternativen">Evaluierte Alternativen</h3>
+<p><strong>Kustomize:</strong></p>
+<ul>
+<li>In kubectl integriert (<code>kubectl apply -k</code>)</li>
+<li>Reine YAML-Dateien mit Overlay-Patches für
+Umgebungsunterschiede</li>
+<li>Kein Templating, keine Variablen-Substitution</li>
+<li>Flux Kustomize-Controller bereits aktiv</li>
+<li>Transparentes Diff bei Code-Reviews</li>
+</ul>
+<p><strong>Helm:</strong></p>
+<ul>
+<li>Go-Template-basiertes Rendering mit Values-Dateien</li>
+<li>Eingebautes Versioning, Packaging und Rollback</li>
+<li>Breites Ökosystem an Community-Charts</li>
+<li>Helm-Controller in Flux verfügbar</li>
+<li>Höhere Abstraktion, gerenderte Templates schwerer zu reviewen</li>
+<li>Hooks für Pre-/Post-Install-Jobs (z.B. Migrations)</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p>Wir verwenden <strong>Kustomize</strong> für die Verwaltung der
+Kubernetes-Manifeste.</p>
+<h3 id="begründung">Begründung</h3>
+<ul>
+<li><strong>Bereits aktiv</strong>: Der Flux Kustomize-Controller
+reconciliert bereits <code>infra/k8s/</code> erfolgreich.</li>
+<li><strong>Einfachheit</strong>: Ein einzelner Service (blog-content)
+rechtfertigt keinen Helm-Chart-Overhead.</li>
+<li><strong>Transparenz</strong>: YAML bleibt direkt lesbar und
+reviewbar, kein Template-Rendering nötig.</li>
+<li><strong>Kein Vendor-Lock</strong>: Kustomize ist in kubectl
+eingebaut, keine zusätzliche Dependency.</li>
+<li><strong>Overlay-Modell</strong>: Umgebungsspezifische Anpassungen
+(Dev/Staging/Prod) über Overlays ergänzbar.</li>
+<li><strong>Konsistenz</strong>: Passt zur existierenden Struktur
+(<code>infra/k8s/kustomization.yaml</code>).</li>
+</ul>
+<h3 id="wann-helm-ergänzt-werden-kann">Wann Helm ergänzt werden
+kann</h3>
+<ul>
+<li>Wenn Community-Charts als Dependency genutzt werden sollen (z.B.
+Redis, Kafka)</li>
+<li>Wenn ein Service so komplex wird, dass Templating-Logik unvermeidbar
+ist</li>
+<li>Wenn Versioning und Packaging über eine Chart-Registry benötigt
+wird</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p><strong>Vorteile:</strong></p>
+<ul>
+<li>Minimale Tooling-Abhängigkeit</li>
+<li>Code-Reviews zeigen exakt die Manifeste, die deployed werden</li>
+<li>Kein separater Build-/Render-Schritt nötig</li>
+<li>Overlays ermöglichen saubere Umgebungstrennung ohne Duplikation</li>
+</ul>
+<p><strong>Nachteile:</strong></p>
+<ul>
+<li>Keine Template-Logik (Conditionals, Loops) verfügbar</li>
+<li>Wiederverwendung über Services erfordert gemeinsame
+Base-Manifeste</li>
+<li>Kein eingebauter Rollback-Mechanismus (nur über Git-Revert)</li>
+<li>Komplexe Parametrisierung (viele Varianten) kann zu vielen
+Patch-Dateien führen</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li>ADR-0020 (Flux für GitOps)</li>
+<li>ADR-0022 (Kubernetes-Plattform)</li>
+<li>ADR-0026 (Helm Charts ab Phase 5: Operator-managed Services wie
+Kafka, RabbitMQ, MongoDB werden als Flux HelmReleases deployt)</li>
+</ul>
+</div>
+<script type="module">
+  // Only load mermaid.js if there are mermaid diagrams on the page
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function(mod) { mod.default.initialize({ startOnLoad: true }); });
+  }
+</script>
+</body>
+</html>
